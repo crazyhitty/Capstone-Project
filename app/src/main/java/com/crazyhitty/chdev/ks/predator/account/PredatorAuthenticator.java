@@ -70,12 +70,11 @@ public class PredatorAuthenticator extends AbstractAccountAuthenticator {
 
         Intent intent = new Intent(mContextWeakReference.get(), AuthenticatorActivity.class);
         intent.putExtra(Constants.Authenticator.ACCOUNT_TYPE, accountType);
-        intent.putExtra(Constants.Authenticator.AUTH_TYPE, authTokenType);
-        intent.putExtra(Constants.Authenticator.IS_ADDING_NEW_ACCOUNT, true);
+        intent.putExtra(Constants.Authenticator.AUTH_TOKEN_TYPE, authTokenType);
         intent.putExtra(Constants.Authenticator.ACCOUNT_AUTHENTICATION_RESPONSE, response);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.Authenticator.INTENT, intent);
+        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
 
         return bundle;
     }
@@ -108,11 +107,11 @@ public class PredatorAuthenticator extends AbstractAccountAuthenticator {
         // If the authToken is unavailable, retry for a new one.
         Intent intent = new Intent(mContextWeakReference.get(), AuthenticatorActivity.class);
         intent.putExtra(Constants.Authenticator.ACCOUNT_TYPE, account.type);
-        intent.putExtra(Constants.Authenticator.AUTH_TYPE, authTokenType);
+        intent.putExtra(Constants.Authenticator.AUTH_TOKEN_TYPE, authTokenType);
         intent.putExtra(Constants.Authenticator.ACCOUNT_AUTHENTICATION_RESPONSE, response);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.Authenticator.INTENT, intent);
+        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
 
         return bundle;
     }

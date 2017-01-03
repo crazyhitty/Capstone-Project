@@ -22,22 +22,28 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.base;
+package com.crazyhitty.chdev.ks.predator.core.posts;
 
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
-
-import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
+import com.crazyhitty.chdev.ks.predator.core.BaseView;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     12/24/2016 7:30 PM
+ * Created:     1/2/2017 10:05 PM
  * Description: Unavailable
  */
 
-public class BaseSupportFragment extends Fragment {
-    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
-        CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
+public interface PostsContract {
+    interface View extends BaseView<Presenter> {
+        void showPosts();
+
+        void unableToGetPosts(String errorMessage);
+    }
+
+    interface Presenter extends BasePresenter {
+        void getPosts(boolean latest);
+
+        void loadMorePosts();
     }
 }

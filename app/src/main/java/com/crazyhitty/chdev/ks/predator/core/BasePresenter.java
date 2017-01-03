@@ -22,22 +22,17 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.base;
-
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
-
-import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+package com.crazyhitty.chdev.ks.predator.core;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     12/24/2016 7:30 PM
- * Description: Unavailable
+ * Created:     1/2/2017 10:00 AM
+ * Description: All of the presenter interfaces extends to this.
  */
 
-public class BaseSupportFragment extends Fragment {
-    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
-        CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
-    }
+public interface BasePresenter {
+    void subscribe();
+
+    void unSubscribe();
 }

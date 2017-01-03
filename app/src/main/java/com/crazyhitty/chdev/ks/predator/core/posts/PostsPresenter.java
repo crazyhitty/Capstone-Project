@@ -22,22 +22,47 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.base;
+package com.crazyhitty.chdev.ks.predator.core.posts;
 
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     12/24/2016 7:30 PM
+ * Created:     1/2/2017 10:13 PM
  * Description: Unavailable
  */
 
-public class BaseSupportFragment extends Fragment {
-    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
-        CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
+public class PostsPresenter implements PostsContract.Presenter {
+    @NonNull
+    private PostsContract.View mView;
+
+    private CompositeSubscription mCompositeSubscription;
+
+    public PostsPresenter(@NonNull PostsContract.View view) {
+        this.mView = view;
+        mCompositeSubscription = new CompositeSubscription();
+    }
+
+    @Override
+    public void subscribe() {
+
+    }
+
+    @Override
+    public void unSubscribe() {
+        mCompositeSubscription.clear();
+    }
+
+    @Override
+    public void getPosts(boolean latest) {
+        //mCompositeSubscription.add();
+    }
+
+    @Override
+    public void loadMorePosts() {
+
     }
 }

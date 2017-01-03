@@ -56,6 +56,7 @@ dependencies {
 
     // support libs
     compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
 
     // external module libs
     compile project(':producthunt-wrapper')

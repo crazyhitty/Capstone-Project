@@ -38,12 +38,14 @@ public class Constants {
 
     public static class Authenticator {
         public static final String ACCOUNT_TYPE = "account_type";
-        public static final String AUTH_TYPE = "auth_type";
-        public static final String IS_ADDING_NEW_ACCOUNT = "is_adding_new_account";
         public static final String ACCOUNT_AUTHENTICATION_RESPONSE = "account_authentication_response";
-        public static final String INTENT = "auth_intent";
         public static final String ACCOUNT_NAME = "account_name";
         public static final String AUTH_TOKEN = "auth_token";
+        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
+        public static final String PRODUCT_HUNT = "Product Hunt";
+        public static final String AUTH_TYPE_CLIENT = "auth_type_client";
+        public static final String AUTH_TYPE_USER = "auth_type_user";
+        public static final String PREDATOR_ACCOUNT_TYPE = "com.crazyhitty.chdev.ks.predator";
 
         private Authenticator() {
 

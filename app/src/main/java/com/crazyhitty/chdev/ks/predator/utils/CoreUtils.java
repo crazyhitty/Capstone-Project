@@ -22,22 +22,42 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.base;
+package com.crazyhitty.chdev.ks.predator.utils;
 
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
-
-import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     12/24/2016 7:30 PM
+ * Created:     1/2/2017 9:06 PM
  * Description: Unavailable
  */
 
-public class BaseSupportFragment extends Fragment {
-    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
-        CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
+public class CoreUtils {
+    private CoreUtils() {
+
+    }
+
+    /**
+     * Set the fragment on the particular layout programmatically.
+     *
+     * @param fragmentManager FragmentManager
+     * @param layoutResId     Layout which will contain this new fragment
+     * @param fragment        Fragment to be set
+     * @param addToBackStack  Add this fragment to fragment manager backstack or not
+     */
+    public static void setFragment(FragmentManager fragmentManager,
+                                   @IdRes int layoutResId,
+                                   Fragment fragment,
+                                   boolean addToBackStack) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
+                .replace(layoutResId, fragment);
+        if (addToBackStack) {
+            fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
+        fragmentTransaction.commit();
     }
 }

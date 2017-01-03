@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2016 Kartik Sharma
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_posts"
+            android:icon="@drawable/ic_posts_24dp"
+            android:title="@string/menu_nav_posts" />
+        <item
+            android:id="@+id/nav_collections"
+            android:icon="@drawable/ic_collections_24dp"
+            android:title="@string/menu_nav_collections" />
+        <item
+            android:id="@+id/nav_bookmarks"
+            android:icon="@drawable/ic_bookmark_24dp"
+            android:title="@string/menu_nav_bookmarks" />
+    </group>
+
+    <item android:title="@string/menu_nav_manage">
+        <menu>
+            <item
+                android:id="@+id/nav_my_profile"
+                android:icon="@drawable/ic_profile_24dp"
+                android:title="@string/menu_nav_my_profile" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_24dp"
+                android:title="@string/menu_nav_settings" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_about_24dp"
+                android:title="@string/menu_nav_about" />
+            <item
+                android:id="@+id/nav_donate"
+                android:icon="@drawable/ic_donate_24dp"
+                android:title="@string/menu_nav_donate" />
+        </menu>
+    </item>
+</menu>

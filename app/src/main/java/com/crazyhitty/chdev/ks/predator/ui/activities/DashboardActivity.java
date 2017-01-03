@@ -25,20 +25,21 @@
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthClientOnlyData;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
-import com.google.gson.Gson;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.PostsFragment;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -49,42 +50,99 @@ import rx.schedulers.Schedulers;
  * the entire app.
  */
 
-public class DashboardActivity extends BaseAppCompatActivity {
+public class DashboardActivity extends BaseAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "DashboardActivity";
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.drawer_layout_dashboard)
+    DrawerLayout drawerLayoutDashboard;
+
+    @BindView(R.id.navigation_view_dashboard)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dummy);
-        Button btnTest = (Button) findViewById(R.id.button_test);
-        btnTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testApi();
-            }
-        });
+        setContentView(R.layout.activity_dashboard);
+        ButterKnife.bind(this);
+        initToolbar();
+        initDrawer();
+
+        // Only set fragment when saved instance is null.
+        // This is done inorder to stop reloading fragment on orientation changes.
+        if (savedInstanceState == null) {
+            initFragment();
+        }
     }
 
-    private void testApi() {
-        ProductHuntRestApi.getApi()
-                .oAuthClient()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<OAuthClientOnlyData>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, "testApi: completed");
-                    }
+    /**
+     * Initialize toolbar.
+     */
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(R.string.app_name);
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "testApi: onError: " + e.getMessage());
-                    }
+    /**
+     * Initialize navigation drawer.
+     */
+    private void initDrawer() {
+        // Set up the hamburger icon which will open/close nav drawer
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
+                drawerLayoutDashboard,
+                toolbar,
+                R.string.dashboard_open_nav_drawer,
+                R.string.dashboard_close_nav_drawer);
+        drawerLayoutDashboard.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
 
-                    @Override
-                    public void onNext(OAuthClientOnlyData oAuthClientOnlyData) {
-                        Log.d(TAG, "testApi: onNext: " + new Gson().toJson(oAuthClientOnlyData));
-                    }
-                });
+        // Set up navigation drawer item clicks
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    /**
+     * Initialize fragment.
+     */
+    private void initFragment() {
+        PostsFragment postsFragment = PostsFragment.newInstance();
+
+
+        setFragment(R.id.frame_layout_dashboard_container,
+                postsFragment,
+                false);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawerLayoutDashboard.closeDrawer(GravityCompat.START);
+        switch (item.getItemId()) {
+            case R.id.nav_posts:
+                return true;
+            case R.id.nav_collections:
+                return true;
+            case R.id.nav_bookmarks:
+                return true;
+            case R.id.nav_my_profile:
+                return false;
+            case R.id.nav_settings:
+                return false;
+            case R.id.nav_about:
+                return false;
+            case R.id.nav_donate:
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayoutDashboard.isDrawerOpen(GravityCompat.START)) {
+            drawerLayoutDashboard.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

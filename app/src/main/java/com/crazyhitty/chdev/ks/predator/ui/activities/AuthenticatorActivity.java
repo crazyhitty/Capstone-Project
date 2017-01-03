@@ -24,11 +24,23 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.Manifest;
+import android.accounts.AccountAuthenticatorActivity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.predator.core.auth.AuthContract;
+import com.crazyhitty.chdev.ks.predator.core.auth.AuthPresenter;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -38,10 +50,57 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
  * Description: Enables a user to register with product hunt. It is a type of dialog.
  */
 
-public class AuthenticatorActivity extends BaseAppCompatActivity {
+public class AuthenticatorActivity extends AccountAuthenticatorActivity implements AuthContract.View {
+    private AuthContract.Presenter mAuthPresenter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authenticator);
+        ButterKnife.bind(this);
+        setPresenter(new AuthPresenter(this));
+    }
+
+    @OnClick(R.id.button_continue)
+    void onContinue() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mAuthPresenter.retrieveClientAuthToken(getApplicationContext());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAuthPresenter.subscribe();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAuthPresenter.unSubscribe();
+    }
+
+    @Override
+    public void isNetworkAvailable(boolean status) {
+
+    }
+
+    @Override
+    public void setPresenter(AuthContract.Presenter presenter) {
+        mAuthPresenter = presenter;
+    }
+
+    @Override
+    public void onAuthTokenRetrieved(Bundle args, String message) {
+        setAccountAuthenticatorResult(args);
+        setResult(RESULT_OK, new Intent().putExtras(args));
+        finish();
+    }
+
+    @Override
+    public void unableToFetchAuthToken(String errorMessage) {
+        Log.d(TAG, "unableToFetchAuthToken: " + errorMessage);
     }
 }

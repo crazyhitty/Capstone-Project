@@ -46,8 +46,8 @@ import rx.Observable;
 
 public interface ProductHuntService {
     @GET(ApiUrls.GET_POSTS)
-    Observable<PostsData> getPosts(@Path(Constants.CATEGORY) String category,
-                                   @Query(Constants.DAYS_AGO) int daysAgo);
+    Observable<PostsData> getPosts(@Query(Constants.PAGE) int page,
+                                   @Query(Constants.PER_PAGE) int perPage);
 
     @GET(ApiUrls.GET_POST_COMMENTS)
     Observable<PostCommentsData> getPostComments(@Path(Constants.POST_ID) int postId,

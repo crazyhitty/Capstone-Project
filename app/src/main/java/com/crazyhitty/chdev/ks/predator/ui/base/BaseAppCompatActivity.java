@@ -24,7 +24,11 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
+import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+
+import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 
 
 /**
@@ -35,5 +39,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class BaseAppCompatActivity extends AppCompatActivity {
-
+    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
+        CoreUtils.setFragment(getSupportFragmentManager(), layoutResId, fragment, addToBackStack);
+    }
 }

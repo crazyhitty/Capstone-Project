@@ -3,6 +3,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
     <application
         android:name=".MainApplication"
@@ -14,18 +16,26 @@
 
         <activity
             android:name=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
-
-        <activity
-            android:name=".ui.activities.AuthenticatorActivity"
-            android:theme="@style/DialogActivity">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activities.AuthenticatorActivity"
+            android:theme="@style/DialogActivity" />
+
+        <!--service required for account manager-->
+        <service android:name=".account.PredatorAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/predator_authenticator" />
+        </service>
 
     </application>
 

@@ -26,4 +26,5 @@
 
     <!--activity_authenticator.xml-->
     <dimen name="authenticator_image_height">200dp</dimen>
+    <dimen name="drawer_height">200dp</dimen>
 </resources>

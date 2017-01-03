@@ -22,36 +22,31 @@
   ~ SOFTWARE.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="false">
 
-    <View
-        android:id="@+id/view_image"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/authenticator_image_height"
-        android:background="@color/material_blue_accent_200" />
-
-    <TextView
-        android:id="@+id/text_view_content"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view_image"
-        android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_content_area"
-        android:layout_marginStart="@dimen/material_component_dialogs_padding_around_content_area"
-        android:layout_marginTop="@dimen/material_component_dialogs_padding_between_title_and_body_text"
-        android:text="@string/lorem_ipsum"
-        android:textSize="@dimen/material_typography_body1" />
+        android:fitsSystemWindows="false"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <Button
-        android:id="@+id/button_continue"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/text_view_content"
-        android:layout_margin="@dimen/material_component_dialogs_padding_around_buttons"
-        android:text="@string/authenticator_continue" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-</RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_layout_dashboard_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>
