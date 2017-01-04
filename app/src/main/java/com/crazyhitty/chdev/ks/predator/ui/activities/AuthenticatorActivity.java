@@ -83,11 +83,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     }
 
     @Override
-    public void isNetworkAvailable(boolean status) {
-
-    }
-
-    @Override
     public void setPresenter(AuthContract.Presenter presenter) {
         mAuthPresenter = presenter;
     }

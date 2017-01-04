@@ -22,15 +22,17 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core;
+package com.crazyhitty.chdev.ks.predator.ui.activities;
+
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 9:59 AM
- * Description: All of the view interfaces extends to this.
+ * Created:     1/4/2017 10:48 PM
+ * Description: Unavailable
  */
 
-public interface BaseView<T> {
-    void setPresenter(T presenter);
+public class OnboardActivity extends BaseAppCompatActivity {
 }

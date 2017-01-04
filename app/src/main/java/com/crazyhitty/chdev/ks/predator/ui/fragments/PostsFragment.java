@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -34,6 +35,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 
 /**
@@ -43,7 +46,9 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
  * Description: Unavailable
  */
 
-public class PostsFragment extends BaseSupportFragment {
+public class PostsFragment extends BaseSupportFragment implements PostsContract.View {
+    private PostsContract.Presenter mPostsPresenter;
+
     public static PostsFragment newInstance() {
         return new PostsFragment();
     }
@@ -52,12 +57,31 @@ public class PostsFragment extends BaseSupportFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setPresenter(new PostsPresenter(this));
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mPostsPresenter.getPosts(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPostsPresenter.subscribe();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPostsPresenter.unSubscribe();
     }
 
     @Override
@@ -73,5 +97,20 @@ public class PostsFragment extends BaseSupportFragment {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setPresenter(PostsContract.Presenter presenter) {
+        mPostsPresenter = presenter;
+    }
+
+    @Override
+    public void showPosts(Cursor cursorPosts) {
+
+    }
+
+    @Override
+    public void unableToGetPosts(String errorMessage) {
+
     }
 }

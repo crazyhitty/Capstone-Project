@@ -24,6 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.core.posts;
 
+import android.database.Cursor;
+
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
 
@@ -36,12 +38,14 @@ import com.crazyhitty.chdev.ks.predator.core.BaseView;
 
 public interface PostsContract {
     interface View extends BaseView<Presenter> {
-        void showPosts();
+        void showPosts(Cursor cursorPosts);
 
         void unableToGetPosts(String errorMessage);
     }
 
     interface Presenter extends BasePresenter {
+        void getOfflinePosts(boolean latest);
+
         void getPosts(boolean latest);
 
         void loadMorePosts();

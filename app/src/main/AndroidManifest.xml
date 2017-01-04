@@ -37,6 +37,14 @@
                 android:resource="@xml/predator_authenticator" />
         </service>
 
+        <!--content provider for maintaining app database-->
+        <provider
+            android:name=".data.PredatorProvider"
+            android:authorities="com.crazyhitty.chdev.ks.predator"
+            android:exported="false"
+            android:protectionLevel="signature"
+            android:syncable="true" />
+
     </application>
 
 </manifest>

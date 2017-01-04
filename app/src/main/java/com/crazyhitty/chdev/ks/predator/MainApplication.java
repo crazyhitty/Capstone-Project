@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
+import android.content.ContentResolver;
 
 import com.facebook.stetho.Stetho;
 
@@ -37,9 +38,16 @@ import com.facebook.stetho.Stetho;
  */
 
 public class MainApplication extends Application {
+    private static ContentResolver sContentResolver;
+
+    public static ContentResolver getContentResolverInstance() {
+        return sContentResolver;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Stetho.initializeWithDefaults(getApplicationContext());
+        sContentResolver = getContentResolver();
     }
 }

@@ -106,11 +106,8 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
      * Initialize fragment.
      */
     private void initFragment() {
-        PostsFragment postsFragment = PostsFragment.newInstance();
-
-
         setFragment(R.id.frame_layout_dashboard_container,
-                postsFragment,
+                PostsFragment.newInstance(),
                 false);
     }
 
