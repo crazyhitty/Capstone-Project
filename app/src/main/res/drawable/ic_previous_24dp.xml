@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~ MIT License
   ~
   ~ Copyright (c) 2016 Kartik Sharma
@@ -22,17 +22,12 @@
   ~ SOFTWARE.
   -->
 
-<resources>
-
-    <!--activity_authenticator.xml-->
-    <dimen name="authenticator_image_height">200dp</dimen>
-    <dimen name="drawer_height">200dp</dimen>
-
-    <!--activity_onboard.xml-->
-    <dimen name="indicator_radius">4dp</dimen>
-
-    <!--common-->
-    <dimen name="divider_small">0.5dp</dimen>
-    <dimen name="space_avg">16dp</dimen>
-    <dimen name="padding_small">8dp</dimen>
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportHeight="24.0"
+    android:viewportWidth="24.0">
+    <path
+        android:fillColor="#FF212121"
+        android:pathData="M15.41,16.09l-4.58,-4.59 4.58,-4.59L14,5.5l-6,6 6,6z" />
+</vector>

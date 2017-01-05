@@ -1,7 +1,8 @@
 <resources>
+    <!--common-->
     <string name="app_name">Predator</string>
-
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="application_icon">Application icon</string>
 
     <!--activity_authenticator.xml-->
     <string name="authenticator_continue">Continue</string>
@@ -24,6 +25,11 @@
     <string name="menu_posts_switch_layout_list">List</string>
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
     <string name="menu_posts_switch_layout_large_cards">Switch Layout</string>
+
+    <!--onboard-->
+    <string name="onboard_skip">Skip</string>
+    <string name="onboard_next">Next</string>
+    <string name="onboard_previous">Previous</string>
 
     <!--dashboard-->
     <string name="dashboard_home">Home</string>

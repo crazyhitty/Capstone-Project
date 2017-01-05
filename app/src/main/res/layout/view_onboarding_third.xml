@@ -22,17 +22,8 @@
   ~ SOFTWARE.
   -->
 
-<resources>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <!--activity_authenticator.xml-->
-    <dimen name="authenticator_image_height">200dp</dimen>
-    <dimen name="drawer_height">200dp</dimen>
-
-    <!--activity_onboard.xml-->
-    <dimen name="indicator_radius">4dp</dimen>
-
-    <!--common-->
-    <dimen name="divider_small">0.5dp</dimen>
-    <dimen name="space_avg">16dp</dimen>
-    <dimen name="padding_small">8dp</dimen>
-</resources>
+</merge>

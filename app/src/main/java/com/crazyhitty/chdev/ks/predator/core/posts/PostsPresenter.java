@@ -109,7 +109,6 @@ public class PostsPresenter implements PostsContract.Presenter {
                         return Observable.create(new Observable.OnSubscribe<Boolean>() {
                             @Override
                             public void call(Subscriber<? super Boolean> subscriber) {
-                                Log.d(TAG, "call: woah");
                                 // Save posts in db
 
                                 MainApplication.getContentResolverInstance()

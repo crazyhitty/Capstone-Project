@@ -24,15 +24,55 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+
+import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.OnboardPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.rd.PageIndicatorView;
+import com.rd.animation.AnimationType;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
  * Created:     1/4/2017 10:48 PM
- * Description: Unavailable
+ * Description: First activity user will interact with, when he/she starts up the app for the first
+ * time.
  */
 
 public class OnboardActivity extends BaseAppCompatActivity {
+    @BindView(R.id.view_pager_onboard)
+    ViewPager viewPagerOnboard;
+    @BindView(R.id.view_pager_indicator)
+    PageIndicatorView pageIndicatorView;
+
+    private OnboardPagerAdapter mOnboardPagerAdapter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_onboard);
+        getWindow().setBackgroundDrawableResource(R.color.colorPrimary);
+        ButterKnife.bind(this);
+        initViewPager();
+    }
+
+    private void initViewPager() {
+        mOnboardPagerAdapter = new OnboardPagerAdapter();
+        viewPagerOnboard.setAdapter(mOnboardPagerAdapter);
+        viewPagerOnboard.setOffscreenPageLimit(2);
+
+        pageIndicatorView.setViewPager(viewPagerOnboard);
+        pageIndicatorView.setSelectedColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+        pageIndicatorView.setUnselectedColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        pageIndicatorView.setRadius(getResources().getDimension(R.dimen.indicator_radius));
+        pageIndicatorView.setAnimationType(AnimationType.WORM);
+    }
 }
