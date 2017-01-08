@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.ui.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,9 +36,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Author:      Kartik Sharma
@@ -69,7 +79,28 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPostsPresenter.getPosts(true);
+        // Get auth token and retrieve latest posts.
+        PredatorAccount.getAuthToken(getActivity(),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: " + e.getMessage(), e);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        mPostsPresenter.getPosts(s, true);
+                    }
+                });
     }
 
     @Override

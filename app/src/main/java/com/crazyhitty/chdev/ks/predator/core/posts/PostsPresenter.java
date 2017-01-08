@@ -31,6 +31,7 @@ import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
@@ -89,13 +90,13 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(boolean latest) {
+    public void getPosts(String token, boolean latest) {
         Observable<Boolean> postsDataObservable = ProductHuntRestApi.getApi()
-                .getPosts(mPage, PER_PAGE_VALUE)
+                .getPosts(CoreUtils.getAuthToken(token), mPage, PER_PAGE_VALUE)
                 .flatMapIterable(new Func1<PostsData, Iterable<PostsData.Posts>>() {
                     @Override
                     public Iterable<PostsData.Posts> call(PostsData postsData) {
-                        // Clear the posts from db, only those which are not bookmarked.
+                        // Clear the posts from db.
                         getContentResolverInstance()
                                 .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                                         null,
@@ -109,8 +110,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                         return Observable.create(new Observable.OnSubscribe<Boolean>() {
                             @Override
                             public void call(Subscriber<? super Boolean> subscriber) {
-                                // Save posts in db
-
+                                // Save posts in db.
                                 MainApplication.getContentResolverInstance()
                                         .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
                                                 getContentValuesBasedOnPosts(post));
@@ -135,6 +135,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 null,
                                 null);
                 Log.d(TAG, "cursorSize: " + mCursor.getCount());
+                mView.showPosts(mCursor);
             }
 
             @Override
@@ -151,8 +152,9 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void loadMorePosts() {
-
+    public void loadMorePosts(String token, boolean latest) {
+        mPage++;
+        getPosts(token, latest);
     }
 
     private ContentValues getContentValuesBasedOnPosts(PostsData.Posts post) {

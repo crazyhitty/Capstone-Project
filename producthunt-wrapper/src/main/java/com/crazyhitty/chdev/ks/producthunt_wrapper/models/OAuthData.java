@@ -22,43 +22,52 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.data;
+package com.crazyhitty.chdev.ks.producthunt_wrapper.models;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/1/2017 10:50 PM
+ * Created:     1/1/2017 6:14 PM
  * Description: Unavailable
  */
 
-public class Constants {
-    private Constants() {
+public class OAuthData {
 
+    /**
+     * access_token : 3186417085ac3d1d21ddd4bd3b857b296ce677d0bcaa8b2cd432ac5caf89ef0c
+     * token_type : bearer
+     * scope : public
+     */
+
+    @SerializedName("access_token")
+    private String accessToken;
+    @SerializedName("token_type")
+    private String tokenType;
+    private String scope;
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public static class Authenticator {
-        public static final String ACCOUNT_TYPE = "account_type";
-        public static final String ACCOUNT_AUTHENTICATION_RESPONSE = "account_authentication_response";
-        public static final String ACCOUNT_NAME = "account_name";
-        public static final String AUTH_TOKEN = "auth_token";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
-        public static final String PRODUCT_HUNT = "Product Hunt";
-        public static final String AUTH_TYPE_CLIENT = "auth_type_client";
-        public static final String AUTH_TYPE_USER = "auth_type_user";
-        public static final String PREDATOR_ACCOUNT_TYPE = "com.crazyhitty.chdev.ks.predator";
-
-        private Authenticator() {
-
-        }
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public static class SharedPreferences {
-        public static final String IS_TOKEN_VALID = "is_token_valid";
-        public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
+    public String getTokenType() {
+        return tokenType;
+    }
 
-        private SharedPreferences() {
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
 
-        }
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

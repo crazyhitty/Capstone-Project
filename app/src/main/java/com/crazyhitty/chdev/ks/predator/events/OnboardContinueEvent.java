@@ -22,34 +22,37 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.auth;
-
-import android.Manifest;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
+package com.crazyhitty.chdev.ks.predator.events;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 9:59 AM
- * Description: Unavailable
+ * Created:     1/6/2017 11:54 AM
+ * Description: Event fired when user wants to finish the onboarding process and continue as a
+ * regular user or a registered user.
  */
 
-public interface AuthContract {
-    interface View extends BaseView<Presenter> {
-        void onAuthTokenRetrieved(Bundle args, String message);
+public class OnboardContinueEvent {
+    private TYPE type;
 
-        void unableToFetchAuthToken(String errorMessage);
+    public OnboardContinueEvent() {
+
     }
 
-    interface Presenter extends BasePresenter {
-        @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
-        void retrieveClientAuthToken(Context context);
+    public OnboardContinueEvent(TYPE type) {
+        this.type = type;
+    }
 
-        void retrieveUserAuthToken(Context context, String token);
+    public TYPE getType() {
+        return type;
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
+    }
+
+    public enum TYPE {
+        REGULAR,
+        REGISTERED
     }
 }

@@ -29,11 +29,9 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -51,38 +49,16 @@ public class ProductHuntRestApi {
     private static final long CONNECTION_TIMEOUT = 30L;
 
     /**
-     * This interceptor will add some predefined params to each request.
+     * This interceptor will add some predefined params/headers to each request.
      */
     private static Interceptor sInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
 
-            // check if the current request's url contains oauth/token or oauth, if yes then use
-            // appropriate params and headers with it.
-            if (original.url().toString().contains(ApiUrls.OAUTH_CLIENT_ONLY_AUTHENTICATION)) {
-                RequestBody requestBody = new FormBody.Builder()
-                        .addEncoded(Constants.CLIENT_ID, Authorization.API_KEY)
-                        .addEncoded(Constants.CLIENT_SECRET, Authorization.API_SECRET)
-                        .addEncoded(Constants.GRANT_TYPE, Constants.CLIENT_CREDENTIALS)
-                        .build();
-
-                Request request = original.newBuilder()
-                        .addHeader(Constants.ACCEPT, Constants.APPLICATION_JSON)
-                        .addHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
-                        .addHeader(Constants.HOST, Constants.HOST_PRODUCT_HUNT)
-                        .post(requestBody)
-                        .build();
-
-                return chain.proceed(request);
-            } else if (original.url().toString().contains(ApiUrls.OAUTH_USER_AUTHENTICATION)) {
-
-            }
-
             Request request = original.newBuilder()
                     .addHeader(Constants.ACCEPT, Constants.APPLICATION_JSON)
                     .addHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
-                    .addHeader(Constants.AUTHORIZATION, Authorization.TEMP_DEV_PUBLIC_PRIVATE_AUTHORIZATION_TOKEN)
                     .addHeader(Constants.HOST, Constants.HOST_PRODUCT_HUNT)
                     .addHeader(Constants.IF_NONE_MATCH, Authorization.E_TAG)
                     .build();

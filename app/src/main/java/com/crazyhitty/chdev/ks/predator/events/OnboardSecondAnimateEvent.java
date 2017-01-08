@@ -22,34 +22,14 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.auth;
-
-import android.Manifest;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
+package com.crazyhitty.chdev.ks.predator.events;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 9:59 AM
- * Description: Unavailable
+ * Created:     1/6/2017 12:01 AM
+ * Description: Dummy class which will be used to send a event.
  */
 
-public interface AuthContract {
-    interface View extends BaseView<Presenter> {
-        void onAuthTokenRetrieved(Bundle args, String message);
-
-        void unableToFetchAuthToken(String errorMessage);
-    }
-
-    interface Presenter extends BasePresenter {
-        @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
-        void retrieveClientAuthToken(Context context);
-
-        void retrieveUserAuthToken(Context context, String token);
-    }
+public class OnboardSecondAnimateEvent {
 }

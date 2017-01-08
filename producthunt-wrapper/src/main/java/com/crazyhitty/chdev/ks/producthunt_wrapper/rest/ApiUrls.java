@@ -42,8 +42,8 @@ class ApiUrls {
     static final String MY_PROFILE = "me";
 
     // Oauth authentications
-    static final String OAUTH_CLIENT_ONLY_AUTHENTICATION = "oauth/token";
-    static final String OAUTH_USER_AUTHENTICATION = "oauth";
+    static final String OAUTH_GET_TOKEN = "oauth/token";
+    static final String OAUTH_USER_AUTHENTICATION = "oauth/authorize";
 
     private ApiUrls() {
 

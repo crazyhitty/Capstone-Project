@@ -15,9 +15,9 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.activities.OnboardActivity"
+            android:name=".ui.activities.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Onboard">
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,12 +25,34 @@
         </activity>
 
         <activity
+            android:name=".ui.activities.OnboardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Onboard" />
+
+        <activity
             android:name=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.Dashboard" />
 
         <activity
             android:name=".ui.activities.AuthenticatorActivity"
-            android:theme="@style/DialogActivity" />
+            android:theme="@style/DialogActivity.NoTitle" />
+
+        <activity
+            android:name=".ui.activities.OAuthTokenHandlerActivity"
+            android:label="@string/app_name"
+            android:theme="@style/DialogActivity.NoTitle">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/host"
+                    android:path="@string/path"
+                    android:scheme="@string/scheme" />
+            </intent-filter>
+        </activity>
 
         <!--service required for account manager-->
         <service android:name=".account.PredatorAuthenticatorService">

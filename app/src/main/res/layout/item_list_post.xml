@@ -22,32 +22,13 @@
   ~ SOFTWARE.
   -->
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout_dashboard"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:layout_height="match_parent">
 
-    <include
-        layout="@layout/layout_dashboard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/image_view_post"
+        android:layout_width="@dimen/post_image_width"
+        android:layout_height="@dimen/post_image_height" />
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_view_dashboard"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/navigation_drawer_header"
-        app:itemBackground="@android:color/transparent"
-        app:itemIconTint="@color/selector_navigation_item"
-        app:itemTextColor="@color/selector_navigation_item"
-        app:menu="@menu/menu_navigation_drawer" />
-
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>

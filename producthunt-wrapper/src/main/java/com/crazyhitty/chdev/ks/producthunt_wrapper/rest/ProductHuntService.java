@@ -26,12 +26,16 @@ package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.MyProfileData;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthClientOnlyData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 
+import java.util.HashMap;
+
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -46,24 +50,31 @@ import rx.Observable;
 
 public interface ProductHuntService {
     @GET(ApiUrls.GET_POSTS)
-    Observable<PostsData> getPosts(@Query(Constants.PAGE) int page,
+    Observable<PostsData> getPosts(@Header(Constants.AUTHORIZATION) String authorization,
+                                   @Query(Constants.PAGE) int page,
                                    @Query(Constants.PER_PAGE) int perPage);
 
     @GET(ApiUrls.GET_POST_COMMENTS)
-    Observable<PostCommentsData> getPostComments(@Path(Constants.POST_ID) int postId,
+    Observable<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,
+                                                 @Path(Constants.POST_ID) int postId,
                                                  @Query(Constants.PAGE) int page,
                                                  @Query(Constants.PER_PAGE) int perPage);
 
     @GET(ApiUrls.GET_COLLECTIONS)
-    Observable<CollectionsData> getCollections(@Query(Constants.PAGE) int page,
+    Observable<CollectionsData> getCollections(@Header(Constants.AUTHORIZATION) String authorization,
+                                               @Query(Constants.PAGE) int page,
                                                @Query(Constants.PER_PAGE) int perPage);
 
     @GET(ApiUrls.MY_PROFILE)
-    Observable<MyProfileData> getMyProfile();
+    Observable<MyProfileData> getMyProfile(@Header(Constants.AUTHORIZATION) String authorization);
 
     @GET(ApiUrls.GET_USER_PROFILE)
-    Observable<UserProfileData> getUserProfile(@Path(Constants.USER_ID) int userId);
+    Observable<UserProfileData> getUserProfile(@Header(Constants.AUTHORIZATION) String authorization,
+                                               @Path(Constants.USER_ID) int userId);
 
-    @POST(ApiUrls.OAUTH_CLIENT_ONLY_AUTHENTICATION)
-    Observable<OAuthClientOnlyData> oAuthClient();
+    @POST(ApiUrls.OAUTH_GET_TOKEN)
+    Observable<OAuthData> oAuthClient(@Body HashMap<String, String> params);
+
+    @POST(ApiUrls.OAUTH_GET_TOKEN)
+    Observable<OAuthData> oAuthUser(@Body HashMap<String, String> params);
 }

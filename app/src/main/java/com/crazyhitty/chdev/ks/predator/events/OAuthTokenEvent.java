@@ -22,34 +22,30 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.auth;
-
-import android.Manifest;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
+package com.crazyhitty.chdev.ks.predator.events;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 9:59 AM
- * Description: Unavailable
+ * Created:     1/7/2017 11:21 AM
+ * Description: Event containing oauth token which will be further used in the application.
  */
 
-public interface AuthContract {
-    interface View extends BaseView<Presenter> {
-        void onAuthTokenRetrieved(Bundle args, String message);
+public class OAuthTokenEvent {
+    private String token;
 
-        void unableToFetchAuthToken(String errorMessage);
+    public OAuthTokenEvent() {
     }
 
-    interface Presenter extends BasePresenter {
-        @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
-        void retrieveClientAuthToken(Context context);
+    public OAuthTokenEvent(String token) {
+        this.token = token;
+    }
 
-        void retrieveUserAuthToken(Context context, String token);
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

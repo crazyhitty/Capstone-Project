@@ -31,7 +31,9 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 
 import rx.Observable;
@@ -69,12 +71,8 @@ public class PredatorAccount {
         Account account = new Account(accountName, accountType);
         AccountManager accountManager = AccountManager.get(context);
 
-        // Check if the user is new and has no previous accounts available.
-        if (accountManager.getAccounts() == null ||
-                accountManager.getAccounts().length == 0) {
-            // Add a new account if no other account are available.
-            accountManager.addAccountExplicitly(account, null, null);
-        }
+        // Add a new account.
+        accountManager.addAccountExplicitly(account, null, null);
 
         // Set the authentication code.
         accountManager.setAuthToken(account, authTokenType, authToken);
@@ -120,5 +118,10 @@ public class PredatorAccount {
                         null);
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    private static void removeAccount(Context context, Account account) {
+        AccountManager.get(context).removeAccountExplicitly(account);
     }
 }

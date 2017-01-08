@@ -24,7 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -49,9 +54,9 @@ public class CoreUtils {
      * @param fragment        Fragment to be set
      * @param addToBackStack  Add this fragment to fragment manager backstack or not
      */
-    public static void setFragment(FragmentManager fragmentManager,
+    public static void setFragment(@NonNull FragmentManager fragmentManager,
                                    @IdRes int layoutResId,
-                                   Fragment fragment,
+                                   @NonNull Fragment fragment,
                                    boolean addToBackStack) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
                 .replace(layoutResId, fragment);
@@ -59,5 +64,45 @@ public class CoreUtils {
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         }
         fragmentTransaction.commit();
+    }
+
+    /**
+     * Starts a new activity.
+     *
+     * @param context  Current context of the application
+     * @param activity Activity you want to start
+     */
+    public static void startActivity(@NonNull Context context,
+                                     @NonNull Class<? extends Activity> activity) {
+        Intent intent = new Intent(context, activity);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Starts a new activity with extra properties.
+     *
+     * @param context  Current context of the application
+     * @param activity Activity you want to start
+     * @param args     Bundle arguments you want to send with the intent
+     * @param flags    Extra flags you want to send with the intent
+     */
+    public static void startActivity(@NonNull Context context,
+                                     @NonNull Class<? extends Activity> activity,
+                                     @NonNull Bundle args,
+                                     int flags) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtras(args);
+        intent.setFlags(flags);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Append Bearer tag in front of the auth code so it can be used by the web services.
+     *
+     * @param token Authorization token
+     * @return Auth Token to be used with product hunt web services
+     */
+    public static String getAuthToken(String token) {
+        return "Bearer " + token;
     }
 }

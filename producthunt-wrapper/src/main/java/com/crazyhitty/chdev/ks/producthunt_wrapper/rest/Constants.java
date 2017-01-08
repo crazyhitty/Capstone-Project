@@ -61,6 +61,11 @@ class Constants {
     static final String CLIENT_SECRET = "client_secret";
     static final String GRANT_TYPE = "grant_type";
     static final String CLIENT_CREDENTIALS = "client_credentials";
+    static final String REDIRECT_URI = "redirect_uri";
+    static final String RESPONSE_TYPE = "response_type";
+    static final String SCOPE = "scope";
+    static final String CODE = "code";
+    static final String AUTHORIZATION_CODE = "authorization_code";
 
     private Constants() {
 

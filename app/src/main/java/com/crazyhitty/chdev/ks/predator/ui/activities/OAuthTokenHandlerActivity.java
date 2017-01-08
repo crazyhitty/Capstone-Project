@@ -22,43 +22,39 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.data;
+package com.crazyhitty.chdev.ks.predator.ui.activities;
+
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.crazyhitty.chdev.ks.predator.events.OAuthTokenEvent;
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.OAuth;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/1/2017 10:50 PM
+ * Created:     1/6/2017 5:08 PM
  * Description: Unavailable
  */
 
-public class Constants {
-    private Constants() {
+public class OAuthTokenHandlerActivity extends BaseAppCompatActivity {
+    private static final String TAG = "OAuthTokenHandlerActivity";
 
-    }
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    public static class Authenticator {
-        public static final String ACCOUNT_TYPE = "account_type";
-        public static final String ACCOUNT_AUTHENTICATION_RESPONSE = "account_authentication_response";
-        public static final String ACCOUNT_NAME = "account_name";
-        public static final String AUTH_TOKEN = "auth_token";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
-        public static final String PRODUCT_HUNT = "Product Hunt";
-        public static final String AUTH_TYPE_CLIENT = "auth_type_client";
-        public static final String AUTH_TYPE_USER = "auth_type_user";
-        public static final String PREDATOR_ACCOUNT_TYPE = "com.crazyhitty.chdev.ks.predator";
-
-        private Authenticator() {
-
-        }
-    }
-
-    public static class SharedPreferences {
-        public static final String IS_TOKEN_VALID = "is_token_valid";
-        public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
-
-        private SharedPreferences() {
-
-        }
+        /**
+         * Parse token retrieved from the uri and send it to the
+         * {@link OnboardActivity#onOAuthTokenReceivedFromProductHunt(OAuthTokenEvent)}.
+         */
+        Uri uri = getIntent().getData();
+        String token = uri.getQueryParameter(OAuth.RESPONSE_TYPE);
+        EventBus.getDefault().post(new OAuthTokenEvent(token));
+        finish();
     }
 }

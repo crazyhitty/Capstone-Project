@@ -6,4 +6,6 @@
     <color name="textColorPrimary">@color/material_grey_900</color>
     <color name="textColorSecondary">@color/material_grey_700</color>
     <color name="textColorTertiary">@color/material_grey_500</color>
+
+    <color name="color_black_dark">#212121</color>
 </resources>

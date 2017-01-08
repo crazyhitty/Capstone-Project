@@ -33,7 +33,9 @@ import android.support.annotation.RequiresPermission;
 
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthClientOnlyData;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.OAuth;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
 import rx.Observer;
@@ -74,13 +76,11 @@ public class AuthPresenter implements AuthContract.Presenter {
     @Override
     @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public void retrieveClientAuthToken(final Context context) {
-        // check if the
-
         mCompositeSubscription.add(ProductHuntRestApi.getApi()
-                .oAuthClient()
+                .oAuthClient(OAuth.getClientAuthRequestBody())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<OAuthClientOnlyData>() {
+                .subscribe(new Observer<OAuthData>() {
                     @Override
                     public void onCompleted() {
                         // Done
@@ -93,26 +93,66 @@ public class AuthPresenter implements AuthContract.Presenter {
 
                     @SuppressWarnings("MissingPermission")
                     @Override
-                    public void onNext(OAuthClientOnlyData oAuthClientOnlyData) {
+                    public void onNext(OAuthData oAuthData) {
                         Bundle args = new Bundle();
                         args.putString(AccountManager.KEY_ACCOUNT_NAME, Constants.Authenticator.PRODUCT_HUNT);
                         args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.AUTH_TYPE_CLIENT);
-                        args.putString(AccountManager.KEY_AUTHTOKEN, oAuthClientOnlyData.getAccessToken());
+                        args.putString(AccountManager.KEY_AUTHTOKEN, oAuthData.getAccessToken());
 
                         mView.onAuthTokenRetrieved(args,
-                                String.format(MSG_TOKEN_SUCCESS, oAuthClientOnlyData.getAccessToken()));
+                                String.format(MSG_TOKEN_SUCCESS, oAuthData.getAccessToken()));
 
                         PredatorAccount.addAccount(context,
                                 Constants.Authenticator.PRODUCT_HUNT,
                                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
-                                oAuthClientOnlyData.getAccessToken(),
+                                oAuthData.getAccessToken(),
                                 Constants.Authenticator.AUTH_TYPE_CLIENT);
+
+                        // valid token is retrieved
+                        PredatorSharedPreferences.setValidToken(context, true);
+                        PredatorSharedPreferences.setAuthTokenType(context, Constants.Authenticator.AUTH_TYPE_CLIENT);
                     }
                 }));
     }
 
     @Override
-    public void retrieveUserAuthToken() {
-        // Do nothing
+    public void retrieveUserAuthToken(final Context context, String token) {
+        mCompositeSubscription.add(ProductHuntRestApi.getApi()
+                .oAuthUser(OAuth.geUserAuthRequestBody(token))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<OAuthData>() {
+                    @Override
+                    public void onCompleted() {
+                        // Done
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.unableToFetchAuthToken(e.getMessage());
+                    }
+
+                    @SuppressWarnings("MissingPermission")
+                    @Override
+                    public void onNext(OAuthData oAuthData) {
+                        Bundle args = new Bundle();
+                        args.putString(AccountManager.KEY_ACCOUNT_NAME, Constants.Authenticator.PRODUCT_HUNT);
+                        args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.AUTH_TYPE_USER);
+                        args.putString(AccountManager.KEY_AUTHTOKEN, oAuthData.getAccessToken());
+
+                        mView.onAuthTokenRetrieved(args,
+                                String.format(MSG_TOKEN_SUCCESS, oAuthData.getAccessToken()));
+
+                        PredatorAccount.addAccount(context,
+                                Constants.Authenticator.PRODUCT_HUNT,
+                                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                                oAuthData.getAccessToken(),
+                                Constants.Authenticator.AUTH_TYPE_USER);
+
+                        // valid token is retrieved
+                        PredatorSharedPreferences.setValidToken(context, true);
+                        PredatorSharedPreferences.setAuthTokenType(context, Constants.Authenticator.AUTH_TYPE_USER);
+                    }
+                }));
     }
 }

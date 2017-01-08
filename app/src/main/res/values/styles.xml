@@ -33,7 +33,9 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:textColorTertiary">@color/textColorTertiary</item>
-        <item name="android:windowBackground">@drawable/ll_app_logo</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -41,17 +43,53 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Dashboard">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/ll_app_logo</item>
+    </style>
+
     <style name="AppTheme.Onboard">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/ll_app_logo</item>
     </style>
 
-    <style name="DialogActivity" parent="Theme.AppCompat.Light.Dialog">
+    <style name="AppTheme.Splash">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/ll_app_logo</item>
+    </style>
+
+    <style name="DialogActivity" parent="Theme.AppCompat.Light.Dialog"></style>
+
+    <style name="DialogActivity.NoTitle" parent="Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="DarkButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+        <item name="colorButtonNormal">@color/color_black_dark</item>
+        <item name="android:textColorPrimary">@color/material_grey_200</item>
+    </style>
+
+    <style name="TextAppearanceLarge" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/color_black_dark</item>
+    </style>
+
+    <style name="TextAppearanceMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/color_black_dark</item>
+    </style>
+
+    <style name="TextAppearanceSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/color_black_dark</item>
+    </style>
 
 </resources>

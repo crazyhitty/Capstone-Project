@@ -24,6 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,10 +64,28 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     @BindView(R.id.navigation_view_dashboard)
     NavigationView navigationView;
 
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, DashboardActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start this activity with any extra intent flags
+     *
+     * @param context Current context of the application
+     * @param flags   Intent flags
+     */
+    public static void startActivity(@NonNull Context context, int flags) {
+        Intent intent = new Intent(context, DashboardActivity.class);
+        intent.setFlags(flags);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        getWindow().setBackgroundDrawableResource(R.color.colorPrimary);
         ButterKnife.bind(this);
         initToolbar();
         initDrawer();

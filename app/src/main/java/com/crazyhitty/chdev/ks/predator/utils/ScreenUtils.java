@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 /**
  * ScreenUtils
@@ -62,5 +63,25 @@ public class ScreenUtils {
 
     public static int pxToDpCeilInt(Context context, float px) {
         return (int) (pxToDp(context, px) + 0.5f);
+    }
+
+    // source: http://stackoverflow.com/a/3410200
+    public static int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    // source: http://stackoverflow.com/a/20264361
+    public static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

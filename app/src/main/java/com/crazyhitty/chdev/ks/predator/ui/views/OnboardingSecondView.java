@@ -28,7 +28,22 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
+
+import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.events.OnboardSecondAnimateEvent;
+import com.crazyhitty.chdev.ks.predator.ui.activities.OnboardActivity;
+import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import butterknife.ButterKnife;
 
 
 /**
@@ -39,24 +54,92 @@ import android.widget.LinearLayout;
  */
 
 public class OnboardingSecondView extends LinearLayout {
+    private static final int ANIM_ITEM_DURATION_MS = 500;
+    private static final int ANIM_AVG_DELAY_DURATION_MS = 300;
+
+    private boolean mAlreadyAnimated = false;
+
     public OnboardingSecondView(Context context) {
         super(context);
+        initializeViews(context);
     }
 
     public OnboardingSecondView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initializeViews(context);
     }
 
     public OnboardingSecondView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initializeViews(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public OnboardingSecondView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        initializeViews(context);
     }
 
-    private void initializeViews() {
+    private void initializeViews(Context context) {
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater.inflate(R.layout.view_onboarding_second, this);
 
+        // bind views
+        ButterKnife.bind(this);
+
+        // set layout params
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        setLayoutParams(layoutParams);
+
+        // set layout properties
+        setOrientation(VERTICAL);
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(this);
+    }
+
+    /**
+     * This method will animate the child views of this viewgroup. This method will generally be
+     * invoked from {@link OnboardActivity#initViewPager()}.
+     *
+     * @param onboardSecondAnimateEvent dummy event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void animateViews(OnboardSecondAnimateEvent onboardSecondAnimateEvent) {
+        if (mAlreadyAnimated) {
+            return;
+        }
+
+        mAlreadyAnimated = true;
+
+        Interpolator interpolator = new DecelerateInterpolator(1.0f);
+
+        int animationDuration = 0;
+
+        for (int i = 0; i < getChildCount(); i++) {
+            getChildAt(i).animate()
+                    .setDuration(ANIM_ITEM_DURATION_MS)
+                    .setInterpolator(interpolator)
+                    .translationXBy(ScreenUtils.dpToPx(getContext().getApplicationContext(), 16.0f))
+                    .alpha(1.0f)
+                    .setStartDelay(animationDuration)
+                    .start();
+            animationDuration += ANIM_AVG_DELAY_DURATION_MS;
+        }
     }
 }

@@ -71,4 +71,10 @@ dependencies {
 
     // view pager indicator
     compile 'com.romandanylyk:pageindicatorview:0.0.8'
+
+    // event bus
+    compile 'org.greenrobot:eventbus:3.0.0'
+
+    // chrome custom tabs
+    compile 'com.android.support:customtabs:25.1.0'
 }

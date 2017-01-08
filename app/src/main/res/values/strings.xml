@@ -3,6 +3,22 @@
     <string name="app_name">Predator</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
     <string name="application_icon">Application icon</string>
+    <string name="feature_1">Feature 1</string>
+    <string name="feature_1_desc">Feature 1 description</string>
+    <string name="feature_2">Feature 2</string>
+    <string name="feature_2_desc">Feature 2 description</string>
+    <string name="feature_3">Feature 3</string>
+    <string name="feature_3_desc">Feature 3 description</string>
+    <string name="feature_4">Feature 4</string>
+    <string name="feature_4_desc">Feature 4 description</string>
+    <string name="authentication">Authentication</string>
+    <string name="continue_as_regular_user">Continue as regular user</string>
+    <string name="continue_as_registered_user">Continue as registered user</string>
+    <string name="loading">Loading</string>
+    <string name="please_wait">Please wait&#8230;</string>
+    <string name="no_application_available_to_open_this_url">No application available to open this url</string>
+    <string name="error">Error</string>
+    <string name="dismiss">Dismiss</string>
 
     <!--activity_authenticator.xml-->
     <string name="authenticator_continue">Continue</string>
@@ -35,4 +51,8 @@
     <string name="dashboard_home">Home</string>
     <string name="dashboard_open_nav_drawer">Open navigation drawer</string>
     <string name="dashboard_close_nav_drawer">Close navigation drawer</string>
+
+    <!--oauth_webview_activity-->
+    <string name="oauth_wv_title">Product Hunt</string>
+    <string name="oauth_wv_close">Close</string>
 </resources>

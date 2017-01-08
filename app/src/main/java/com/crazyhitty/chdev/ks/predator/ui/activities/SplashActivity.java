@@ -22,43 +22,37 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.data;
+package com.crazyhitty.chdev.ks.predator.ui.activities;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/1/2017 10:50 PM
+ * Created:     1/6/2017 11:06 AM
  * Description: Unavailable
  */
 
-public class Constants {
-    private Constants() {
+public class SplashActivity extends BaseAppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    }
-
-    public static class Authenticator {
-        public static final String ACCOUNT_TYPE = "account_type";
-        public static final String ACCOUNT_AUTHENTICATION_RESPONSE = "account_authentication_response";
-        public static final String ACCOUNT_NAME = "account_name";
-        public static final String AUTH_TOKEN = "auth_token";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
-        public static final String PRODUCT_HUNT = "Product Hunt";
-        public static final String AUTH_TYPE_CLIENT = "auth_type_client";
-        public static final String AUTH_TYPE_USER = "auth_type_user";
-        public static final String PREDATOR_ACCOUNT_TYPE = "com.crazyhitty.chdev.ks.predator";
-
-        private Authenticator() {
-
-        }
-    }
-
-    public static class SharedPreferences {
-        public static final String IS_TOKEN_VALID = "is_token_valid";
-        public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
-        public static final String AUTH_TOKEN_TYPE = "auth_token_type";
-
-        private SharedPreferences() {
-
+        // check if user has a already completed onboarding or not, if not then redirect him/her to
+        // the onboarding activity, otherwise redirect him/her to dashboard activity.
+        if (PredatorSharedPreferences.isOnboardingComplete(getApplicationContext())) {
+            DashboardActivity.startActivity(getApplicationContext(),
+                    Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+        } else {
+            OnboardActivity.startActivity(getApplicationContext(),
+                    Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
         }
     }
 }

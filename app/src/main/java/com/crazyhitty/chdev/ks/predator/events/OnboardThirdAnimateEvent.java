@@ -22,52 +22,14 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.producthunt_wrapper.models;
-
-import com.google.gson.annotations.SerializedName;
+package com.crazyhitty.chdev.ks.predator.events;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/1/2017 6:14 PM
- * Description: Unavailable
+ * Created:     1/6/2017 10:17 AM
+ * Description: Dummy class which will be used to send a event.
  */
 
-public class OAuthClientOnlyData {
-
-    /**
-     * access_token : 3186417085ac3d1d21ddd4bd3b857b296ce677d0bcaa8b2cd432ac5caf89ef0c
-     * token_type : bearer
-     * scope : public
-     */
-
-    @SerializedName("access_token")
-    private String accessToken;
-    @SerializedName("token_type")
-    private String tokenType;
-    private String scope;
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    public void setTokenType(String tokenType) {
-        this.tokenType = tokenType;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
+public class OnboardThirdAnimateEvent {
 }

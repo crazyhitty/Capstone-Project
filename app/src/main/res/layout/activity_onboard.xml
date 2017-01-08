@@ -43,7 +43,8 @@
             android:id="@+id/relative_layout_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:animateLayoutChanges="true">
 
             <View
                 android:id="@+id/view_divider"
@@ -71,10 +72,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/material_layout_app_bar_icon_padding"
+                android:layout_marginEnd="@dimen/margin_small"
                 android:layout_toStartOf="@+id/image_button_next"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/onboard_previous"
+                android:padding="@dimen/padding_min"
                 app:srcCompat="@drawable/ic_previous_24dp" />
 
             <ImageButton
@@ -83,9 +85,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/material_layout_app_bar_icon_padding"
+                android:layout_marginEnd="@dimen/margin_avg"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/onboard_next"
+                android:padding="@dimen/padding_min"
                 app:srcCompat="@drawable/ic_next_24dp" />
 
         </RelativeLayout>

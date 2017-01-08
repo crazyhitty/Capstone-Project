@@ -46,8 +46,8 @@ public interface PostsContract {
     interface Presenter extends BasePresenter {
         void getOfflinePosts(boolean latest);
 
-        void getPosts(boolean latest);
+        void getPosts(String token, boolean latest);
 
-        void loadMorePosts();
+        void loadMorePosts(String token, boolean latest);
     }
 }

@@ -26,45 +26,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/image_view_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:contentDescription="@string/application_icon"
-        android:src="@mipmap/ic_launcher" />
-
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/space_avg" />
-
     <TextView
         android:id="@+id/text_view_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="start"
+        android:layout_marginTop="@dimen/margin_avg"
         android:alpha="0"
-        android:contentDescription="@string/application_icon"
-        android:gravity="center"
+        android:gravity="start"
+        android:paddingEnd="@dimen/padding_avg"
+        android:paddingStart="@dimen/padding_avg"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
-
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/space_avg" />
+        android:translationX="@dimen/onboard_translation_x" />
 
     <TextView
         android:id="@+id/text_view_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@+id/text_view_title"
+        android:layout_gravity="start"
+        android:layout_marginTop="@dimen/margin_avg"
         android:alpha="0"
-        android:contentDescription="@string/application_icon"
-        android:gravity="center"
+        android:gravity="start"
+        android:paddingEnd="@dimen/padding_avg"
+        android:paddingStart="@dimen/padding_avg"
         android:text="@string/lorem_ipsum"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:visibility="gone" />
+        android:translationX="@dimen/onboard_translation_x" />
+
+    <!--suppress AndroidDomInspection -->
+    <ImageView
+        android:id="@+id/image_view_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/application_icon"
+        android:src="@mipmap/ic_launcher"
+        android:tint="@color/colorAccent" />
 
 </merge>

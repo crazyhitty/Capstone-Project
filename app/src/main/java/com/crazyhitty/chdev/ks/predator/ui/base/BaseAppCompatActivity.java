@@ -24,10 +24,16 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 
 
@@ -39,7 +45,64 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
  */
 
 public class BaseAppCompatActivity extends AppCompatActivity {
+    private static final String TAG = "BaseAppCompatActivity";
+
+    private ProgressDialog mLoadingDialog;
+    private AlertDialog mErrorDialog;
+
     public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getSupportFragmentManager(), layoutResId, fragment, addToBackStack);
+    }
+
+    public void showLoadingDialog(boolean isCancellable) {
+        mLoadingDialog = new ProgressDialog(this);
+        mLoadingDialog.setTitle(R.string.loading);
+        mLoadingDialog.setMessage(getString(R.string.please_wait));
+        mLoadingDialog.setIndeterminate(true);
+        mLoadingDialog.setCancelable(isCancellable);
+        mLoadingDialog.show();
+    }
+
+    public void dismissLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
+    public void showErrorDialog(String message, boolean isCancellable) {
+        mErrorDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.error)
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_outline_24dp)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    public void dismissErrorDialog() {
+        if (mErrorDialog != null && mErrorDialog.isShowing()) {
+            mErrorDialog.dismiss();
+        }
+    }
+
+    public void showShortToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showShortToast(@StringRes int messageRes) {
+        Toast.makeText(getApplicationContext(), messageRes, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showLongToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    public void showLongToast(@StringRes int messageRes) {
+        Toast.makeText(getApplicationContext(), messageRes, Toast.LENGTH_LONG).show();
     }
 }
