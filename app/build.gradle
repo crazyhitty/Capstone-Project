@@ -77,4 +77,7 @@ dependencies {
 
     // chrome custom tabs
     compile 'com.android.support:customtabs:25.1.0'
+
+    // fresco
+    compile 'com.facebook.fresco:fresco:1.0.0'
 }

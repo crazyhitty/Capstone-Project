@@ -40,7 +40,7 @@
     <string name="menu_posts_switch_layout">Switch Layout</string>
     <string name="menu_posts_switch_layout_list">List</string>
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
-    <string name="menu_posts_switch_layout_large_cards">Switch Layout</string>
+    <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
 
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
@@ -55,4 +55,10 @@
     <!--oauth_webview_activity-->
     <string name="oauth_wv_title">Product Hunt</string>
     <string name="oauth_wv_close">Close</string>
+
+    <!--item_list_post.xml-->
+    <string name="item_list_post_image_desc">Post image</string>
+
+    <!--posts fragment-->
+    <string name="posts_hunting_more_posts">Hunting more posts!</string>
 </resources>

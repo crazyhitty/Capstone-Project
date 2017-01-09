@@ -23,12 +23,51 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:paddingBottom="@dimen/padding_avg"
+    android:paddingTop="@dimen/padding_avg">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_view_post"
-        android:layout_width="@dimen/post_image_width"
-        android:layout_height="@dimen/post_image_height" />
+        android:layout_width="@dimen/item_list_post_image_width"
+        android:layout_height="@dimen/item_list_post_image_height"
+        android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
+        android:contentDescription="@string/item_list_post_image_desc"
+        android:padding="@dimen/item_list_post_image_padding"
+        fresco:placeholderImage="@color/colorPrimary"
+        fresco:roundedCornerRadius="@dimen/item_list_post_image_corner_padding" />
+
+    <TextView
+        android:id="@+id/text_view_post_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:layout_toStartOf="@+id/checkbox_bookmark"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:text="Post title" />
+
+    <TextView
+        android:id="@+id/text_view_post_short_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_post_title"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:layout_toStartOf="@+id/checkbox_bookmark"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="@string/lorem_ipsum" />
+
+    <CheckBox
+        android:id="@+id/checkbox_bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/material_component_lists_right_padding"
+        android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
+        android:button="@drawable/selector_bookmark" />
 
 </RelativeLayout>

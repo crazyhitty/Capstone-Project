@@ -98,6 +98,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     public static void startActivity(@NonNull Context context, int flags) {
         Intent intent = new Intent(context, OnboardActivity.class);
         intent.setFlags(flags);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

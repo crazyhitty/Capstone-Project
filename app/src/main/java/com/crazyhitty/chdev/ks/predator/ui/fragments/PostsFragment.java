@@ -27,6 +27,9 @@ package com.crazyhitty.chdev.ks.predator.ui.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,8 +44,12 @@ import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.utils.ListItemDecorator;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -57,7 +64,16 @@ import static android.content.ContentValues.TAG;
  */
 
 public class PostsFragment extends BaseSupportFragment implements PostsContract.View {
+    @BindView(R.id.recycler_view_posts)
+    RecyclerView recyclerViewPosts;
+    @BindView(R.id.swipe_refresh_layout_posts)
+    SwipeRefreshLayout swipeRefreshLayoutPosts;
+
     private PostsContract.Presenter mPostsPresenter;
+
+    private PostsRecyclerAdapter mPostsRecyclerAdapter;
+
+    private boolean mLoadMoreStatus = true;
 
     public static PostsFragment newInstance() {
         return new PostsFragment();
@@ -68,17 +84,23 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setPresenter(new PostsPresenter(this));
+        mPostsPresenter.subscribe();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_posts, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // Disable swipe refresh layout initially.
+        swipeRefreshLayoutPosts.setEnabled(false);
+
         // Get auth token and retrieve latest posts.
         PredatorAccount.getAuthToken(getActivity(),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
@@ -98,20 +120,14 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, true);
+                        mPostsPresenter.getPosts(s, true, true);
                     }
                 });
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mPostsPresenter.subscribe();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         mPostsPresenter.unSubscribe();
     }
 
@@ -137,11 +153,72 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     @Override
     public void showPosts(Cursor cursorPosts) {
-
+        if (!mLoadMoreStatus) {
+            mLoadMoreStatus = true;
+            mPostsRecyclerAdapter.updateCursor(cursorPosts);
+        } else {
+            setListTypeAdapter(cursorPosts);
+        }
     }
 
     @Override
     public void unableToGetPosts(String errorMessage) {
 
+    }
+
+    private void setListTypeAdapter(Cursor cursor) {
+        // Create the adapter, and pass the cursor object to it alongside its type.
+        mPostsRecyclerAdapter = new PostsRecyclerAdapter(cursor, PostsRecyclerAdapter.TYPE.LIST);
+        // Create a list type layout manager.
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerViewPosts.setLayoutManager(layoutManager);
+
+        // Set the adapter onto the recycler view.
+        recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
+
+        // Add appropriate decorations to the recycler view items.
+        ListItemDecorator listItemDecorator = new ListItemDecorator(getContext().getApplicationContext(),
+                16,
+                72);
+        recyclerViewPosts.addItemDecoration(listItemDecorator);
+
+        // Add scroll listener that will manage scroll down to load more functionality as well as
+        // control animation of the items.
+        recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
+                    mPostsRecyclerAdapter.setAnimationStatus(false);
+                }
+
+                // Check if the last item is on screen, if yes then start loading more posts.
+                if (mLoadMoreStatus &&
+                        layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
+                    PredatorAccount.getAuthToken(getActivity(),
+                            Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                            PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<String>() {
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.d(TAG, "onError: " + e.getMessage(), e);
+                                }
+
+                                @Override
+                                public void onNext(String s) {
+                                    mLoadMoreStatus = false;
+                                    mPostsPresenter.loadMorePosts(s, true);
+                                }
+                            });
+                }
+            }
+        });
     }
 }

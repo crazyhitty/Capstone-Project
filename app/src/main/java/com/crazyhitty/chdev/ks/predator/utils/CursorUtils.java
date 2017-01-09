@@ -22,32 +22,42 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.utils;
 
 import android.database.Cursor;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
+import android.support.annotation.NonNull;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
- * Description: Unavailable
+ * Created:     1/9/2017 10:55 AM
+ * Description: Utility class for getting values from cursor.
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(Cursor cursorPosts);
+public class CursorUtils {
+    private CursorUtils() {
 
-        void unableToGetPosts(String errorMessage);
     }
 
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
+    /**
+     * Get the string value for that particular column.
+     *
+     * @param cursor     Cursor containing database data.
+     * @param columnName Column name, whose data you will be getting.
+     * @return String value of that particular column.
+     */
+    public static String getString(@NonNull Cursor cursor, @NonNull String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
 
-        void getPosts(String token, boolean latest, boolean clearPrevious);
-
-        void loadMorePosts(String token, boolean latest);
+    /**
+     * Get the int value for that particular column.
+     *
+     * @param cursor     Cursor containing database data.
+     * @param columnName Column name, whose data you will be getting.
+     * @return int value of that particular column.
+     */
+    public static int getInt(@NonNull Cursor cursor, @NonNull String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
     }
 }

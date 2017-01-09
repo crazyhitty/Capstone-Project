@@ -27,7 +27,10 @@ package com.crazyhitty.chdev.ks.predator;
 import android.app.Application;
 import android.content.ContentResolver;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
+
+import java.lang.ref.WeakReference;
 
 
 /**
@@ -38,16 +41,23 @@ import com.facebook.stetho.Stetho;
  */
 
 public class MainApplication extends Application {
-    private static ContentResolver sContentResolver;
+    private static WeakReference<ContentResolver> sContentResolverWeakReference;
 
     public static ContentResolver getContentResolverInstance() {
-        return sContentResolver;
+        return sContentResolverWeakReference.get();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Initialize stetho
         Stetho.initializeWithDefaults(getApplicationContext());
-        sContentResolver = getContentResolver();
+
+        // Create a static reference to content resolver so that it can be accessed anywhere.
+        sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
+
+        // Initialize fresco
+        Fresco.initialize(this);
     }
 }

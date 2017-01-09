@@ -26,7 +26,6 @@
 
         <activity
             android:name=".ui.activities.OnboardActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Onboard" />
 
         <activity

@@ -66,6 +66,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
 
     public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, DashboardActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -78,6 +79,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     public static void startActivity(@NonNull Context context, int flags) {
         Intent intent = new Intent(context, DashboardActivity.class);
         intent.setFlags(flags);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

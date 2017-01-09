@@ -90,17 +90,19 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(String token, boolean latest) {
+    public void getPosts(String token, boolean latest, final boolean clearPrevious) {
         Observable<Boolean> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPosts(CoreUtils.getAuthToken(token), mPage, PER_PAGE_VALUE)
                 .flatMapIterable(new Func1<PostsData, Iterable<PostsData.Posts>>() {
                     @Override
                     public Iterable<PostsData.Posts> call(PostsData postsData) {
-                        // Clear the posts from db.
-                        getContentResolverInstance()
-                                .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                                        null,
-                                        null);
+                        // Clear the posts from db, only if clearPrevious flag is true.
+                        if (clearPrevious) {
+                            getContentResolverInstance()
+                                    .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                                            null,
+                                            null);
+                        }
                         return postsData.getPosts();
                     }
                 })
@@ -154,7 +156,7 @@ public class PostsPresenter implements PostsContract.Presenter {
     @Override
     public void loadMorePosts(String token, boolean latest) {
         mPage++;
-        getPosts(token, latest);
+        getPosts(token, latest, false);
     }
 
     private ContentValues getContentValuesBasedOnPosts(PostsData.Posts post) {

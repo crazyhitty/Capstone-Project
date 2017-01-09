@@ -22,32 +22,34 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.utils;
 
-import android.database.Cursor;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
+import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     1/9/2017 4:00 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(Cursor cursorPosts);
+public class RecyclerViewItemAnimations {
+    private static final String TAG = "RecyclerViewItemAnimations";
 
-        void unableToGetPosts(String errorMessage);
+    private RecyclerViewItemAnimations() {
+
     }
 
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
-
-        void getPosts(String token, boolean latest, boolean clearPrevious);
-
-        void loadMorePosts(String token, boolean latest);
+    public static void setListTranslateYAnim(View view, int startDelayMs) {
+        view.setTranslationY(ScreenUtils.dpToPx(view.getContext(), 16.0f));
+        view.setAlpha(0.0f);
+        view.animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator())
+                .setDuration(300)
+                .alpha(1.0f)
+                .setStartDelay(startDelayMs)
+                .start();
     }
 }
