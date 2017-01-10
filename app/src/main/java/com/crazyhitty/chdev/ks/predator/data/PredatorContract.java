@@ -48,6 +48,7 @@ public class PredatorContract {
 
         public static final String TABLE_NAME = "posts_table";
 
+        public static final String COLUMN_ID = "id";
         public static final String COLUMN_POST_ID = "post_id";
         public static final String COLUMN_CATEGORY_ID = "category_id";
         public static final String COLUMN_DAY = "day";

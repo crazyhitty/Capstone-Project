@@ -35,6 +35,11 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -54,10 +59,12 @@ import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolve
 
 public class PostsPresenter implements PostsContract.Presenter {
     private static final String TAG = "PostsPresenter";
+    private static final String DATE_PATTERN_ORIGINAL_FORMAT = "yyyy-MM-dd";
+    private static final String DATE_PATTERN_FINAL_FORMAT = "MMMM d";
 
-    private static final int PER_PAGE_VALUE = 20;
+    private int mDaysAgo = 0;
 
-    private int mPage = 1;
+    private String mDate;
 
     private Cursor mCursor;
 
@@ -90,9 +97,12 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(String token, boolean latest, final boolean clearPrevious) {
+    public void getPosts(String token,
+                         String categoryName,
+                         boolean latest,
+                         final boolean clearPrevious) {
         Observable<Boolean> postsDataObservable = ProductHuntRestApi.getApi()
-                .getPosts(CoreUtils.getAuthToken(token), mPage, PER_PAGE_VALUE)
+                .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mDaysAgo)
                 .flatMapIterable(new Func1<PostsData, Iterable<PostsData.Posts>>() {
                     @Override
                     public Iterable<PostsData.Posts> call(PostsData postsData) {
@@ -102,6 +112,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                                             null,
                                             null);
+                            mDaysAgo = 0;
                         }
                         return postsData.getPosts();
                     }
@@ -113,6 +124,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                             @Override
                             public void call(Subscriber<? super Boolean> subscriber) {
                                 // Save posts in db.
+                                mDate = post.getDay();
                                 MainApplication.getContentResolverInstance()
                                         .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
                                                 getContentValuesBasedOnPosts(post));
@@ -137,7 +149,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 null,
                                 null);
                 Log.d(TAG, "cursorSize: " + mCursor.getCount());
-                mView.showPosts(mCursor);
+                mView.showPosts(mCursor, getDate());
             }
 
             @Override
@@ -154,9 +166,9 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void loadMorePosts(String token, boolean latest) {
-        mPage++;
-        getPosts(token, latest, false);
+    public void loadMorePosts(String token, String categoryName, boolean latest) {
+        mDaysAgo++;
+        getPosts(token, categoryName, latest, false);
     }
 
     private ContentValues getContentValuesBasedOnPosts(PostsData.Posts post) {
@@ -180,5 +192,23 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_48PX, post.getUser().getImageUrl().getValue48px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
         return contentValues;
+    }
+
+    private String getDate() {
+        if (mDaysAgo == 0) {
+            return "Today";
+        } else if (mDaysAgo == 1) {
+            return "Yesterday";
+        } else {
+            try {
+                Date date = new SimpleDateFormat(DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+                        .parse(mDate);
+                return new SimpleDateFormat(DATE_PATTERN_FINAL_FORMAT, Locale.US)
+                        .format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return mDate;
+            }
+        }
     }
 }

@@ -54,6 +54,11 @@ public interface ProductHuntService {
                                    @Query(Constants.PAGE) int page,
                                    @Query(Constants.PER_PAGE) int perPage);
 
+    @GET(ApiUrls.GET_POSTS_BY_CATEGORY_DAYWISE)
+    Observable<PostsData> getPostsCategoryWise(@Header(Constants.AUTHORIZATION) String authorization,
+                                               @Path(Constants.CATEGORY_NAME) String categoryName,
+                                               @Query(Constants.DAYS_AGO) int daysAgo);
+
     @GET(ApiUrls.GET_POST_COMMENTS)
     Observable<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,
                                                  @Path(Constants.POST_ID) int postId,

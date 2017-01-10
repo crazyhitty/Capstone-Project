@@ -46,6 +46,7 @@ import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.ListItemDecorator;
 
 import butterknife.BindView;
@@ -53,8 +54,6 @@ import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Author:      Kartik Sharma
@@ -64,16 +63,21 @@ import static android.content.ContentValues.TAG;
  */
 
 public class PostsFragment extends BaseSupportFragment implements PostsContract.View {
+    private static final String TAG = "PostsFragment";
+    private static final String CATEGORY_TECH = "tech";
+
     @BindView(R.id.recycler_view_posts)
     RecyclerView recyclerViewPosts;
     @BindView(R.id.swipe_refresh_layout_posts)
     SwipeRefreshLayout swipeRefreshLayoutPosts;
+    @BindView(R.id.loading_view)
+    LoadingView loadingView;
 
     private PostsContract.Presenter mPostsPresenter;
 
     private PostsRecyclerAdapter mPostsRecyclerAdapter;
 
-    private boolean mLoadMoreStatus = true;
+    private boolean mIsLoading = false;
 
     public static PostsFragment newInstance() {
         return new PostsFragment();
@@ -98,10 +102,28 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // Set loading type.
+        loadingView.setLoadingType(LoadingView.TYPE.LATEST_POSTS);
+        initSwipeRefreshLayout();
+        getLatestPosts();
+        setRecyclerViewProperties();
+    }
+
+    private void initSwipeRefreshLayout() {
         // Disable swipe refresh layout initially.
         swipeRefreshLayoutPosts.setEnabled(false);
+        swipeRefreshLayoutPosts.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLatestPosts();
+            }
+        });
+    }
 
-        // Get auth token and retrieve latest posts.
+    /**
+     * Get auth token and retrieve latest posts.
+     */
+    private void getLatestPosts() {
         PredatorAccount.getAuthToken(getActivity(),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
@@ -110,7 +132,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onCompleted() {
-
+                        // Done
                     }
 
                     @Override
@@ -120,9 +142,55 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, true, true);
+                        mPostsPresenter.getPosts(s, CATEGORY_TECH, true, true);
                     }
                 });
+    }
+
+    private void setRecyclerViewProperties() {
+        // Create a list type layout manager.
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerViewPosts.setLayoutManager(layoutManager);
+
+        // Add appropriate decorations to the recycler view items.
+        ListItemDecorator listItemDecorator = new ListItemDecorator(getContext().getApplicationContext(), 72);
+        recyclerViewPosts.addItemDecoration(listItemDecorator);
+
+        // Add scroll listener that will manage scroll down to load more functionality.
+        recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Check if the last item is on screen, if yes then start loading more posts.
+                if (!mIsLoading &&
+                        layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
+                    mIsLoading = true;
+                    PredatorAccount.getAuthToken(getActivity(),
+                            Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                            PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<String>() {
+                                @Override
+                                public void onCompleted() {
+                                    // Done
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.d(TAG, "onError: " + e.getMessage(), e);
+                                }
+
+                                @Override
+                                public void onNext(String s) {
+                                    Log.d(TAG, "onNext: load more posts");
+                                    mPostsPresenter.loadMorePosts(s, CATEGORY_TECH, true);
+                                }
+                            });
+                }
+            }
+        });
     }
 
     @Override
@@ -152,12 +220,23 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
-    public void showPosts(Cursor cursorPosts) {
-        if (!mLoadMoreStatus) {
-            mLoadMoreStatus = true;
-            mPostsRecyclerAdapter.updateCursor(cursorPosts);
+    public void showPosts(Cursor cursorPosts, String date) {
+        if (mIsLoading) {
+            mIsLoading = false;
+            mPostsRecyclerAdapter.updateCursor(cursorPosts, date);
         } else {
-            setListTypeAdapter(cursorPosts);
+            // Hide loading view
+            loadingView.stopLoading();
+
+            // Enable swipe refresh layout
+            swipeRefreshLayoutPosts.setEnabled(true);
+
+            setListTypeAdapter(cursorPosts, date);
+        }
+
+        // Dismiss swipe refresh layout animation if it is going on.
+        if (swipeRefreshLayoutPosts.isRefreshing()) {
+            swipeRefreshLayoutPosts.setRefreshing(false);
         }
     }
 
@@ -166,59 +245,14 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     }
 
-    private void setListTypeAdapter(Cursor cursor) {
+    private void setListTypeAdapter(Cursor cursor, String date) {
         // Create the adapter, and pass the cursor object to it alongside its type.
-        mPostsRecyclerAdapter = new PostsRecyclerAdapter(cursor, PostsRecyclerAdapter.TYPE.LIST);
-        // Create a list type layout manager.
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerViewPosts.setLayoutManager(layoutManager);
+        mPostsRecyclerAdapter = new PostsRecyclerAdapter(cursor,
+                PostsRecyclerAdapter.TYPE.LIST,
+                date);
+
 
         // Set the adapter onto the recycler view.
         recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
-
-        // Add appropriate decorations to the recycler view items.
-        ListItemDecorator listItemDecorator = new ListItemDecorator(getContext().getApplicationContext(),
-                16,
-                72);
-        recyclerViewPosts.addItemDecoration(listItemDecorator);
-
-        // Add scroll listener that will manage scroll down to load more functionality as well as
-        // control animation of the items.
-        recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
-                    mPostsRecyclerAdapter.setAnimationStatus(false);
-                }
-
-                // Check if the last item is on screen, if yes then start loading more posts.
-                if (mLoadMoreStatus &&
-                        layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
-                    PredatorAccount.getAuthToken(getActivity(),
-                            Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
-                            PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<String>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    Log.d(TAG, "onError: " + e.getMessage(), e);
-                                }
-
-                                @Override
-                                public void onNext(String s) {
-                                    mLoadMoreStatus = false;
-                                    mPostsPresenter.loadMorePosts(s, true);
-                                }
-                            });
-                }
-            }
-        });
     }
 }

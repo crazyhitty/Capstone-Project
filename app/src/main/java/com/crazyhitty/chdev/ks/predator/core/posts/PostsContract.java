@@ -38,7 +38,7 @@ import com.crazyhitty.chdev.ks.predator.core.BaseView;
 
 public interface PostsContract {
     interface View extends BaseView<Presenter> {
-        void showPosts(Cursor cursorPosts);
+        void showPosts(Cursor cursorPosts, String date);
 
         void unableToGetPosts(String errorMessage);
     }
@@ -46,8 +46,8 @@ public interface PostsContract {
     interface Presenter extends BasePresenter {
         void getOfflinePosts(boolean latest);
 
-        void getPosts(String token, boolean latest, boolean clearPrevious);
+        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
 
-        void loadMorePosts(String token, boolean latest);
+        void loadMorePosts(String token, String categoryName, boolean latest);
     }
 }

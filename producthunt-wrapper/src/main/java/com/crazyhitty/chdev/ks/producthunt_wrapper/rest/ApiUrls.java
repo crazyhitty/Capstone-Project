@@ -34,6 +34,7 @@ package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 class ApiUrls {
     // Requires normal auth token
     static final String GET_POSTS = "posts/all";
+    static final String GET_POSTS_BY_CATEGORY_DAYWISE = "categories/{category_name}/posts";
     static final String GET_POST_COMMENTS = "posts/{post_id}/comments";
     static final String GET_COLLECTIONS = "collections";
     static final String GET_USER_PROFILE = "users/{user_id}";

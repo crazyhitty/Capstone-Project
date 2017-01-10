@@ -22,34 +22,33 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.utils;
+package com.crazyhitty.chdev.ks.predator.receivers;
 
-import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/9/2017 4:00 PM
+ * Created:     1/10/2017 5:23 PM
  * Description: Unavailable
  */
 
-public class RecyclerViewItemAnimations {
-    private static final String TAG = "RecyclerViewItemAnimations";
-
-    private RecyclerViewItemAnimations() {
-
-    }
-
-    public static void setListTranslateYAnim(View view, int startDelayMs) {
-        view.setTranslationY(ScreenUtils.dpToPx(view.getContext(), 16.0f));
-        view.setAlpha(0.0f);
-        view.animate()
-                .translationY(0)
-                .setInterpolator(new DecelerateInterpolator())
-                .setDuration(300)
-                .alpha(1.0f)
-                .setStartDelay(startDelayMs)
-                .start();
+public class NetworkBroadcastReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = networkInfo != null &&
+                networkInfo.isConnectedOrConnecting();
+        int networkType = networkInfo != null ? networkInfo.getType() : -1;
+        EventBus.getDefault().post(new NetworkEvent(isConnected, networkType));
     }
 }

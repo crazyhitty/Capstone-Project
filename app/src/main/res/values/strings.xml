@@ -61,4 +61,10 @@
 
     <!--posts fragment-->
     <string name="posts_hunting_more_posts">Hunting more posts!</string>
+    <string name="posts_date_today">Today</string>
+    <string name="posts_date_yesterday">Yesterday</string>
+
+    <!--loading view-->
+    <string name="loading_view_message">Wait while we hunt %s!</string>
+    <string name="loading_view_latest_posts">latest posts</string>
 </resources>

@@ -22,26 +22,17 @@
   ~ SOFTWARE.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="@android:anim/decelerate_interpolator">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout_posts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <translate
+        android:duration="200"
+        android:fromYDelta="30%"
+        android:toYDelta="0%" />
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/recycler_view_posts"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <alpha
+        android:duration="200"
+        android:fromAlpha="0"
+        android:toAlpha="1" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <com.crazyhitty.chdev.ks.predator.ui.views.LoadingView
-        android:id="@+id/loading_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</FrameLayout>
+</set>

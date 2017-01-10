@@ -38,6 +38,7 @@
     <dimen name="padding_min">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_avg">16dp</dimen>
+    <dimen name="padding_large">32dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_avg">16dp</dimen>
     <dimen name="margin_large">32dp</dimen>
@@ -54,4 +55,8 @@
     <!--item_load_more.xml-->
     <dimen name="item_load_more_progress_bar_height">24dp</dimen>
     <dimen name="item_load_more_progress_bar_width">24dp</dimen>
+
+    <!--view_loading.xml-->
+    <dimen name="view_loading_image_margin_top">16dp</dimen>
+    <dimen name="view_loading_progress_padding">36dp</dimen>
 </resources>

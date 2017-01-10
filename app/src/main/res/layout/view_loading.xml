@@ -22,26 +22,27 @@
   ~ SOFTWARE.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout_posts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/text_view_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/progress_bar_loading"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/loading_view_message"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/recycler_view_posts"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <ProgressBar
+        android:id="@+id/progress_bar_loading"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/view_loading_image_margin_top"
+        android:indeterminate="true" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <com.crazyhitty.chdev.ks.predator.ui.views.LoadingView
-        android:id="@+id/loading_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</FrameLayout>
+</merge>

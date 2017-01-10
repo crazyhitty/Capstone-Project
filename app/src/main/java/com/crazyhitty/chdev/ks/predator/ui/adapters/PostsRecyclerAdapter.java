@@ -29,16 +29,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
-import com.crazyhitty.chdev.ks.predator.utils.RecyclerViewItemAnimations;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,11 +59,11 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int VIEW_TYPE_SMALL_CARDS = 2;
     private static final int VIEW_TYPE_LARGE_CARDS = 3;
     private static final int VIEW_TYPE_LOAD_MORE = 98;
-    private static final int VIEW_TYPE_DATE_CHANGE = 99;
 
-    private boolean mAnimationStatus = true;
     private TYPE mType;
     private WeakReference<Cursor> mCursorWeakReference;
+    private int mLastPosition = -1;
+    private HashMap<Integer, String> mDateHashMap = new HashMap<>();
 
     /**
      * Constructor used to create a PostRecyclerAdapter.
@@ -69,27 +71,22 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @param cursor Cursor containing database values
      * @param type   Type of data to be displayed
      */
-    public PostsRecyclerAdapter(Cursor cursor, TYPE type) {
+    public PostsRecyclerAdapter(Cursor cursor, TYPE type, String date) {
         mCursorWeakReference = new WeakReference<Cursor>(cursor);
         mType = type;
+        mDateHashMap.put(0, date);
     }
 
     public void setType(TYPE type) {
         mType = type;
     }
 
-    public void setAnimationStatus(boolean animationStatus) {
-        mAnimationStatus = animationStatus;
-    }
-
-    public void updateCursor(Cursor cursor) {
+    public void updateCursor(Cursor cursor, String date) {
         int oldCursorSize = mCursorWeakReference.get().getCount();
         int newCursorSize = cursor.getCount();
         mCursorWeakReference = new WeakReference<Cursor>(cursor);
-        /*notifyItemRangeInserted(oldCursorSize, newCursorSize-oldCursorSize);*/
-        for (int i = 0; i < (newCursorSize - oldCursorSize); i++) {
-            notifyItemInserted(getItemCount() - 2);
-        }
+        mDateHashMap.put(oldCursorSize, date);
+        notifyItemRangeInserted(oldCursorSize, newCursorSize - oldCursorSize);
     }
 
     @Override
@@ -119,6 +116,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 onBindLoadMoreViewHolder((LoadMoreViewHolder) holder, position);
                 break;
         }
+        manageAnimation(holder.itemView, position);
     }
 
     private void onBindListItemViewHolder(ListItemViewHolder listItemViewHolder, int position) {
@@ -130,19 +128,27 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 PredatorContract.PostsEntry.COLUMN_TAGLINE);
         String postImageUrl = CursorUtils.getString(mCursorWeakReference.get(),
                 PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL);
+        String date = mDateHashMap.get(position);
+        boolean showDate = (date != null);
 
         listItemViewHolder.txtPostTitle.setText(title);
         listItemViewHolder.txtShortDesc.setText(shortDesc);
         listItemViewHolder.imageViewPost.setImageURI(postImageUrl);
-
-        if (mAnimationStatus) {
-            RecyclerViewItemAnimations.setListTranslateYAnim(listItemViewHolder.itemView,
-                    50);
-        }
+        listItemViewHolder.txtDate.setText(date);
+        listItemViewHolder.txtDate.setVisibility(showDate ? View.VISIBLE : View.GONE);
     }
 
     private void onBindLoadMoreViewHolder(LoadMoreViewHolder loadMoreViewHolder, int position) {
 
+    }
+
+    private void manageAnimation(View view, int position) {
+        if (position > mLastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.anim_bottom_top_fade_in);
+            view.startAnimation(animation);
+            mLastPosition = position;
+        }
     }
 
     @Override
@@ -183,6 +189,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public static class ListItemViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.text_view_date)
+        TextView txtDate;
         @BindView(R.id.image_view_post)
         SimpleDraweeView imageViewPost;
         @BindView(R.id.text_view_post_title)
@@ -199,7 +207,6 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public static class LoadMoreViewHolder extends RecyclerView.ViewHolder {
-
         public LoadMoreViewHolder(View itemView) {
             super(itemView);
         }

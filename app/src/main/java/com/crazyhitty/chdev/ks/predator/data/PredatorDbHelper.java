@@ -78,7 +78,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
 
     private String getCreatePostsTableSqlQuery() {
         return "CREATE TABLE " + PredatorContract.PostsEntry.TABLE_NAME + "(" +
-                PredatorContract.PostsEntry.COLUMN_POST_ID + " INTEGER PRIMARY KEY, " +
+                PredatorContract.PostsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.PostsEntry.COLUMN_POST_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_CATEGORY_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_DAY + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_NAME + " TEXT, " +
@@ -101,6 +102,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.PostsEntry.TABLE_NAME);
+        onCreate(db);
     }
 
     public int addPost(ContentValues contentValues) {

@@ -70,4 +70,8 @@ public class OAuth {
         params.put(Constants.CODE, token);
         return params;
     }
+
+    public static String getTestingToken() {
+        return Authorization.TEMP_DEV_PUBLIC_AUTHORIZATION_TOKEN;
+    }
 }

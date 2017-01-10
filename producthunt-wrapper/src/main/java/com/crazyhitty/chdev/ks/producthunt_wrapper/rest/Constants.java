@@ -45,7 +45,7 @@ class Constants {
     static final String BEARER = "Bearer ";
 
     // posts
-    static final String CATEGORY = "category";
+    static final String CATEGORY_NAME = "category_name";
     static final String DAYS_AGO = "days_ago";
 
     // comments

@@ -44,13 +44,13 @@ public class ListItemDecorator extends RecyclerView.ItemDecoration {
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
     private Drawable divider;
 
-    private int mSpacingPx;
     private int mDividerLeftPadding;
+    private int mSpacingPx;
 
-    public ListItemDecorator(Context context, int spacingDp, int dividerLeftPaddingDp) {
+    public ListItemDecorator(Context context, int dividerLeftPaddingDp) {
         super();
-        mSpacingPx = ScreenUtils.dpToPxInt(context, 16.0f);
-        mDividerLeftPadding = ScreenUtils.dpToPxInt(context, 72.0f);
+        mSpacingPx = ScreenUtils.dpToPxInt(context, 16);
+        mDividerLeftPadding = ScreenUtils.dpToPxInt(context, dividerLeftPaddingDp);
         final TypedArray styledAttributes = context.obtainStyledAttributes(ATTRS);
         divider = styledAttributes.getDrawable(0);
         styledAttributes.recycle();
@@ -69,7 +69,6 @@ public class ListItemDecorator extends RecyclerView.ItemDecoration {
 
             divider.setBounds(left, top, right, bottom);
             divider.draw(c);
-
         }
     }
 
@@ -81,7 +80,7 @@ public class ListItemDecorator extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         if (parent.getChildAdapterPosition(view) == 0) {
-            outRect.top = mSpacingPx;
+            outRect.top = -mSpacingPx;
         }
     }
 }
