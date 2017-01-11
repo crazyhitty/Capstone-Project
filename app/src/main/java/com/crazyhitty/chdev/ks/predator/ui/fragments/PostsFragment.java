@@ -44,10 +44,17 @@ import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.ListItemDecorator;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +69,7 @@ import rx.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class PostsFragment extends BaseSupportFragment implements PostsContract.View {
+public class PostsFragment extends BaseSupportFragment implements PostsContract.View, PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
     private static final String TAG = "PostsFragment";
     private static final String CATEGORY_TECH = "tech";
 
@@ -89,6 +96,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         setHasOptionsMenu(true);
         setPresenter(new PostsPresenter(this));
         mPostsPresenter.subscribe();
+        EventBus.getDefault().register(this);
     }
 
     @Nullable
@@ -105,8 +113,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         // Set loading type.
         loadingView.setLoadingType(LoadingView.TYPE.LATEST_POSTS);
         initSwipeRefreshLayout();
-        getLatestPosts();
         setRecyclerViewProperties();
+
+        // Always load offline posts first.
+        getOfflinePosts();
     }
 
     private void initSwipeRefreshLayout() {
@@ -115,9 +125,22 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         swipeRefreshLayoutPosts.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getLatestPosts();
+                if (isNetworkAvailable(true)) {
+                    getLatestPosts();
+                } else {
+                    swipeRefreshLayoutPosts.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayoutPosts.setRefreshing(false);
+                        }
+                    });
+                }
             }
         });
+    }
+
+    private void getOfflinePosts() {
+        mPostsPresenter.getOfflinePosts(true);
     }
 
     /**
@@ -147,6 +170,31 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                 });
     }
 
+    private void loadMorePosts() {
+        PredatorAccount.getAuthToken(getActivity(),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                        // Done
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: " + e.getMessage(), e);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.d(TAG, "onNext: load more posts");
+                        mPostsPresenter.loadMorePosts(s, CATEGORY_TECH, true);
+                    }
+                });
+    }
+
     private void setRecyclerViewProperties() {
         // Create a list type layout manager.
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -164,39 +212,25 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                 // Check if the last item is on screen, if yes then start loading more posts.
                 if (!mIsLoading &&
-                        layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1) {
+                        layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1 &&
+                        isNetworkAvailable(false)) {
                     mIsLoading = true;
-                    PredatorAccount.getAuthToken(getActivity(),
-                            Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
-                            PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<String>() {
-                                @Override
-                                public void onCompleted() {
-                                    // Done
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    Log.d(TAG, "onError: " + e.getMessage(), e);
-                                }
-
-                                @Override
-                                public void onNext(String s) {
-                                    Log.d(TAG, "onNext: load more posts");
-                                    mPostsPresenter.loadMorePosts(s, CATEGORY_TECH, true);
-                                }
-                            });
+                    loadMorePosts();
                 }
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkConnectivityChanged(NetworkEvent networkEvent) {
+        mPostsRecyclerAdapter.setNetworkStatus(networkEvent.isConnected(), getString(R.string.item_load_more_error_desc));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPostsPresenter.unSubscribe();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -220,10 +254,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
-    public void showPosts(Cursor cursorPosts, String date) {
+    public void showPosts(Cursor cursorPosts, HashMap<Integer, String> datehashMap) {
         if (mIsLoading) {
             mIsLoading = false;
-            mPostsRecyclerAdapter.updateCursor(cursorPosts, date);
+            mPostsRecyclerAdapter.updateCursor(cursorPosts, datehashMap);
         } else {
             // Hide loading view
             loadingView.stopLoading();
@@ -231,28 +265,47 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             // Enable swipe refresh layout
             swipeRefreshLayoutPosts.setEnabled(true);
 
-            setListTypeAdapter(cursorPosts, date);
+            setListTypeAdapter(cursorPosts, datehashMap);
         }
 
         // Dismiss swipe refresh layout animation if it is going on.
         if (swipeRefreshLayoutPosts.isRefreshing()) {
             swipeRefreshLayoutPosts.setRefreshing(false);
         }
+
+        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_error_desc));
     }
 
     @Override
-    public void unableToGetPosts(String errorMessage) {
+    public void unableToGetPosts(boolean onLoadMore, String errorMessage) {
+        if (mPostsRecyclerAdapter != null && mPostsRecyclerAdapter.getItemCount() != 0) {
+            // If the adapter contains items already.
+            showLongToast(errorMessage);
+            if (onLoadMore) {
+                // If the error occurs while loading more posts.
+                mPostsRecyclerAdapter.setNetworkStatus(false, errorMessage);
+            }
+        } else {
 
+        }
     }
 
-    private void setListTypeAdapter(Cursor cursor, String date) {
+    private void setListTypeAdapter(Cursor cursor, HashMap<Integer, String> datehashMap) {
         // Create the adapter, and pass the cursor object to it alongside its type.
         mPostsRecyclerAdapter = new PostsRecyclerAdapter(cursor,
                 PostsRecyclerAdapter.TYPE.LIST,
-                date);
-
+                datehashMap,
+                this);
 
         // Set the adapter onto the recycler view.
         recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
+    }
+
+    @Override
+    public void onLoadMore() {
+        if (isNetworkAvailable(true)) {
+            loadMorePosts();
+        }
+        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_error_desc));
     }
 }

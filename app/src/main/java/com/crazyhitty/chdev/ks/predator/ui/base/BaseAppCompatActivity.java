@@ -44,17 +44,17 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
  * Description: Unavailable
  */
 
-public class BaseAppCompatActivity extends AppCompatActivity {
+public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private static final String TAG = "BaseAppCompatActivity";
 
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
 
-    public void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
+    protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getSupportFragmentManager(), layoutResId, fragment, addToBackStack);
     }
 
-    public void showLoadingDialog(boolean isCancellable) {
+    protected void showLoadingDialog(boolean isCancellable) {
         mLoadingDialog = new ProgressDialog(this);
         mLoadingDialog.setTitle(R.string.loading);
         mLoadingDialog.setMessage(getString(R.string.please_wait));
@@ -63,13 +63,13 @@ public class BaseAppCompatActivity extends AppCompatActivity {
         mLoadingDialog.show();
     }
 
-    public void dismissLoadingDialog() {
+    protected void dismissLoadingDialog() {
         if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
         }
     }
 
-    public void showErrorDialog(String message, boolean isCancellable) {
+    protected void showErrorDialog(String message, boolean isCancellable) {
         mErrorDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.error)
                 .setMessage(message)
@@ -84,25 +84,25 @@ public class BaseAppCompatActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void dismissErrorDialog() {
+    protected void dismissErrorDialog() {
         if (mErrorDialog != null && mErrorDialog.isShowing()) {
             mErrorDialog.dismiss();
         }
     }
 
-    public void showShortToast(String message) {
+    protected void showShortToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public void showShortToast(@StringRes int messageRes) {
+    protected void showShortToast(@StringRes int messageRes) {
         Toast.makeText(getApplicationContext(), messageRes, Toast.LENGTH_SHORT).show();
     }
 
-    public void showLongToast(String message) {
+    protected void showLongToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void showLongToast(@StringRes int messageRes) {
+    protected void showLongToast(@StringRes int messageRes) {
         Toast.makeText(getApplicationContext(), messageRes, Toast.LENGTH_LONG).show();
     }
 }

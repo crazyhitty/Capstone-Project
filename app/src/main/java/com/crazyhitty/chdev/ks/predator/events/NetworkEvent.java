@@ -62,6 +62,10 @@ public class NetworkEvent {
         return type;
     }
 
+    public void setType(TYPE type) {
+        this.type = type;
+    }
+
     public void setType(int networkType) {
         switch (networkType) {
             case ConnectivityManager.TYPE_MOBILE:
@@ -76,8 +80,9 @@ public class NetworkEvent {
         }
     }
 
-    public void setType(TYPE type) {
-        this.type = type;
+    @Override
+    public String toString() {
+        return "connected: " + connected + ", type: " + type;
     }
 
     public enum TYPE {

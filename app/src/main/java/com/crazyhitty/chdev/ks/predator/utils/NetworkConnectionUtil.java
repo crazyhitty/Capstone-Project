@@ -22,34 +22,34 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.utils;
 
-import android.database.Cursor;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-
-import java.util.HashMap;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     1/11/2017 1:56 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(Cursor cursorPosts, HashMap<Integer, String> dateHashMap);
+public class NetworkConnectionUtil {
+    private NetworkConnectionUtil() {
 
-        void unableToGetPosts(boolean onLoadMore, String errorMessage);
     }
 
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
-
-        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
-
-        void loadMorePosts(String token, String categoryName, boolean latest);
+    /**
+     * Checks if the device is currently connected with any particular network or not.
+     *
+     * @param context Current context of the application
+     * @return "true" if network is available, "false" if none available.
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null &&
+                networkInfo.isConnectedOrConnecting();
     }
 }

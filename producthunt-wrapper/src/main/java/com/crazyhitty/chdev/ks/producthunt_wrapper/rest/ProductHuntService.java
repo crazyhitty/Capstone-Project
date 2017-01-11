@@ -57,7 +57,7 @@ public interface ProductHuntService {
     @GET(ApiUrls.GET_POSTS_BY_CATEGORY_DAYWISE)
     Observable<PostsData> getPostsCategoryWise(@Header(Constants.AUTHORIZATION) String authorization,
                                                @Path(Constants.CATEGORY_NAME) String categoryName,
-                                               @Query(Constants.DAYS_AGO) int daysAgo);
+                                               @Query(Constants.DAY) String day);
 
     @GET(ApiUrls.GET_POST_COMMENTS)
     Observable<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,

@@ -35,7 +35,7 @@
         android:paddingEnd="@dimen/material_component_lists_text_left_padding"
         android:paddingStart="@dimen/material_component_lists_text_left_padding"
         android:paddingTop="@dimen/padding_large"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearanceDate"
         tools:text="Date" />
 
     <RelativeLayout
@@ -54,6 +54,7 @@
             android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
             android:contentDescription="@string/item_list_post_image_desc"
             android:padding="@dimen/item_list_post_image_padding"
+            fresco:failureImage="@drawable/ic_image_broken_error"
             fresco:placeholderImage="@color/colorPrimary"
             fresco:roundedCornerRadius="@dimen/item_list_post_image_corner_padding" />
 

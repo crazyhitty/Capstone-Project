@@ -55,8 +55,15 @@
     <!--item_load_more.xml-->
     <dimen name="item_load_more_progress_bar_height">24dp</dimen>
     <dimen name="item_load_more_progress_bar_width">24dp</dimen>
+    <dimen name="item_load_more_image_padding">2dp</dimen>
+    <dimen name="item_load_more_image_corner_padding">2dp</dimen>
 
     <!--view_loading.xml-->
     <dimen name="view_loading_image_margin_top">16dp</dimen>
     <dimen name="view_loading_progress_padding">36dp</dimen>
+    <dimen name="view_loading_translation_y">32dp</dimen>
+    <dimen name="view_loading_image_height">200dp</dimen>
+    <dimen name="view_loading_image_width">200dp</dimen>
+    <dimen name="view_loading_image_padding">4dp</dimen>
+    <dimen name="view_loading_image_corner_padding">4dp</dimen>
 </resources>

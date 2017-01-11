@@ -27,14 +27,16 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/text_view_loading"
+        android:id="@+id/text_view_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/progress_bar_loading"
         android:layout_centerInParent="true"
+        android:alpha="0.0"
         android:gravity="center"
         android:text="@string/loading_view_message"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:translationY="@dimen/view_loading_translation_y" />
 
     <ProgressBar
         android:id="@+id/progress_bar_loading"
@@ -43,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginTop="@dimen/view_loading_image_margin_top"
-        android:indeterminate="true" />
+        android:alpha="0.0"
+        android:indeterminate="true"
+        android:translationY="@dimen/view_loading_translation_y" />
 
 </merge>

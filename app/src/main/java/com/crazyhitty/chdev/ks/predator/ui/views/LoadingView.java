@@ -31,11 +31,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,8 +51,15 @@ import butterknife.ButterKnife;
  */
 
 public class LoadingView extends RelativeLayout {
-    @BindView(R.id.text_view_loading)
-    TextView txtLoading;
+    private static final int ANIM_MESSAGE_DURATION_MS = 500;
+    private static final int ANIM_PROGRESS_DURATION_MS = 500;
+    private static final int ANIM_MESSAGE_DELAY_APPEARING_MS = 500;
+    private static final int ANIM_PROGRESS_DELAY_APPEARING_MS = 750;
+    private static final int ANIM_MESSAGE_DELAY_DISAPPEARING_MS = 500;
+    private static final int ANIM_PROGRESS_DELAY_DISAPPEARING_MS = 500;
+
+    @BindView(R.id.text_view_message)
+    TextView txtMessage;
     @BindView(R.id.progress_bar_loading)
     ProgressBar progressBarLoading;
 
@@ -87,14 +97,58 @@ public class LoadingView extends RelativeLayout {
 
         // Set layout properties.
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+
+        // Set animation.
+        manageAnimation(true, false);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setError("Something happened!");
+            }
+        }, 3000);
     }
 
     public void startLoading() {
         setVisibility(View.VISIBLE);
+        progressBarLoading.setVisibility(View.VISIBLE);
+        manageAnimation(true, false);
     }
 
     public void stopLoading() {
         setVisibility(View.GONE);
+    }
+
+    private void manageAnimation(boolean isAppearing, boolean isError) {
+        float alpha = 1.0f;
+        float translationY = 0.0f;
+        int messageDelay = ANIM_MESSAGE_DELAY_APPEARING_MS;
+        int progressBarDelay = ANIM_PROGRESS_DELAY_APPEARING_MS;
+
+        if (!isAppearing) {
+            alpha = 0.0f;
+            translationY = -32.0f;
+            messageDelay = ANIM_MESSAGE_DELAY_DISAPPEARING_MS;
+            progressBarDelay = ANIM_PROGRESS_DELAY_DISAPPEARING_MS;
+        }
+
+        Interpolator interpolator = new DecelerateInterpolator();
+
+        txtMessage.animate()
+                .setDuration(ANIM_MESSAGE_DURATION_MS)
+                .setInterpolator(interpolator)
+                .alpha(alpha)
+                .setStartDelay(messageDelay)
+                .translationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), translationY))
+                .start();
+
+        progressBarLoading.animate()
+                .setDuration(ANIM_PROGRESS_DURATION_MS)
+                .setInterpolator(interpolator)
+                .alpha(alpha)
+                .setStartDelay(progressBarDelay)
+                .translationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), translationY))
+                .start();
     }
 
     public void setLoadingType(TYPE type) {
@@ -102,9 +156,26 @@ public class LoadingView extends RelativeLayout {
         switch (type) {
             case LATEST_POSTS:
                 String latestPosts = getResources().getString(R.string.loading_view_latest_posts);
-                txtLoading.setText(String.format(loadingText, latestPosts));
+                txtMessage.setText(String.format(loadingText, latestPosts));
                 break;
         }
+    }
+
+    public void setError(final String errorMessage) {
+        manageAnimation(false, false);
+
+        // Set new translationY for both txtMessage and progressBarLoading.
+        txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 64.0f));
+        progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 64.0f));
+
+        // Change text after the animation is complete and run the .
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                txtMessage.setText(errorMessage);
+                manageAnimation(true, true);
+            }
+        }, 600);
     }
 
     public enum TYPE {

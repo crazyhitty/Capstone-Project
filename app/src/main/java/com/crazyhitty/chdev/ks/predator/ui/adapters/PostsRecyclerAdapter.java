@@ -31,7 +31,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -62,31 +64,53 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private TYPE mType;
     private WeakReference<Cursor> mCursorWeakReference;
+    private OnPostsLoadMoreRetryListener mOnPostsLoadMoreRetryListener;
     private int mLastPosition = -1;
     private HashMap<Integer, String> mDateHashMap = new HashMap<>();
+    private boolean mNetworkAvailable;
+    private String mErrorMessage;
 
     /**
-     * Constructor used to create a PostRecyclerAdapter.
+     * Constructor used to create a PostRecyclerAdapter with already defined dates. General use case
+     * is when user want to see offline posts which doesn't support date wise pagination.
      *
-     * @param cursor Cursor containing database values
-     * @param type   Type of data to be displayed
+     * @param cursor                          Cursor containing database values
+     * @param type                            Type of data to be displayed
+     * @param dateHashMap                     Hashmap containing where to show appropriate dates
+     * @param onPostsLoadMoreRetryListener    listener that will notify when to load more posts
      */
-    public PostsRecyclerAdapter(Cursor cursor, TYPE type, String date) {
+    public PostsRecyclerAdapter(Cursor cursor,
+                                TYPE type,
+                                HashMap<Integer, String> dateHashMap,
+                                OnPostsLoadMoreRetryListener onPostsLoadMoreRetryListener) {
         mCursorWeakReference = new WeakReference<Cursor>(cursor);
         mType = type;
-        mDateHashMap.put(0, date);
+        mDateHashMap = dateHashMap;
+        mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
     }
 
     public void setType(TYPE type) {
         mType = type;
     }
 
-    public void updateCursor(Cursor cursor, String date) {
+    /**
+     * Update current dataset.
+     *
+     * @param cursor
+     * @param dateHashMap
+     */
+    public void updateCursor(Cursor cursor, HashMap<Integer, String> dateHashMap) {
         int oldCursorSize = mCursorWeakReference.get().getCount();
         int newCursorSize = cursor.getCount();
         mCursorWeakReference = new WeakReference<Cursor>(cursor);
-        mDateHashMap.put(oldCursorSize, date);
+        mDateHashMap = dateHashMap;
         notifyItemRangeInserted(oldCursorSize, newCursorSize - oldCursorSize);
+    }
+
+    public void setNetworkStatus(boolean status, String message) {
+        mNetworkAvailable = status;
+        mErrorMessage = message;
+        notifyItemChanged(getItemCount() - 1);
     }
 
     @Override
@@ -139,7 +163,23 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void onBindLoadMoreViewHolder(LoadMoreViewHolder loadMoreViewHolder, int position) {
+        // All elements except progress bar will be visible if network is available, and vice versa.
 
+        loadMoreViewHolder.imgViewError.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.txtErrorTitle.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.txtErrorDesc.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.btnRetry.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+
+        loadMoreViewHolder.progressBarLoading.setVisibility(mNetworkAvailable ? View.VISIBLE : View.GONE);
+
+        loadMoreViewHolder.txtErrorDesc.setText(mErrorMessage);
+
+        loadMoreViewHolder.btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnPostsLoadMoreRetryListener.onLoadMore();
+            }
+        });
     }
 
     private void manageAnimation(View view, int position) {
@@ -182,13 +222,23 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        ((RootViewHolder) holder).clearAnimation();
+    }
+
     public enum TYPE {
         LIST,
         SMALL_CARDS,
         LARGE_CARDS
     }
 
-    public static class ListItemViewHolder extends RecyclerView.ViewHolder {
+    public interface OnPostsLoadMoreRetryListener {
+        void onLoadMore();
+    }
+
+    public static class ListItemViewHolder extends RootViewHolder {
         @BindView(R.id.text_view_date)
         TextView txtDate;
         @BindView(R.id.image_view_post)
@@ -206,9 +256,31 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public static class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+    public static class LoadMoreViewHolder extends RootViewHolder {
+        @BindView(R.id.image_view_error_icon)
+        SimpleDraweeView imgViewError;
+        @BindView(R.id.text_view_error_title)
+        TextView txtErrorTitle;
+        @BindView(R.id.text_view_error_desc)
+        TextView txtErrorDesc;
+        @BindView(R.id.button_retry)
+        Button btnRetry;
+        @BindView(R.id.progress_bar_loading)
+        ProgressBar progressBarLoading;
+
         public LoadMoreViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    private static class RootViewHolder extends RecyclerView.ViewHolder {
+        public RootViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        protected void clearAnimation() {
+            itemView.clearAnimation();
         }
     }
 }

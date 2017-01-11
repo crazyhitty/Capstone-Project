@@ -47,6 +47,7 @@ class Constants {
     // posts
     static final String CATEGORY_NAME = "category_name";
     static final String DAYS_AGO = "days_ago";
+    static final String DAY = "day";
 
     // comments
     static final String POST_ID = "post_id";

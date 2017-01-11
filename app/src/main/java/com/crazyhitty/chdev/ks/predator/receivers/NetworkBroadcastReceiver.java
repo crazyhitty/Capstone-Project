@@ -24,11 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.receivers;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 
@@ -42,6 +44,9 @@ import org.greenrobot.eventbus.EventBus;
  */
 
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = "NetworkBroadcastReceiver";
+
+    @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -49,6 +54,7 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
         boolean isConnected = networkInfo != null &&
                 networkInfo.isConnectedOrConnecting();
         int networkType = networkInfo != null ? networkInfo.getType() : -1;
+        Log.d(TAG, "onReceive: Connection status: " + isConnected);
         EventBus.getDefault().post(new NetworkEvent(isConnected, networkType));
     }
 }

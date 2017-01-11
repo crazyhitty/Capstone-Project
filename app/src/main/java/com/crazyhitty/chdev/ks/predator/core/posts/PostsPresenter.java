@@ -32,13 +32,12 @@ import android.util.Log;
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
+import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.HashMap;
 
 import rx.Observable;
 import rx.Observer;
@@ -59,14 +58,14 @@ import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolve
 
 public class PostsPresenter implements PostsContract.Presenter {
     private static final String TAG = "PostsPresenter";
-    private static final String DATE_PATTERN_ORIGINAL_FORMAT = "yyyy-MM-dd";
-    private static final String DATE_PATTERN_FINAL_FORMAT = "MMMM d";
 
-    private int mDaysAgo = 0;
+    private String mLastDate = DateUtils.getPredatorCurrentDate();
 
-    private String mDate;
+    private HashMap<Integer, String> mDateHashMap = new HashMap<>();
 
     private Cursor mCursor;
+
+    private boolean mLoadMore = false;
 
     @NonNull
     private PostsContract.View mView;
@@ -93,43 +92,93 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     @Override
     public void getOfflinePosts(boolean latest) {
+        Observable<Cursor> postsDataObservable = Observable.create(new Observable.OnSubscribe<Cursor>() {
+            @Override
+            public void call(Subscriber<? super Cursor> subscriber) {
+                Cursor cursor = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                                null,
+                                null,
+                                null,
+                                null);
+                if (cursor != null && cursor.getCount() != 0) {
+                    dateMatcher(cursor);
+                    subscriber.onNext(cursor);
+                } else {
+                    subscriber.onError(new NoPostsAvailableException());
+                }
+                subscriber.onCompleted();
+            }
+        });
+        postsDataObservable.subscribeOn(Schedulers.newThread());
+        postsDataObservable.observeOn(AndroidSchedulers.mainThread());
 
+        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Cursor>() {
+            @Override
+            public void onCompleted() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToGetPosts(false, e.getMessage());
+            }
+
+            @Override
+            public void onNext(Cursor cursor) {
+                mCursor = cursor;
+                Log.d(TAG, "cursorSize: " + mCursor.getCount());
+                mView.showPosts(mCursor, mDateHashMap);
+            }
+        }));
     }
 
     @Override
-    public void getPosts(String token,
-                         String categoryName,
-                         boolean latest,
+    public void getPosts(final String token,
+                         final String categoryName,
+                         final boolean latest,
                          final boolean clearPrevious) {
-        Observable<Boolean> postsDataObservable = ProductHuntRestApi.getApi()
-                .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mDaysAgo)
-                .flatMapIterable(new Func1<PostsData, Iterable<PostsData.Posts>>() {
+        if (clearPrevious) {
+            mLoadMore = false;
+            mLastDate = DateUtils.getPredatorCurrentDate();
+        }
+        Observable<Cursor> postsDataObservable = ProductHuntRestApi.getApi()
+                .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
+                .flatMap(new Func1<PostsData, Observable<Cursor>>() {
                     @Override
-                    public Iterable<PostsData.Posts> call(PostsData postsData) {
-                        // Clear the posts from db, only if clearPrevious flag is true.
+                    public Observable<Cursor> call(final PostsData postsData) {
                         if (clearPrevious) {
                             getContentResolverInstance()
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                                             null,
                                             null);
-                            mDaysAgo = 0;
                         }
-                        return postsData.getPosts();
-                    }
-                })
-                .flatMap(new Func1<PostsData.Posts, Observable<Boolean>>() {
-                    @Override
-                    public Observable<Boolean> call(final PostsData.Posts post) {
-                        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+                        return Observable.create(new Observable.OnSubscribe<Cursor>() {
                             @Override
-                            public void call(Subscriber<? super Boolean> subscriber) {
-                                // Save posts in db.
-                                mDate = post.getDay();
-                                MainApplication.getContentResolverInstance()
-                                        .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
-                                                getContentValuesBasedOnPosts(post));
+                            public void call(Subscriber<? super Cursor> subscriber) {
+                                if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
+                                    loadMorePosts(token, categoryName, latest);
+                                    return;
+                                }
 
-                                subscriber.onNext(true);
+                                for (PostsData.Posts post : postsData.getPosts()) {
+                                    MainApplication.getContentResolverInstance()
+                                            .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
+                                                    getContentValuesBasedOnPosts(post));
+                                }
+                                Cursor cursor = MainApplication.getContentResolverInstance()
+                                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                                                null,
+                                                null,
+                                                null,
+                                                null);
+                                if (cursor != null && cursor.getCount() != 0) {
+                                    dateMatcher(cursor);
+                                    subscriber.onNext(cursor);
+                                } else {
+                                    subscriber.onError(new NoPostsAvailableException());
+                                }
                                 subscriber.onCompleted();
                             }
                         });
@@ -138,37 +187,54 @@ public class PostsPresenter implements PostsContract.Presenter {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Boolean>() {
+        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Cursor>() {
             @Override
             public void onCompleted() {
                 // Done
-                mCursor = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                null,
-                                null,
-                                null,
-                                null);
-                Log.d(TAG, "cursorSize: " + mCursor.getCount());
-                mView.showPosts(mCursor, getDate());
             }
 
             @Override
             public void onError(Throwable e) {
                 Log.d(TAG, "onError: " + e.getMessage(), e);
-                mView.unableToGetPosts(e.getMessage());
+                mView.unableToGetPosts(mLoadMore, e.getMessage());
             }
 
             @Override
-            public void onNext(Boolean bool) {
-
+            public void onNext(Cursor cursor) {
+                mCursor = cursor;
+                Log.d(TAG, "cursorSize: " + mCursor.getCount());
+                mView.showPosts(mCursor, mDateHashMap);
             }
         }));
     }
 
     @Override
     public void loadMorePosts(String token, String categoryName, boolean latest) {
-        mDaysAgo++;
+        mLastDate = DateUtils.getPredatorPreviousDate(mLastDate);
+        mLoadMore = true;
         getPosts(token, categoryName, latest, false);
+    }
+
+    /**
+     * Matches all the post publish dates and create a hashmap for positions and dates wherever the
+     * dates are changed in the cursor.
+     *
+     * @param cursor Cursor containing database values
+     */
+    private void dateMatcher(Cursor cursor) {
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+
+            // Match post date with current date
+            String date = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
+
+            String dateToBeShown = DateUtils.getPredatorPostsDate(date);
+
+            if (!mDateHashMap.containsValue(dateToBeShown)) {
+                mDateHashMap.put(i, dateToBeShown);
+                mLastDate = date;
+            }
+        }
     }
 
     private ContentValues getContentValuesBasedOnPosts(PostsData.Posts post) {
@@ -194,21 +260,10 @@ public class PostsPresenter implements PostsContract.Presenter {
         return contentValues;
     }
 
-    private String getDate() {
-        if (mDaysAgo == 0) {
-            return "Today";
-        } else if (mDaysAgo == 1) {
-            return "Yesterday";
-        } else {
-            try {
-                Date date = new SimpleDateFormat(DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
-                        .parse(mDate);
-                return new SimpleDateFormat(DATE_PATTERN_FINAL_FORMAT, Locale.US)
-                        .format(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return mDate;
-            }
+    public static class NoPostsAvailableException extends Throwable {
+        @Override
+        public String getMessage() {
+            return "No posts available.";
         }
     }
 }

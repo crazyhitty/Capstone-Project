@@ -92,4 +92,8 @@
         <item name="android:textColor">@color/color_black_dark</item>
     </style>
 
+    <style name="TextAppearanceDate" parent="@style/TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
 </resources>
