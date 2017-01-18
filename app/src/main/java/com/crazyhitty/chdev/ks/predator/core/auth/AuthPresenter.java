@@ -78,7 +78,7 @@ public class AuthPresenter implements AuthContract.Presenter {
     public void retrieveClientAuthToken(final Context context) {
         mCompositeSubscription.add(ProductHuntRestApi.getApi()
                 .oAuthClient(OAuth.getClientAuthRequestBody())
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<OAuthData>() {
                     @Override
@@ -119,7 +119,7 @@ public class AuthPresenter implements AuthContract.Presenter {
     public void retrieveUserAuthToken(final Context context, String token) {
         mCompositeSubscription.add(ProductHuntRestApi.getApi()
                 .oAuthUser(OAuth.geUserAuthRequestBody(token))
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<OAuthData>() {
                     @Override

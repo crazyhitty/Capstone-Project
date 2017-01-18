@@ -39,6 +39,7 @@
         tools:text="Date" />
 
     <RelativeLayout
+        android:id="@+id/relative_layout_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_view_date"

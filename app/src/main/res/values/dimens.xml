@@ -39,6 +39,7 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_avg">16dp</dimen>
     <dimen name="padding_large">32dp</dimen>
+    <dimen name="margin_min">4dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_avg">16dp</dimen>
     <dimen name="margin_large">32dp</dimen>
@@ -59,11 +60,33 @@
     <dimen name="item_load_more_image_corner_padding">2dp</dimen>
 
     <!--view_loading.xml-->
-    <dimen name="view_loading_image_margin_top">16dp</dimen>
     <dimen name="view_loading_progress_padding">36dp</dimen>
     <dimen name="view_loading_translation_y">32dp</dimen>
-    <dimen name="view_loading_image_height">200dp</dimen>
-    <dimen name="view_loading_image_width">200dp</dimen>
-    <dimen name="view_loading_image_padding">4dp</dimen>
-    <dimen name="view_loading_image_corner_padding">4dp</dimen>
+    <dimen name="view_loading_image_height">44dp</dimen>
+    <dimen name="view_loading_image_width">44dp</dimen>
+    <dimen name="view_loading_image_padding">2dp</dimen>
+    <dimen name="view_loading_image_corner_padding">2dp</dimen>
+
+    <!--activity_post_details.xml-->
+    <dimen name="activity_post_details_app_bar_height">300dp</dimen>
+
+    <!--item_post_user.xml-->
+    <dimen name="item_post_user_image_width">44dp</dimen>
+    <dimen name="item_post_user_image_height">44dp</dimen>
+    <dimen name="item_post_user_image_padding">2dp</dimen>
+    <dimen name="item_post_user_image_corner_padding">2dp</dimen>
+    <dimen name="item_post_user_card_corner_radius">4dp</dimen>
+    <dimen name="item_post_user_card_elevation">2dp</dimen>
+
+    <!--item_media.xml-->
+    <dimen name="item_media_card_width">200dp</dimen>
+    <dimen name="item_media_card_height">100dp</dimen>
+    <dimen name="item_media_card_corner_radius">4dp</dimen>
+    <dimen name="item_media_card_elevation">2dp</dimen>
+
+    <!--item_post_details_comment.xml-->
+    <dimen name="item_post_details_comment_image_height">44dp</dimen>
+    <dimen name="item_post_details_comment_image_width">44dp</dimen>
+    <dimen name="item_post_details_comment_image_padding">2dp</dimen>
+    <dimen name="item_post_details_comment_image_corner_padding">2dp</dimen>
 </resources>

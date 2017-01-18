@@ -146,6 +146,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             case R.id.nav_my_profile:
                 return false;
             case R.id.nav_settings:
+                SettingsActivity.startActivity(getApplicationContext());
                 return false;
             case R.id.nav_about:
                 return false;

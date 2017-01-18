@@ -29,6 +29,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.Dashboard">
@@ -37,6 +38,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@drawable/ll_app_logo</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.Onboard">
@@ -45,6 +47,23 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowBackground">@drawable/ll_app_logo</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.PostDetails">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.Splash">
@@ -53,6 +72,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowBackground">@drawable/ll_app_logo</item>
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
     </style>
 
 </resources>

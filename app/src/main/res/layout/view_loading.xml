@@ -23,15 +23,31 @@
   -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/image_view_loading"
+        android:layout_width="@dimen/view_loading_image_width"
+        android:layout_height="@dimen/view_loading_image_height"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
+        android:alpha="0.0"
+        android:contentDescription="@string/loading_view_image_desc"
+        android:padding="@dimen/view_loading_image_padding"
+        android:visibility="gone"
+        fresco:failureImage="@drawable/ic_image_broken_error"
+        fresco:placeholderImage="@drawable/ic_error_alternative"
+        fresco:roundedCornerRadius="@dimen/view_loading_image_corner_padding" />
 
     <TextView
         android:id="@+id/text_view_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/progress_bar_loading"
+        android:layout_below="@+id/image_view_loading"
         android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/margin_avg"
         android:alpha="0.0"
         android:gravity="center"
         android:text="@string/loading_view_message"
@@ -43,10 +59,24 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_message"
         android:layout_centerInParent="true"
-        android:layout_marginTop="@dimen/view_loading_image_margin_top"
+        android:layout_marginTop="@dimen/margin_avg"
         android:alpha="0.0"
         android:indeterminate="true"
         android:translationY="@dimen/view_loading_translation_y" />
+
+    <Button
+        android:id="@+id/button_retry"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_message"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/margin_avg"
+        android:alpha="0.0"
+        android:text="@string/retry"
+        android:translationY="@dimen/view_loading_translation_y"
+        android:visibility="gone" />
 
 </merge>

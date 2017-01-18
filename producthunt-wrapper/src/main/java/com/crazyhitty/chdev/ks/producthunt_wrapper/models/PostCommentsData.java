@@ -137,6 +137,13 @@ public class PostCommentsData {
             this.parentCommentId = parentCommentId;
         }
 
+        public int getParentCommentIdInteger() {
+            if (parentCommentId != null) {
+                return Double.valueOf(String.valueOf(parentCommentId)).intValue();
+            }
+            return 0;
+        }
+
         public int getUserId() {
             return userId;
         }
@@ -310,20 +317,20 @@ public class PostCommentsData {
 
             public static class ImageUrl {
                 /**
-                 * 48px : https://ph-avatars.imgix.net/8412/original?auto=format&fit=crop&crop=faces&w=48&h=48
+                 * 100px : https://ph-avatars.imgix.net/8412/original?auto=format&fit=crop&crop=faces&w=100&h=100
                  * original : https://ph-avatars.imgix.net/8412/original?auto=format&fit=crop&crop=faces&w=original&h=original
                  */
 
-                @SerializedName("48px")
-                private String value48px;
+                @SerializedName("100px")
+                private String value100px;
                 private String original;
 
-                public String getValue48px() {
-                    return value48px;
+                public String getValue100px() {
+                    return value100px;
                 }
 
-                public void setValue48px(String value48px) {
-                    this.value48px = value48px;
+                public void setValue100px(String value100px) {
+                    this.value100px = value100px;
                 }
 
                 public String getOriginal() {

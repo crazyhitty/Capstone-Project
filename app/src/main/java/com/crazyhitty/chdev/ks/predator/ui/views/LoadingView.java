@@ -33,15 +33,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Author:      Kartik Sharma
@@ -53,15 +57,28 @@ import butterknife.ButterKnife;
 public class LoadingView extends RelativeLayout {
     private static final int ANIM_MESSAGE_DURATION_MS = 500;
     private static final int ANIM_PROGRESS_DURATION_MS = 500;
+    private static final int ANIM_IMAGE_DURATION_MS = 500;
+    private static final int ANIM_BUTTON_DURATION_MS = 500;
     private static final int ANIM_MESSAGE_DELAY_APPEARING_MS = 500;
     private static final int ANIM_PROGRESS_DELAY_APPEARING_MS = 750;
+    private static final int ANIM_IMAGE_DELAY_APPEARING_MS = 500;
+    private static final int ANIM_BUTTON_DELAY_APPEARING_MS = 750;
     private static final int ANIM_MESSAGE_DELAY_DISAPPEARING_MS = 500;
     private static final int ANIM_PROGRESS_DELAY_DISAPPEARING_MS = 500;
+    private static final int ANIM_IMAGE_DELAY_DISAPPEARING_MS = 500;
+    private static final int ANIM_BUTTON_DELAY_DISAPPEARING_MS = 500;
 
+    @BindView(R.id.image_view_loading)
+    SimpleDraweeView imgViewLoading;
     @BindView(R.id.text_view_message)
     TextView txtMessage;
     @BindView(R.id.progress_bar_loading)
     ProgressBar progressBarLoading;
+    @BindView(R.id.button_retry)
+    Button btnRetry;
+
+    private STATE_SHOWN mStateShown = STATE_SHOWN.LOADING;
+    private OnRetryClickListener mOnRetryClickListener;
 
     public LoadingView(Context context) {
         super(context);
@@ -99,37 +116,135 @@ public class LoadingView extends RelativeLayout {
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
         // Set animation.
-        manageAnimation(true, false);
+        manageAnimation(true);
+    }
+
+    public void setOnRetryClickListener(OnRetryClickListener onRetryClickListener) {
+        mOnRetryClickListener = onRetryClickListener;
+    }
+
+    public void startLoading(final TYPE type) {
+        int animDelay = 0;
+        if (mStateShown == STATE_SHOWN.ERROR) {
+            animDelay = 700;
+            manageAnimation(false);
+        }
+
+        mStateShown = STATE_SHOWN.LOADING;
+
+        setVisibility(View.VISIBLE);
 
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                setError("Something happened!");
-            }
-        }, 3000);
-    }
+                progressBarLoading.setVisibility(View.VISIBLE);
+                progressBarLoading.setAlpha(0.0f);
 
-    public void startLoading() {
-        setVisibility(View.VISIBLE);
-        progressBarLoading.setVisibility(View.VISIBLE);
-        manageAnimation(true, false);
+                imgViewLoading.setVisibility(View.GONE);
+                imgViewLoading.setAlpha(0.0f);
+
+                btnRetry.setVisibility(View.GONE);
+                btnRetry.setAlpha(0.0f);
+
+                txtMessage.setAlpha(0.0f);
+                setLoadingType(type);
+
+                txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+
+                manageAnimation(true);
+            }
+        }, animDelay);
     }
 
     public void stopLoading() {
         setVisibility(View.GONE);
     }
 
-    private void manageAnimation(boolean isAppearing, boolean isError) {
+    public void setError(final String errorMessage) {
+        manageAnimation(false);
+
+        // Set new properties of views and animate them until the previous animation is finished.
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+
+                txtMessage.setAlpha(0.0f);
+
+                progressBarLoading.setVisibility(View.GONE);
+                progressBarLoading.setAlpha(0.0f);
+
+                imgViewLoading.setVisibility(View.VISIBLE);
+                imgViewLoading.setAlpha(0.0f);
+
+                btnRetry.setVisibility(View.VISIBLE);
+                btnRetry.setAlpha(0.0f);
+
+                txtMessage.setText(errorMessage);
+                manageAnimation(true);
+            }
+        }, 700);
+
+        mStateShown = STATE_SHOWN.ERROR;
+    }
+
+    public void setComplete(final String message) {
+        manageAnimation(false);
+
+        // Set new properties of views and animate them until the previous animation is finished.
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+                GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
+                hierarchy.setPlaceholderImage(R.drawable.ic_done);
+                imgViewLoading.setHierarchy(hierarchy);
+
+                txtMessage.setAlpha(0.0f);
+
+                progressBarLoading.setVisibility(View.GONE);
+                progressBarLoading.setAlpha(0.0f);
+
+                imgViewLoading.setVisibility(View.VISIBLE);
+                imgViewLoading.setAlpha(0.0f);
+
+                btnRetry.setVisibility(View.GONE);
+                btnRetry.setAlpha(0.0f);
+
+                txtMessage.setText(message);
+                manageAnimation(true);
+
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopLoading();
+                        mStateShown = STATE_SHOWN.COMPLETE;
+                    }
+                }, 2000);
+            }
+        }, 700);
+    }
+
+    private void manageAnimation(boolean isAppearing) {
         float alpha = 1.0f;
         float translationY = 0.0f;
         int messageDelay = ANIM_MESSAGE_DELAY_APPEARING_MS;
         int progressBarDelay = ANIM_PROGRESS_DELAY_APPEARING_MS;
+        int imageDelay = ANIM_IMAGE_DELAY_APPEARING_MS;
+        int buttonDelay = ANIM_BUTTON_DELAY_APPEARING_MS;
 
         if (!isAppearing) {
             alpha = 0.0f;
             translationY = -32.0f;
             messageDelay = ANIM_MESSAGE_DELAY_DISAPPEARING_MS;
             progressBarDelay = ANIM_PROGRESS_DELAY_DISAPPEARING_MS;
+            imageDelay = ANIM_IMAGE_DELAY_DISAPPEARING_MS;
+            buttonDelay = ANIM_BUTTON_DELAY_DISAPPEARING_MS;
         }
 
         Interpolator interpolator = new DecelerateInterpolator();
@@ -149,6 +264,22 @@ public class LoadingView extends RelativeLayout {
                 .setStartDelay(progressBarDelay)
                 .translationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), translationY))
                 .start();
+
+        imgViewLoading.animate()
+                .setDuration(ANIM_IMAGE_DURATION_MS)
+                .setInterpolator(interpolator)
+                .alpha(alpha)
+                .setStartDelay(imageDelay)
+                .translationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), translationY))
+                .start();
+
+        btnRetry.animate()
+                .setDuration(ANIM_IMAGE_DURATION_MS)
+                .setInterpolator(interpolator)
+                .alpha(alpha)
+                .setStartDelay(buttonDelay)
+                .translationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), translationY))
+                .start();
     }
 
     public void setLoadingType(TYPE type) {
@@ -161,24 +292,28 @@ public class LoadingView extends RelativeLayout {
         }
     }
 
-    public void setError(final String errorMessage) {
-        manageAnimation(false, false);
+    public STATE_SHOWN getCurrentState() {
+        return mStateShown;
+    }
 
-        // Set new translationY for both txtMessage and progressBarLoading.
-        txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 64.0f));
-        progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 64.0f));
-
-        // Change text after the animation is complete and run the .
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                txtMessage.setText(errorMessage);
-                manageAnimation(true, true);
-            }
-        }, 600);
+    @OnClick(R.id.button_retry)
+    public void onRetry() {
+        if (mOnRetryClickListener != null) {
+            mOnRetryClickListener.onRetry();
+        }
     }
 
     public enum TYPE {
         LATEST_POSTS
+    }
+
+    public enum STATE_SHOWN {
+        LOADING,
+        ERROR,
+        COMPLETE
+    }
+
+    public interface OnRetryClickListener {
+        void onRetry();
     }
 }

@@ -30,7 +30,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.util.Log;
+import android.text.TextUtils;
+
+import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import static android.content.ContentValues.TAG;
 
@@ -74,34 +77,108 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(getCreatePostsTableSqlQuery());
+        db.execSQL(getCreateUsersTableSqlQuery());
+        db.execSQL(getCreateCommentsTableSqlQuery());
+        db.execSQL(getCreateInstallLinksTableSqlQuery());
+        db.execSQL(getCreateMediaTableSqlQuery());
     }
 
     private String getCreatePostsTableSqlQuery() {
         return "CREATE TABLE " + PredatorContract.PostsEntry.TABLE_NAME + "(" +
                 PredatorContract.PostsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                PredatorContract.PostsEntry.COLUMN_POST_ID + " INTEGER, " +
+                PredatorContract.PostsEntry.COLUMN_POST_ID + " INTEGER UNIQUE, " +
                 PredatorContract.PostsEntry.COLUMN_CATEGORY_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_DAY + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_NAME + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_TAGLINE + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_CREATED_AT + " TEXT, " +
+                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_REDIRECT_URL + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL + " TEXT, " +
+                PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_NAME + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_USERNAME + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_ID + " INTEGER, " +
-                PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_48PX + " TEXT, " +
+                PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT);";
+    }
+
+    private String getCreateUsersTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.UsersEntry.TABLE_NAME + "(" +
+                PredatorContract.UsersEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.UsersEntry.COLUMN_USER_ID + " INTEGER UNIQUE, " +
+                PredatorContract.UsersEntry.COLUMN_CREATED_AT + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_NAME + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_USERNAME + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_WEBSITE_URL + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS + " TEXT);";
+    }
+
+    private String getCreateCommentsTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.CommentsEntry.TABLE_NAME + "(" +
+                PredatorContract.CommentsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.CommentsEntry.COLUMN_COMMENT_ID + " INTEGER UNIQUE, " +
+                PredatorContract.CommentsEntry.COLUMN_BODY + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_CREATED_AT + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_POST_ID + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_ID + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_CREATED_AT + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_NAME + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_USERNAME + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_VOTES + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_IS_STICKY + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_IS_MAKER + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_IS_HUNTER + " INTEGER, " +
+                PredatorContract.CommentsEntry.COLUMN_IS_LIVE_GUEST + " INTEGER);";
+    }
+
+    private String getCreateInstallLinksTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.InstallLinksEntry.TABLE_NAME + "(" +
+                PredatorContract.InstallLinksEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID + " INTEGER UNIQUE, " +
+                PredatorContract.InstallLinksEntry.COLUMN_POST_ID + " INTEGER, " +
+                PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT + " TEXT, " +
+                PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK + " INTEGER, " +
+                PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL + " TEXT, " +
+                PredatorContract.InstallLinksEntry.COLUMN_PLATFORM + " TEXT);";
+    }
+
+    private String getCreateMediaTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.MediaEntry.TABLE_NAME + "(" +
+                PredatorContract.MediaEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.MediaEntry.COLUMN_MEDIA_ID + " INTEGER UNIQUE, " +
+                PredatorContract.MediaEntry.COLUMN_POST_ID + " INTEGER, " +
+                PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE + " TEXT, " +
+                PredatorContract.MediaEntry.COLUMN_PLATFORM + " TEXT, " +
+                PredatorContract.MediaEntry.COLUMN_VIDEO_ID + " TEXT, " +
+                PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH + " INTEGER, " +
+                PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT + " INTEGER, " +
+                PredatorContract.MediaEntry.COLUMN_IMAGE_URL + " TEXT);";
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Remove existing tables from database.
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.PostsEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.UsersEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.CommentsEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.InstallLinksEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.MediaEntry.TABLE_NAME);
+
+        // Recreate the tables.
         onCreate(db);
     }
 
@@ -116,7 +193,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
             db.insertOrThrow(PredatorContract.PostsEntry.TABLE_NAME, null, contentValues);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add posts to database");
+            Logger.e(TAG, "Error while trying to add post to database", e);
         } finally {
             db.endTransaction();
         }
@@ -151,7 +228,279 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                     selectionArgs);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add posts to database");
+            Logger.e(TAG, "Error while trying to delete posts from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addOrUpdateUser(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            int id = contentValues.getAsInteger(PredatorContract.UsersEntry.COLUMN_USER_ID);
+
+            Cursor cursor = db.query(PredatorContract.UsersEntry.TABLE_NAME,
+                    null,
+                    PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + contentValues.getAsInteger(PredatorContract.UsersEntry.COLUMN_USER_ID),
+                    null,
+                    null,
+                    null,
+                    null);
+
+            if (cursor != null && cursor.getCount() != 0) {
+                cursor.moveToFirst();
+
+                String makerPostIds = CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+                if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS) &&
+                        !TextUtils.isEmpty(makerPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS))) {
+                    makerPostIds += "," + contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, makerPostIds);
+                } else if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS) &&
+                        TextUtils.isEmpty(makerPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS))) {
+                    makerPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, makerPostIds);
+                }
+
+                String hunterPostIds = CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS) &&
+                        !TextUtils.isEmpty(hunterPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS))) {
+                    hunterPostIds += "," + contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, hunterPostIds);
+                } else if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS) &&
+                        TextUtils.isEmpty(hunterPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS))) {
+                    hunterPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, hunterPostIds);
+                }
+
+                String votedPostIds = CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS);
+                if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS) &&
+                        !TextUtils.isEmpty(votedPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS))) {
+                    votedPostIds += "," + contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, votedPostIds);
+                } else if (contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS) &&
+                        TextUtils.isEmpty(votedPostIds) &&
+                        !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS))) {
+                    votedPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, votedPostIds);
+                }
+
+                cursor.close();
+
+                db.update(PredatorContract.UsersEntry.TABLE_NAME,
+                        contentValues,
+                        PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + id,
+                        null);
+            } else {
+                db.insertOrThrow(PredatorContract.UsersEntry.TABLE_NAME, null, contentValues);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add/update user to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.UsersEntry.COLUMN_USER_ID);
+    }
+
+    public Cursor getUsers(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.UsersEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllUsers(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.UsersEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete users from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addComment(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.insertOrThrow(PredatorContract.CommentsEntry.TABLE_NAME, null, contentValues);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add comment to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.CommentsEntry.COLUMN_COMMENT_ID);
+    }
+
+    public Cursor getComments(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.CommentsEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllComments(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.CommentsEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete comments from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addInstallLinks(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.insertOrThrow(PredatorContract.InstallLinksEntry.TABLE_NAME, null, contentValues);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add install link to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.InstallLinksEntry.COLUMN_POST_ID);
+    }
+
+    public Cursor getInstallLinks(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.InstallLinksEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllInstallLinks(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.InstallLinksEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete install links from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addMedia(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.insertOrThrow(PredatorContract.MediaEntry.TABLE_NAME, null, contentValues);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add media to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.MediaEntry.COLUMN_MEDIA_ID);
+    }
+
+    public Cursor getMedia(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.MediaEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllMedia(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.MediaEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete media from database", e);
         } finally {
             db.endTransaction();
         }

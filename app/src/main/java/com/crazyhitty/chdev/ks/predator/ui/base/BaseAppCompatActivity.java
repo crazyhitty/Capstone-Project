@@ -31,6 +31,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -47,11 +48,21 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private static final String TAG = "BaseAppCompatActivity";
 
+    // Supporting vector drawable resources on pre lollipop devices.
+    // Source: http://stackoverflow.com/a/38012842
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
 
     protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getSupportFragmentManager(), layoutResId, fragment, addToBackStack);
+    }
+
+    protected void setFragment(@IdRes int layoutResId, android.app.Fragment fragment, boolean addToBackStack) {
+        CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
     }
 
     protected void showLoadingDialog(boolean isCancellable) {

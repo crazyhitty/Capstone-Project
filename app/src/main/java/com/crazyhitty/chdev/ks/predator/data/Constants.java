@@ -52,6 +52,11 @@ public class Constants {
         }
     }
 
+    public static class Media {
+        public static final String IMAGE = "image";
+        public static final String VIDEO = "video";
+    }
+
     public static class SharedPreferences {
         public static final String IS_TOKEN_VALID = "is_token_valid";
         public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";

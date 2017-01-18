@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2016 Kartik Sharma
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_avg">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/image_view_user"
+        android:layout_width="@dimen/item_post_details_comment_image_width"
+        android:layout_height="@dimen/item_post_details_comment_image_height"
+        android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
+        android:contentDescription="@string/item_post_details_comment_user_image_desc"
+        android:padding="@dimen/item_post_details_comment_image_padding"
+        fresco:failureImage="@drawable/ic_image_broken_error"
+        fresco:placeholderImage="@color/colorPrimary"
+        fresco:roundedCornerRadius="@dimen/item_post_details_comment_image_corner_padding" />
+
+    <TextView
+        android:id="@+id/text_view_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_component_lists_right_padding"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:text="Username" />
+
+    <TextView
+        android:id="@+id/text_view_user_headline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_user_name"
+        android:layout_marginEnd="@dimen/material_component_lists_right_padding"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="Headline" />
+
+    <TextView
+        android:id="@+id/text_view_comment_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_user_headline"
+        android:layout_marginEnd="@dimen/material_component_lists_right_padding"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:layout_marginTop="@dimen/margin_min"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:textAppearance="@style/TextAppearanceComment"
+        tools:text="@string/lorem_ipsum" />
+
+</RelativeLayout>

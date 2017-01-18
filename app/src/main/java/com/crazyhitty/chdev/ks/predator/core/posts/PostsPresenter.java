@@ -27,13 +27,13 @@ package com.crazyhitty.chdev.ks.predator.core.posts;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
@@ -46,8 +46,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-
-import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolverInstance;
 
 /**
  * Author:      Kartik Sharma
@@ -86,6 +84,7 @@ public class PostsPresenter implements PostsContract.Presenter {
     public void unSubscribe() {
         mCompositeSubscription.clear();
         if (mCursor != null) {
+            Logger.d(TAG, "unSubscribe: cursor closed");
             mCursor.close();
         }
     }
@@ -100,7 +99,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 null,
                                 null,
                                 null,
-                                null);
+                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
                 if (cursor != null && cursor.getCount() != 0) {
                     dateMatcher(cursor);
                     subscriber.onNext(cursor);
@@ -110,7 +109,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                 subscriber.onCompleted();
             }
         });
-        postsDataObservable.subscribeOn(Schedulers.newThread());
+        postsDataObservable.subscribeOn(Schedulers.io());
         postsDataObservable.observeOn(AndroidSchedulers.mainThread());
 
         mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Cursor>() {
@@ -121,14 +120,14 @@ public class PostsPresenter implements PostsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG, "onError: " + e.getMessage(), e);
-                mView.unableToGetPosts(false, e.getMessage());
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToGetPosts(false, true, e.getMessage());
             }
 
             @Override
             public void onNext(Cursor cursor) {
                 mCursor = cursor;
-                Log.d(TAG, "cursorSize: " + mCursor.getCount());
+                Logger.d(TAG, "cursorSize: " + mCursor.getCount());
                 mView.showPosts(mCursor, mDateHashMap);
             }
         }));
@@ -139,52 +138,79 @@ public class PostsPresenter implements PostsContract.Presenter {
                          final String categoryName,
                          final boolean latest,
                          final boolean clearPrevious) {
+        Logger.d(TAG, "getPosts: called");
         if (clearPrevious) {
             mLoadMore = false;
             mLastDate = DateUtils.getPredatorCurrentDate();
         }
         Observable<Cursor> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
-                .flatMap(new Func1<PostsData, Observable<Cursor>>() {
+                .map(new Func1<PostsData, Cursor>() {
                     @Override
-                    public Observable<Cursor> call(final PostsData postsData) {
+                    public Cursor call(PostsData postsData) {
                         if (clearPrevious) {
-                            getContentResolverInstance()
+                            MainApplication.getContentResolverInstance()
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                                             null,
                                             null);
+                            MainApplication.getContentResolverInstance()
+                                    .delete(PredatorContract.UsersEntry.CONTENT_URI_USERS_DELETE,
+                                            null,
+                                            null);
+                            MainApplication.getContentResolverInstance()
+                                    .delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
+                                            null,
+                                            null);
                         }
+
+                        if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
+                            return null;
+                        }
+
+                        for (PostsData.Posts post : postsData.getPosts()) {
+                            Logger.d(TAG, "post: " + post.getName());
+                            MainApplication.getContentResolverInstance()
+                                    .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
+                                            getContentValuesForPosts(post));
+
+                            // Add/update users.
+                            MainApplication.getContentResolverInstance()
+                                    .insert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
+                                            getContentValuesForHunterUser(post.getId(), post.getUser()));
+                            for (PostsData.Posts.Makers maker : post.getMakers()) {
+                                MainApplication.getContentResolverInstance()
+                                        .insert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
+                                                getContentValuesForMakerUser(post.getId(), maker));
+                            }
+                        }
+                        Cursor cursor = MainApplication.getContentResolverInstance()
+                                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                                        null,
+                                        null,
+                                        null,
+                                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+                        return cursor;
+                    }
+                })
+                .flatMap(new Func1<Cursor, Observable<Cursor>>() {
+                    @Override
+                    public Observable<Cursor> call(final Cursor cursor) {
+
                         return Observable.create(new Observable.OnSubscribe<Cursor>() {
                             @Override
                             public void call(Subscriber<? super Cursor> subscriber) {
-                                if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
-                                    loadMorePosts(token, categoryName, latest);
-                                    return;
-                                }
-
-                                for (PostsData.Posts post : postsData.getPosts()) {
-                                    MainApplication.getContentResolverInstance()
-                                            .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
-                                                    getContentValuesBasedOnPosts(post));
-                                }
-                                Cursor cursor = MainApplication.getContentResolverInstance()
-                                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                                null,
-                                                null,
-                                                null,
-                                                null);
                                 if (cursor != null && cursor.getCount() != 0) {
                                     dateMatcher(cursor);
                                     subscriber.onNext(cursor);
                                 } else {
-                                    subscriber.onError(new NoPostsAvailableException());
+                                    loadMorePosts(token, categoryName, latest);
                                 }
                                 subscriber.onCompleted();
                             }
                         });
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
         mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Cursor>() {
@@ -195,14 +221,14 @@ public class PostsPresenter implements PostsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG, "onError: " + e.getMessage(), e);
-                mView.unableToGetPosts(mLoadMore, e.getMessage());
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToGetPosts(mLoadMore, false, e.getMessage());
             }
 
             @Override
             public void onNext(Cursor cursor) {
                 mCursor = cursor;
-                Log.d(TAG, "cursorSize: " + mCursor.getCount());
+                Logger.d(TAG, "cursorSize: " + mCursor.getCount());
                 mView.showPosts(mCursor, mDateHashMap);
             }
         }));
@@ -210,7 +236,7 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     @Override
     public void loadMorePosts(String token, String categoryName, boolean latest) {
-        mLastDate = DateUtils.getPredatorPreviousDate(mLastDate);
+        mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
         mLoadMore = true;
         getPosts(token, categoryName, latest, false);
     }
@@ -228,7 +254,7 @@ public class PostsPresenter implements PostsContract.Presenter {
             // Match post date with current date
             String date = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
 
-            String dateToBeShown = DateUtils.getPredatorPostsDate(date);
+            String dateToBeShown = DateUtils.getPredatorPostDate(date);
 
             if (!mDateHashMap.containsValue(dateToBeShown)) {
                 mDateHashMap.put(i, dateToBeShown);
@@ -237,7 +263,7 @@ public class PostsPresenter implements PostsContract.Presenter {
         }
     }
 
-    private ContentValues getContentValuesBasedOnPosts(PostsData.Posts post) {
+    private ContentValues getContentValuesForPosts(PostsData.Posts post) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, post.getCategoryId());
@@ -246,17 +272,42 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, post.getTagline());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, post.getCommentsCount());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, post.getCreatedAt());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(post.getCreatedAt()));
         contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, post.getDiscussionUrl());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, post.getRedirectUrl());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, post.getVotesCount());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, post.getThumbnail().getImageUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, post.getThumbnail().getOriginalImageUrl());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, post.getScreenshotUrl().getValue300px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, post.getScreenshotUrl().getValue850px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, post.getUser().getName());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, post.getUser().getUsername());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, post.getUser().getId());
-        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_48PX, post.getUser().getImageUrl().getValue48px());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, post.getUser().getImageUrl().getValue100px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
+        return contentValues;
+    }
+
+    private ContentValues getContentValuesForHunterUser(int postId, PostsData.Posts.User user) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, user.getId());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, user.getName());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, user.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, user.getImageUrl().getValue100px());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, user.getImageUrl().getOriginal());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, postId);
+        return contentValues;
+    }
+
+    private ContentValues getContentValuesForMakerUser(int postId, PostsData.Posts.Makers maker) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, maker.getId());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, maker.getCreatedAt());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, maker.getName());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, maker.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, maker.getImageUrlMaker().getValue48px());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, maker.getImageUrlMaker().getOriginal());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, postId);
         return contentValues;
     }
 

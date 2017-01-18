@@ -31,11 +31,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthContract;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthPresenter;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -96,6 +96,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
     @Override
     public void unableToFetchAuthToken(String errorMessage) {
-        Log.d(TAG, "unableToFetchAuthToken: " + errorMessage);
+        Logger.d(TAG, "unableToFetchAuthToken: " + errorMessage);
     }
 }

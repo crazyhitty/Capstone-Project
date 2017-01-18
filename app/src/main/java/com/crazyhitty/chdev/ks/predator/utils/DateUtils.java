@@ -38,8 +38,12 @@ import java.util.Locale;
  */
 
 public class DateUtils {
+    private static final String TAG = "DateUtils";
+
     private static final String PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT = "yyyy-MM-dd";
     private static final String PREDATOR_DATE_PATTERN_FINAL_FORMAT = "MMMM d";
+    private static final String PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String PREDATOR_COMPLETE_DATE_PATTERN_FINAL_FORMAT = "EEE, d MMM yyyy h:mm a";
 
     private DateUtils() {
 
@@ -54,12 +58,30 @@ public class DateUtils {
     }
 
     /**
+     * Convert post publish date into milliseconds.
+     *
+     * @param date    Post publish date in complete date format
+     * @return Returns time in milliseconds according to the date provided.
+     */
+    public static long predatorDateToMillis(String date) {
+        Date providedDate = null;
+        try {
+            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+                    .parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return providedDate.getTime();
+    }
+
+    /**
      * Get previous date from current.
      *
      * @param date Post publish date in default date format
      * @return Returns one day before date from provided date.
      */
-    public static String getPredatorPreviousDate(String date) {
+    public static String getPredatorPostPreviousDate(String date) {
         Date providedDate = null;
         try {
             providedDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
@@ -83,7 +105,7 @@ public class DateUtils {
      * @param date Post publish date
      * @return A valid string which can either be "Today", "Yesterday" or some other date.
      */
-    public static String getPredatorPostsDate(String date) {
+    public static String getPredatorPostDate(String date) {
         Calendar currentCalendar = Calendar.getInstance();
         Calendar providedCalendar = Calendar.getInstance();
 
@@ -97,16 +119,43 @@ public class DateUtils {
         }
 
         providedCalendar.setTime(providedDate);
+        String newDate = null;
 
         switch (daysBetween(currentCalendar, providedCalendar)) {
             case 0:
-                return "Today";
+                newDate = "Today";
+                Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
+                return newDate;
             case 1:
-                return "Yesterday";
+                newDate = "Yesterday";
+                Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
+                return newDate;
             default:
-                return new SimpleDateFormat(PREDATOR_DATE_PATTERN_FINAL_FORMAT, Locale.US)
+                newDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_FINAL_FORMAT, Locale.US)
                         .format(providedDate);
+                Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
+                return newDate;
         }
+    }
+
+    /**
+     * Get complete post publish date.
+     *
+     * @param date Post publish date, in complete format (Example: 2017-01-11T00:07:13.396-08:00)
+     * @return Post publish date in appropriate format (Example: Thu, 13 Jan 2017 1:58 PM).
+     */
+    public static String getPredatorPostCompleteDate(String date) {
+        Date providedDate = null;
+        try {
+            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+                    .parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return date;
+        }
+
+        return new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_FINAL_FORMAT, Locale.US)
+                .format(providedDate);
     }
 
     /**

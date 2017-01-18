@@ -42,7 +42,7 @@ public interface PostsContract {
     interface View extends BaseView<Presenter> {
         void showPosts(Cursor cursorPosts, HashMap<Integer, String> dateHashMap);
 
-        void unableToGetPosts(boolean onLoadMore, String errorMessage);
+        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
     }
 
     interface Presenter extends BasePresenter {

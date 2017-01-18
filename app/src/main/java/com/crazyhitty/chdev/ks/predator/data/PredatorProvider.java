@@ -47,6 +47,22 @@ public class PredatorProvider extends ContentProvider {
     private static final int POSTS_DELETE = 101;
     private static final int POSTS_GET = 102;
     private static final int POSTS_GET_BY_ID = 103;
+    private static final int USERS_ADD = 200;
+    private static final int USERS_DELETE = 201;
+    private static final int USERS_GET = 202;
+    private static final int USERS_GET_BY_ID = 203;
+    private static final int COMMENTS_ADD = 300;
+    private static final int COMMENTS_DELETE = 301;
+    private static final int COMMENTS_GET = 302;
+    private static final int COMMENTS_GET_BY_ID = 303;
+    private static final int INSTALL_LINKS_ADD = 400;
+    private static final int INSTALL_LINKS_DELETE = 401;
+    private static final int INSTALL_LINKS_GET = 402;
+    private static final int INSTALL_LINKS_GET_BY_ID = 403;
+    private static final int MEDIA_ADD = 500;
+    private static final int MEDIA_DELETE = 501;
+    private static final int MEDIA_GET = 502;
+    private static final int MEDIA_GET_BY_ID = 503;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private PredatorDbHelper mPredatorDbHelper;
@@ -57,6 +73,22 @@ public class PredatorProvider extends ContentProvider {
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS_DELETE_ALL, POSTS_DELETE);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS, POSTS_GET);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS + "/#", POSTS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS_ADD, USERS_ADD);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS_DELETE_ALL, USERS_DELETE);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS, USERS_GET);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS + "/#", USERS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CommentsEntry.PATH_COMMENTS_ADD, COMMENTS_ADD);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CommentsEntry.PATH_COMMENTS_DELETE_ALL, COMMENTS_DELETE);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CommentsEntry.PATH_COMMENTS, COMMENTS_GET);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CommentsEntry.PATH_COMMENTS + "/#", COMMENTS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.InstallLinksEntry.PATH_INSTALL_LINKS_ADD, INSTALL_LINKS_ADD);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.InstallLinksEntry.PATH_INSTALL_LINKS_DELETE_ALL, INSTALL_LINKS_DELETE);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.InstallLinksEntry.PATH_INSTALL_LINKS, INSTALL_LINKS_GET);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.InstallLinksEntry.PATH_INSTALL_LINKS + "/#", INSTALL_LINKS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.MediaEntry.PATH_MEDIA_ADD, MEDIA_ADD);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.MediaEntry.PATH_MEDIA_DELETE_ALL, MEDIA_DELETE);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.MediaEntry.PATH_MEDIA, MEDIA_GET);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.MediaEntry.PATH_MEDIA + "/#", MEDIA_GET_BY_ID);
         return uriMatcher;
     }
 
@@ -72,6 +104,14 @@ public class PredatorProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case POSTS_GET:
                 return mPredatorDbHelper.getPosts(projection, selection, selectionArgs, sortOrder);
+            case USERS_GET:
+                return mPredatorDbHelper.getUsers(projection, selection, selectionArgs, sortOrder);
+            case COMMENTS_GET:
+                return mPredatorDbHelper.getComments(projection, selection, selectionArgs, sortOrder);
+            case INSTALL_LINKS_GET:
+                return mPredatorDbHelper.getInstallLinks(projection, selection, selectionArgs, sortOrder);
+            case MEDIA_GET:
+                return mPredatorDbHelper.getMedia(projection, selection, selectionArgs, sortOrder);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -85,6 +125,22 @@ public class PredatorProvider extends ContentProvider {
                 return PredatorContract.PostsEntry.CONTENT_TYPE;
             case POSTS_GET_BY_ID:
                 return PredatorContract.PostsEntry.CONTENT_ITEM_TYPE;
+            case USERS_GET:
+                return PredatorContract.UsersEntry.CONTENT_TYPE;
+            case USERS_GET_BY_ID:
+                return PredatorContract.UsersEntry.CONTENT_ITEM_TYPE;
+            case COMMENTS_GET:
+                return PredatorContract.CommentsEntry.CONTENT_TYPE;
+            case COMMENTS_GET_BY_ID:
+                return PredatorContract.CommentsEntry.CONTENT_ITEM_TYPE;
+            case INSTALL_LINKS_GET:
+                return PredatorContract.InstallLinksEntry.CONTENT_TYPE;
+            case INSTALL_LINKS_GET_BY_ID:
+                return PredatorContract.InstallLinksEntry.CONTENT_ITEM_TYPE;
+            case MEDIA_GET:
+                return PredatorContract.MediaEntry.CONTENT_TYPE;
+            case MEDIA_GET_BY_ID:
+                return PredatorContract.MediaEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -105,6 +161,38 @@ public class PredatorProvider extends ContentProvider {
                     throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
                 }
                 return returnUri;
+            case USERS_ADD:
+                id = mPredatorDbHelper.addOrUpdateUser(values);
+                if (id > 0) {
+                    returnUri = PredatorContract.UsersEntry.buildUsersUri(id);
+                } else {
+                    throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                }
+                return returnUri;
+            case COMMENTS_ADD:
+                id = mPredatorDbHelper.addComment(values);
+                if (id > 0) {
+                    returnUri = PredatorContract.CommentsEntry.buildCommentsUri(id);
+                } else {
+                    throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                }
+                return returnUri;
+            case INSTALL_LINKS_ADD:
+                id = mPredatorDbHelper.addInstallLinks(values);
+                if (id > 0) {
+                    returnUri = PredatorContract.InstallLinksEntry.buildInstallLinksUri(id);
+                } else {
+                    throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                }
+                return returnUri;
+            case MEDIA_ADD:
+                id = mPredatorDbHelper.addMedia(values);
+                if (id > 0) {
+                    returnUri = PredatorContract.MediaEntry.buildMediaUri(id);
+                } else {
+                    throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                }
+                return returnUri;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
@@ -116,6 +204,14 @@ public class PredatorProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case POSTS_DELETE:
                 return mPredatorDbHelper.deleteAllPosts(selection, selectionArgs);
+            case USERS_DELETE:
+                return mPredatorDbHelper.deleteAllUsers(selection, selectionArgs);
+            case COMMENTS_DELETE:
+                return mPredatorDbHelper.deleteAllComments(selection, selectionArgs);
+            case INSTALL_LINKS_DELETE:
+                return mPredatorDbHelper.deleteAllInstallLinks(selection, selectionArgs);
+            case MEDIA_DELETE:
+                return mPredatorDbHelper.deleteAllMedia(selection, selectionArgs);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 

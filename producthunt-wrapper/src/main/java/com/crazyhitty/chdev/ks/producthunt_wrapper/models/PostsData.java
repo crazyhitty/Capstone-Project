@@ -333,6 +333,10 @@ public class PostsData {
             public void setImageUrl(String imageUrl) {
                 this.imageUrl = imageUrl;
             }
+
+            public String getOriginalImageUrl() {
+                return imageUrl.replace("h=570&w=430", "h=original&w=original");
+            }
         }
 
         public static class User {
@@ -340,7 +344,7 @@ public class PostsData {
              * id : 347650
              * name : Umit Akcan
              * username : umitakcn
-             * image_url : {"48px":"https://ph-avatars.imgix.net/347650/original?auto=format&fit=crop&crop=faces&w=48&h=48","original":"https://ph-avatars.imgix.net/347650/original?auto=format&fit=crop&crop=faces&w=original&h=original"}
+             * image_url : {"48px":"https://ph-avatars.imgix.net/347650/original?auto=format&fit=crop&crop=faces&w=100&h=100","original":"https://ph-avatars.imgix.net/347650/original?auto=format&fit=crop&crop=faces&w=original&h=original"}
              */
 
             private int id;
@@ -387,16 +391,16 @@ public class PostsData {
                  * original : https://ph-avatars.imgix.net/347650/original?auto=format&fit=crop&crop=faces&w=original&h=original
                  */
 
-                @SerializedName("48px")
-                private String value48px;
+                @SerializedName("100px")
+                private String value100px;
                 private String original;
 
-                public String getValue48px() {
-                    return value48px;
+                public String getValue100px() {
+                    return value100px;
                 }
 
-                public void setValue48px(String value48px) {
-                    this.value48px = value48px;
+                public void setValue100px(String value100px) {
+                    this.value100px = value100px;
                 }
 
                 public String getOriginal() {

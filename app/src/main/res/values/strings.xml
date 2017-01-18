@@ -72,8 +72,45 @@
     <string name="posts_hunting_more_posts">Hunting more posts!</string>
     <string name="posts_date_today">Today</string>
     <string name="posts_date_yesterday">Yesterday</string>
+    <string name="posts_successfully_loaded_posts">Success, here ya go!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>
     <string name="loading_view_latest_posts">latest posts</string>
+    <string name="loading_view_image_desc">Notification image</string>
+
+    <!--post details-->
+    <string name="post_details_title">Post Details</string>
+    <string name="post_details_users">Users</string>
+    <string name="post_details_media">Media</string>
+    <string name="post_details_comments">Comments</string>
+    <string name="post_details_loading_please_wait">Please wait&#8230;</string>
+    <string name="post_details_unavailable">Unavailable currently.</string>
+
+    <!--item post user-->
+    <string name="item_post_user_image_desc">User image</string>
+    <string name="item_post_user_both">Hunter &amp; Maker</string>
+    <string name="item_post_user_hunter">Hunter</string>
+    <string name="item_post_user_maker">Maker</string>
+    <string name="item_post_user_voted">Voted</string>
+
+    <!--item media-->
+    <string name="item_media_image_desc">Media Image</string>
+    <string name="item_media_image_type">Media Image Type</string>
+
+    <!--item post details comments-->
+    <string name="item_post_details_comment_user_image_desc">User image</string>
+
+    <!--settings-->
+    <string name="settings_name">Settings</string>
+    <string name="settings_system">System</string>
+    <string name="settings_clear_cache_key">clear_cache</string>
+    <string name="settings_clear_cache_title">Clear cache</string>
+    <string name="settings_clear_cache_summary">Clear entire cache powering offline state of this application.</string>
+    <string name="settings_clear_cache_dialog_title">Clear cache</string>
+    <string name="settings_clear_cache_dialog_summary">Clear entire cache powering offline state of this application including existing database. Don\'t worry, this will not reset your login credentials.</string>
+    <string name="settings_clear_cache_dialog_yes">Clear</string>
+    <string name="settings_clear_cache_dialog_no">Cancel</string>
+    <string name="settings_clear_cache_success_message">Successfully cleared cache.</string>
+    <string name="settings_clear_cache_failure_message">Unable to wipe cache, please try again :(</string>
 </resources>

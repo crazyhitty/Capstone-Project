@@ -28,6 +28,7 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.MyProfileData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 
@@ -58,6 +59,10 @@ public interface ProductHuntService {
     Observable<PostsData> getPostsCategoryWise(@Header(Constants.AUTHORIZATION) String authorization,
                                                @Path(Constants.CATEGORY_NAME) String categoryName,
                                                @Query(Constants.DAY) String day);
+
+    @GET(ApiUrls.GET_POSTS_DETAILS)
+    Observable<PostDetailsData> getPostDetails(@Header(Constants.AUTHORIZATION) String authorization,
+                                               @Path(Constants.POST_ID) int postId);
 
     @GET(ApiUrls.GET_POST_COMMENTS)
     Observable<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,

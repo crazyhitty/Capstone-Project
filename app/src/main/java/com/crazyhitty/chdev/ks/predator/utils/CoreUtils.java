@@ -67,6 +67,26 @@ public class CoreUtils {
     }
 
     /**
+     * Set the fragment(non-support) on the particular layout programmatically.
+     *
+     * @param fragmentManager FragmentManager
+     * @param layoutResId     Layout which will contain this new fragment
+     * @param fragment        Fragment to be set
+     * @param addToBackStack  Add this fragment to fragment manager backstack or not
+     */
+    public static void setFragment(@NonNull android.app.FragmentManager fragmentManager,
+                                   @IdRes int layoutResId,
+                                   @NonNull android.app.Fragment fragment,
+                                   boolean addToBackStack) {
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
+                .replace(layoutResId, fragment);
+        if (addToBackStack) {
+            fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
+        fragmentTransaction.commit();
+    }
+
+    /**
      * Starts a new activity.
      *
      * @param context  Current context of the application
