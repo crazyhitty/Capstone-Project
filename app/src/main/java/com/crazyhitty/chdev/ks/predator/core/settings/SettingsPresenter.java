@@ -79,6 +79,21 @@ public class SettingsPresenter implements SettingsContract.Presenter {
                         .delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
                                 null,
                                 null);
+                // Delete all values from install_links_table.
+                MainApplication.getContentResolverInstance()
+                        .delete(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_DELETE,
+                                null,
+                                null);
+                // Delete all values from media_table.
+                MainApplication.getContentResolverInstance()
+                        .delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
+                                null,
+                                null);
+                // Delete all values from collections_table.
+                MainApplication.getContentResolverInstance()
+                        .delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
+                                null,
+                                null);
 
                 // Clear fresco cache.
                 Fresco.getImagePipeline().clearCaches();

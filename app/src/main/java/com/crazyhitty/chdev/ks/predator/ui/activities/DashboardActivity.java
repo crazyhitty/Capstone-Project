@@ -27,9 +27,11 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -38,6 +40,7 @@ import android.view.MenuItem;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.PostsFragment;
 
 import butterknife.BindView;
@@ -138,11 +141,14 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         drawerLayoutDashboard.closeDrawer(GravityCompat.START);
         switch (item.getItemId()) {
             case R.id.nav_posts:
+                setFragmentOnDashboard(PostsFragment.newInstance());
                 return true;
             case R.id.nav_collections:
+                setFragmentOnDashboard(CollectionFragment.newInstance());
                 return true;
-            case R.id.nav_bookmarks:
-                return true;
+            // TODO: Impement after bookmarks functionality is completed.
+            /*case R.id.nav_bookmarks:
+                return true;*/
             case R.id.nav_my_profile:
                 return false;
             case R.id.nav_settings:
@@ -163,6 +169,19 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             drawerLayoutDashboard.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void setFragmentOnDashboard(final Fragment fragment) {
+        if (!isFragmentVisible(fragment)) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setFragment(R.id.frame_layout_dashboard_container,
+                            fragment,
+                            false);
+                }
+            }, 300);
         }
     }
 }

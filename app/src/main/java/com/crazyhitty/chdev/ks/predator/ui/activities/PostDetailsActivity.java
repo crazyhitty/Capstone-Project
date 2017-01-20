@@ -30,7 +30,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -51,7 +50,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 /**
@@ -80,8 +78,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
     TextView txtPostDate;
     @BindView(R.id.image_view_post)
     SimpleDraweeView imgViewPost;
-    @BindView(R.id.fab_bookmark)
-    FloatingActionButton fabBookmark;
+    /*@BindView(R.id.fab_bookmark)
+    FloatingActionButton fabBookmark;*/
 
     public static void startActivity(Context context, int id, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
@@ -204,10 +202,10 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
         getSupportActionBar().setTitle(postDetails.getTitle());
     }
 
-    @OnClick(R.id.fab_bookmark)
+    /*@OnClick(R.id.fab_bookmark)
     public void onBookmark() {
         fabBookmark.setSelected(!fabBookmark.isSelected());
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

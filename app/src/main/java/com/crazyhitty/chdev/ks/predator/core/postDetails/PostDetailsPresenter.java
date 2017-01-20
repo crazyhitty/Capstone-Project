@@ -25,13 +25,19 @@
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -70,7 +76,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private CompositeSubscription mCompositeSubscription;
 
     private Cursor mPostDetailsCursor;
-    private Cursor mInstallLinksCursor;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
@@ -301,8 +306,29 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 null);
 
                                 if (installLinksCursor != null && installLinksCursor.getCount() != 0) {
-                                    subscriber.onNext(new PostDetailsDataType(PostDetailsDataType.TYPE.INSTALL_LINKS,
-                                            installLinksCursor));
+                                    List<InstallLink> installLinks = new ArrayList<InstallLink>();
+
+                                    for (int i = 0; i < installLinksCursor.getCount(); i++) {
+                                        installLinksCursor.moveToPosition(i);
+
+                                        InstallLink installLink = new InstallLink();
+                                        installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
+                                        installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
+                                        installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
+                                        installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
+                                        installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
+                                        installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
+                                        installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
+
+                                        installLinks.add(installLink);
+                                    }
+
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setInstallLinks(installLinks);
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+
+                                    subscriber.onNext(postDetailsDataType);
+                                    installLinksCursor.close();
                                 } else {
                                     subscriber.onError(new InstallLinksUnavailableException());
                                 }
@@ -405,6 +431,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 } else if (e instanceof VotedUsersUnavailableException) {
                     mView.unableToFetchAllUsers(e.getMessage());
                 }
+                mView.dismissLoading();
             }
 
             @Override
@@ -417,13 +444,13 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         mView.showComments(postDetailsDataType.getComments());
                         break;
                     case INSTALL_LINKS:
-                        mInstallLinksCursor = postDetailsDataType.getCursor();
-                        mView.attachInstallLinks(mInstallLinksCursor);
+                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
                         break;
                     case USERS_VOTED:
                         mView.showAllUsers(postDetailsDataType.getUsers());
                         break;
                 }
+                mView.dismissLoading();
             }
         }));
     }
@@ -491,11 +518,31 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (installLinksCursor != null && installLinksCursor.getCount() != 0) {
-                    subscriber.onNext(new PostDetailsDataType(PostDetailsDataType.TYPE.INSTALL_LINKS,
-                            installLinksCursor));
+                    List<InstallLink> installLinks = new ArrayList<InstallLink>();
+
+                    for (int i = 0; i < installLinksCursor.getCount(); i++) {
+                        installLinksCursor.moveToPosition(i);
+
+                        InstallLink installLink = new InstallLink();
+                        installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
+                        installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
+                        installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
+                        installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
+                        installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
+                        installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
+                        installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
+
+                        installLinks.add(installLink);
+                    }
+
+                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                    postDetailsDataType.setInstallLinks(installLinks);
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+
+                    subscriber.onNext(postDetailsDataType);
+                    installLinksCursor.close();
                 } else {
                     subscriber.onError(new InstallLinksUnavailableException());
-                    return;
                 }
 
                 Cursor cursorUsers = MainApplication.getContentResolverInstance()
@@ -592,6 +639,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     mView.unableToFetchAllUsers(e.getMessage());
                 }
                 mView.noOfflineDataAvailable();
+                mView.dismissLoading();
             }
 
             @Override
@@ -604,15 +652,46 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         mView.showComments(postDetailsDataType.getComments());
                         break;
                     case INSTALL_LINKS:
-                        mInstallLinksCursor = postDetailsDataType.getCursor();
-                        mView.attachInstallLinks(mInstallLinksCursor);
+                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
                         break;
                     case USERS_VOTED:
                         mView.showAllUsers(postDetailsDataType.getUsers());
                         break;
                 }
+                mView.dismissLoading();
             }
         }));
+    }
+
+    @Override
+    public void openRedirectUrl(Context context) {
+        if (mPostDetailsCursor == null || mPostDetailsCursor.getCount() == 0) {
+            Toast.makeText(context, R.string.post_details_no_redirect_url_available, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mPostDetailsCursor.moveToFirst();
+
+        String redirectUrl = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
+
+        if (TextUtils.isEmpty(redirectUrl)) {
+            Toast.makeText(context, R.string.post_details_no_redirect_url_available, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(redirectUrl));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void sharePostDetails(Context context) {
+        Toast.makeText(context, R.string.not_yet_implemented, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -626,9 +705,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         Logger.d(TAG, "unSubscribe: cursor closed");
         if (mPostDetailsCursor != null) {
             mPostDetailsCursor.close();
-        }
-        if (mInstallLinksCursor != null) {
-            mInstallLinksCursor.close();
         }
     }
 
@@ -803,18 +879,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     private static class PostDetailsDataType {
         private TYPE type;
-        private Cursor cursor;
         private List<User> users;
         private List<Comment> comments;
         private List<Media> media;
-
-        public PostDetailsDataType() {
-        }
-
-        public PostDetailsDataType(TYPE type, Cursor cursor) {
-            this.type = type;
-            this.cursor = cursor;
-        }
+        private List<InstallLink> installLinks;
 
         public TYPE getType() {
             return type;
@@ -822,14 +890,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
         public void setType(TYPE type) {
             this.type = type;
-        }
-
-        public Cursor getCursor() {
-            return cursor;
-        }
-
-        public void setCursor(Cursor cursor) {
-            this.cursor = cursor;
         }
 
         public List<User> getUsers() {
@@ -854,6 +914,14 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
         public void setMedia(List<Media> media) {
             this.media = media;
+        }
+
+        public List<InstallLink> getInstallLinks() {
+            return installLinks;
+        }
+
+        public void setInstallLinks(List<InstallLink> installLinks) {
+            this.installLinks = installLinks;
         }
 
         enum TYPE {

@@ -24,11 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.User;
 
@@ -49,7 +51,7 @@ public interface PostDetailsContract {
 
         void showMedia(List<Media> media);
 
-        void attachInstallLinks(Cursor cursor);
+        void attachInstallLinks(List<InstallLink> installLinks);
 
         void showAllUsers(List<User> users);
 
@@ -68,6 +70,8 @@ public interface PostDetailsContract {
         void unableToFetchComments(String errorMessage);
 
         void noOfflineDataAvailable();
+
+        void dismissLoading();
     }
 
     interface Presenter extends BasePresenter {
@@ -78,5 +82,9 @@ public interface PostDetailsContract {
         void getExtraDetails(String token, int postId);
 
         void getExtraDetailsOffline(int postId);
+
+        void openRedirectUrl(Context context);
+
+        void sharePostDetails(Context context);
     }
 }

@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -81,6 +81,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         db.execSQL(getCreateCommentsTableSqlQuery());
         db.execSQL(getCreateInstallLinksTableSqlQuery());
         db.execSQL(getCreateMediaTableSqlQuery());
+        db.execSQL(getCreateCollectionsTableSqlQuery());
     }
 
     private String getCreatePostsTableSqlQuery() {
@@ -169,6 +170,27 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.MediaEntry.COLUMN_IMAGE_URL + " TEXT);";
     }
 
+    private String getCreateCollectionsTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.CollectionsEntry.TABLE_NAME + "(" +
+                PredatorContract.CollectionsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID + " INTEGER UNIQUE, " +
+                PredatorContract.CollectionsEntry.COLUMN_NAME + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_TITLE + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_CREATED_AT + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID + " INTEGER, " +
+                PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS + " INTEGER, " +
+                PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_USER_NAME + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_USER_ID + " INTEGER, " +
+                PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
+                PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT);";
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Remove existing tables from database.
@@ -177,6 +199,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.CommentsEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.InstallLinksEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.MediaEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.CollectionsEntry.TABLE_NAME);
 
         // Recreate the tables.
         onCreate(db);
@@ -501,6 +524,59 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Logger.e(TAG, "Error while trying to delete media from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addCollection(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.insertOrThrow(PredatorContract.CollectionsEntry.TABLE_NAME, null, contentValues);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add collection to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID);
+    }
+
+    public Cursor getCollections(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.CollectionsEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllCollections(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.CollectionsEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete collections from database", e);
         } finally {
             db.endTransaction();
         }

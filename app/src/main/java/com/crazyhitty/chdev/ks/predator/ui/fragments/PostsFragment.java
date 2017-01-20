@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -44,6 +43,7 @@ import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
@@ -56,6 +56,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,7 +71,8 @@ import rx.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class PostsFragment extends BaseSupportFragment implements PostsContract.View, PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
+public class PostsFragment extends BaseSupportFragment implements PostsContract.View,
+        PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
     private static final String TAG = "PostsFragment";
     private static final String CATEGORY_TECH = "tech";
 
@@ -257,7 +259,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetworkConnectivityChanged(NetworkEvent networkEvent) {
         if (mPostsRecyclerAdapter != null && mPostsRecyclerAdapter.getItemCount() != 0) {
-            mPostsRecyclerAdapter.setNetworkStatus(networkEvent.isConnected(), getString(R.string.item_load_more_error_desc));
+            mPostsRecyclerAdapter.setNetworkStatus(networkEvent.isConnected(), getString(R.string.item_load_more_posts_error_desc));
         } else if (networkEvent.isConnected() && loadingView.getCurrentState() == LoadingView.STATE_SHOWN.ERROR) {
             // Get latest posts if internet is available and no offline posts are available currently.
             loadingView.startLoading(LoadingView.TYPE.LATEST_POSTS);
@@ -276,7 +278,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_posts, menu);
+        // TODO: Implement post listing menu functionality.
+        // Don't inflate menu until the functionality supporting it is completed.
+        //inflater.inflate(R.menu.menu_posts, menu);
     }
 
     @Override
@@ -293,10 +297,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
-    public void showPosts(Cursor cursorPosts, HashMap<Integer, String> dateHashMap) {
+    public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
         if (mIsLoading) {
             mIsLoading = false;
-            mPostsRecyclerAdapter.updateCursor(cursorPosts, dateHashMap, false);
+            mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, false);
         } else {
             // Hide loading view
             loadingView.setComplete(getString(R.string.posts_successfully_loaded_posts));
@@ -304,7 +308,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             // Enable swipe refresh layout
             swipeRefreshLayoutPosts.setEnabled(true);
 
-            setListTypeAdapter(cursorPosts, dateHashMap);
+            setListTypeAdapter(posts, dateHashMap);
         }
 
         // Dismiss swipe refresh layout animation if it is going on.
@@ -312,7 +316,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             swipeRefreshLayoutPosts.setRefreshing(false);
         }
 
-        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_error_desc));
+        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
     }
 
     @Override
@@ -334,8 +338,8 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         }
     }
 
-    private void setListTypeAdapter(Cursor cursor, HashMap<Integer, String> dateHashMap) {
-        mPostsRecyclerAdapter.updateCursor(cursor, dateHashMap, true);
+    private void setListTypeAdapter(List<Post> posts, HashMap<Integer, String> dateHashMap) {
+        mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, true);
     }
 
     @Override
@@ -343,6 +347,6 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         if (isNetworkAvailable(true)) {
             loadMorePosts();
         }
-        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_error_desc));
+        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
     }
 }

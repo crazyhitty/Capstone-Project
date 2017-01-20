@@ -73,7 +73,8 @@ public interface ProductHuntService {
     @GET(ApiUrls.GET_COLLECTIONS)
     Observable<CollectionsData> getCollections(@Header(Constants.AUTHORIZATION) String authorization,
                                                @Query(Constants.PAGE) int page,
-                                               @Query(Constants.PER_PAGE) int perPage);
+                                               @Query(Constants.PER_PAGE) int perPage,
+                                               @Query(Constants.SEARCH_FEATURED) boolean isFeatured);
 
     @GET(ApiUrls.MY_PROFILE)
     Observable<MyProfileData> getMyProfile(@Header(Constants.AUTHORIZATION) String authorization);

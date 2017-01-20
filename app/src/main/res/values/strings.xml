@@ -23,6 +23,7 @@
     <string name="settings">Settings</string>
     <string name="retry">Retry</string>
     <string name="not_connected_to_network_err">Not connected to network!</string>
+    <string name="not_yet_implemented">Not yet implemented!</string>
 
     <!--activity_authenticator.xml-->
     <string name="authenticator_continue">Continue</string>
@@ -46,6 +47,10 @@
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
     <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
 
+    <!--menu_post_details.xml-->
+    <string name="menu_post_details_share">Share</string>
+    <string name="menu_post_details_open_redirect_url">Open redirect url</string>
+
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
     <string name="onboard_next">Next</string>
@@ -63,10 +68,10 @@
     <!--item_list_post.xml-->
     <string name="item_list_post_image_desc">Post image</string>
 
-    <!--item_load_more.xml-->
-    <string name="item_load_more_error_image_desc">Error</string>
-    <string name="item_load_more_error_title">Cannot hunt more posts ;(</string>
-    <string name="item_load_more_error_desc">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
+    <!--item_load_more_posts.xml-->
+    <string name="item_load_more_posts_error_image_desc">Error</string>
+    <string name="item_load_more_posts_error_title">Cannot hunt more posts ;(</string>
+    <string name="item_load_more_posts_error_desc">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
 
     <!--posts fragment-->
     <string name="posts_hunting_more_posts">Hunting more posts!</string>
@@ -77,6 +82,7 @@
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>
     <string name="loading_view_latest_posts">latest posts</string>
+    <string name="loading_view_latest_collections">latest collections</string>
     <string name="loading_view_image_desc">Notification image</string>
 
     <!--post details-->
@@ -86,6 +92,7 @@
     <string name="post_details_comments">Comments</string>
     <string name="post_details_loading_please_wait">Please wait&#8230;</string>
     <string name="post_details_unavailable">Unavailable currently.</string>
+    <string name="post_details_no_redirect_url_available">No redirect url avaiable.</string>
 
     <!--item post user-->
     <string name="item_post_user_image_desc">User image</string>
@@ -100,6 +107,14 @@
 
     <!--item post details comments-->
     <string name="item_post_details_comment_user_image_desc">User image</string>
+
+    <!--item collection-->
+    <string name="item_collection_image_desc">Collection backdrop image</string>
+    <string name="item_collection_no_desc_available">No description available</string>
+
+    <!--item_load_more_collection.xml-->
+    <string name="item_load_more_collection_error_title">Cannot hunt more collections ;(</string>
+    <string name="item_load_more_collection_error_desc">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>

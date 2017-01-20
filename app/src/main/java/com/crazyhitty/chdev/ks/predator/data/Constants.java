@@ -55,6 +55,10 @@ public class Constants {
     public static class Media {
         public static final String IMAGE = "image";
         public static final String VIDEO = "video";
+
+        private Media() {
+
+        }
     }
 
     public static class SharedPreferences {

@@ -115,6 +115,7 @@
         android:layout_margin="@dimen/material_component_floating_action_button_margin"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:tint="@color/colorPrimary"
+        android:visibility="gone"
         app:layout_anchor="@id/app_bar_layout"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/selector_bookmark_fab" />

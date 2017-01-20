@@ -28,9 +28,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,6 +47,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
@@ -77,6 +82,8 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     private static final String ARG_POST_TABLE_ID = "id";
     private static final String ARG_POST_TABLE_POST_ID = "post_id";
 
+    @BindView(R.id.swipe_refresh_layout_post_details)
+    SwipeRefreshLayout swipeRefreshLayoutPostDetails;
     @BindView(R.id.recycler_view_post_details)
     RecyclerView recyclerViewPostDetails;
 
@@ -109,7 +116,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
         setPresenter(new PostDetailsPresenter(this));
         mPostDetailsPresenter.subscribe();
         EventBus.getDefault().register(this);
@@ -137,10 +144,12 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
 
         // Always load offline posts details first.
         getPostDetails(getArguments().getInt(ARG_POST_TABLE_POST_ID), true);
+
+        initSwipeRefreshLayout();
     }
 
     private void setPostDetailsRecyclerViewProperties() {
-        // Create a horizontal layout manager for recycler view.
+        // Create a layout manager for recycler view.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerViewPostDetails.setLayoutManager(layoutManager);
 
@@ -189,6 +198,24 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
                 });
     }
 
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayoutPostDetails.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (isNetworkAvailable(true)) {
+                    getPostDetails(getArguments().getInt(ARG_POST_TABLE_POST_ID), false);
+                } else {
+                    swipeRefreshLayoutPostDetails.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayoutPostDetails.setRefreshing(false);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -200,6 +227,26 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     public void onDetach() {
         super.onDetach();
         mOnFragmentInteractionListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_post_details, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_open_redirect_url:
+                mPostDetailsPresenter.openRedirectUrl(getContext());
+                break;
+            case R.id.menu_share:
+                mPostDetailsPresenter.sharePostDetails(getContext());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -226,8 +273,8 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     }
 
     @Override
-    public void attachInstallLinks(Cursor cursor) {
-        Logger.d(TAG, "attachInstallLinks: cursorSize: " + cursor.getCount());
+    public void attachInstallLinks(List<InstallLink> installLinks) {
+        Logger.d(TAG, "attachInstallLinks: installLinks: " + installLinks.size());
     }
 
     @Override
@@ -280,6 +327,17 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         } else {
             mPostDetailsRecyclerAdapter.setUnavailable(true);
         }
+    }
+
+    @Override
+    public void dismissLoading() {
+        Logger.d(TAG, "dismissLoading");
+        swipeRefreshLayoutPostDetails.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayoutPostDetails.setRefreshing(false);
+            }
+        });
     }
 
     @Override

@@ -289,6 +289,10 @@ public class LoadingView extends RelativeLayout {
                 String latestPosts = getResources().getString(R.string.loading_view_latest_posts);
                 txtMessage.setText(String.format(loadingText, latestPosts));
                 break;
+            case LATEST_COLLECTIONS:
+                String latestCollections = getResources().getString(R.string.loading_view_latest_collections);
+                txtMessage.setText(String.format(loadingText, latestCollections));
+                break;
         }
     }
 
@@ -304,7 +308,8 @@ public class LoadingView extends RelativeLayout {
     }
 
     public enum TYPE {
-        LATEST_POSTS
+        LATEST_POSTS,
+        LATEST_COLLECTIONS
     }
 
     public enum STATE_SHOWN {

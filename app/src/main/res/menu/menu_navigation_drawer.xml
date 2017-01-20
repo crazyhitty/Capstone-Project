@@ -32,10 +32,12 @@
             android:id="@+id/nav_collections"
             android:icon="@drawable/ic_collections_24dp"
             android:title="@string/menu_nav_collections" />
-        <item
+        <!--TODO: Work on bookmark functionality.-->
+        <!--Bookmark menu shouldn't be visible to the user until it is complete.-->
+        <!--<item
             android:id="@+id/nav_bookmarks"
             android:icon="@drawable/ic_bookmark_24dp"
-            android:title="@string/menu_nav_bookmarks" />
+            android:title="@string/menu_nav_bookmarks" />-->
     </group>
 
     <item android:title="@string/menu_nav_manage">

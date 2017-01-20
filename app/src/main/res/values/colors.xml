@@ -9,4 +9,5 @@
 
     <color name="color_black_dark">#212121</color>
     <color name="color_grey_alpha">#7d757575</color>
+    <color name="color_collection_overlay">#7d212121</color>
 </resources>

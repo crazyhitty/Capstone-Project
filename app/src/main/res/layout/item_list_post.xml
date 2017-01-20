@@ -63,6 +63,7 @@
             android:id="@+id/text_view_post_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_component_lists_right_padding"
             android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
             android:layout_toStartOf="@+id/checkbox_bookmark"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -73,11 +74,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_view_post_title"
+            android:layout_marginEnd="@dimen/material_component_lists_right_padding"
             android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
             android:layout_toStartOf="@+id/checkbox_bookmark"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="@string/lorem_ipsum" />
 
+        <!--TODO: Work on bookmark functionality.-->
+        <!--Bookmark checkbox shouldn't be visible to the user until it is complete.-->
         <CheckBox
             android:id="@+id/checkbox_bookmark"
             android:layout_width="wrap_content"
@@ -85,7 +89,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/material_component_lists_right_padding"
             android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
-            android:button="@drawable/selector_bookmark" />
+            android:button="@drawable/selector_bookmark"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

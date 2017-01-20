@@ -51,4 +51,11 @@ public class ImageUtils {
     public static String getCustomCommentUserImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
         return imageUrl.replace("w=100&h=100", "w=" + widthPx + "&h=" + heightPx);
     }
+
+    public static String getCustomCollectionImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
+        if (heightPx == 0 || widthPx == 0) {
+            return imageUrl.concat("?h=" + 150 + "&w=" + 200);
+        }
+        return imageUrl.concat("?h=" + heightPx + "&w=" + widthPx);
+    }
 }

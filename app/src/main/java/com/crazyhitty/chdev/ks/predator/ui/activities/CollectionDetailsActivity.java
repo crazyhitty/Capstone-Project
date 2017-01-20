@@ -22,34 +22,25 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.ui.activities;
 
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Post;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     1/20/2017 9:36 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
-
-        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
-    }
-
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
-
-        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
-
-        void loadMorePosts(String token, String categoryName, boolean latest);
+public class CollectionDetailsActivity extends BaseAppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setContentView();
+        //ButterKnife.bind(this);
     }
 }

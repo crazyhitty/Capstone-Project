@@ -49,6 +49,9 @@ class Constants {
     static final String DAYS_AGO = "days_ago";
     static final String DAY = "day";
 
+    // collections
+    static final String SEARCH_FEATURED = "search[featured]";
+
     // comments
     static final String POST_ID = "post_id";
     static final String PAGE = "page";

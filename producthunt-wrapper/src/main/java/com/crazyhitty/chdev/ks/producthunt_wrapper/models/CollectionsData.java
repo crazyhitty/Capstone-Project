@@ -60,18 +60,18 @@ public class CollectionsData {
          * collection_url : https://www.producthunt.com/@joseph_bradley_barnes/collections/cool?utm_campaign=producthunt-api&utm_medium=api&utm_source=Application%3A+Predator+%28ID%3A+3937%29
          * posts_count : 1
          * user : {"id":773438,"name":"Joseph Bradley Barnes","username":"joseph_bradley_barnes","headline":"R&D Engineer","image_url":{"48px":"https://ph-avatars.imgix.net/773438/original?auto=format&fit=crop&crop=faces&w=48&h=48","original":"https://ph-avatars.imgix.net/773438/original?auto=format&fit=crop&crop=faces&w=original&h=original"}}
-         * background_image_url : null
+         * backgroundImageUrl : null
          */
 
         private int id;
         private String name;
-        private Object title;
+        private String title;
         @SerializedName("created_at")
         private String createdAt;
         @SerializedName("updated_at")
         private String updatedAt;
         @SerializedName("featured_at")
-        private Object featuredAt;
+        private String featuredAt;
         @SerializedName("subscriber_count")
         private int subscriberCount;
         @SerializedName("category_id")
@@ -81,7 +81,8 @@ public class CollectionsData {
         @SerializedName("posts_count")
         private int postsCount;
         private User user;
-        private Object background_image_url;
+        @SerializedName("background_image_url")
+        private String backgroundImageUrl;
 
         public int getId() {
             return id;
@@ -99,11 +100,11 @@ public class CollectionsData {
             this.name = name;
         }
 
-        public Object getTitle() {
+        public String getTitle() {
             return title;
         }
 
-        public void setTitle(Object title) {
+        public void setTitle(String title) {
             this.title = title;
         }
 
@@ -123,11 +124,11 @@ public class CollectionsData {
             this.updatedAt = updatedAt;
         }
 
-        public Object getFeaturedAt() {
+        public String getFeaturedAt() {
             return featuredAt;
         }
 
-        public void setFeaturedAt(Object featuredAt) {
+        public void setFeaturedAt(String featuredAt) {
             this.featuredAt = featuredAt;
         }
 
@@ -171,12 +172,12 @@ public class CollectionsData {
             this.user = user;
         }
 
-        public Object getBackground_image_url() {
-            return background_image_url;
+        public String getBackgroundImageUrl() {
+            return backgroundImageUrl;
         }
 
-        public void setBackground_image_url(Object background_image_url) {
-            this.background_image_url = background_image_url;
+        public void setBackgroundImageUrl(String backgroundImageUrl) {
+            this.backgroundImageUrl = backgroundImageUrl;
         }
 
         public static class User {
@@ -237,20 +238,20 @@ public class CollectionsData {
 
             public static class ImageUrl {
                 /**
-                 * 48px : https://ph-avatars.imgix.net/773438/original?auto=format&fit=crop&crop=faces&w=48&h=48
+                 * 48px : https://ph-avatars.imgix.net/773438/original?auto=format&fit=crop&crop=faces&w=100&h=100
                  * original : https://ph-avatars.imgix.net/773438/original?auto=format&fit=crop&crop=faces&w=original&h=original
                  */
 
-                @SerializedName("48px")
-                private String value48px;
+                @SerializedName("100px")
+                private String value100px;
                 private String original;
 
-                public String getValue48px() {
-                    return value48px;
+                public String getValue100px() {
+                    return value100px;
                 }
 
-                public void setValue48px(String value48px) {
-                    this.value48px = value48px;
+                public void setValue100px(String value100px) {
+                    this.value100px = value100px;
                 }
 
                 public String getOriginal() {

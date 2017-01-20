@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters;
 
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,14 +37,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,12 +63,13 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int VIEW_TYPE_LARGE_CARDS = 3;
     private static final int VIEW_TYPE_LOAD_MORE = 98;
 
+    private List<Post> mPosts;
     private TYPE mType;
-    private WeakReference<Cursor> mCursorWeakReference;
     private OnPostsLoadMoreRetryListener mOnPostsLoadMoreRetryListener;
     private OnItemClickListener mOnItemClickListener;
-    private int mLastPosition = -1;
     private HashMap<Integer, String> mDateHashMap = new HashMap<>();
+
+    private int mLastPosition = -1;
     private boolean mNetworkAvailable;
     private String mErrorMessage;
 
@@ -78,16 +77,16 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      * Constructor used to create a PostRecyclerAdapter with already defined dates. General use case
      * is when user want to see offline posts which doesn't support date wise pagination.
      *
-     * @param cursor                       Cursor containing database values
+     * @param posts                        List containing posts
      * @param type                         Type of data to be displayed
      * @param dateHashMap                  Hashmap containing where to show appropriate dates
      * @param onPostsLoadMoreRetryListener listener that will notify when to load more posts
      */
-    public PostsRecyclerAdapter(Cursor cursor,
+    public PostsRecyclerAdapter(List<Post> posts,
                                 TYPE type,
                                 HashMap<Integer, String> dateHashMap,
                                 OnPostsLoadMoreRetryListener onPostsLoadMoreRetryListener) {
-        mCursorWeakReference = new WeakReference<Cursor>(cursor);
+        mPosts = posts;
         mType = type;
         mDateHashMap = dateHashMap;
         mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
@@ -104,21 +103,19 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     /**
      * Update current dataset.
      *
-     * @param cursor
+     * @param posts
      * @param dateHashMap
      * @param forceReplace
      */
-    public void updateCursor(Cursor cursor, HashMap<Integer, String> dateHashMap, boolean forceReplace) {
-        int oldCursorSize = mCursorWeakReference.get() != null ?
-                mCursorWeakReference.get().getCount() : 0;
-        int newCursorSize = cursor.getCount();
-        mCursorWeakReference = new WeakReference<Cursor>(cursor);
+    public void updateDataset(List<Post> posts, HashMap<Integer, String> dateHashMap, boolean forceReplace) {
         mDateHashMap = dateHashMap;
+        mPosts = posts;
         if (forceReplace) {
             mLastPosition = -1;
             notifyDataSetChanged();
         } else {
-            notifyItemRangeInserted(oldCursorSize, newCursorSize - oldCursorSize);
+            int oldCount = mPosts.size();
+            notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
         }
     }
 
@@ -138,7 +135,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 viewHolder = new ListItemViewHolder(viewListType);
                 break;
             case VIEW_TYPE_LOAD_MORE:
-                View viewLoadMore = layoutInflater.inflate(R.layout.item_load_more, parent, false);
+                View viewLoadMore = layoutInflater.inflate(R.layout.item_load_more_posts, parent, false);
                 viewHolder = new LoadMoreViewHolder(viewLoadMore);
                 break;
         }
@@ -159,15 +156,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void onBindListItemViewHolder(final ListItemViewHolder listItemViewHolder, int position) {
-        mCursorWeakReference.get().moveToPosition(position);
+        String title = mPosts.get(position).getName();
+        String shortDesc = mPosts.get(position).getTagline();
 
-        String title = CursorUtils.getString(mCursorWeakReference.get(),
-                PredatorContract.PostsEntry.COLUMN_NAME);
-        String shortDesc = CursorUtils.getString(mCursorWeakReference.get(),
-                PredatorContract.PostsEntry.COLUMN_TAGLINE);
-
-        String postImageUrl = CursorUtils.getString(mCursorWeakReference.get(),
-                PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL);
+        String postImageUrl = mPosts.get(position).getThumbnailImageUrl();
         postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postImageUrl,
                 ScreenUtils.dpToPxInt(listItemViewHolder.itemView.getContext(), 44),
                 ScreenUtils.dpToPxInt(listItemViewHolder.itemView.getContext(), 44));
@@ -223,16 +215,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemCount() {
         // Add extra item, that will be shown in case of load more scenario.
-        return mCursorWeakReference.get() != null ?
-                mCursorWeakReference.get().getCount() + 1 : 0;
-    }
-
-    /**
-     * @return Returns the cursor size.
-     */
-    public int getCount() {
-        return mCursorWeakReference.get() != null ?
-                mCursorWeakReference.get().getCount() : 0;
+        return mPosts != null ?
+                mPosts.size() + 1 : 0;
     }
 
     /**
@@ -240,9 +224,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @return Returns the unique id associated with the item at available position.
      */
     public int getId(int position) {
-        mCursorWeakReference.get().moveToPosition(position);
-        return CursorUtils.getInt(mCursorWeakReference.get(),
-                PredatorContract.PostsEntry.COLUMN_ID);
+        return mPosts.get(position).getId();
     }
 
     /**
@@ -250,9 +232,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @return Returns the unique post id associated with the item at available position.
      */
     public int getPostId(int position) {
-        mCursorWeakReference.get().moveToPosition(position);
-        return CursorUtils.getInt(mCursorWeakReference.get(),
-                PredatorContract.PostsEntry.COLUMN_POST_ID);
+        return mPosts.get(position).getPostId();
     }
 
     @Override

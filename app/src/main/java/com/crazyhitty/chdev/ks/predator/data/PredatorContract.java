@@ -279,4 +279,61 @@ public class PredatorContract {
             return ContentUris.withAppendedId(CONTENT_URI_MEDIA, id);
         }
     }
+
+    /**
+     * CollectionsEntry table definition.
+     */
+    public static class CollectionsEntry implements BaseColumns {
+        // A list of possible paths that will be appended to the base URI for CollectionsEntry table.
+        public static final String PATH_COLLECTIONS = "collections";
+        public static final String PATH_COLLECTIONS_ADD = "collections_add";
+        public static final String PATH_COLLECTIONS_DELETE_ALL = "collections_delete_all";
+
+        // Content URI represents the base location for the table
+        public static final Uri CONTENT_URI_COLLECTIONS = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_COLLECTIONS)
+                .build();
+
+        public static final Uri CONTENT_URI_COLLECTIONS_ADD = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_COLLECTIONS_ADD)
+                .build();
+
+        public static final Uri CONTENT_URI_COLLECTIONS_DELETE = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_COLLECTIONS_DELETE_ALL)
+                .build();
+
+        // These are special type prefixes that specify if a URI returns a list or a specific item.
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_URI_COLLECTIONS + "/" + PATH_COLLECTIONS;
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_URI_COLLECTIONS + "/" + PATH_COLLECTIONS;
+
+        public static final String TABLE_NAME = "collections_table";
+
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_COLLECTION_ID = "collection_id";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
+        public static final String COLUMN_FEATURED_AT = "featured_at";
+        public static final String COLUMN_SUBSCRIBER_COUNT = "subscriber_count";
+        public static final String COLUMN_CATEGORY_ID = "category_id";
+        public static final String COLUMN_COLLECTION_URL = "collection_url";
+        public static final String COLUMN_POST_COUNTS = "post_counts";
+        public static final String COLUMN_BACKGROUND_IMAGE_URL = "background_image_url";
+        public static final String COLUMN_USER_NAME = "user_name";
+        public static final String COLUMN_USER_USERNAME = "user_username";
+        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_USER_IMAGE_URL_100PX = "user_image_url_100px";
+        public static final String COLUMN_USER_IMAGE_URL_ORIGINAL = "user_image_url_original";
+
+        // Define a function to build a URI to find a specific post by it's identifier
+        public static Uri buildCollectionUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI_COLLECTIONS, id);
+        }
+    }
 }

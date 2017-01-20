@@ -32,6 +32,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -54,15 +55,34 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
+    private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
 
-    protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
+    protected void setFragment(@IdRes int layoutResId,
+                               Fragment fragment,
+                               boolean addToBackStack) {
+        mCurrentFragmentTag = fragment.getClass().getSimpleName();
         CoreUtils.setFragment(getSupportFragmentManager(), layoutResId, fragment, addToBackStack);
     }
 
-    protected void setFragment(@IdRes int layoutResId, android.app.Fragment fragment, boolean addToBackStack) {
+    protected void setFragment(@IdRes int layoutResId,
+                               android.app.Fragment fragment,
+                               boolean addToBackStack) {
+        mCurrentFragmentTag = fragment.getClass().getSimpleName();
         CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
+    }
+
+    public String getCurrentFragmentTag() {
+        return mCurrentFragmentTag;
+    }
+
+    public boolean isFragmentVisible(Fragment fragment) {
+        return TextUtils.equals(fragment.getClass().getSimpleName(), mCurrentFragmentTag);
+    }
+
+    public boolean isFragmentVisible(android.app.Fragment fragment) {
+        return TextUtils.equals(fragment.getClass().getSimpleName(), mCurrentFragmentTag);
     }
 
     protected void showLoadingDialog(boolean isCancellable) {

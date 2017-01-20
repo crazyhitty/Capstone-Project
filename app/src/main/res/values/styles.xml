@@ -108,6 +108,7 @@
 
     <style name="TextAppearancePostTitle" parent="TextAppearanceLarge">
         <item name="android:textColor">@color/material_grey_200</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearancePostDesc" parent="TextAppearanceMedium">
@@ -125,6 +126,15 @@
     </style>
 
     <style name="TextAppearanceComment" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/material_grey_700</item>
+    </style>
+
+    <style name="TextAppearanceCollectionTitle" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearanceCollectionDesc" parent="@style/TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/material_grey_700</item>
     </style>
 

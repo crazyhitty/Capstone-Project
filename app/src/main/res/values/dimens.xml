@@ -53,7 +53,7 @@
     <dimen name="item_list_post_image_padding">2dp</dimen>
     <dimen name="item_list_post_image_corner_padding">2dp</dimen>
 
-    <!--item_load_more.xml-->
+    <!--item_load_more_posts_posts.xml-->
     <dimen name="item_load_more_progress_bar_height">24dp</dimen>
     <dimen name="item_load_more_progress_bar_width">24dp</dimen>
     <dimen name="item_load_more_image_padding">2dp</dimen>
@@ -89,4 +89,10 @@
     <dimen name="item_post_details_comment_image_width">44dp</dimen>
     <dimen name="item_post_details_comment_image_padding">2dp</dimen>
     <dimen name="item_post_details_comment_image_corner_padding">2dp</dimen>
+
+    <!--item_collection.xml-->
+    <dimen name="item_collection_card_height">150dp</dimen>
+    <dimen name="item_collection_card_corner_radius">4dp</dimen>
+    <dimen name="item_collection_card_elevation">2dp</dimen>
+    <dimen name="item_collection_title_margin_top">64dp</dimen>
 </resources>

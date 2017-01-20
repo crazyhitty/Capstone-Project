@@ -22,16 +22,21 @@
   ~ SOFTWARE.
   -->
 
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe_refresh_layout_post_details"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_post_details"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <item
+        android:id="@+id/menu_open_redirect_url"
+        android:icon="@drawable/ic_open_redirect_url_24dp"
+        android:orderInCategory="99"
+        android:title="@string/menu_post_details_open_redirect_url"
+        app:showAsAction="ifRoom" />
 
-</android.support.v4.widget.SwipeRefreshLayout>
+    <item
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_share_24dp"
+        android:orderInCategory="100"
+        android:title="@string/menu_post_details_share"
+        app:showAsAction="ifRoom" />
+
+</menu>

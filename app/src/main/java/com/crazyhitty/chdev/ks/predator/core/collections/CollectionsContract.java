@@ -22,34 +22,33 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.core.collections;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     1/20/2017 9:26 AM
  * Description: Unavailable
  */
 
-public interface PostsContract {
+public interface CollectionsContract {
     interface View extends BaseView<Presenter> {
-        void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
+        void showCollections(List<Collection> collections);
 
-        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
+        void unableToFetchCollections(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
     }
 
     interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
+        void getOfflineCollections();
 
-        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
+        void getLatestCollections(String token, boolean clearPrevious);
 
-        void loadMorePosts(String token, String categoryName, boolean latest);
+        void loadMoreCollections(String token);
     }
 }
