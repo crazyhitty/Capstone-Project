@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.MyProfileData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
@@ -75,6 +76,10 @@ public interface ProductHuntService {
                                                @Query(Constants.PAGE) int page,
                                                @Query(Constants.PER_PAGE) int perPage,
                                                @Query(Constants.SEARCH_FEATURED) boolean isFeatured);
+
+    @GET(ApiUrls.GET_COLLECTIONS_DETAILS)
+    Observable<CollectionDetailsData> getCollectionDetails(@Header(Constants.AUTHORIZATION) String authorization,
+                                                           @Path(Constants.COLLECTION_ID) int collectionId);
 
     @GET(ApiUrls.MY_PROFILE)
     Observable<MyProfileData> getMyProfile(@Header(Constants.AUTHORIZATION) String authorization);

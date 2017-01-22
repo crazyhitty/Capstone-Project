@@ -34,6 +34,7 @@ package com.crazyhitty.chdev.ks.predator.models;
 public class Post {
     private int id;
     private int postId;
+    private int collectionId;
     private int categoryId;
     private String day;
     private String name;
@@ -53,6 +54,7 @@ public class Post {
     private int userId;
     private String userImageUrl100px;
     private String userImageUrlOriginal;
+    private boolean isInCollection;
 
     public int getId() {
         return id;
@@ -68,6 +70,14 @@ public class Post {
 
     public void setPostId(int postId) {
         this.postId = postId;
+    }
+
+    public int getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(int collectionId) {
+        this.collectionId = collectionId;
     }
 
     public int getCategoryId() {
@@ -220,5 +230,17 @@ public class Post {
 
     public void setUserImageUrlOriginal(String userImageUrlOriginal) {
         this.userImageUrlOriginal = userImageUrlOriginal;
+    }
+
+    public boolean isInCollection() {
+        return isInCollection;
+    }
+
+    public void setInCollection(int inCollection) {
+        isInCollection = inCollection == 1;
+    }
+
+    public void setInCollection(boolean inCollection) {
+        isInCollection = inCollection;
     }
 }

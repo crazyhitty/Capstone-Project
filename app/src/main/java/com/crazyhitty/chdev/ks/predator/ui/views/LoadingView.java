@@ -79,6 +79,7 @@ public class LoadingView extends RelativeLayout {
 
     private STATE_SHOWN mStateShown = STATE_SHOWN.LOADING;
     private OnRetryClickListener mOnRetryClickListener;
+    private AnimationStateChangeListener mAnimationStateChangeListener;
 
     public LoadingView(Context context) {
         super(context);
@@ -121,6 +122,10 @@ public class LoadingView extends RelativeLayout {
 
     public void setOnRetryClickListener(OnRetryClickListener onRetryClickListener) {
         mOnRetryClickListener = onRetryClickListener;
+    }
+
+    public void setAnimationStateChangeListener(AnimationStateChangeListener animationStateChangeListener) {
+        mAnimationStateChangeListener = animationStateChangeListener;
     }
 
     public void startLoading(final TYPE type) {
@@ -224,6 +229,9 @@ public class LoadingView extends RelativeLayout {
                     public void run() {
                         stopLoading();
                         mStateShown = STATE_SHOWN.COMPLETE;
+                        if (mAnimationStateChangeListener != null) {
+                            mAnimationStateChangeListener.onStateChanged(mStateShown);
+                        }
                     }
                 }, 2000);
             }
@@ -293,6 +301,10 @@ public class LoadingView extends RelativeLayout {
                 String latestCollections = getResources().getString(R.string.loading_view_latest_collections);
                 txtMessage.setText(String.format(loadingText, latestCollections));
                 break;
+            case COLLECTION_POSTS:
+                String collectionsPosts = getResources().getString(R.string.loading_view_collections_posts);
+                txtMessage.setText(String.format(loadingText, collectionsPosts));
+                break;
         }
     }
 
@@ -309,7 +321,8 @@ public class LoadingView extends RelativeLayout {
 
     public enum TYPE {
         LATEST_POSTS,
-        LATEST_COLLECTIONS
+        LATEST_COLLECTIONS,
+        COLLECTION_POSTS
     }
 
     public enum STATE_SHOWN {
@@ -320,5 +333,9 @@ public class LoadingView extends RelativeLayout {
 
     public interface OnRetryClickListener {
         void onRetry();
+    }
+
+    public interface AnimationStateChangeListener {
+        void onStateChanged(STATE_SHOWN stateShown);
     }
 }

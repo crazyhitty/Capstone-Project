@@ -24,10 +24,27 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionDetailsFragment;
+import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
+import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
+import com.facebook.drawee.view.SimpleDraweeView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Author:      Kartik Sharma
@@ -36,11 +53,134 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
  * Description: Unavailable
  */
 
-public class CollectionDetailsActivity extends BaseAppCompatActivity {
+public class CollectionDetailsActivity extends BaseAppCompatActivity implements CollectionDetailsFragment.OnFragmentInteractionListener {
+    private static final String TAG = "CollectionDetailsActivity";
+    private static final String ARG_COLLECTION_TABLE_ID = "id";
+    private static final String ARG_COLLECTION_TABLE_COLLECTION_ID = "collection_id";
+    private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
+    private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
+
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.image_view_collection)
+    SimpleDraweeView imgViewCollection;
+    @BindView(R.id.text_view_collection_title)
+    TextView txtCollectionTitle;
+    @BindView(R.id.text_view_collection_desc)
+    TextView txtCollectionDesc;
+
+    public static void startActivity(Context context, int id, int collectionId) {
+        Intent intent = new Intent(context, CollectionDetailsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ARG_COLLECTION_TABLE_ID, id);
+        intent.putExtra(ARG_COLLECTION_TABLE_COLLECTION_ID, collectionId);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView();
-        //ButterKnife.bind(this);
+        setContentView(R.layout.activity_collection_details);
+        ButterKnife.bind(this);
+        initAppBarLayout();
+        initToolbar();
+
+        // Only set fragment when saved instance is null.
+        // This is done inorder to stop reloading fragment on orientation changes.
+        if (savedInstanceState == null) {
+            initCollectionDetailsFragment();
+        }
+    }
+
+    private void initAppBarLayout() {
+        appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+            @Override
+            public void onStateChanged(AppBarLayout appBarLayout, State state) {
+                switch (state) {
+                    case COLLAPSED:
+                        showToolbarTitle(true);
+                        break;
+                    case EXPANDED:
+                        hideToolbarTitle(true);
+                        break;
+                }
+            }
+        });
+
+        appBarLayout.setExpanded(false);
+    }
+
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        hideToolbarTitle(false);
+
+        // Add back button to go back to the previous screen.
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void hideToolbarTitle(boolean withAnimation) {
+        ToolbarUtils.getTitleTextView(toolbar)
+                .animate()
+                .alpha(0.0f)
+                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_APPEARING_DURATION : 0)
+                .start();
+    }
+
+    private void showToolbarTitle(boolean withAnimation) {
+        ToolbarUtils.getTitleTextView(toolbar)
+                .animate()
+                .alpha(1.0f)
+                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
+                .start();
+    }
+
+    private void initCollectionDetailsFragment() {
+        // Get id and collectionId from intent.
+        int id = getIntent().getExtras().getInt(ARG_COLLECTION_TABLE_ID);
+        int collectionId = getIntent().getExtras().getInt(ARG_COLLECTION_TABLE_COLLECTION_ID);
+        // Send this id to the fragment which will be hosted under this activity.
+        setFragment(R.id.frame_layout_collection_details_container,
+                CollectionDetailsFragment.newInstance(id, collectionId),
+                false);
+    }
+
+    @Override
+    public void setToolbarTitle(String title) {
+        // Set toolbar title.
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void setAppBarContents(Collection collection) {
+        txtCollectionTitle.setText(collection.getName());
+
+        if (TextUtils.isEmpty(collection.getTitle())) {
+            txtCollectionDesc.setText(R.string.item_collection_no_desc_available);
+        } else {
+            txtCollectionDesc.setText(collection.getTitle());
+        }
+
+        if (TextUtils.isEmpty(collection.getBackgroundImageUrl())) {
+            imgViewCollection.setVisibility(View.GONE);
+        } else {
+            imgViewCollection.setImageURI(collection.getBackgroundImageUrl());
+        }
+    }
+
+    @Override
+    public void expandAppBar() {
+        appBarLayout.setExpanded(true, true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

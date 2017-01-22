@@ -61,7 +61,6 @@ import butterknife.ButterKnife;
 
 public class PostDetailsActivity extends BaseAppCompatActivity implements PostDetailsFragment.OnFragmentInteractionListener {
     private static final String TAG = "PostDetailsActivity";
-    private static final String ARG_POST_TABLE_ID = "id";
     private static final String ARG_POST_TABLE_POST_ID = "post_id";
     private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
     private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
@@ -81,10 +80,9 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
     /*@BindView(R.id.fab_bookmark)
     FloatingActionButton fabBookmark;*/
 
-    public static void startActivity(Context context, int id, int postId) {
+    public static void startActivity(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ARG_POST_TABLE_ID, id);
         intent.putExtra(ARG_POST_TABLE_POST_ID, postId);
         context.startActivity(intent);
     }
@@ -145,12 +143,11 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
     }
 
     private void initPostDetailsFragment() {
-        // Get id and postId from intent.
-        int id = getIntent().getExtras().getInt(ARG_POST_TABLE_ID);
+        // Get postId from intent.
         int postId = getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID);
         // Send this id to the fragment which will be hosted under this activity.
         setFragment(R.id.frame_layout_post_details_container,
-                PostDetailsFragment.newInstance(id, postId),
+                PostDetailsFragment.newInstance(postId),
                 false);
     }
 

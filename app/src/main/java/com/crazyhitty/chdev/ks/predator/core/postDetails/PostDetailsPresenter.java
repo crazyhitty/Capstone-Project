@@ -83,14 +83,14 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public void getDetails(final int id) {
+    public void getDetails(final int postId) {
         Observable<Cursor> postDetailsObservable = Observable.create(new Observable.OnSubscribe<Cursor>() {
             @Override
             public void call(Subscriber<? super Cursor> subscriber) {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
-                                PredatorContract.PostsEntry.COLUMN_ID + "=" + id,
+                                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
                                 null,
                                 null);
 

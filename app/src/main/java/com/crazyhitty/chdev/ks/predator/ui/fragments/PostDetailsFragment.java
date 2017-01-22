@@ -79,7 +79,6 @@ import rx.schedulers.Schedulers;
 
 public class PostDetailsFragment extends BaseSupportFragment implements PostDetailsContract.View {
     private static final String TAG = "PostDetailsFragment";
-    private static final String ARG_POST_TABLE_ID = "id";
     private static final String ARG_POST_TABLE_POST_ID = "post_id";
 
     @BindView(R.id.swipe_refresh_layout_post_details)
@@ -93,9 +92,8 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
 
     private PostDetailsRecyclerAdapter mPostDetailsRecyclerAdapter;
 
-    public static PostDetailsFragment newInstance(int id, int postId) {
+    public static PostDetailsFragment newInstance(int postId) {
         Bundle args = new Bundle();
-        args.putInt(ARG_POST_TABLE_ID, id);
         args.putInt(ARG_POST_TABLE_POST_ID, postId);
         PostDetailsFragment fragment = new PostDetailsFragment();
         fragment.setArguments(args);
@@ -137,7 +135,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         setPostDetailsRecyclerViewProperties();
 
         // Get post details.
-        mPostDetailsPresenter.getDetails(getArguments().getInt(ARG_POST_TABLE_ID));
+        mPostDetailsPresenter.getDetails(getArguments().getInt(ARG_POST_TABLE_POST_ID));
 
         // Get users.
         mPostDetailsPresenter.getUsers(getArguments().getInt(ARG_POST_TABLE_POST_ID));

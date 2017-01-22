@@ -250,7 +250,6 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             @Override
             public void onItemClick(int position) {
                 PostDetailsActivity.startActivity(getContext(),
-                        mPostsRecyclerAdapter.getId(position),
                         mPostsRecyclerAdapter.getPostId(position));
             }
         });

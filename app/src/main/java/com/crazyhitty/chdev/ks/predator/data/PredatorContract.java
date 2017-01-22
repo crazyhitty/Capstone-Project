@@ -48,6 +48,7 @@ public class PredatorContract {
 
         public static final String COLUMN_ID = "id";
         public static final String COLUMN_POST_ID = "post_id";
+        public static final String COLUMN_COLLECTION_ID = "collection_id";
         public static final String COLUMN_CATEGORY_ID = "category_id";
         public static final String COLUMN_DAY = "day";
         public static final String COLUMN_NAME = "name";
@@ -67,6 +68,7 @@ public class PredatorContract {
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_USER_IMAGE_URL_100PX = "user_image_url_100px";
         public static final String COLUMN_USER_IMAGE_URL_ORIGINAL = "user_image_url_original";
+        public static final String COLUMN_IS_IN_COLLECTION = "is_in_collection";
 
         // Define a function to build a URI to find a specific post by it's identifier
         public static Uri buildPostsUri(long id) {

@@ -186,6 +186,22 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mCollections != null ? mCollections.size() + 1 : 0;
     }
 
+    /**
+     * @param position Current position of the element.
+     * @return Returns the unique id associated with the item at available position.
+     */
+    public int getId(int position) {
+        return mCollections.get(position).getId();
+    }
+
+    /**
+     * @param position Current position of the element.
+     * @return Returns the unique collection id associated with the item at available position.
+     */
+    public int getCollectionId(int position) {
+        return mCollections.get(position).getCollectionId();
+    }
+
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.

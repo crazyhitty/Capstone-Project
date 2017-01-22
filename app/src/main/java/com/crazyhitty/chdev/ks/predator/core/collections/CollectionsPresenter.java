@@ -119,11 +119,17 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                 .map(new Func1<CollectionsData, List<Collection>>() {
                     @Override
                     public List<Collection> call(CollectionsData collectionsData) {
-                        // Clear previous collections from database if required.
                         if (clearPrevious) {
+                            // Clear previous collections from database.
                             MainApplication.getContentResolverInstance()
                                     .delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
                                             null,
+                                            null);
+
+                            // Clear posts currently available for collections from database.
+                            MainApplication.getContentResolverInstance()
+                                    .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                                            PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
                                             null);
                         }
 

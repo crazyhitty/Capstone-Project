@@ -22,69 +22,38 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.postDetails;
-
-import android.content.Context;
-import android.database.Cursor;
+package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Comment;
-import com.crazyhitty.chdev.ks.predator.models.InstallLink;
-import com.crazyhitty.chdev.ks.predator.models.Media;
-import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 
 import java.util.List;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/12/2017 5:13 PM
+ * Created:     1/21/2017 1:29 PM
  * Description: Unavailable
  */
 
-public interface PostDetailsContract {
+public interface CollectionDetailsContract {
     interface View extends BaseView<Presenter> {
-        void showDetails(Cursor cursor);
+        void showCollectionDetails(Collection collection);
 
-        void showUsers(List<User> users);
+        void showPosts(List<Post> posts);
 
-        void showMedia(List<Media> media);
-
-        void attachInstallLinks(List<InstallLink> installLinks);
-
-        void showAllUsers(List<User> users);
-
-        void showComments(List<Comment> comments);
-
-        void unableToFetchPostDetails(String errorMessage);
-
-        void unableToFetchUsers(String errorMessage);
-
-        void unableToFetchMedia(String errorMessage);
-
-        void unableToFetchInstallLinks(String errorMessage);
-
-        void unableToFetchAllUsers(String errorMessage);
-
-        void unableToFetchComments(String errorMessage);
-
-        void noOfflineDataAvailable();
-
-        void dismissLoading();
+        void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage);
     }
 
     interface Presenter extends BasePresenter {
-        void getDetails(int postId);
+        void getCollectionDetails(int collectionId);
 
-        void getUsers(int postId);
+        Collection getCurrentCollection();
 
-        void getExtraDetails(String token, int postId);
+        void getOfflinePosts(int collectionId);
 
-        void getExtraDetailsOffline(int postId);
-
-        void openRedirectUrl(Context context);
-
-        void sharePostDetails(Context context);
+        void getPosts(String token, int collectionId);
     }
 }

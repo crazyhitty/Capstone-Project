@@ -58,6 +58,15 @@
         <item name="android:colorEdgeEffect">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.CollectionDetails">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>-->
+        <item name="android:colorEdgeEffect">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.Settings">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

@@ -22,24 +22,27 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsPresenter;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -50,59 +53,94 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:13 PM
+ * Created:     1/21/2017 1:53 PM
  * Description: Unavailable
  */
 
-public class PostsPresenter implements PostsContract.Presenter {
-    private static final String TAG = "PostsPresenter";
-
-    private String mLastDate = DateUtils.getPredatorCurrentDate();
-
-    private HashMap<Integer, String> mDateHashMap = new HashMap<>();
-
-    private boolean mLoadMore = false;
-
+public class CollectionDetailsPresenter implements CollectionDetailsContract.Presenter {
     @NonNull
-    private PostsContract.View mView;
+    private CollectionDetailsContract.View mView;
 
     private CompositeSubscription mCompositeSubscription;
 
-    public PostsPresenter(@NonNull PostsContract.View view) {
+    private Collection mCollection;
+
+    public CollectionDetailsPresenter(@NonNull CollectionDetailsContract.View view) {
         this.mView = view;
         mCompositeSubscription = new CompositeSubscription();
     }
 
     @Override
-    public void subscribe() {
+    public void getCollectionDetails(final int collectionId) {
+        Observable<Collection> collectionsCursorObservable = Observable.create(new Observable.OnSubscribe<Collection>() {
+            @Override
+            public void call(Subscriber<? super Collection> subscriber) {
+                // Retrieve the results from the database.
+                Cursor cursor = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
+                                null,
+                                PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID + "=" + collectionId,
+                                null,
+                                null);
+                if (cursor != null && cursor.getCount() != 0) {
+                    subscriber.onNext(getCollectionFromCursor(cursor));
+                    cursor.close();
+                } else {
+                    subscriber.onError(new CollectionsPresenter.CollectionsUnavailableException());
+                }
+                subscriber.onCompleted();
+            }
+        });
 
+        collectionsCursorObservable.subscribeOn(Schedulers.io());
+        collectionsCursorObservable.observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeSubscription.add(collectionsCursorObservable.subscribe(new Observer<Collection>() {
+            @Override
+            public void onCompleted() {
+                // Done.
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Collection collection) {
+                mCollection = collection;
+                mView.showCollectionDetails(mCollection);
+            }
+        }));
     }
 
     @Override
-    public void unSubscribe() {
-        mCompositeSubscription.clear();
+    public Collection getCurrentCollection() {
+        return mCollection;
     }
 
     @Override
-    public void getOfflinePosts(boolean latest) {
+    public void getOfflinePosts(final int collectionId) {
         Observable<List<Post>> postsDataObservable = Observable.create(new Observable.OnSubscribe<List<Post>>() {
             @Override
             public void call(Subscriber<? super List<Post>> subscriber) {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
-                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
                                 null,
-                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+                                PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
                 if (cursor != null && cursor.getCount() != 0) {
-                    dateMatcher(cursor);
                     subscriber.onNext(getPostsFromCursor(cursor));
                     cursor.close();
                 } else {
-                    subscriber.onError(new NoPostsAvailableException());
+                    subscriber.onError(new PostsPresenter.NoPostsAvailableException());
                 }
                 subscriber.onCompleted();
             }
@@ -119,56 +157,39 @@ public class PostsPresenter implements PostsContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
-                mView.unableToGetPosts(false, true, e.getMessage());
+                mView.unableToGetPosts(true, e.getMessage());
             }
 
             @Override
             public void onNext(List<Post> posts) {
-                mView.showPosts(posts, mDateHashMap);
+                mView.showPosts(posts);
             }
         }));
     }
 
     @Override
-    public void getPosts(final String token,
-                         final String categoryName,
-                         final boolean latest,
-                         final boolean clearPrevious) {
-        Logger.d(TAG, "getPosts: called");
-        if (clearPrevious) {
-            mLoadMore = false;
-            mLastDate = DateUtils.getPredatorCurrentDate();
-            mDateHashMap = new HashMap<>();
-        }
+    public void getPosts(String token, final int collectionId) {
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
-                .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
-                .map(new Func1<PostsData, List<Post>>() {
+                .getCollectionDetails(CoreUtils.getAuthToken(token), collectionId)
+                .map(new Func1<CollectionDetailsData, List<Post>>() {
                     @Override
-                    public List<Post> call(PostsData postsData) {
-                        if (clearPrevious) {
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                                            null,
-                                            null);
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.UsersEntry.CONTENT_URI_USERS_DELETE,
-                                            null,
-                                            null);
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
-                                            null,
-                                            null);
-                        }
+                    public List<Post> call(CollectionDetailsData collectionDetailsData) {
+                        // Remove old posts for that collection id
+                        MainApplication.getContentResolverInstance()
+                                .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                                        PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
+                                        null);
 
-                        if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
+                        if (collectionDetailsData.getCollection().getPosts() == null || collectionDetailsData.getCollection().getPosts().isEmpty()) {
                             return null;
                         }
 
-                        for (PostsData.Posts post : postsData.getPosts()) {
+                        for (PostsData.Posts post : collectionDetailsData.getCollection().getPosts()) {
                             Logger.d(TAG, "post: " + post.getName());
                             MainApplication.getContentResolverInstance()
                                     .insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
-                                            getContentValuesForPosts(post));
+                                            getContentValuesForPosts(collectionId, post));
 
                             // Add/update users.
                             MainApplication.getContentResolverInstance()
@@ -183,13 +204,12 @@ public class PostsPresenter implements PostsContract.Presenter {
                         Cursor cursor = MainApplication.getContentResolverInstance()
                                 .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                         null,
-                                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                        PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
                                         null,
-                                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-
+                                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
                         List<Post> posts = null;
                         if (cursor != null && cursor.getCount() != 0) {
-                            dateMatcher(cursor);
                             posts = getPostsFromCursor(cursor);
                             cursor.close();
                         }
@@ -205,7 +225,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 if (posts != null && posts.size() != 0) {
                                     subscriber.onNext(posts);
                                 } else {
-                                    loadMorePosts(token, categoryName, latest);
+                                    subscriber.onError(new NoCollectionPostsAvailableException());
                                 }
                                 subscriber.onCompleted();
                             }
@@ -224,48 +244,30 @@ public class PostsPresenter implements PostsContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
-                mView.unableToGetPosts(mLoadMore, false, e.getMessage());
+                mView.unableToGetPosts(false, e.getMessage());
             }
 
             @Override
             public void onNext(List<Post> posts) {
-                mView.showPosts(posts, mDateHashMap);
+                mView.showPosts(posts);
             }
         }));
     }
 
     @Override
-    public void loadMorePosts(String token, String categoryName, boolean latest) {
-        mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
-        mLoadMore = true;
-        getPosts(token, categoryName, latest, false);
+    public void subscribe() {
+
     }
 
-    /**
-     * Matches all the post publish dates and create a hashmap for positions and dates wherever the
-     * dates are changed in the cursor.
-     *
-     * @param cursor Cursor containing database values
-     */
-    private void dateMatcher(Cursor cursor) {
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-
-            // Match post date with current date
-            String date = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
-
-            String dateToBeShown = DateUtils.getPredatorPostDate(date);
-
-            if (!mDateHashMap.containsValue(dateToBeShown)) {
-                mDateHashMap.put(i, dateToBeShown);
-                mLastDate = date;
-            }
-        }
+    @Override
+    public void unSubscribe() {
+        mCompositeSubscription.clear();
     }
 
-    private ContentValues getContentValuesForPosts(PostsData.Posts post) {
+    private ContentValues getContentValuesForPosts(int collectionId, PostsData.Posts post) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_COLLECTION_ID, collectionId);
         contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, post.getCategoryId());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, post.getDay());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, post.getName());
@@ -285,6 +287,7 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, post.getUser().getId());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, post.getUser().getImageUrl().getValue100px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION, 1);
         return contentValues;
     }
 
@@ -318,6 +321,7 @@ public class PostsPresenter implements PostsContract.Presenter {
             Post post = new Post();
             post.setId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_ID));
             post.setPostId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_POST_ID));
+            post.setCollectionId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_COLLECTION_ID));
             post.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_CATEGORY_ID));
             post.setDay(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY));
             post.setName(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_NAME));
@@ -337,15 +341,41 @@ public class PostsPresenter implements PostsContract.Presenter {
             post.setUserId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_USER_ID));
             post.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX));
             post.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
+            post.setInCollection(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION));
             posts.add(post);
         }
         return posts;
     }
 
-    public static class NoPostsAvailableException extends Throwable {
+    private Collection getCollectionFromCursor(Cursor cursor) {
+        cursor.moveToFirst();
+
+        Collection collection = new Collection();
+        collection.setId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_ID));
+        collection.setCollectionId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID));
+        collection.setName(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_NAME));
+        collection.setTitle(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_TITLE));
+        collection.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_CREATED_AT));
+        collection.setUpdatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT));
+        collection.setFeaturedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT));
+        collection.setSubscriberCount(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT));
+        collection.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID));
+        collection.setCollectionUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL));
+        collection.setPostCounts(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS));
+        collection.setBackgroundImageUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL));
+        collection.setUsername(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_NAME));
+        collection.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME));
+        collection.setUserId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_ID));
+        collection.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX));
+        collection.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
+
+        return collection;
+    }
+
+    public static class NoCollectionPostsAvailableException extends Throwable {
         @Override
         public String getMessage() {
-            return "No posts available.";
+            return "No posts available for this collection.";
         }
     }
 }

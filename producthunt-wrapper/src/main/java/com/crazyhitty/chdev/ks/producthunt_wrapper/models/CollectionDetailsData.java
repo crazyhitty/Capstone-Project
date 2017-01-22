@@ -22,33 +22,37 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
+package com.crazyhitty.chdev.ks.producthunt_wrapper.models;
+
+import java.util.List;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     12/26/2016 9:51 PM
+ * Created:     1/21/2017 1:33 PM
  * Description: Unavailable
  */
 
-class ApiUrls {
-    // Requires normal auth token
-    static final String GET_POSTS = "posts/all";
-    static final String GET_POSTS_BY_CATEGORY_DAYWISE = "categories/{category_name}/posts";
-    static final String GET_POSTS_DETAILS = "posts/{post_id}";
-    static final String GET_POST_COMMENTS = "posts/{post_id}/comments";
-    static final String GET_COLLECTIONS = "collections";
-    static final String GET_COLLECTIONS_DETAILS = "collections/{collection_id}";
-    static final String GET_USER_PROFILE = "users/{user_id}";
+public class CollectionDetailsData {
+    private Collection collection;
 
-    // Requires public+private auth token
-    static final String MY_PROFILE = "me";
+    public Collection getCollection() {
+        return collection;
+    }
 
-    // Oauth authentications
-    static final String OAUTH_GET_TOKEN = "oauth/token";
-    static final String OAUTH_USER_AUTHENTICATION = "oauth/authorize";
+    public void setCollection(Collection collection) {
+        this.collection = collection;
+    }
 
-    private ApiUrls() {
+    public static class Collection {
+        private List<PostsData.Posts> posts;
 
+        public List<PostsData.Posts> getPosts() {
+            return posts;
+        }
+
+        public void setPosts(List<PostsData.Posts> posts) {
+            this.posts = posts;
+        }
     }
 }

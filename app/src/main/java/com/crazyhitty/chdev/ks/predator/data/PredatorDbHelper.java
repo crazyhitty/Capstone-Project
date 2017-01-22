@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -88,6 +88,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         return "CREATE TABLE " + PredatorContract.PostsEntry.TABLE_NAME + "(" +
                 PredatorContract.PostsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PredatorContract.PostsEntry.COLUMN_POST_ID + " INTEGER UNIQUE, " +
+                PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_CATEGORY_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_DAY + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_NAME + " TEXT, " +
@@ -106,7 +107,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.PostsEntry.COLUMN_USER_USERNAME + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
-                PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT);";
+                PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
+                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + " INTEGER DEFAULT 0);";
     }
 
     private String getCreateUsersTableSqlQuery() {

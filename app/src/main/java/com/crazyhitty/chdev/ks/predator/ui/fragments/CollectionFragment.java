@@ -44,6 +44,7 @@ import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
+import com.crazyhitty.chdev.ks.predator.ui.activities.CollectionDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.CollectionsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
@@ -200,7 +201,9 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
         mCollectionsRecyclerAdapter.setOnItemClickListener(new CollectionsRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                showShortToast(R.string.not_yet_implemented);
+                CollectionDetailsActivity.startActivity(getContext(),
+                        mCollectionsRecyclerAdapter.getId(position),
+                        mCollectionsRecyclerAdapter.getCollectionId(position));
             }
         });
     }

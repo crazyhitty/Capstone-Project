@@ -24,17 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.receivers.NetworkBroadcastReceiver;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
@@ -46,22 +41,6 @@ import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
  */
 
 public abstract class BaseSupportFragment extends Fragment {
-    private NetworkBroadcastReceiver mNetworkBroadcastReceiver;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mNetworkBroadcastReceiver = new NetworkBroadcastReceiver();
-        getActivity().registerReceiver(mNetworkBroadcastReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getActivity().unregisterReceiver(mNetworkBroadcastReceiver);
-    }
-
     protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
     }

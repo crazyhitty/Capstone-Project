@@ -26,6 +26,8 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -39,6 +41,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.receivers.NetworkBroadcastReceiver;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.PostsFragment;
@@ -67,6 +70,8 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     @BindView(R.id.navigation_view_dashboard)
     NavigationView navigationView;
 
+    private NetworkBroadcastReceiver mNetworkBroadcastReceiver;
+
     public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -92,6 +97,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         setContentView(R.layout.activity_dashboard);
         getWindow().setBackgroundDrawableResource(R.color.colorPrimary);
         ButterKnife.bind(this);
+        initNetworKBroadcastReceiver();
         initToolbar();
         initDrawer();
 
@@ -100,6 +106,15 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         if (savedInstanceState == null) {
             initFragment();
         }
+    }
+
+    /**
+     * Initialize network braodcast receiver.
+     */
+    private void initNetworKBroadcastReceiver() {
+        mNetworkBroadcastReceiver = new NetworkBroadcastReceiver();
+        registerReceiver(mNetworkBroadcastReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     /**
@@ -161,6 +176,12 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             default:
                 return false;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mNetworkBroadcastReceiver);
     }
 
     @Override

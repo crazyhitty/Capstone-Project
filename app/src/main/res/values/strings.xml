@@ -83,6 +83,7 @@
     <string name="loading_view_message">Wait while we hunt %s!</string>
     <string name="loading_view_latest_posts">latest posts</string>
     <string name="loading_view_latest_collections">latest collections</string>
+    <string name="loading_view_collections_posts">all of the posts available in this collection</string>
     <string name="loading_view_image_desc">Notification image</string>
 
     <!--post details-->

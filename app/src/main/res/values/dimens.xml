@@ -95,4 +95,7 @@
     <dimen name="item_collection_card_corner_radius">4dp</dimen>
     <dimen name="item_collection_card_elevation">2dp</dimen>
     <dimen name="item_collection_title_margin_top">64dp</dimen>
+
+    <!--activity_collection_details.xml-->
+    <dimen name="activity_collection_details_app_bar_height">150dp</dimen>
 </resources>

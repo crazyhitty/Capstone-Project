@@ -51,6 +51,7 @@ class Constants {
 
     // collections
     static final String SEARCH_FEATURED = "search[featured]";
+    static final String COLLECTION_ID = "collection_id";
 
     // comments
     static final String POST_ID = "post_id";

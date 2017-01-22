@@ -72,6 +72,19 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private int mLastPosition = -1;
     private boolean mNetworkAvailable;
     private String mErrorMessage;
+    private boolean mLoadMoreNotRequired = false;
+
+    /**
+     * Initialize using this constructor if load more and dates functionalilties are not required.
+     *
+     * @param mPosts    List containing posts
+     * @param mType     Type of data to be displayed
+     */
+    public PostsRecyclerAdapter(List<Post> mPosts, TYPE mType) {
+        this.mPosts = mPosts;
+        this.mType = mType;
+        mLoadMoreNotRequired = true;
+    }
 
     /**
      * Constructor used to create a PostRecyclerAdapter with already defined dates. General use case
@@ -90,6 +103,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mType = type;
         mDateHashMap = dateHashMap;
         mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
+        mLoadMoreNotRequired = false;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -109,6 +123,23 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      */
     public void updateDataset(List<Post> posts, HashMap<Integer, String> dateHashMap, boolean forceReplace) {
         mDateHashMap = dateHashMap;
+        mPosts = posts;
+        if (forceReplace) {
+            mLastPosition = -1;
+            notifyDataSetChanged();
+        } else {
+            int oldCount = mPosts.size();
+            notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
+        }
+    }
+
+    /**
+     * Update current dataset.
+     *
+     * @param posts
+     * @param forceReplace
+     */
+    public void updateDataset(List<Post> posts, boolean forceReplace) {
         mPosts = posts;
         if (forceReplace) {
             mLastPosition = -1;
@@ -214,9 +245,14 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        // Add extra item, that will be shown in case of load more scenario.
-        return mPosts != null ?
-                mPosts.size() + 1 : 0;
+        if (mLoadMoreNotRequired) {
+            return mPosts != null ?
+                    mPosts.size() : 0;
+        } else {
+            // Add extra item, that will be shown in case of load more scenario.
+            return mPosts != null ?
+                    mPosts.size() + 1 : 0;
+        }
     }
 
     /**
@@ -238,7 +274,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.
-        if (position == getItemCount() - 1) {
+        if (position == getItemCount() - 1 && !mLoadMoreNotRequired) {
             return VIEW_TYPE_LOAD_MORE;
         }
         switch (mType) {

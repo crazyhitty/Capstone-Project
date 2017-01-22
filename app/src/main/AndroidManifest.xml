@@ -40,6 +40,11 @@
             android:theme="@style/AppTheme.PostDetails" />
 
         <activity
+            android:name=".ui.activities.CollectionDetailsActivity"
+            android:parentActivityName=".ui.activities.DashboardActivity"
+            android:theme="@style/AppTheme.CollectionDetails" />
+
+        <activity
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
             android:theme="@style/AppTheme.Settings" />

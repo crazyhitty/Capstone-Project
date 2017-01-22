@@ -60,6 +60,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.CollectionDetails">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.Settings">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -135,6 +141,15 @@
     </style>
 
     <style name="TextAppearanceCollectionDesc" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/material_grey_700</item>
+    </style>
+
+    <style name="TextAppearanceCollectionDetailTitle" parent="TextAppearanceLarge">
+        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearanceCollectionDetailDesc" parent="TextAppearanceMedium">
         <item name="android:textColor">@color/material_grey_700</item>
     </style>
 
