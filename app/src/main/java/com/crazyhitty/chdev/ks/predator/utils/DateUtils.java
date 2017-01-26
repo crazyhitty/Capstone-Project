@@ -60,7 +60,7 @@ public class DateUtils {
     /**
      * Convert post publish date into milliseconds.
      *
-     * @param date    Post publish date in complete date format
+     * @param date Post publish date in complete date format
      * @return Returns time in milliseconds according to the date provided.
      */
     public static long predatorDateToMillis(String date) {
@@ -160,9 +160,9 @@ public class DateUtils {
 
     /**
      * Converts the number of hours into milliseconds.
-     * @param hours    Number of hours in string, for eg: "6"
-     * @return
-     * Number of hours in milliseconds.
+     *
+     * @param hours Number of hours in string, for eg: "6"
+     * @return Number of hours in milliseconds.
      */
     public static long hoursToMillis(String hours) {
         return hoursToMillis(Integer.parseInt(hours));

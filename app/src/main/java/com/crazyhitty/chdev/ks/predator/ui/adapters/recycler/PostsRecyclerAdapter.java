@@ -77,8 +77,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     /**
      * Initialize using this constructor if load more and dates functionalilties are not required.
      *
-     * @param mPosts    List containing posts
-     * @param mType     Type of data to be displayed
+     * @param mPosts List containing posts
+     * @param mType  Type of data to be displayed
      */
     public PostsRecyclerAdapter(List<Post> mPosts, TYPE mType) {
         this.mPosts = mPosts;
