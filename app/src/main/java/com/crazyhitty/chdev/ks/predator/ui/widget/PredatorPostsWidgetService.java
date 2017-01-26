@@ -22,38 +22,21 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.ui.widget;
 
-import android.content.Context;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Post;
-
-import java.util.HashMap;
-import java.util.List;
+import android.content.Intent;
+import android.widget.RemoteViewsService;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     1/26/2017 4:44 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
-
-        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
-    }
-
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
-
-        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
-
-        void loadMorePosts(String token, String categoryName, boolean latest);
-
-        void updateWidgets(Context context);
+public class PredatorPostsWidgetService extends RemoteViewsService {
+    @Override
+    public RemoteViewsFactory onGetViewFactory(Intent intent) {
+        return new PredatorPostsWidgetFactory(getApplicationContext(), intent);
     }
 }

@@ -67,9 +67,8 @@ import butterknife.ButterKnife;
  */
 
 public class PostDetailsActivity extends BaseAppCompatActivity implements PostDetailsFragment.OnFragmentInteractionListener, MediaRecyclerAdapter.OnMediaItemClickListener {
+    public static final String ARG_POST_TABLE_POST_ID = "post_id";
     private static final String TAG = "PostDetailsActivity";
-    private static final String ARG_POST_TABLE_POST_ID = "post_id";
-
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)

@@ -125,4 +125,9 @@
     <!--item_library.xml-->
     <dimen name="item_library_card_corner_radius">4dp</dimen>
     <dimen name="item_library_card_elevation">2dp</dimen>
+
+    <!--widget_posts-->
+    <dimen name="widget_posts_min_height">146dip</dimen>
+    <dimen name="widget_posts_min_width">146dip</dimen>
+    <dimen name="widget_posts_list_fading_edge">8dp</dimen>
 </resources>

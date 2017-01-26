@@ -155,6 +155,9 @@
     <string name="activity_about_mail_subject">Regarding Predator</string>
     <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
 
+    <!--widget-->
+    <string name="widget_posts_unavailable">Posts unavailable.</string>
+
     <!--settings-->
     <string name="settings_name">Settings</string>
     <string name="settings_system">System</string>

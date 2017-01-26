@@ -112,6 +112,20 @@
                 android:resource="@xml/sync_adapter" />
         </service>
 
+        <receiver android:name=".ui.widget.PredatorPostsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/predator_posts_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".ui.widget.PredatorPostsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>

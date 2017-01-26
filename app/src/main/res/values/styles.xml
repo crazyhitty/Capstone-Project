@@ -206,4 +206,12 @@
         <item name="android:textColor">@color/material_grey_400</item>
     </style>
 
+    <style name="TextAppearanceWidgetPostTitle" parent="TextAppearanceMedium">
+        <item name="android:textColor">@color/material_grey_200</item>
+    </style>
+
+    <style name="TextAppearanceWidgetPostDesc" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/material_grey_400</item>
+    </style>
+
 </resources>

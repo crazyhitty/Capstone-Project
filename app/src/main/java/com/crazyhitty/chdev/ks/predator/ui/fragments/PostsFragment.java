@@ -315,6 +315,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         }
 
         mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
+
+        // Update widgets.
+        mPostsPresenter.updateWidgets(getContext());
     }
 
     @Override
