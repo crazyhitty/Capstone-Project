@@ -45,7 +45,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.activities.CollectionDetailsActivity;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.CollectionsRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CollectionsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.CollectionItemDecorator;
@@ -262,6 +262,12 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
 
     @Override
     public void unableToFetchCollections(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
+        swipeRefreshLayoutCollections.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayoutCollections.setRefreshing(false);
+            }
+        });
         if (mCollectionsRecyclerAdapter != null && mCollectionsRecyclerAdapter.getItemCount() != 0) {
             // If the adapter contains items already.
             showLongToast(errorMessage);

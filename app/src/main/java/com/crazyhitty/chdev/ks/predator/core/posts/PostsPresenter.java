@@ -158,6 +158,10 @@ public class PostsPresenter implements PostsContract.Presenter {
                                     .delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
                                             null,
                                             null);
+                            MainApplication.getContentResolverInstance()
+                                    .delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
+                                            null,
+                                            null);
                         }
 
                         if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {

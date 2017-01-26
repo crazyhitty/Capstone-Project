@@ -45,7 +45,7 @@ import com.crazyhitty.chdev.ks.predator.events.OAuthTokenEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardContinueEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardSecondAnimateEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardThirdAnimateEvent;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.OnboardPagerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.OnboardPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.views.OnboardingSecondView;
 import com.crazyhitty.chdev.ks.predator.ui.views.OnboardingThirdView;
@@ -72,7 +72,7 @@ import butterknife.OnClick;
 
 public class OnboardActivity extends BaseAppCompatActivity implements AuthContract.View {
     private static final String TAG = "OnboardActivity";
-    private static final int RC_OAUTH_WEBVIEW = 1337;
+    private static final int RC_PERMISSION = 1337;
 
     @BindView(R.id.view_pager_onboard)
     ViewPager viewPagerOnboard;
@@ -106,7 +106,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboard);
-        getWindow().setBackgroundDrawableResource(R.color.colorPrimary);
+        getWindow().setBackgroundDrawableResource(R.color.color_primary);
         ButterKnife.bind(this);
         initViewPager();
         setPresenter(new AuthPresenter(this));
@@ -135,8 +135,8 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
         viewPagerOnboard.setOffscreenPageLimit(2);
 
         pageIndicatorView.setViewPager(viewPagerOnboard);
-        pageIndicatorView.setSelectedColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
-        pageIndicatorView.setUnselectedColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        pageIndicatorView.setSelectedColor(ContextCompat.getColor(getApplicationContext(), R.color.color_accent));
+        pageIndicatorView.setUnselectedColor(ContextCompat.getColor(getApplicationContext(), R.color.color_primary_dark));
         pageIndicatorView.setRadius(getResources().getDimension(R.dimen.indicator_radius));
         pageIndicatorView.setAnimationType(AnimationType.WORM);
 
@@ -173,7 +173,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     private void onFirstPageSelection() {
         // disable back button
         imgBtnPrevious.setEnabled(false);
-        imgBtnPrevious.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        imgBtnPrevious.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.color_primary_dark));
     }
 
     private void onSecondPageSelection() {
@@ -201,8 +201,8 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
         // disable skip button
         btnSkip.setEnabled(false);
 
-        btnSkip.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
-        imgBtnNext.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        btnSkip.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.color_primary_dark));
+        imgBtnNext.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.color_primary_dark));
 
         /**
          * Post an event at {@link OnboardingThirdView#animateViews(OnboardThirdAnimateEvent)},
@@ -243,6 +243,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     public void onContinue(OnboardContinueEvent onboardContinueEvent) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) !=
                 PackageManager.PERMISSION_GRANTED) {
+            requestPermission();
             return;
         }
         showLoadingDialog(false);
@@ -287,5 +288,31 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     @Override
     public void setPresenter(AuthContract.Presenter presenter) {
         mAuthPresenter = presenter;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.GET_ACCOUNTS},
+                RC_PERMISSION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case RC_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    onContinue(new OnboardContinueEvent(OnboardContinueEvent.TYPE.REGULAR));
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    showLongToast(R.string.permission_denied_err_msg);
+                }
+                return;
+            }
+        }
     }
 }

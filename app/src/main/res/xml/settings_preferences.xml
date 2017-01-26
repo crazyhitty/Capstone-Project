@@ -36,6 +36,22 @@
             predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
             predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_background_sync_key"
+            android:summaryOff="@string/settings_background_sync_summary_off"
+            android:summaryOn="@string/settings_background_sync_summary_on"
+            android:title="@string/settings_background_sync_title" />
+
+        <ListPreference
+            android:defaultValue="@string/settings_sync_interval_default_value"
+            android:dialogTitle="@string/settings_sync_interval_dialog_title"
+            android:entries="@array/settings_sync_interval_entries"
+            android:entryValues="@array/settings_sync_interval_entry_values"
+            android:key="@string/settings_sync_interval_key"
+            android:summary="@string/settings_sync_interval_summary"
+            android:title="@string/settings_sync_interval_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

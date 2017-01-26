@@ -3,14 +3,6 @@
     <string name="app_name">Predator</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
     <string name="application_icon">Application icon</string>
-    <string name="feature_1">Feature 1</string>
-    <string name="feature_1_desc">Feature 1 description</string>
-    <string name="feature_2">Feature 2</string>
-    <string name="feature_2_desc">Feature 2 description</string>
-    <string name="feature_3">Feature 3</string>
-    <string name="feature_3_desc">Feature 3 description</string>
-    <string name="feature_4">Feature 4</string>
-    <string name="feature_4_desc">Feature 4 description</string>
     <string name="authentication">Authentication</string>
     <string name="continue_as_regular_user">Continue as regular user</string>
     <string name="continue_as_registered_user">Continue as registered user</string>
@@ -24,6 +16,8 @@
     <string name="retry">Retry</string>
     <string name="not_connected_to_network_err">Not connected to network!</string>
     <string name="not_yet_implemented">Not yet implemented!</string>
+    <string name="share_using">Share using&#8230;</string>
+    <string name="permission_denied_err_msg">Permission denied!\nPlease accept the permission inorder to make the application work properly!</string>
 
     <!--activity_authenticator.xml-->
     <string name="authenticator_continue">Continue</string>
@@ -37,6 +31,7 @@
     <string name="menu_nav_settings">Settings</string>
     <string name="menu_nav_about">About</string>
     <string name="menu_nav_donate">Donate</string>
+    <string name="menu_nav_spread_love">Spread love</string>
 
     <!--menu_posts.xml-->
     <string name="menu_posts_sort">Sort</string>
@@ -55,6 +50,18 @@
     <string name="onboard_skip">Skip</string>
     <string name="onboard_next">Next</string>
     <string name="onboard_previous">Previous</string>
+    <string name="onboard_app_desc">A beautifully crafted client for producthunt.com . Get the latest tech products on your fingertips. View latest products and collections uploaded on ProductHunt.</string>
+    <string name="onboard_feature_1">View latest products</string>
+    <string name="onboard_feature_1_desc">Discover amazing products which might change your life and stay up to date with latest technological products.</string>
+    <string name="onboard_feature_2">View featured collections</string>
+    <string name="onboard_feature_2_desc">Check out the curated lists of products made by various other hunters out there in the wild.</string>
+    <string name="onboard_feature_3">Minimal design</string>
+    <string name="onboard_feature_3_desc">Simple and easy to navigate throughout the application and use of small delightfull animations add a cherry on top.</string>
+    <string name="onboard_feature_4">Background syncing</string>
+    <string name="onboard_feature_4_desc">Synchronize data even if the application is offline and stay up to date always. (Optional, can be activated via application settings)</string>
+    <string name="onboard_authentication_alternate_title">Just, em&#8230; one more thing!</string>
+    <string name="onboard_authentication_desc">Inorder to communicate with ProductHunt api we need to generate a authentication token, which will be securely saved in your device. But this requires <b>CONTACT</b> permission so that it can save that token securely. Don\'t worry we won\'t steal your contacts :)</string>
+    <string name="onboard_continue">Continue</string>
 
     <!--dashboard-->
     <string name="dashboard_home">Home</string>
@@ -104,7 +111,9 @@
 
     <!--item media-->
     <string name="item_media_image_desc">Media Image</string>
-    <string name="item_media_image_type">Media Image Type</string>
+    <string name="item_media_type_image">IMG</string>
+    <string name="item_media_type_gif">GIF</string>
+    <string name="item_media_type_video">VID</string>
 
     <!--item post details comments-->
     <string name="item_post_details_comment_user_image_desc">User image</string>
@@ -117,9 +126,39 @@
     <string name="item_load_more_collection_error_title">Cannot hunt more collections ;(</string>
     <string name="item_load_more_collection_error_desc">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
 
+    <!--activity_collection_details.xml-->
+    <string name="activity_collection_details_image_desc">Collection image</string>
+
+    <!--activity_media_full_screen.xml-->
+    <string name="activity_media_full_screen_close">Close</string>
+    <string name="activity_media_full_screen_next">Next image</string>
+    <string name="activity_media_full_screen_previous">Previous image</string>
+
+    <!--navigation_drawer_header.xml-->
+    <string name="navigation_drawer_header_image_desc">App logo</string>
+
+    <!--activity_about.xml-->
+    <string name="activity_about">About</string>
+    <string name="activity_about_logo_desc">App logo</string>
+    <string name="activity_about_app_name">Predator</string>
+    <string name="activity_about_app_desc">Minimal client for ProductHunt.</string>
+    <string name="activity_about_github">github</string>
+    <string name="activity_about_google_plus">google plus</string>
+    <string name="activity_about_mail">mail</string>
+    <string name="activity_about_version">Version %s</string>
+    <string name="activity_about_title_developer">Developer</string>
+    <string name="activity_about_developer_username">Kartik Sharma</string>
+    <string name="activity_about_developer_type">Maker</string>
+    <string name="activity_about_special_thanks_title">Special Thanks</string>
+    <string name="activity_about_special_thanks_desc">To Kajal Mittal for her regular and relevant feedback.\n\nApplication icon made by Freepik from www.flaticon.com\n\nOther icons provided by material.io/icons and materialdesignicons.com</string>
+    <string name="activity_about_library_title">Libraries</string>
+    <string name="activity_about_mail_subject">Regarding Predator</string>
+    <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
+
     <!--settings-->
     <string name="settings_name">Settings</string>
     <string name="settings_system">System</string>
+
     <string name="settings_clear_cache_key">clear_cache</string>
     <string name="settings_clear_cache_title">Clear cache</string>
     <string name="settings_clear_cache_summary">Clear entire cache powering offline state of this application.</string>
@@ -129,4 +168,25 @@
     <string name="settings_clear_cache_dialog_no">Cancel</string>
     <string name="settings_clear_cache_success_message">Successfully cleared cache.</string>
     <string name="settings_clear_cache_failure_message">Unable to wipe cache, please try again :(</string>
+
+    <string name="settings_background_sync_key">background_sync</string>
+    <string name="settings_background_sync_title">Background sync</string>
+    <string name="settings_background_sync_summary_on">Background sync is currently turned on, application will automatically re-fetch new data from the server even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
+    <string name="settings_background_sync_summary_off">Background sync is currently turned off, enable this feature if you want the application to automatically re-fetch new data from the server periodically even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
+
+    <string name="settings_sync_interval_key">sync_interval</string>
+    <string name="settings_sync_interval_title">Sync interval</string>
+    <string name="settings_sync_interval_summary">Change the frequency at which background syncing should be operated.</string>
+    <string name="settings_sync_interval_dialog_title">Sync interval</string>
+    <string name="settings_sync_interval_default_value">6</string>
+    <string-array name="settings_sync_interval_entries">
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>24 hours</item>
+    </string-array>
+    <string-array name="settings_sync_interval_entry_values">
+        <item>6</item>
+        <item>12</item>
+        <item>24</item>
+    </string-array>
 </resources>

@@ -24,15 +24,24 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
+import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsContract;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsPresenter;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSyncAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference;
+import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 
 /**
  * Author:      Kartik Sharma
@@ -43,6 +52,8 @@ import com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference;
 
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
+    private SwitchPreference mSwitchPreferenceBackgroundSync;
+    private ListPreference mListPreferenceSyncInterval;
 
     private SettingsContract.Presenter mSettingsPresenter;
 
@@ -64,6 +75,10 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         bindPreferences();
 
         manageCachePreferences();
+
+        manageBackgroundSyncPreferences();
+
+        manageSyncIntervalPreferences();
     }
 
     @Override
@@ -74,6 +89,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
     private void bindPreferences() {
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
+        mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
+        mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
     }
 
     private void manageCachePreferences() {
@@ -82,6 +99,40 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             public void onClick(DialogInterface dialog) {
                 // Clear cache.
                 mSettingsPresenter.clearCache();
+            }
+        });
+    }
+
+    private void manageBackgroundSyncPreferences() {
+        mSwitchPreferenceBackgroundSync.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean status = (Boolean) newValue;
+                mListPreferenceSyncInterval.setEnabled(status);
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+                    if (status) {
+                        PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
+                    } else {
+                        PredatorSyncAdapter.removePeriodicSync(getActivity().getApplicationContext());
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    private void manageSyncIntervalPreferences() {
+        mListPreferenceSyncInterval.setEnabled(PredatorSharedPreferences.isSyncEnabled(getActivity().getApplicationContext()));
+
+        mListPreferenceSyncInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String hours = (String) newValue;
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+                    PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
+                            DateUtils.hoursToMillis(hours));
+                }
+                return true;
             }
         });
     }

@@ -1,0 +1,64 @@
+{
+  "libraries": [
+    {
+      "library_title": "RxJava",
+      "library_creator": "ReactiveX",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/ReactiveX/RxJava"
+    },
+    {
+      "library_title": "RxAndroid",
+      "library_creator": "ReactiveX",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/ReactiveX/RxAndroid"
+    },
+    {
+      "library_title": "Retrofit",
+      "library_creator": "Square",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/square/retrofit"
+    },
+    {
+      "library_title": "Stetho",
+      "library_creator": "Facebook",
+      "library_license_type": "BSD License",
+      "library_redirect_url": "https://github.com/facebook/stetho"
+    },
+    {
+      "library_title": "Material Design Dimens",
+      "library_creator": "Dmitry Malkovich",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/DmitryMalkovich/material-design-dimens"
+    },
+    {
+      "library_title": "Butterknife",
+      "library_creator": "ReactiveX",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/JakeWharton/butterknife"
+    },
+    {
+      "library_title": "PageIndicatorView",
+      "library_creator": "Roman Danylyk",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/romandanylyk/PageIndicatorView"
+    },
+    {
+      "library_title": "EventBus",
+      "library_creator": "Greenrobot",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/greenrobot/EventBus"
+    },
+    {
+      "library_title": "CustomTabsHelper",
+      "library_creator": "Zhang Hai",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/DreaminginCodeZH/CustomTabsHelper"
+    },
+    {
+      "library_title": "Fresco",
+      "library_creator": "Facebook",
+      "library_license_type": "BSD License",
+      "library_redirect_url": "https://github.com/facebook/fresco"
+    }
+  ]
+}

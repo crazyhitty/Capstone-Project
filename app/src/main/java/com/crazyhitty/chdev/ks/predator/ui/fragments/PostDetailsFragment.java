@@ -51,7 +51,7 @@ import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.PostDetailsRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostDetailsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -117,6 +117,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         setHasOptionsMenu(true);
         setPresenter(new PostDetailsPresenter(this));
         mPostDetailsPresenter.subscribe();
+        mPostDetailsPresenter.initChromeCustomTabs(this);
         EventBus.getDefault().register(this);
     }
 
@@ -155,7 +156,6 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         mPostDetailsRecyclerAdapter = new PostDetailsRecyclerAdapter();
 
         mPostDetailsRecyclerAdapter.updateTitles(Arrays.asList(getString(R.string.post_details_users),
-                getString(R.string.post_details_media),
                 getString(R.string.post_details_comments)));
 
         recyclerViewPostDetails.setAdapter(mPostDetailsRecyclerAdapter);
@@ -186,7 +186,8 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
 
                     @Override
                     public void onNext(String s) {
-                        mPostDetailsRecyclerAdapter.setUnavailable(false);
+                        mPostDetailsRecyclerAdapter.setCommentsUnavailable(false);
+                        mPostDetailsRecyclerAdapter.setUsersUnavailable(false);
                         if (loadOffline) {
                             mPostDetailsPresenter.getExtraDetailsOffline(postId);
                         } else {
@@ -238,7 +239,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_open_redirect_url:
-                mPostDetailsPresenter.openRedirectUrl(getContext());
+                mPostDetailsPresenter.openRedirectUrl(getActivity());
                 break;
             case R.id.menu_share:
                 mPostDetailsPresenter.sharePostDetails(getContext());
@@ -267,7 +268,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     @Override
     public void showMedia(List<Media> media) {
         Logger.d(TAG, "showMedia: media: " + media.size());
-        mPostDetailsRecyclerAdapter.updateMedia(media);
+        mOnFragmentInteractionListener.showMedia(media);
     }
 
     @Override
@@ -282,7 +283,7 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     }
 
     @Override
-    public void showComments(List<Comment> comments) {
+    public void showComments(final List<Comment> comments) {
         Logger.d(TAG, "showComments: comments: " + comments.size());
         mPostDetailsRecyclerAdapter.updateComments(comments);
     }
@@ -310,20 +311,29 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
     @Override
     public void unableToFetchAllUsers(String errorMessage) {
         Logger.d(TAG, "unableToFetchAllUsers: " + errorMessage);
+        mPostDetailsRecyclerAdapter.setUsersUnavailable(true);
     }
 
     @Override
     public void unableToFetchComments(String errorMessage) {
         Logger.d(TAG, "unableToFetchComments: " + errorMessage);
+        mPostDetailsRecyclerAdapter.setCommentsUnavailable(true);
     }
 
     @Override
     public void noOfflineDataAvailable() {
+        swipeRefreshLayoutPostDetails.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayoutPostDetails.setRefreshing(false);
+            }
+        });
         Logger.d(TAG, "noOfflineDataAvailable");
         if (isNetworkAvailable(true)) {
             getPostDetails(getArguments().getInt(ARG_POST_TABLE_POST_ID), false);
         } else {
-            mPostDetailsRecyclerAdapter.setUnavailable(true);
+            mPostDetailsRecyclerAdapter.setCommentsUnavailable(false);
+            mPostDetailsRecyclerAdapter.setUsersUnavailable(false);
         }
     }
 
@@ -350,7 +360,13 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         }
     }
 
+    public void openMedia(Media media) {
+        mPostDetailsPresenter.openMedia(getContext(), media);
+    }
+
     public interface OnFragmentInteractionListener {
         void showPostDetails(PostDetails postDetails);
+
+        void showMedia(List<Media> media);
     }
 }

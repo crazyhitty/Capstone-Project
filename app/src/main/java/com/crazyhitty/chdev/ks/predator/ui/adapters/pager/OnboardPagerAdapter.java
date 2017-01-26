@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.adapters;
+package com.crazyhitty.chdev.ks.predator.ui.adapters.pager;
 
 import android.support.v4.view.PagerAdapter;
 import android.view.View;

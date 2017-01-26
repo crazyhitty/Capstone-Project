@@ -45,7 +45,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.ListItemDecorator;
@@ -74,7 +74,6 @@ import rx.schedulers.Schedulers;
 public class PostsFragment extends BaseSupportFragment implements PostsContract.View,
         PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
     private static final String TAG = "PostsFragment";
-    private static final String CATEGORY_TECH = "tech";
 
     @BindView(R.id.recycler_view_posts)
     RecyclerView recyclerViewPosts;
@@ -185,7 +184,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, CATEGORY_TECH, true, true);
+                        mPostsPresenter.getPosts(s, Constants.Posts.CATEGORY_TECH, true, true);
                     }
                 });
     }
@@ -210,7 +209,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
-                        mPostsPresenter.loadMorePosts(s, CATEGORY_TECH, true);
+                        mPostsPresenter.loadMorePosts(s, Constants.Posts.CATEGORY_TECH, true);
                     }
                 });
     }
@@ -320,6 +319,12 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     @Override
     public void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
+        swipeRefreshLayoutPosts.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayoutPosts.setRefreshing(false);
+            }
+        });
         if (mPostsRecyclerAdapter != null && mPostsRecyclerAdapter.getItemCount() != 0) {
             // If the adapter contains items already.
             showLongToast(errorMessage);

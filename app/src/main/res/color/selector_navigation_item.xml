@@ -23,6 +23,6 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/colorAccent" android:state_checked="true" />
+    <item android:color="@color/color_accent" android:state_checked="true" />
     <item android:color="@color/material_grey_700" android:state_checked="false" />
 </selector>

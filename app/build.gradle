@@ -84,8 +84,8 @@ dependencies {
     // event bus
     compile 'org.greenrobot:eventbus:3.0.0'
 
-    // chrome custom tabs
-    compile 'com.android.support:customtabs:25.1.0'
+    // chrome custom tabs helper
+    compile 'me.zhanghai.android.customtabshelper:library:1.0.3'
 
     // fresco
     compile 'com.facebook.fresco:fresco:1.0.0'

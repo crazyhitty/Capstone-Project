@@ -24,8 +24,11 @@
 
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -75,6 +78,10 @@ public interface PostDetailsContract {
     }
 
     interface Presenter extends BasePresenter {
+        void initChromeCustomTabs(Fragment fragment);
+
+        void initChromeCustomTabs(FragmentActivity fragmentActivity);
+
         void getDetails(int postId);
 
         void getUsers(int postId);
@@ -83,8 +90,10 @@ public interface PostDetailsContract {
 
         void getExtraDetailsOffline(int postId);
 
-        void openRedirectUrl(Context context);
+        void openRedirectUrl(Activity activity);
 
         void sharePostDetails(Context context);
+
+        void openMedia(Context context, Media media);
     }
 }

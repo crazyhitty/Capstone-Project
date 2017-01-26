@@ -56,7 +56,7 @@
             android:contentDescription="@string/item_list_post_image_desc"
             android:padding="@dimen/item_list_post_image_padding"
             fresco:failureImage="@drawable/ic_image_broken_error"
-            fresco:placeholderImage="@color/colorPrimary"
+            fresco:placeholderImage="@color/color_primary"
             fresco:roundedCornerRadius="@dimen/item_list_post_image_corner_padding" />
 
         <TextView

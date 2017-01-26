@@ -24,22 +24,29 @@
 
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.ui.activities.MediaFullScreenActivity;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -48,10 +55,13 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
+import org.chromium.customtabsclient.CustomTabsActivityHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -59,6 +69,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH;
 
 /**
  * Author:      Kartik Sharma
@@ -69,17 +81,43 @@ import rx.subscriptions.CompositeSubscription;
 
 public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private static final String TAG = "PostDetailsPresenter";
-
+    private final CustomTabsIntent mCustomTabsIntent;
+    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
+            new CustomTabsActivityHelper.CustomTabsFallback() {
+                @Override
+                public void openUri(Activity activity, Uri uri) {
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            };
     @NonNull
     private PostDetailsContract.View mView;
-
     private CompositeSubscription mCompositeSubscription;
-
     private Cursor mPostDetailsCursor;
+    private CustomTabsHelperFragment mCustomTabsHelperFragment;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
         mCompositeSubscription = new CompositeSubscription();
+        mCustomTabsIntent = new CustomTabsIntent.Builder()
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .build();
+    }
+
+    @Override
+    public void initChromeCustomTabs(Fragment fragment) {
+        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragment);
+    }
+
+    @Override
+    public void initChromeCustomTabs(FragmentActivity fragmentActivity) {
+        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragmentActivity);
     }
 
     @Override
@@ -123,6 +161,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 Logger.d(TAG, "onNext: " + mPostDetailsCursor.getCount());
                 mPostDetailsCursor.moveToFirst();
                 mView.showDetails(mPostDetailsCursor);
+                prepareChromeCustomTabs(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL));
             }
         }));
     }
@@ -246,6 +285,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                         Media mediaObj = new Media();
                                         mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
                                         mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
+                                        mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
                                         mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
                                         mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
                                         mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
@@ -476,6 +516,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         Media mediaObj = new Media();
                         mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
                         mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
+                        mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
                         mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
                         mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
                         mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
@@ -664,34 +705,45 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public void openRedirectUrl(Context context) {
-        if (mPostDetailsCursor == null || mPostDetailsCursor.getCount() == 0) {
-            Toast.makeText(context, R.string.post_details_no_redirect_url_available, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        mPostDetailsCursor.moveToFirst();
-
+    public void openRedirectUrl(Activity activity) {
         String redirectUrl = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
 
-        if (TextUtils.isEmpty(redirectUrl)) {
-            Toast.makeText(context, R.string.post_details_no_redirect_url_available, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(redirectUrl));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
-        } else {
-            Toast.makeText(context, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG).show();
-        }
+        CustomTabsHelperFragment.open(activity,
+                mCustomTabsIntent,
+                Uri.parse(redirectUrl),
+                mCustomTabsFallback);
     }
 
     @Override
     public void sharePostDetails(Context context) {
-        Toast.makeText(context, R.string.not_yet_implemented, Toast.LENGTH_SHORT).show();
+        String title = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_NAME);
+        String body = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_TAGLINE) + "\n" +
+                CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL);
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+        sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(Intent.createChooser(sharingIntent, context.getString(R.string.share_using)));
+    }
+
+    @Override
+    public void openMedia(Context context, Media media) {
+        switch (media.getMediaType()) {
+            case Constants.Media.IMAGE:
+                MediaFullScreenActivity.startActivity(context,
+                        media.getMediaId(),
+                        media.getPostId());
+                break;
+            case Constants.Media.VIDEO:
+                Intent videoIntent = new Intent();
+                videoIntent.setAction(Intent.ACTION_VIEW);
+                videoIntent.setData(Uri.parse(YOUTUBE_PATH.concat(media.getVideoId())));
+                videoIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(videoIntent);
+                break;
+        }
     }
 
     @Override
@@ -706,6 +758,23 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         if (mPostDetailsCursor != null) {
             mPostDetailsCursor.close();
         }
+    }
+
+    private void prepareChromeCustomTabs(String url) {
+        final Uri uri = Uri.parse(url);
+        mCustomTabsHelperFragment.setConnectionCallback(
+                new CustomTabsActivityHelper.ConnectionCallback() {
+                    @Override
+                    public void onCustomTabsConnected() {
+                        mCustomTabsHelperFragment.mayLaunchUrl(uri,
+                                null,
+                                null);
+                    }
+
+                    @Override
+                    public void onCustomTabsDisconnected() {
+                    }
+                });
     }
 
     private void addCommentsToDatabase(List<PostCommentsData.Comments> comments) {

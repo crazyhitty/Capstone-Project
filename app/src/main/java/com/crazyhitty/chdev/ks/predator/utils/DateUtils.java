@@ -159,6 +159,26 @@ public class DateUtils {
     }
 
     /**
+     * Converts the number of hours into milliseconds.
+     * @param hours    Number of hours in string, for eg: "6"
+     * @return
+     * Number of hours in milliseconds.
+     */
+    public static long hoursToMillis(String hours) {
+        return hoursToMillis(Integer.parseInt(hours));
+    }
+
+    /**
+     * Converts the number of hours into milliseconds.
+     *
+     * @param hours Number of hours in integer, for eg: 6
+     * @return Number of hours in milliseconds.
+     */
+    public static long hoursToMillis(int hours) {
+        return hours * 60 * 60 * 1000L;
+    }
+
+    /**
      * <a href="http://stackoverflow.com/a/28865648">Source</a>
      * <p>Get number of days between two calendar objects.</p>
      *

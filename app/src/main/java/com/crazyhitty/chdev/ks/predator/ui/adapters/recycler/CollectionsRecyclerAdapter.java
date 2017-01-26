@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.adapters;
+package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;

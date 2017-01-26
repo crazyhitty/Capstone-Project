@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.adapters;
+package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,9 +38,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
-import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.User;
-import com.crazyhitty.chdev.ks.predator.utils.MediaItemDecorator;
 import com.crazyhitty.chdev.ks.predator.utils.PostUserItemDecorator;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
@@ -61,13 +59,11 @@ import butterknife.ButterKnife;
 public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_TITLE = 1;
     private static final int VIEW_TYPE_USERS = 2;
-    private static final int VIEW_TYPE_MEDIA = 3;
     private static final int VIEW_TYPE_COMMENT = 4;
     private static final int VIEW_TYPE_LOADING = 5;
 
     private List<String> mTitles;
     private List<User> mUsers;
-    private List<Media> mMedia;
     private List<Comment> mComments;
     private int mLastPosition = -1;
     private boolean mUnavailable;
@@ -77,11 +73,9 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public PostDetailsRecyclerAdapter(List<String> titles,
                                       List<User> users,
-                                      List<Media> media,
                                       List<Comment> comments) {
         mTitles = titles;
         mUsers = users;
-        mMedia = media;
         mComments = comments;
     }
 
@@ -95,11 +89,6 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         notifyItemChanged(1);
     }
 
-    public void updateMedia(List<Media> media) {
-        mMedia = media;
-        notifyItemChanged(3);
-    }
-
     public void updateComments(List<Comment> comments) {
         mComments = comments;
         notifyDataSetChanged();
@@ -109,16 +98,17 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mUnavailable;
     }
 
-    public void setUnavailable(boolean isUnavailable) {
+    public void setUsersUnavailable(boolean isUnavailable) {
         mUnavailable = isUnavailable;
         if (mUsers == null || mUsers.size() == 0) {
             notifyItemChanged(1);
         }
-        if (mMedia == null || mMedia.size() == 0) {
-            notifyItemChanged(3);
-        }
+    }
+
+    public void setCommentsUnavailable(boolean isUnavailable) {
+        mUnavailable = isUnavailable;
         if (mComments == null || mComments.size() == 0) {
-            notifyItemChanged(5);
+            notifyItemChanged(3);
         }
     }
 
@@ -134,10 +124,6 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             case VIEW_TYPE_USERS:
                 View usersView = layoutInflater.inflate(R.layout.item_post_details_users, parent, false);
                 viewHolder = new UsersViewHolder(usersView);
-                break;
-            case VIEW_TYPE_MEDIA:
-                View mediaView = layoutInflater.inflate(R.layout.item_post_details_media, parent, false);
-                viewHolder = new MediaViewHolder(mediaView);
                 break;
             case VIEW_TYPE_COMMENT:
                 View commentView = layoutInflater.inflate(R.layout.item_post_details_comment, parent, false);
@@ -160,9 +146,6 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             case VIEW_TYPE_USERS:
                 onBindUsersViewHolder((UsersViewHolder) holder, position);
                 break;
-            case VIEW_TYPE_MEDIA:
-                onBindMediaViewHolder((MediaViewHolder) holder, position);
-                break;
             case VIEW_TYPE_COMMENT:
                 onBindCommentViewHolder((CommentViewHolder) holder, position);
                 break;
@@ -181,12 +164,8 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         usersViewHolder.postUsersRecyclerAdapter.updateUsers(mUsers);
     }
 
-    private void onBindMediaViewHolder(MediaViewHolder mediaViewHolder, int position) {
-        mediaViewHolder.mediaRecyclerAdapter.updateMedia(mMedia);
-    }
-
     private void onBindCommentViewHolder(CommentViewHolder commentViewHolder, int position) {
-        Comment comment = mComments.get(position - 5);
+        Comment comment = mComments.get(position - 3);
 
         commentViewHolder.txtUsername.setText(comment.getUsername());
         commentViewHolder.txtUserHeadline.setText(comment.getUserHeadline());
@@ -238,13 +217,11 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        int titleViewTypeCount = 3;
+        int titleViewTypeCount = 2;
         int userViewTypeCount = 1;
-        int mediaViewTypeCount = 1;
         int commentViewTypeCount = mComments != null ? mComments.size() : 1;
         return titleViewTypeCount +
                 userViewTypeCount +
-                mediaViewTypeCount +
                 commentViewTypeCount;
     }
 
@@ -256,10 +233,6 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             case 1:
                 return mUsers != null ? VIEW_TYPE_USERS : VIEW_TYPE_LOADING;
             case 2:
-                return VIEW_TYPE_TITLE;
-            case 3:
-                return mMedia != null ? VIEW_TYPE_MEDIA : VIEW_TYPE_LOADING;
-            case 4:
                 return VIEW_TYPE_TITLE;
             default:
                 return mComments != null ? VIEW_TYPE_COMMENT : VIEW_TYPE_LOADING;
@@ -307,32 +280,6 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             // Create adapter that will power this recycler view.
             postUsersRecyclerAdapter = new PostUsersRecyclerAdapter(null);
             recyclerViewUsers.setAdapter(postUsersRecyclerAdapter);
-        }
-    }
-
-    public static class MediaViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.recycler_view_media)
-        RecyclerView recyclerViewMedia;
-
-        MediaRecyclerAdapter mediaRecyclerAdapter;
-
-        public MediaViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-
-            // Set up the recycler view properties.
-            // Create a horizontal layout manager for recycler view.
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(itemView.getContext(),
-                    LinearLayoutManager.HORIZONTAL,
-                    false);
-            recyclerViewMedia.setLayoutManager(layoutManager);
-
-            // Add appropriate decorations to the recycler view items.
-            recyclerViewMedia.addItemDecoration(new MediaItemDecorator(itemView.getContext(), 16));
-
-            // Create adapter that will power this recycler view.
-            mediaRecyclerAdapter = new MediaRecyclerAdapter(null);
-            recyclerViewMedia.setAdapter(mediaRecyclerAdapter);
         }
     }
 

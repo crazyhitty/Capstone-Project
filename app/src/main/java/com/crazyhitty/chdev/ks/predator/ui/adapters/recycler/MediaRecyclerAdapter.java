@@ -22,14 +22,13 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.ui.adapters;
+package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
@@ -54,9 +53,11 @@ import butterknife.ButterKnife;
 
 public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdapter.MediaViewHolder> {
     private List<Media> mMedia;
+    private OnMediaItemClickListener mOnMediaItemClickListener;
 
-    public MediaRecyclerAdapter(List<Media> media) {
+    public MediaRecyclerAdapter(List<Media> media, OnMediaItemClickListener onMediaItemClickListener) {
         mMedia = media;
+        mOnMediaItemClickListener = onMediaItemClickListener;
     }
 
     public void updateMedia(List<Media> media) {
@@ -72,7 +73,7 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdap
     }
 
     @Override
-    public void onBindViewHolder(MediaViewHolder holder, int position) {
+    public void onBindViewHolder(final MediaViewHolder holder, int position) {
         String mediaImageUrl = mMedia.get(position).getImageUrl();
         mediaImageUrl = ImageUtils.getCustomMediaImageThumbnailUrl(mediaImageUrl,
                 ScreenUtils.dpToPxInt(holder.itemView.getContext(), 100),
@@ -85,14 +86,26 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdap
                 .build();
         holder.imgViewMedia.setController(controller);
 
-        int iconDrawableRes = R.drawable.ic_image_24dp;
-
-        if (TextUtils.equals(Constants.Media.VIDEO, mMedia.get(position).getMediaType())) {
-            iconDrawableRes = R.drawable.ic_video_24dp;
+        int mediaTypeTxtRes = R.string.item_media_type_image;
+        switch (mMedia.get(position).getMediaType()) {
+            case Constants.Media.IMAGE:
+                mediaTypeTxtRes = R.string.item_media_type_image;
+                break;
+            case Constants.Media.VIDEO:
+                mediaTypeTxtRes = R.string.item_media_type_video;
+                break;
         }
 
         // Set media type.
-        holder.imgViewMediaType.setImageResource(iconDrawableRes);
+        holder.txtMediaType.setText(mediaTypeTxtRes);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnMediaItemClickListener.onMediaItemClick(holder.getAdapterPosition(),
+                        mMedia.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
@@ -100,11 +113,15 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdap
         return mMedia != null ? mMedia.size() : 0;
     }
 
+    public interface OnMediaItemClickListener {
+        void onMediaItemClick(int position, Media media);
+    }
+
     public static class MediaViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_view_media)
         SimpleDraweeView imgViewMedia;
-        @BindView(R.id.image_view_media_type)
-        ImageView imgViewMediaType;
+        @BindView(R.id.text_view_media_type)
+        TextView txtMediaType;
 
         public MediaViewHolder(View itemView) {
             super(itemView);

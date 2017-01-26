@@ -36,6 +36,8 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 
+import com.crazyhitty.chdev.ks.predator.data.Constants;
+
 import rx.Observable;
 import rx.Subscriber;
 
@@ -118,6 +120,18 @@ public class PredatorAccount {
                         null);
             }
         });
+    }
+
+    @SuppressWarnings("MissingPermission")
+    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
+    public static Account getAccount(Context context) {
+        Account[] accounts = AccountManager.get(context)
+                .getAccountsByType(Constants.Authenticator.PREDATOR_ACCOUNT_TYPE);
+        if (accounts.length == 0) {
+            return null;
+        } else {
+            return accounts[0];
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)

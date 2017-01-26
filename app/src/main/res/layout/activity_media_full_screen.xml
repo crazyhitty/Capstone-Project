@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2016 Kartik Sharma
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatar_layout_full_screen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager_media"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_footer"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="@android:color/black"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_small"
+            android:background="@color/material_grey_200" />
+
+        <ImageButton
+            android:id="@+id/image_button_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/activity_media_full_screen_close"
+            android:padding="@dimen/padding_min"
+            android:tint="@color/color_primary"
+            app:srcCompat="@drawable/ic_close_24dp" />
+
+        <TextView
+            android:id="@+id/text_view_current_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAppearance="@style/TextAppearanceMediaImageNumber"
+            tools:text="1 / 7" />
+
+        <ImageButton
+            android:id="@+id/image_button_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:layout_toStartOf="@+id/image_button_next"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/activity_media_full_screen_previous"
+            android:padding="@dimen/padding_min"
+            android:tint="@color/color_primary"
+            app:srcCompat="@drawable/ic_previous_24dp" />
+
+        <ImageButton
+            android:id="@+id/image_button_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/activity_media_full_screen_next"
+            android:padding="@dimen/padding_min"
+            android:tint="@color/color_primary"
+            app:srcCompat="@drawable/ic_next_24dp" />
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

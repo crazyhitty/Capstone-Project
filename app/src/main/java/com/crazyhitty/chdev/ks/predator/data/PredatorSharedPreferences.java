@@ -25,6 +25,10 @@
 package com.crazyhitty.chdev.ks.predator.data;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
+
+import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 
 /**
  * Author:      Kartik Sharma
@@ -74,6 +78,19 @@ public class PredatorSharedPreferences {
         return SharedPreferencesManager.getString(context,
                 Constants.SharedPreferences.AUTH_TOKEN_TYPE,
                 Constants.Authenticator.AUTH_TYPE_CLIENT);
+    }
+
+    public static boolean isSyncEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.settings_background_sync_key), false);
+    }
+
+    public static long getSyncIntervalInMillis(Context context) {
+        String hours = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.settings_sync_interval_key),
+                        context.getString(R.string.settings_sync_interval_default_value));
+
+        return DateUtils.hoursToMillis(hours);
     }
 
     private static class SharedPreferencesManager {

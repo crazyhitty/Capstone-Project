@@ -32,11 +32,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 
 
 /**
@@ -48,6 +50,8 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private static final String TAG = "BaseAppCompatActivity";
+    private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
+    private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
 
     // Supporting vector drawable resources on pre lollipop devices.
     // Source: http://stackoverflow.com/a/38012842
@@ -55,9 +59,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
+    private Toolbar mToolbar;
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
+
+    protected void attachToolbar(Toolbar toolbar) {
+        mToolbar = toolbar;
+    }
 
     protected void setFragment(@IdRes int layoutResId,
                                Fragment fragment,
@@ -135,5 +144,21 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
 
     protected void showLongToast(@StringRes int messageRes) {
         Toast.makeText(getApplicationContext(), messageRes, Toast.LENGTH_LONG).show();
+    }
+
+    protected void hideToolbarTitle(boolean withAnimation) {
+        ToolbarUtils.getTitleTextView(mToolbar)
+                .animate()
+                .alpha(0.0f)
+                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_APPEARING_DURATION : 0)
+                .start();
+    }
+
+    protected void showToolbarTitle(boolean withAnimation) {
+        ToolbarUtils.getTitleTextView(mToolbar)
+                .animate()
+                .alpha(1.0f)
+                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
+                .start();
     }
 }

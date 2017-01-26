@@ -26,6 +26,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_posts"
+            android:checked="true"
             android:icon="@drawable/ic_posts_24dp"
             android:title="@string/menu_nav_posts" />
         <item
@@ -42,10 +43,12 @@
 
     <item android:title="@string/menu_nav_manage">
         <menu>
-            <item
+            <!--TODO: Implement after my profile functionality is completed.-->
+            <!--My profile menu shouldn't be visible to the user until it is complete.-->
+            <!--<item
                 android:id="@+id/nav_my_profile"
                 android:icon="@drawable/ic_profile_24dp"
-                android:title="@string/menu_nav_my_profile" />
+                android:title="@string/menu_nav_my_profile" />-->
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_24dp"
@@ -54,10 +57,16 @@
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_about_24dp"
                 android:title="@string/menu_nav_about" />
-            <item
+            <!--TODO: Implement after donate(in app purchases) functionality is completed.-->
+            <!--Donate menu shouldn't be visible to the user until it is complete.-->
+            <!--<item
                 android:id="@+id/nav_donate"
                 android:icon="@drawable/ic_donate_24dp"
-                android:title="@string/menu_nav_donate" />
+                android:title="@string/menu_nav_donate" />-->
+            <item
+                android:id="@+id/nav_spread_love"
+                android:icon="@drawable/ic_spread_love_24dp"
+                android:title="@string/menu_nav_spread_love" />
         </menu>
     </item>
 </menu>

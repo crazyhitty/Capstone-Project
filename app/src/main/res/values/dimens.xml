@@ -68,7 +68,9 @@
     <dimen name="view_loading_image_corner_padding">2dp</dimen>
 
     <!--activity_post_details.xml-->
-    <dimen name="activity_post_details_app_bar_height">300dp</dimen>
+    <dimen name="activity_post_details_app_bar_height">400dp</dimen>
+    <dimen name="activity_post_details_media_view_pager_height">200dp</dimen>
+    <dimen name="activity_post_details_margin_content_start">12dp</dimen>
 
     <!--item_post_user.xml-->
     <dimen name="item_post_user_image_width">44dp</dimen>
@@ -98,4 +100,29 @@
 
     <!--activity_collection_details.xml-->
     <dimen name="activity_collection_details_app_bar_height">150dp</dimen>
+    <dimen name="activity_collection_details_image_height">44dp</dimen>
+    <dimen name="activity_collection_details_image_width">44dp</dimen>
+    <dimen name="activity_collection_details_image_padding">2dp</dimen>
+    <dimen name="activity_collection_details_image_corner_padding">2dp</dimen>
+    <dimen name="activity_collection_margin_content_start">12dp</dimen>
+
+    <!--bg_rect_dark_black_rounded.xml-->
+    <dimen name="bg_rect_dark_black_rounded_radius">2dp</dimen>
+
+    <!--navigation_drawer_header.xml-->
+    <dimen name="navigation_drawer_header_image_height">64dp</dimen>
+    <dimen name="navigation_drawer_header_image_width">64dp</dimen>
+
+    <!--activity_about.xml-->
+    <dimen name="activity_about_logo_height">44dp</dimen>
+    <dimen name="activity_about_logo_width">44dp</dimen>
+    <dimen name="activity_about_logo_padding">2dp</dimen>
+    <dimen name="activity_about_margin_content_start">12dp</dimen>
+    <dimen name="activity_about_margin_content_start_icons">8dp</dimen>
+    <dimen name="activity_about_icon_padding">12dp</dimen>
+    <dimen name="activity_about_fading_edge">4dp</dimen>
+
+    <!--item_library.xml-->
+    <dimen name="item_library_card_corner_radius">4dp</dimen>
+    <dimen name="item_library_card_elevation">2dp</dimen>
 </resources>

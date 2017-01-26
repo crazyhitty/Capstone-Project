@@ -52,11 +52,51 @@ public class Constants {
         }
     }
 
+    public static class Sync {
+        public static final int ON = 1;
+        public static final int OFF = 0;
+
+        private Sync() {
+
+        }
+    }
+
     public static class Media {
         public static final String IMAGE = "image";
         public static final String VIDEO = "video";
+        public static final String YOUTUBE_PATH = "https://www.youtube.com/watch?v=";
 
         private Media() {
+
+        }
+    }
+
+    public static class Posts {
+        public static final String CATEGORY_TECH = "tech";
+
+        private Posts() {
+
+        }
+    }
+
+    public static class Library {
+        public static final String LIBRARIES = "libraries";
+        public static final String LIBRARY_TITLE = "library_title";
+        public static final String LIBRARY_CREATOR = "library_creator";
+        public static final String LIBRARY_LICENSE_TYPE = "library_license_type";
+        public static final String LIBRARY_REDIRECT_URL = "library_redirect_url";
+
+        private Library() {
+
+        }
+    }
+
+    public static class About {
+        public static final String URL_GITHUB = "https://github.com/crazyhitty/Capstone-Project";
+        public static final String URL_GOOGLE_PLUS = "https://plus.google.com/communities/102250921213849521349";
+        public static final String MAIL_ID = "cr42yh17m4n@gmail.com";
+
+        private About() {
 
         }
     }
@@ -65,6 +105,7 @@ public class Constants {
         public static final String IS_TOKEN_VALID = "is_token_valid";
         public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
         public static final String AUTH_TOKEN_TYPE = "auth_token_type";
+        public static final String SYNC_INTERVAL = "sync_interval";
 
         private SharedPreferences() {
 

@@ -44,7 +44,7 @@ import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.PostsRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.CollectionPostItemDecorator;
@@ -250,6 +250,12 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
 
     @Override
     public void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage) {
+        swipeRefreshLayoutPosts.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayoutPosts.setRefreshing(false);
+            }
+        });
         if (wasLoadingOfflinePosts && isNetworkAvailable(false)) {
             // Get latest posts if internet is available and no offline posts are available currently.
             loadingView.startLoading(LoadingView.TYPE.COLLECTION_POSTS);

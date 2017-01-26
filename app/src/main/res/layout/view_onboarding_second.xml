@@ -36,7 +36,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_1"
+        android:text="@string/onboard_feature_1"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -50,7 +50,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_1_desc"
+        android:text="@string/onboard_feature_1_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -64,7 +64,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_2"
+        android:text="@string/onboard_feature_2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -78,7 +78,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_2_desc"
+        android:text="@string/onboard_feature_2_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -92,7 +92,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_3"
+        android:text="@string/onboard_feature_3"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -106,7 +106,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_3_desc"
+        android:text="@string/onboard_feature_3_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -120,7 +120,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_4"
+        android:text="@string/onboard_feature_4"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -134,7 +134,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/feature_4_desc"
+        android:text="@string/onboard_feature_4_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 

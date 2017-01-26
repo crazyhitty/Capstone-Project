@@ -59,22 +59,22 @@
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/image_view_collection"
-                    android:layout_width="@dimen/item_list_post_image_width"
-                    android:layout_height="@dimen/item_list_post_image_height"
+                    android:layout_width="@dimen/activity_collection_details_image_width"
+                    android:layout_height="@dimen/activity_collection_details_image_height"
                     android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
                     android:layout_marginTop="@dimen/margin_min"
-                    android:contentDescription="@string/item_list_post_image_desc"
-                    android:padding="@dimen/item_list_post_image_padding"
+                    android:contentDescription="@string/activity_collection_details_image_desc"
+                    android:padding="@dimen/activity_collection_details_image_padding"
                     fresco:failureImage="@drawable/ic_image_broken_error"
-                    fresco:placeholderImage="@color/colorPrimary"
-                    fresco:roundedCornerRadius="@dimen/item_list_post_image_corner_padding" />
+                    fresco:placeholderImage="@color/color_primary"
+                    fresco:roundedCornerRadius="@dimen/activity_collection_details_image_corner_padding" />
 
                 <TextView
                     android:id="@+id/text_view_collection_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_avg"
-                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_marginStart="@dimen/activity_collection_margin_content_start"
                     android:layout_toEndOf="@+id/image_view_collection"
                     android:textAppearance="@style/TextAppearanceCollectionDetailTitle"
                     tools:text="Title" />
@@ -86,7 +86,7 @@
                     android:layout_below="@+id/text_view_collection_title"
                     android:layout_marginBottom="@dimen/margin_avg"
                     android:layout_marginEnd="@dimen/margin_avg"
-                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_marginStart="@dimen/activity_collection_margin_content_start"
                     android:layout_toEndOf="@+id/image_view_collection"
                     android:textAppearance="@style/TextAppearanceCollectionDetailDesc"
                     tools:text="Description" />

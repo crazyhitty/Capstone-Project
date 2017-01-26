@@ -36,7 +36,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/authentication"
+        android:text="@string/onboard_authentication_alternate_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -51,7 +51,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/lorem_ipsum"
+        android:text="@string/onboard_authentication_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -65,7 +65,7 @@
         android:layout_marginTop="@dimen/margin_large"
         android:alpha="0"
         android:gravity="center"
-        android:text="@string/continue_as_regular_user"
+        android:text="@string/onboard_continue"
         android:theme="@style/DarkButton" />
 
     <Button
@@ -79,6 +79,7 @@
         android:alpha="0"
         android:gravity="center"
         android:text="@string/continue_as_registered_user"
-        android:theme="@style/DarkButton" />
+        android:theme="@style/DarkButton"
+        android:visibility="gone" />
 
 </merge>

@@ -114,7 +114,7 @@ public class LoadingView extends RelativeLayout {
         ButterKnife.bind(this);
 
         // Set layout properties.
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_primary));
 
         // Set animation.
         manageAnimation(true);

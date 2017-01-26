@@ -95,7 +95,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        getWindow().setBackgroundDrawableResource(R.color.colorPrimary);
+        getWindow().setBackgroundDrawableResource(R.color.color_primary);
         ButterKnife.bind(this);
         initNetworKBroadcastReceiver();
         initToolbar();
@@ -161,17 +161,22 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             case R.id.nav_collections:
                 setFragmentOnDashboard(CollectionFragment.newInstance());
                 return true;
-            // TODO: Impement after bookmarks functionality is completed.
+            // TODO: Implement after bookmarks functionality is completed.
             /*case R.id.nav_bookmarks:
                 return true;*/
-            case R.id.nav_my_profile:
-                return false;
+            // TODO: Implement after my profile functionality is completed.
+            /*case R.id.nav_my_profile:
+                return false;*/
             case R.id.nav_settings:
                 SettingsActivity.startActivity(getApplicationContext());
                 return false;
             case R.id.nav_about:
+                AboutActivity.startActivity(getApplicationContext());
                 return false;
-            case R.id.nav_donate:
+            // TODO: Implement after donate(in app purchases) functionality is completed.
+            /*case R.id.nav_donate:
+                return false;*/
+            case R.id.nav_spread_love:
                 return false;
             default:
                 return false;

@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
 
     <application
         android:name=".MainApplication"
@@ -45,9 +48,19 @@
             android:theme="@style/AppTheme.CollectionDetails" />
 
         <activity
+            android:name=".ui.activities.MediaFullScreenActivity"
+            android:parentActivityName=".ui.activities.PostDetailsActivity"
+            android:theme="@style/AppTheme.MediaFullScreen" />
+
+        <activity
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
             android:theme="@style/AppTheme.Settings" />
+
+        <activity
+            android:name=".ui.activities.AboutActivity"
+            android:parentActivityName=".ui.activities.DashboardActivity"
+            android:theme="@style/AppTheme.About" />
 
         <activity
             android:name=".ui.activities.AuthenticatorActivity"
@@ -87,6 +100,17 @@
             android:exported="false"
             android:protectionLevel="signature"
             android:syncable="true" />
+
+        <service
+            android:name=".data.PredatorSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_adapter" />
+        </service>
 
     </application>
 

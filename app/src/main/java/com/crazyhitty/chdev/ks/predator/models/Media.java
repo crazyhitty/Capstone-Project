@@ -34,6 +34,7 @@ package com.crazyhitty.chdev.ks.predator.models;
 public class Media {
     private int id;
     private int mediaId;
+    private int postId;
     private String mediaType;
     private String platform;
     private String videoId;
@@ -55,6 +56,14 @@ public class Media {
 
     public void setMediaId(int mediaId) {
         this.mediaId = mediaId;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 
     public String getMediaType() {

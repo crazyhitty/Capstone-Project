@@ -51,7 +51,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/lorem_ipsum"
+        android:text="@string/onboard_app_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -62,7 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:contentDescription="@string/application_icon"
-        android:src="@mipmap/ic_launcher"
-        android:tint="@color/colorAccent" />
+        android:src="@drawable/ic_logo" />
 
 </merge>

@@ -40,7 +40,6 @@ import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionDetailsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
-import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
@@ -57,8 +56,6 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
     private static final String TAG = "CollectionDetailsActivity";
     private static final String ARG_COLLECTION_TABLE_ID = "id";
     private static final String ARG_COLLECTION_TABLE_COLLECTION_ID = "collection_id";
-    private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
-    private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
 
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
@@ -113,27 +110,13 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
     }
 
     private void initToolbar() {
+        attachToolbar(toolbar);
+
         setSupportActionBar(toolbar);
         hideToolbarTitle(false);
 
         // Add back button to go back to the previous screen.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void hideToolbarTitle(boolean withAnimation) {
-        ToolbarUtils.getTitleTextView(toolbar)
-                .animate()
-                .alpha(0.0f)
-                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_APPEARING_DURATION : 0)
-                .start();
-    }
-
-    private void showToolbarTitle(boolean withAnimation) {
-        ToolbarUtils.getTitleTextView(toolbar)
-                .animate()
-                .alpha(1.0f)
-                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
-                .start();
     }
 
     private void initCollectionDetailsFragment() {

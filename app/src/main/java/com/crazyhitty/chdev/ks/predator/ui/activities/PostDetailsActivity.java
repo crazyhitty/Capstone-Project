@@ -30,23 +30,30 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.MediaRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.PostDetailsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
-import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
+import com.crazyhitty.chdev.ks.predator.utils.MediaItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
+import com.crazyhitty.chdev.ks.predator.utils.StartSnapHelper;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,16 +66,16 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class PostDetailsActivity extends BaseAppCompatActivity implements PostDetailsFragment.OnFragmentInteractionListener {
+public class PostDetailsActivity extends BaseAppCompatActivity implements PostDetailsFragment.OnFragmentInteractionListener, MediaRecyclerAdapter.OnMediaItemClickListener {
     private static final String TAG = "PostDetailsActivity";
     private static final String ARG_POST_TABLE_POST_ID = "post_id";
-    private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
-    private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
 
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.recycler_view_media)
+    RecyclerView recyclerViewMedia;
     @BindView(R.id.text_view_post_title)
     TextView txtPostTitle;
     @BindView(R.id.text_view_post_short_desc)
@@ -79,6 +86,9 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
     SimpleDraweeView imgViewPost;
     /*@BindView(R.id.fab_bookmark)
     FloatingActionButton fabBookmark;*/
+
+    private MediaRecyclerAdapter mMediaRecyclerAdapter;
+    private PostDetailsFragment mPostDetailsFragment;
 
     public static void startActivity(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
@@ -94,12 +104,33 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
         ButterKnife.bind(this);
         initAppBarLayout();
         initToolbar();
+        setMediaRecyclerViewProperties();
 
         // Only set fragment when saved instance is null.
         // This is done inorder to stop reloading fragment on orientation changes.
         if (savedInstanceState == null) {
             initPostDetailsFragment();
         }
+    }
+
+    private void setMediaRecyclerViewProperties() {
+        // Set up the recycler view properties.
+        // Create a horizontal layout manager for recycler view.
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false);
+        recyclerViewMedia.setLayoutManager(layoutManager);
+
+        // Add appropriate decorations to the recycler view items.
+        recyclerViewMedia.addItemDecoration(new MediaItemDecorator(getApplicationContext(), 16));
+
+        // Create adapter that will power this recycler view.
+        mMediaRecyclerAdapter = new MediaRecyclerAdapter(null, this);
+        recyclerViewMedia.setAdapter(mMediaRecyclerAdapter);
+
+        // Add snaphelper that will snap the recycler view items at start.
+        SnapHelper snapHelper = new StartSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerViewMedia);
     }
 
     private void initAppBarLayout() {
@@ -119,6 +150,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
     }
 
     private void initToolbar() {
+        attachToolbar(toolbar);
+
         setSupportActionBar(toolbar);
         hideToolbarTitle(false);
 
@@ -126,28 +159,13 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void hideToolbarTitle(boolean withAnimation) {
-        ToolbarUtils.getTitleTextView(toolbar)
-                .animate()
-                .alpha(0.0f)
-                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_APPEARING_DURATION : 0)
-                .start();
-    }
-
-    private void showToolbarTitle(boolean withAnimation) {
-        ToolbarUtils.getTitleTextView(toolbar)
-                .animate()
-                .alpha(1.0f)
-                .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
-                .start();
-    }
-
     private void initPostDetailsFragment() {
         // Get postId from intent.
         int postId = getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID);
         // Send this id to the fragment which will be hosted under this activity.
+        mPostDetailsFragment = PostDetailsFragment.newInstance(postId);
         setFragment(R.id.frame_layout_post_details_container,
-                PostDetailsFragment.newInstance(postId),
+                mPostDetailsFragment,
                 false);
     }
 
@@ -170,33 +188,24 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements PostDe
             txtPostDate.setText(date);
         }
 
-        // The code inside runnable will only run when this view is initialized on the screen.
-        imgViewPost.post(new Runnable() {
-            @Override
-            public void run() {
-                int height = imgViewPost.getHeight();
-                int width = imgViewPost.getWidth();
-                Logger.d(TAG, "imgViewPost height: " + height + ", width: " + width);
-
-                String postImageUrl = postDetails.getBackdropUrl();
-
-                if (height != 0 && width != 0) {
-                    postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postImageUrl,
-                            height,
-                            width);
-                }
-
-                // Set post image, also animate automatically if it is a gif.
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setUri(postImageUrl)
-                        .setAutoPlayAnimations(true)
-                        .build();
-                imgViewPost.setController(controller);
-            }
-        });
+        String postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postDetails.getBackdropUrl(),
+                ScreenUtils.dpToPxInt(getApplicationContext(), 44.0f),
+                ScreenUtils.dpToPxInt(getApplicationContext(), 44.0f));
+        imgViewPost.setImageURI(postImageUrl);
 
         // Set toolbar title.
         getSupportActionBar().setTitle(postDetails.getTitle());
+    }
+
+    @Override
+    public void showMedia(List<Media> media) {
+        mMediaRecyclerAdapter.updateMedia(media);
+        recyclerViewMedia.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onMediaItemClick(int position, Media media) {
+        mPostDetailsFragment.openMedia(media);
     }
 
     /*@OnClick(R.id.fab_bookmark)
