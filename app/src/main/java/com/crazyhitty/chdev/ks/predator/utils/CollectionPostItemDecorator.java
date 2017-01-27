@@ -32,6 +32,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.crazyhitty.chdev.ks.predator.R;
+
 
 /**
  * Author:      Kartik Sharma
@@ -62,10 +64,16 @@ public class CollectionPostItemDecorator extends RecyclerView.ItemDecoration {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) child.getLayoutParams();
+
             int left = mDividerLeftPadding;
             int top = child.getBottom() + layoutParams.bottomMargin;
             int right = child.getRight();
             int bottom = top + divider.getIntrinsicHeight();
+
+            if (parent.getResources().getBoolean(R.bool.is_right_to_left)) {
+                left = child.getLeft();
+                right = child.getRight() - mDividerLeftPadding;
+            }
 
             divider.setBounds(left, top, right, bottom);
             divider.draw(c);
