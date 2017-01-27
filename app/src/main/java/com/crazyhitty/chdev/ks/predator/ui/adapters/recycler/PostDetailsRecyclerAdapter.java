@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -296,6 +297,7 @@ public class PostDetailsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         public CommentViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            txtCommentBody.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         protected void clearAnimation() {

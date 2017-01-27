@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.utils;
 
 import android.app.Activity;
+import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Author:      Kartik Sharma
@@ -124,5 +128,40 @@ public class CoreUtils {
      */
     public static String getAuthToken(String token) {
         return "Bearer " + token;
+    }
+
+    /**
+     * Manually create an exception and open system error reporting window.
+     * Source: https://github.com/DmitryMalkovich/github-analytics/blob/master/app/src/main/java/com/dmitrymalkovich/android/githubanalytics/util/ActivityUtils.java#L64
+     *
+     * @param activity Current activity
+     */
+    public static void openFeedback(Activity activity) {
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            ApplicationErrorReport report = new ApplicationErrorReport();
+            report.packageName = report.processName = activity.getApplication()
+                    .getPackageName();
+            report.time = System.currentTimeMillis();
+            report.type = ApplicationErrorReport.TYPE_CRASH;
+            report.systemApp = false;
+            ApplicationErrorReport.CrashInfo crash = new ApplicationErrorReport.CrashInfo();
+            crash.exceptionClassName = e.getClass().getSimpleName();
+            crash.exceptionMessage = e.getMessage();
+            StringWriter writer = new StringWriter();
+            PrintWriter printer = new PrintWriter(writer);
+            e.printStackTrace(printer);
+            crash.stackTrace = writer.toString();
+            StackTraceElement stack = e.getStackTrace()[0];
+            crash.throwClassName = stack.getClassName();
+            crash.throwFileName = stack.getFileName();
+            crash.throwLineNumber = stack.getLineNumber();
+            crash.throwMethodName = stack.getMethodName();
+            report.crashInfo = crash;
+            Intent intent = new Intent(Intent.ACTION_APP_ERROR);
+            intent.putExtra(Intent.EXTRA_BUG_REPORT, report);
+            activity.startActivity(intent);
+        }
     }
 }

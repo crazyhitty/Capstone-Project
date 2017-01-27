@@ -46,6 +46,10 @@
     <string name="menu_post_details_share">Share</string>
     <string name="menu_post_details_open_redirect_url">Open redirect url</string>
 
+    <!--menu_about.xml-->
+    <string name="menu_about_feedback">Feedback</string>
+    <string name="menu_about_changelog">Changelog</string>
+
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
     <string name="onboard_next">Next</string>
@@ -60,7 +64,7 @@
     <string name="onboard_feature_4">Background syncing</string>
     <string name="onboard_feature_4_desc">Synchronize data even if the application is offline and stay up to date always. (Optional, can be activated via application settings)</string>
     <string name="onboard_authentication_alternate_title">Just, em&#8230; one more thing!</string>
-    <string name="onboard_authentication_desc">Inorder to communicate with ProductHunt api we need to generate a authentication token, which will be securely saved in your device. But this requires <b>CONTACT</b> permission so that it can save that token securely. Don\'t worry we won\'t steal your contacts :)</string>
+    <string name="onboard_authentication_desc">Inorder to communicate with ProductHunt api, we need to generate a authentication token, which will be securely saved in your device. But this requires <b>CONTACT</b> permission so that it can save that token securely. Don\'t worry we won\'t steal your contacts :)</string>
     <string name="onboard_continue">Continue</string>
 
     <!--dashboard-->
@@ -150,13 +154,21 @@
     <string name="activity_about_developer_username">Kartik Sharma</string>
     <string name="activity_about_developer_type">Maker</string>
     <string name="activity_about_special_thanks_title">Special Thanks</string>
-    <string name="activity_about_special_thanks_desc">To Kajal Mittal for her regular and relevant feedback.\n\nApplication icon made by Freepik from www.flaticon.com\n\nOther icons provided by material.io/icons and materialdesignicons.com</string>
+    <string name="activity_about_special_thanks_desc"><![CDATA[To <a href="https://github.com/kajal-mittal">Kajal Mittal</a> for her regular and relevant feedback. Application icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>. Other icons provided by <a href="https://material.io/icons/">Google</a> and <a href="https://materialdesignicons.com/">Material Design Icons</a>.]]></string>
     <string name="activity_about_library_title">Libraries</string>
     <string name="activity_about_mail_subject">Regarding Predator</string>
     <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
 
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>
+
+    <!--changelog-->
+    <string name="changelog_title">Changelog</string>
+    <string name="changelog_ok">OK</string>
+
+    <!--share_app-->
+    <string name="share_app_title">Predator for ProductHunt!</string>
+    <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>

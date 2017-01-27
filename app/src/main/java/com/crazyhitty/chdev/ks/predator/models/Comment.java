@@ -36,6 +36,8 @@ public class Comment {
     private int commentId;
     private int parentCommentId;
     private String body;
+    private String createdAt;
+    private int createdAtMillis;
     private int postId;
     private int userId;
     private String username;
@@ -79,6 +81,22 @@ public class Comment {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getCreatedAtMillis() {
+        return createdAtMillis;
+    }
+
+    public void setCreatedAtMillis(int createdAtMillis) {
+        this.createdAtMillis = createdAtMillis;
     }
 
     public int getPostId() {

@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.base;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
@@ -160,5 +162,17 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
                 .alpha(1.0f)
                 .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
                 .start();
+    }
+
+    protected void shareApp() {
+        String title = getString(R.string.share_app_title);
+        String body = getString(R.string.share_app_body, BuildConfig.APPLICATION_ID);
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+        sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_using)));
     }
 }

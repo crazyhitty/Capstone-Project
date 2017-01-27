@@ -69,7 +69,6 @@ public class AboutFragment extends BaseSupportFragment implements AboutContract.
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setPresenter(new AboutPresenter(this));
-        mAboutPresenter.initChromeCustomTabs(this);
         mAboutPresenter.subscribe();
     }
 
@@ -104,10 +103,19 @@ public class AboutFragment extends BaseSupportFragment implements AboutContract.
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+        inflater.inflate(R.menu.menu_about, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_feedback:
+                mAboutPresenter.openFeedback(getActivity());
+                break;
+            case R.id.menu_changelog:
+                mAboutPresenter.openChangelog(getFragmentManager());
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 

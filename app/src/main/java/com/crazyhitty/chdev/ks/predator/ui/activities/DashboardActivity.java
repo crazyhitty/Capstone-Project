@@ -168,15 +168,28 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             /*case R.id.nav_my_profile:
                 return false;*/
             case R.id.nav_settings:
-                SettingsActivity.startActivity(getApplicationContext());
+                // Start activity after a delay
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SettingsActivity.startActivity(getApplicationContext());
+                    }
+                }, 300);
                 return false;
             case R.id.nav_about:
-                AboutActivity.startActivity(getApplicationContext());
+                // Start activity after a delay
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        AboutActivity.startActivity(getApplicationContext());
+                    }
+                }, 300);
                 return false;
             // TODO: Implement after donate(in app purchases) functionality is completed.
             /*case R.id.nav_donate:
                 return false;*/
             case R.id.nav_spread_love:
+                shareApp();
                 return false;
             default:
                 return false;

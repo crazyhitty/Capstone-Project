@@ -26,8 +26,7 @@ package com.crazyhitty.chdev.ks.predator.core.about;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -50,10 +49,6 @@ public interface AboutContract {
     }
 
     interface Presenter extends BasePresenter {
-        void initChromeCustomTabs(Fragment fragment);
-
-        void initChromeCustomTabs(FragmentActivity fragmentActivity);
-
         void fetchAboutData(Context context);
 
         void openGithub(Activity activity);
@@ -63,5 +58,9 @@ public interface AboutContract {
         void openMail(Context context);
 
         void openLibraryRedirectUrl(Activity activity, String redirectUrl);
+
+        void openFeedback(Activity activity);
+
+        void openChangelog(FragmentManager fragmentManager);
     }
 }

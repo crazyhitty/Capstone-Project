@@ -22,13 +22,12 @@
   ~ SOFTWARE.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text_view_data"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_min"
-    android:layout_marginTop="@dimen/margin_min"
-    android:linksClickable="true"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    tools:text="Special thanks" />
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@android:integer/config_shortAnimTime"
+    android:shareInterpolator="@android:anim/decelerate_interpolator">
+
+    <translate
+        android:fromXDelta="0%"
+        android:toXDelta="-100%" />
+
+</set>

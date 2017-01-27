@@ -22,13 +22,12 @@
   ~ SOFTWARE.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text_view_data"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_min"
-    android:layout_marginTop="@dimen/margin_min"
-    android:linksClickable="true"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    tools:text="Special thanks" />
+<changelog bulletedList="true">
+
+    <changelogversion
+        changeDate="Jan 27, 2016"
+        versionName="0.1">
+        <changelogtext>Initial release.</changelogtext>
+    </changelogversion>
+
+</changelog>

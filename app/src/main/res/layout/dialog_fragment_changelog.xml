@@ -22,13 +22,8 @@
   ~ SOFTWARE.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text_view_data"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_min"
-    android:layout_marginTop="@dimen/margin_min"
-    android:linksClickable="true"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    tools:text="Special thanks" />
+<it.gmariotti.changelibs.library.view.ChangeLogRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center" />

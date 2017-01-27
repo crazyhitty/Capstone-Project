@@ -117,7 +117,6 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         setHasOptionsMenu(true);
         setPresenter(new PostDetailsPresenter(this));
         mPostDetailsPresenter.subscribe();
-        mPostDetailsPresenter.initChromeCustomTabs(this);
         EventBus.getDefault().register(this);
     }
 

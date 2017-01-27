@@ -175,4 +175,8 @@ public class AboutActivity extends BaseAppCompatActivity {
         mAboutFragment.openMail();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

@@ -33,8 +33,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -49,6 +47,7 @@ import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.ui.activities.MediaFullScreenActivity;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
+import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
@@ -99,7 +98,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private PostDetailsContract.View mView;
     private CompositeSubscription mCompositeSubscription;
     private Cursor mPostDetailsCursor;
-    private CustomTabsHelperFragment mCustomTabsHelperFragment;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
@@ -108,16 +106,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 .enableUrlBarHiding()
                 .setShowTitle(true)
                 .build();
-    }
-
-    @Override
-    public void initChromeCustomTabs(Fragment fragment) {
-        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragment);
-    }
-
-    @Override
-    public void initChromeCustomTabs(FragmentActivity fragmentActivity) {
-        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragmentActivity);
     }
 
     @Override
@@ -161,7 +149,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 Logger.d(TAG, "onNext: " + mPostDetailsCursor.getCount());
                 mPostDetailsCursor.moveToFirst();
                 mView.showDetails(mPostDetailsCursor);
-                prepareChromeCustomTabs(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL));
             }
         }));
     }
@@ -760,23 +747,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }
     }
 
-    private void prepareChromeCustomTabs(String url) {
-        final Uri uri = Uri.parse(url);
-        mCustomTabsHelperFragment.setConnectionCallback(
-                new CustomTabsActivityHelper.ConnectionCallback() {
-                    @Override
-                    public void onCustomTabsConnected() {
-                        mCustomTabsHelperFragment.mayLaunchUrl(uri,
-                                null,
-                                null);
-                    }
-
-                    @Override
-                    public void onCustomTabsDisconnected() {
-                    }
-                });
-    }
-
     private void addCommentsToDatabase(List<PostCommentsData.Comments> comments) {
         for (PostCommentsData.Comments comment : comments) {
             MainApplication.getContentResolverInstance()
@@ -786,13 +756,22 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     private List<Comment> getComments(int postId, int parentCommentId, List<Comment> comments, int childSpaces) {
+        String sortOrder = null;
+        if (childSpaces == 0) {
+            // If top level comments are being fetched, then sort them according to the vote count.
+            sortOrder = PredatorContract.CommentsEntry.COLUMN_VOTES + " DESC";
+        } else {
+            // If child comment, then sort according the time of their creation.
+            sortOrder = PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS + " ASC";
+        }
+
         Cursor cursor = MainApplication.getContentResolverInstance()
                 .query(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS,
                         null,
                         PredatorContract.CommentsEntry.COLUMN_POST_ID + " = " + postId + " AND " +
                                 PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID + " = " + parentCommentId,
                         null,
-                        PredatorContract.CommentsEntry.COLUMN_VOTES + " DESC");
+                        sortOrder);
         if (cursor != null && cursor.getCount() != 0) {
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
@@ -802,6 +781,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 comment.setCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_COMMENT_ID));
                 comment.setParentCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID));
                 comment.setBody(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_BODY));
+                comment.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT));
+                comment.setCreatedAtMillis(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS));
                 comment.setPostId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_POST_ID));
                 comment.setUserId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_USER_ID));
                 comment.setUsername(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_NAME));
@@ -832,6 +813,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_COMMENT_ID, comment.getId());
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_BODY, comment.getBody());
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_CREATED_AT, comment.getCreatedAt());
+        contentValues.put(PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(comment.getCreatedAt()));
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID, comment.getParentCommentIdInteger());
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_POST_ID, comment.getPostId());
         contentValues.put(PredatorContract.CommentsEntry.COLUMN_USER_ID, comment.getUserId());

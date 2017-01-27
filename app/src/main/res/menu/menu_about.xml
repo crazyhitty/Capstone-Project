@@ -22,13 +22,21 @@
   ~ SOFTWARE.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text_view_data"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_min"
-    android:layout_marginTop="@dimen/margin_min"
-    android:linksClickable="true"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    tools:text="Special thanks" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_feedback"
+        android:icon="@drawable/ic_feedback_24dp"
+        android:orderInCategory="99"
+        android:title="@string/menu_about_feedback"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_changelog"
+        android:icon="@drawable/ic_changelog_24dp"
+        android:orderInCategory="100"
+        android:title="@string/menu_about_changelog"
+        app:showAsAction="ifRoom" />
+
+</menu>

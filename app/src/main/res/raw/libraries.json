@@ -59,6 +59,12 @@
       "library_creator": "Facebook",
       "library_license_type": "BSD License",
       "library_redirect_url": "https://github.com/facebook/fresco"
+    },
+    {
+      "library_title": "ChangeLog Library",
+      "library_creator": "Gabriele Mariotti",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/gabrielemariotti/changeloglib"
     }
   ]
 }

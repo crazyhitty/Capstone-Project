@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,13 +199,14 @@ public class AboutRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         public SpecialThanksViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            txtData.setMovementMethod(LinkMovementMethod.getInstance());
 
             // Add start margin of 16dp to this item.
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) itemView.getLayoutParams();
             layoutParams.setMargins(ScreenUtils.dpToPxInt(itemView.getContext(), 16.0f),
-                    ScreenUtils.dpToPxInt(itemView.getContext(), 4.0f),
+                    0,
                     ScreenUtils.dpToPxInt(itemView.getContext(), 16.0f),
-                    ScreenUtils.dpToPxInt(itemView.getContext(), 4.0f));
+                    0);
         }
     }
 

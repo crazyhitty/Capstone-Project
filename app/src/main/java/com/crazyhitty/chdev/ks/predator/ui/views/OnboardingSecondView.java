@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.events.OnboardSecondAnimateEvent;
@@ -43,6 +44,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -53,9 +55,12 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class OnboardingSecondView extends LinearLayout {
+public class OnboardingSecondView extends ScrollView {
     private static final int ANIM_ITEM_DURATION_MS = 500;
     private static final int ANIM_AVG_DELAY_DURATION_MS = 300;
+
+    @BindView(R.id.linear_layout_onboard)
+    LinearLayout linearLayoutOnboard;
 
     private boolean mAlreadyAnimated = false;
 
@@ -91,9 +96,6 @@ public class OnboardingSecondView extends LinearLayout {
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         setLayoutParams(layoutParams);
-
-        // set layout properties
-        setOrientation(VERTICAL);
     }
 
     @Override
@@ -131,8 +133,8 @@ public class OnboardingSecondView extends LinearLayout {
 
         int animationDuration = 0;
 
-        for (int i = 0; i < getChildCount(); i++) {
-            getChildAt(i).animate()
+        for (int i = 0; i < linearLayoutOnboard.getChildCount(); i++) {
+            linearLayoutOnboard.getChildAt(i).animate()
                     .setDuration(ANIM_ITEM_DURATION_MS)
                     .setInterpolator(interpolator)
                     .translationXBy(ScreenUtils.dpToPx(getContext().getApplicationContext(), 16.0f))

@@ -26,7 +26,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/linear_layout_onboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
         android:id="@+id/text_view_feature_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -129,6 +135,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:layout_marginBottom="@dimen/margin_avg"
         android:layout_marginTop="@dimen/margin_small"
         android:alpha="0"
         android:gravity="start"
@@ -137,5 +144,7 @@
         android:text="@string/onboard_feature_4_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
+
+    </LinearLayout>
 
 </merge>

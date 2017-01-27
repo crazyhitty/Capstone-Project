@@ -32,13 +32,15 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.models.About;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.ChangelogDialogFragment;
+import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
@@ -87,7 +89,6 @@ public class AboutPresenter implements AboutContract.Presenter {
     @NonNull
     private AboutContract.View mView;
     private CompositeSubscription mCompositeSubscription;
-    private CustomTabsHelperFragment mCustomTabsHelperFragment;
 
     public AboutPresenter(@NonNull AboutContract.View view) {
         mView = view;
@@ -100,22 +101,12 @@ public class AboutPresenter implements AboutContract.Presenter {
 
     @Override
     public void subscribe() {
-        prepareChromeCustomTabs(Constants.About.URL_GITHUB);
+
     }
 
     @Override
     public void unSubscribe() {
         mCompositeSubscription.clear();
-    }
-
-    @Override
-    public void initChromeCustomTabs(Fragment fragment) {
-        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragment);
-    }
-
-    @Override
-    public void initChromeCustomTabs(FragmentActivity fragmentActivity) {
-        mCustomTabsHelperFragment = CustomTabsHelperFragment.attachTo(fragmentActivity);
     }
 
     @Override
@@ -215,11 +206,6 @@ public class AboutPresenter implements AboutContract.Presenter {
             @Override
             public void onNext(List<About> about) {
                 mView.showAboutData(about);
-                for (About aboutObj : about) {
-                    if (!TextUtils.isEmpty(aboutObj.getLibraryRedirectUrl())) {
-                        prepareChromeCustomTabs(aboutObj.getLibraryRedirectUrl());
-                    }
-                }
             }
         }));
     }
@@ -257,20 +243,18 @@ public class AboutPresenter implements AboutContract.Presenter {
                 mCustomTabsFallback);
     }
 
-    private void prepareChromeCustomTabs(String url) {
-        final Uri uri = Uri.parse(url);
-        mCustomTabsHelperFragment.setConnectionCallback(
-                new CustomTabsActivityHelper.ConnectionCallback() {
-                    @Override
-                    public void onCustomTabsConnected() {
-                        mCustomTabsHelperFragment.mayLaunchUrl(uri,
-                                null,
-                                null);
-                    }
+    @Override
+    public void openFeedback(Activity activity) {
+        CoreUtils.openFeedback(activity);
+    }
 
-                    @Override
-                    public void onCustomTabsDisconnected() {
-                    }
-                });
+    @Override
+    public void openChangelog(FragmentManager fragmentManager) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment prev = fragmentManager.findFragmentByTag(ChangelogDialogFragment.class.getSimpleName());
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+        ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
     }
 }
