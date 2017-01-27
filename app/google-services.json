@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "120692221300-i18a9s01u471gqtnm2mon0fjup0ffkik.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crazyhitty.chdev.ks.predator",
+            "certificate_hash": "F86EC743899CFE36AFC5B657406592FBCE891E16"
+          }
+        },
+        {
           "client_id": "120692221300-ii4iaput5v5d7jvkbakprug168hlmlv3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
