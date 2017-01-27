@@ -36,8 +36,22 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
-    buildTypes {
+
+    signingConfigs {
         release {
+            storeFile file("release.jks")
+            storePassword "predator_keystore"
+            keyAlias "predator_keystore"
+            keyPassword "predator_keystore"
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+        release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -99,4 +113,10 @@ dependencies {
 
     // changelog lib
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
+
+    // firebase
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

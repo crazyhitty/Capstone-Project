@@ -245,6 +245,81 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         return Observable.create(new Observable.OnSubscribe<PostDetailsDataType>() {
                             @Override
                             public void call(Subscriber<? super PostDetailsDataType> subscriber) {
+                                // Add users who upvoted this post to database.
+                                MainApplication.getContentResolverInstance()
+                                        .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
+                                                getBulkContentValuesForUsers(postId, postDetailsData.getPost().getVotes()));
+
+                                Cursor cursorUsers = MainApplication.getContentResolverInstance()
+                                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                                                null,
+                                                PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
+                                                        " LIKE '%" +
+                                                        postId +
+                                                        "%' OR " +
+                                                        PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
+                                                        " LIKE '%" +
+                                                        postId +
+                                                        "%' OR " +
+                                                        PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS +
+                                                        " LIKE '%" +
+                                                        postId +
+                                                        "%'",
+                                                null,
+                                                null);
+
+                                if (cursorUsers != null && cursorUsers.getCount() != 0) {
+                                    List<User> users = new ArrayList<User>();
+                                    for (int i = 0; i < cursorUsers.getCount(); i++) {
+                                        cursorUsers.moveToPosition(i);
+
+                                        User user = new User();
+                                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
+                                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
+                                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
+                                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
+                                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+                                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+
+                                        // Check if user is hunter, maker, both or a user who just
+                                        // upvoted this post.
+                                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+
+                                        if (!TextUtils.isEmpty(hunterPostIds) &&
+                                                !TextUtils.isEmpty(makersPostIds) &&
+                                                hunterPostIds.contains(String.valueOf(postId)) &&
+                                                makersPostIds.contains(String.valueOf(postId))) {
+                                            // User is both hunter and maker.
+                                            user.setType(User.TYPE.BOTH);
+                                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
+                                                hunterPostIds.contains(String.valueOf(postId))) {
+                                            // User is hunter.
+                                            user.setType(User.TYPE.HUNTER);
+                                        } else if (!TextUtils.isEmpty(makersPostIds) &&
+                                                makersPostIds.contains(String.valueOf(postId))) {
+                                            // User is maker.
+                                            user.setType(User.TYPE.MAKER);
+                                        } else {
+                                            // User upvoted this post.
+                                            user.setType(User.TYPE.UPVOTER);
+                                        }
+                                        users.add(user);
+                                    }
+                                    cursorUsers.close();
+
+                                    // Sort the users list on basis of user type.
+                                    Collections.sort(users, new UsersComparator());
+
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
+                                    postDetailsDataType.setUsers(users);
+
+                                    subscriber.onNext(postDetailsDataType);
+                                } else {
+                                    subscriber.onError(new VotedUsersUnavailableException());
+                                }
+
                                 // Clear media for that particular post.
                                 MainApplication.getContentResolverInstance()
                                         .delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
@@ -360,80 +435,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                     subscriber.onError(new InstallLinksUnavailableException());
                                 }
 
-                                // Add users who upvoted this post to database.
-                                MainApplication.getContentResolverInstance()
-                                        .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
-                                                getBulkContentValuesForUsers(postId, postDetailsData.getPost().getVotes()));
-
-                                Cursor cursorUsers = MainApplication.getContentResolverInstance()
-                                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                                null,
-                                                PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
-                                                        " LIKE '%" +
-                                                        postId +
-                                                        "%' OR " +
-                                                        PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
-                                                        " LIKE '%" +
-                                                        postId +
-                                                        "%' OR " +
-                                                        PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS +
-                                                        " LIKE '%" +
-                                                        postId +
-                                                        "%'",
-                                                null,
-                                                null);
-
-                                if (cursorUsers != null && cursorUsers.getCount() != 0) {
-                                    List<User> users = new ArrayList<User>();
-                                    for (int i = 0; i < cursorUsers.getCount(); i++) {
-                                        cursorUsers.moveToPosition(i);
-
-                                        User user = new User();
-                                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
-                                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-                                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-                                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-                                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-                                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-                                        // Check if user is hunter, maker, both or a user who just
-                                        // upvoted this post.
-                                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-                                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
-
-                                        if (!TextUtils.isEmpty(hunterPostIds) &&
-                                                !TextUtils.isEmpty(makersPostIds) &&
-                                                hunterPostIds.contains(String.valueOf(postId)) &&
-                                                makersPostIds.contains(String.valueOf(postId))) {
-                                            // User is both hunter and maker.
-                                            user.setType(User.TYPE.BOTH);
-                                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
-                                                hunterPostIds.contains(String.valueOf(postId))) {
-                                            // User is hunter.
-                                            user.setType(User.TYPE.HUNTER);
-                                        } else if (!TextUtils.isEmpty(makersPostIds) &&
-                                                makersPostIds.contains(String.valueOf(postId))) {
-                                            // User is maker.
-                                            user.setType(User.TYPE.MAKER);
-                                        } else {
-                                            // User upvoted this post.
-                                            user.setType(User.TYPE.UPVOTER);
-                                        }
-                                        users.add(user);
-                                    }
-                                    cursorUsers.close();
-
-                                    // Sort the users list on basis of user type.
-                                    Collections.sort(users, new UsersComparator());
-
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
-                                    postDetailsDataType.setUsers(users);
-
-                                    subscriber.onNext(postDetailsDataType);
-                                } else {
-                                    subscriber.onError(new VotedUsersUnavailableException());
-                                }
                                 subscriber.onCompleted();
                             }
                         });
@@ -487,6 +488,77 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         Observable<PostDetailsDataType> postDetailsCursorTypeObservable = Observable.create(new Observable.OnSubscribe<PostDetailsDataType>() {
             @Override
             public void call(Subscriber<? super PostDetailsDataType> subscriber) {
+                Cursor cursorUsers = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                                null,
+                                PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
+                                        " LIKE '%" +
+                                        postId +
+                                        "%' OR " +
+                                        PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
+                                        " LIKE '%" +
+                                        postId +
+                                        "%' OR " +
+                                        PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS +
+                                        " LIKE '%" +
+                                        postId +
+                                        "%'",
+                                null,
+                                null);
+
+                if (cursorUsers != null && cursorUsers.getCount() != 0) {
+                    List<User> users = new ArrayList<User>();
+                    for (int i = 0; i < cursorUsers.getCount(); i++) {
+                        cursorUsers.moveToPosition(i);
+
+                        User user = new User();
+                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
+                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
+                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
+                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
+                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+
+                        // Check if user is hunter, maker, both or a user who just
+                        // upvoted this post.
+                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+
+                        if (!TextUtils.isEmpty(hunterPostIds) &&
+                                !TextUtils.isEmpty(makersPostIds) &&
+                                hunterPostIds.contains(String.valueOf(postId)) &&
+                                makersPostIds.contains(String.valueOf(postId))) {
+                            // User is both hunter and maker.
+                            user.setType(User.TYPE.BOTH);
+                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
+                                hunterPostIds.contains(String.valueOf(postId))) {
+                            // User is hunter.
+                            user.setType(User.TYPE.HUNTER);
+                        } else if (!TextUtils.isEmpty(makersPostIds) &&
+                                makersPostIds.contains(String.valueOf(postId))) {
+                            // User is maker.
+                            user.setType(User.TYPE.MAKER);
+                        } else {
+                            // User upvoted this post.
+                            user.setType(User.TYPE.UPVOTER);
+                        }
+                        users.add(user);
+                    }
+                    cursorUsers.close();
+
+                    // Sort the users list on basis of user type.
+                    Collections.sort(users, new UsersComparator());
+
+                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
+                    postDetailsDataType.setUsers(users);
+
+                    subscriber.onNext(postDetailsDataType);
+                } else {
+                    subscriber.onError(new VotedUsersUnavailableException());
+                    return;
+                }
+
                 // Query the media available.
                 Cursor mediaCursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.MediaEntry.CONTENT_URI_MEDIA,
@@ -573,76 +645,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     subscriber.onError(new InstallLinksUnavailableException());
                 }
 
-                Cursor cursorUsers = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                null,
-                                PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
-                                        " LIKE '%" +
-                                        postId +
-                                        "%' OR " +
-                                        PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
-                                        " LIKE '%" +
-                                        postId +
-                                        "%' OR " +
-                                        PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS +
-                                        " LIKE '%" +
-                                        postId +
-                                        "%'",
-                                null,
-                                null);
-
-                if (cursorUsers != null && cursorUsers.getCount() != 0) {
-                    List<User> users = new ArrayList<User>();
-                    for (int i = 0; i < cursorUsers.getCount(); i++) {
-                        cursorUsers.moveToPosition(i);
-
-                        User user = new User();
-                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
-                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-                        // Check if user is hunter, maker, both or a user who just
-                        // upvoted this post.
-                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
-
-                        if (!TextUtils.isEmpty(hunterPostIds) &&
-                                !TextUtils.isEmpty(makersPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId)) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is both hunter and maker.
-                            user.setType(User.TYPE.BOTH);
-                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId))) {
-                            // User is hunter.
-                            user.setType(User.TYPE.HUNTER);
-                        } else if (!TextUtils.isEmpty(makersPostIds) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is maker.
-                            user.setType(User.TYPE.MAKER);
-                        } else {
-                            // User upvoted this post.
-                            user.setType(User.TYPE.UPVOTER);
-                        }
-                        users.add(user);
-                    }
-                    cursorUsers.close();
-
-                    // Sort the users list on basis of user type.
-                    Collections.sort(users, new UsersComparator());
-
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
-                    postDetailsDataType.setUsers(users);
-
-                    subscriber.onNext(postDetailsDataType);
-                } else {
-                    subscriber.onError(new VotedUsersUnavailableException());
-                    return;
-                }
                 subscriber.onCompleted();
             }
         });
