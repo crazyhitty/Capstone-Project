@@ -7,7 +7,7 @@ Predator is a minimalistic client for ProductHunt. It shows latest products and 
 ### Installation instructions
 * Clone this repository using `git clone https://github.com/crazyhitty/Capstone-Project.git`
 * Download [Authorization.java](https://gist.github.com/crazyhitty/08fcf4b67d3e20a87e2bde8be7e5ead9) and paste it in `producthunt-wrapper\src\main\java\com\crazyhitty\chdev\ks\producthunt_wrapper\rest\`
-* Add appropriate **API_KEY** and **API_SECRET** into the **Authorization.java** file. You can generate these from [here](https://www.producthunt.com/v1/oauth/applications). Make sure to login first on [producthunt.com](https://www.producthunt.com/) as the previous link will keep on redirecting you onto the main site until you log in.
+* Add appropriate **API_KEY** and **API_SECRET** into the **Authorization.java** file. You can generate these from [here](https://www.producthunt.com/v1/oauth/applications). Make sure to login first on [producthunt.com](https://www.producthunt.com/) as the previous link will keep on redirecting you onto the main site until you log in. Also, make sure to put this in redirect uri: `predator://com.crazyhitty.chdev.ks.predator/oauth2redirect`
 * Now, from the root directory of the project run `gradlew installRelease` (windows) or `./gradlew installRelease` (linux) as this will install the release build of the application in your device.
 
 ### Features
