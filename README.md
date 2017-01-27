@@ -1,4 +1,7 @@
 # Predator for ProductHunt
+
+<a href='https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200"/></a>
+
 Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt api. It also offers other information like media and comments associated with that product.
 
 # Permissions required
