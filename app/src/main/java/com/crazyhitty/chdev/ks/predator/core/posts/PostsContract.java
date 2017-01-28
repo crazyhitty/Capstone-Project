@@ -25,6 +25,9 @@
 package com.crazyhitty.chdev.ks.predator.core.posts;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -42,17 +45,30 @@ import java.util.List;
 
 public interface PostsContract {
     interface View extends BaseView<Presenter> {
+        void initLoader();
+
+        void restartLoader();
+
+        void destroyLoader();
+
         void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
 
         void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
     }
 
     interface Presenter extends BasePresenter {
-        void getOfflinePosts(boolean latest);
 
-        void getPosts(String token, String categoryName, boolean latest, boolean clearPrevious);
+        Loader<Cursor> onCreateLoader(Context context);
 
-        void loadMorePosts(String token, String categoryName, boolean latest);
+        void onLoadFinished(Cursor data);
+
+        void onLoaderReset();
+
+        CursorLoader getCursorLoader(Context context);
+
+        void getPosts(String token, String categoryName, boolean clearPrevious);
+
+        void loadMorePosts(String token, String categoryName);
 
         void updateWidgets(Context context);
     }

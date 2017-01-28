@@ -24,8 +24,11 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -72,7 +75,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class PostsFragment extends BaseSupportFragment implements PostsContract.View,
-        PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
+        PostsRecyclerAdapter.OnPostsLoadMoreRetryListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "PostsFragment";
 
     @BindView(R.id.recycler_view_posts)
@@ -115,9 +118,6 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         initLoadingView();
         initSwipeRefreshLayout();
         setRecyclerViewProperties();
-
-        // Always load offline posts first.
-        getOfflinePosts();
     }
 
     private void initLoadingView() {
@@ -158,10 +158,6 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         });
     }
 
-    private void getOfflinePosts() {
-        mPostsPresenter.getOfflinePosts(true);
-    }
-
     /**
      * Get auth token and retrieve latest posts.
      */
@@ -184,7 +180,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, Constants.Posts.CATEGORY_TECH, true, true);
+                        mPostsPresenter.getPosts(s, Constants.Posts.CATEGORY_TECH, true);
                     }
                 });
     }
@@ -209,7 +205,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
-                        mPostsPresenter.loadMorePosts(s, Constants.Posts.CATEGORY_TECH, true);
+                        mPostsPresenter.loadMorePosts(s, Constants.Posts.CATEGORY_TECH);
                     }
                 });
     }
@@ -295,6 +291,25 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
+    public void initLoader() {
+        getLoaderManager().initLoader(Constants.CursorLoaderIds.POSTS_FRAGMENT_ID,
+                null,
+                this);
+    }
+
+    @Override
+    public void restartLoader() {
+        getLoaderManager().restartLoader(Constants.CursorLoaderIds.POSTS_FRAGMENT_ID,
+                null,
+                this);
+    }
+
+    @Override
+    public void destroyLoader() {
+        getLoaderManager().destroyLoader(Constants.CursorLoaderIds.POSTS_FRAGMENT_ID);
+    }
+
+    @Override
     public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
         if (mIsLoading) {
             mIsLoading = false;
@@ -355,5 +370,20 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             loadMorePosts();
         }
         mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return mPostsPresenter.onCreateLoader(getActivity());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mPostsPresenter.onLoadFinished(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mPostsPresenter.onLoaderReset();
     }
 }

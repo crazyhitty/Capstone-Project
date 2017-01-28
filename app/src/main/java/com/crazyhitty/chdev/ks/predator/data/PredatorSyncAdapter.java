@@ -65,6 +65,21 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private PostsContract.View mPostsView = new PostsContract.View() {
         @Override
+        public void initLoader() {
+
+        }
+
+        @Override
+        public void restartLoader() {
+
+        }
+
+        @Override
+        public void destroyLoader() {
+
+        }
+
+        @Override
         public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
             Logger.d(TAG, "showPosts: postsSize: " + posts.size());
             // Update widgets.
@@ -175,7 +190,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                     true);
 
             // Fetch latest posts.
-            mPostsPresenter.getPosts(authToken, Constants.Posts.CATEGORY_TECH, true, true);
+            mPostsPresenter.getPosts(authToken, Constants.Posts.CATEGORY_TECH, true);
 
             // Fetch featured collections.
             mCollectionsPresenter.getLatestCollections(authToken, true);

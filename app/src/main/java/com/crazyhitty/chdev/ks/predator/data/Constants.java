@@ -111,4 +111,14 @@ public class Constants {
 
         }
     }
+
+    public static class CursorLoaderIds {
+        public static final int POSTS_FRAGMENT_ID = 101;
+        public static final int POSTS_SYNC_ADAPTER_ID = 102;
+        public static final int POSTS_WIDGET_ID = 103;
+
+        private CursorLoaderIds() {
+
+        }
+    }
 }
