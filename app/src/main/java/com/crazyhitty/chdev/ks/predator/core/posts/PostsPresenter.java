@@ -24,20 +24,14 @@
 
 package com.crazyhitty.chdev.ks.predator.core.posts;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
-import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Post;
-import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
@@ -85,29 +79,29 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     @Override
     public void subscribe() {
-        mView.initLoader();
+
     }
 
     @Override
     public void unSubscribe() {
-        mView.destroyLoader();
         mCompositeSubscription.clear();
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(Context context) {
-        return getCursorLoader(context);
-    }
-
-    @Override
-    public void onLoadFinished(final Cursor data) {
+    public void getOfflinePosts(boolean latest) {
         Observable<List<Post>> postsDataObservable = Observable.create(new Observable.OnSubscribe<List<Post>>() {
             @Override
             public void call(Subscriber<? super List<Post>> subscriber) {
-                if (data != null && data.getCount() != 0) {
-                    dateMatcher(data);
-                    subscriber.onNext(getPostsFromCursor(data));
-                    data.close();
+                Cursor cursor = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                                null,
+                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                null,
+                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+                if (cursor != null && cursor.getCount() != 0) {
+                    dateMatcher(cursor);
+                    subscriber.onNext(getPostsFromCursor(cursor));
+                    cursor.close();
                 } else {
                     subscriber.onError(new NoPostsAvailableException());
                 }
@@ -137,24 +131,9 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void onLoaderReset() {
-
-    }
-
-    @Override
-    public CursorLoader getCursorLoader(Context context) {
-        return new CursorLoader(
-                context,
-                PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                null,
-                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
-                null,
-                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-    }
-
-    @Override
     public void getPosts(final String token,
                          final String categoryName,
+                         final boolean latest,
                          final boolean clearPrevious) {
         Logger.d(TAG, "getPosts: called");
         if (clearPrevious) {
@@ -162,11 +141,11 @@ public class PostsPresenter implements PostsContract.Presenter {
             mLastDate = DateUtils.getPredatorCurrentDate();
             mDateHashMap = new HashMap<>();
         }
-        Observable<Integer> postsDataObservable = ProductHuntRestApi.getApi()
+        Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
-                .map(new Func1<PostsData, Integer>() {
+                .map(new Func1<PostsData, List<Post>>() {
                     @Override
-                    public Integer call(PostsData postsData) {
+                    public List<Post> call(PostsData postsData) {
                         if (clearPrevious) {
                             MainApplication.getContentResolverInstance()
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
@@ -206,19 +185,32 @@ public class PostsPresenter implements PostsContract.Presenter {
                                                 getContentValuesForMakerUser(post.getId(), maker));
                             }
                         }
-                        return postsData.getPosts().size();
+                        Cursor cursor = MainApplication.getContentResolverInstance()
+                                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                                        null,
+                                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                        null,
+                                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+
+                        List<Post> posts = null;
+                        if (cursor != null && cursor.getCount() != 0) {
+                            dateMatcher(cursor);
+                            posts = getPostsFromCursor(cursor);
+                            cursor.close();
+                        }
+                        return posts;
                     }
                 })
-                .flatMap(new Func1<Integer, Observable<Integer>>() {
+                .flatMap(new Func1<List<Post>, Observable<List<Post>>>() {
                     @Override
-                    public Observable<Integer> call(final Integer integer) {
-                        return Observable.create(new Observable.OnSubscribe<Integer>() {
+                    public Observable<List<Post>> call(final List<Post> posts) {
+                        return Observable.create(new Observable.OnSubscribe<List<Post>>() {
                             @Override
-                            public void call(Subscriber<? super Integer> subscriber) {
-                                if (integer != null && integer.intValue() != 0) {
-                                    subscriber.onNext(integer);
+                            public void call(Subscriber<? super List<Post>> subscriber) {
+                                if (posts != null && posts.size() != 0) {
+                                    subscriber.onNext(posts);
                                 } else {
-                                    loadMorePosts(token, categoryName);
+                                    loadMorePosts(token, categoryName, latest);
                                 }
                                 subscriber.onCompleted();
                             }
@@ -228,7 +220,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<Integer>() {
+        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<List<Post>>() {
             @Override
             public void onCompleted() {
                 // Done
@@ -241,25 +233,22 @@ public class PostsPresenter implements PostsContract.Presenter {
             }
 
             @Override
-            public void onNext(Integer integer) {
-                mView.restartLoader();
+            public void onNext(List<Post> posts) {
+                mView.showPosts(posts, mDateHashMap);
             }
         }));
     }
 
     @Override
-    public void loadMorePosts(String token, String categoryName) {
+    public void loadMorePosts(String token, String categoryName, boolean latest) {
         mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
         mLoadMore = true;
-        getPosts(token, categoryName, false);
+        getPosts(token, categoryName, latest, false);
     }
 
     @Override
     public void updateWidgets(Context context) {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
-                new ComponentName(context, PredatorPostsWidgetProvider.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_posts);
+
     }
 
     /**

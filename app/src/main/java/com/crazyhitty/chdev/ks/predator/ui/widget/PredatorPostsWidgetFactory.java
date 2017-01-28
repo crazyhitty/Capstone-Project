@@ -27,19 +27,15 @@ package com.crazyhitty.chdev.ks.predator.ui.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
-import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -56,11 +52,10 @@ import java.util.List;
  */
 
 public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteViewsFactory,
-        PostsContract.View, Loader.OnLoadCompleteListener<Cursor> {
+        PostsContract.View {
     private static final String TAG = "PredatorPostsWidgetFactory";
 
     private WeakReference<Context> mContextWeakReference;
-    private WeakReference<CursorLoader> mCursorLoaderWeakReference;
     private int mAppWidgetId;
 
     private PostsContract.Presenter mPostsPresenter;
@@ -79,6 +74,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
         Logger.d(TAG, "onCreate: true");
         setPresenter(new PostsPresenter(this));
         mPostsPresenter.subscribe();
+        mPostsPresenter.getOfflinePosts(true);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                mPostsPresenter.subscribe();
+                mPostsPresenter.getOfflinePosts(true);
             }
         });
     }
@@ -144,28 +140,6 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
     }
 
     @Override
-    public void initLoader() {
-        mCursorLoaderWeakReference = new WeakReference<CursorLoader>(mPostsPresenter.getCursorLoader(mContextWeakReference.get()));
-        mCursorLoaderWeakReference.get().registerListener(Constants.CursorLoaderIds.POSTS_WIDGET_ID, this);
-        mCursorLoaderWeakReference.get().startLoading();
-    }
-
-    @Override
-    public void restartLoader() {
-        mCursorLoaderWeakReference.get().startLoading();
-    }
-
-    @Override
-    public void destroyLoader() {
-        // Stop the cursor loader
-        if (mCursorLoaderWeakReference.get() != null) {
-            mCursorLoaderWeakReference.get().unregisterListener(this);
-            mCursorLoaderWeakReference.get().cancelLoad();
-            mCursorLoaderWeakReference.get().stopLoading();
-        }
-    }
-
-    @Override
     public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
         Logger.d(TAG, "showPosts: post size: " + posts.size());
         mPosts = posts;
@@ -179,10 +153,5 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
     @Override
     public void setPresenter(PostsContract.Presenter presenter) {
         mPostsPresenter = presenter;
-    }
-
-    @Override
-    public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
-        mPostsPresenter.onLoadFinished(data);
     }
 }
