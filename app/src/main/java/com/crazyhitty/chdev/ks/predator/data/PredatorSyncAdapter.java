@@ -67,6 +67,8 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         @Override
         public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
             Logger.d(TAG, "showPosts: postsSize: " + posts.size());
+            // Update widgets.
+            mPostsPresenter.updateWidgets(getContext());
         }
 
         @Override
