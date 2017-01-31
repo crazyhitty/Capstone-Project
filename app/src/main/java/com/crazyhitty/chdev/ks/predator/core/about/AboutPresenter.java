@@ -55,13 +55,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Author:      Kartik Sharma
@@ -88,11 +89,11 @@ public class AboutPresenter implements AboutContract.Presenter {
             };
     @NonNull
     private AboutContract.View mView;
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public AboutPresenter(@NonNull AboutContract.View view) {
         mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
         mCustomTabsIntent = new CustomTabsIntent.Builder()
                 .enableUrlBarHiding()
                 .setShowTitle(true)
@@ -106,14 +107,14 @@ public class AboutPresenter implements AboutContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     @Override
     public void fetchAboutData(final Context context) {
-        Observable<List<About>> aboutObservable = Observable.create(new Observable.OnSubscribe<List<About>>() {
+        Observable<List<About>> aboutObservable = Observable.create(new ObservableOnSubscribe<List<About>>() {
             @Override
-            public void call(Subscriber<? super List<About>> subscriber) {
+            public void subscribe(ObservableEmitter<List<About>> emitter) throws Exception {
                 List<About> about = new ArrayList<About>();
 
                 About titleDeveloper = new About();
@@ -184,17 +185,17 @@ public class AboutPresenter implements AboutContract.Presenter {
                     e.printStackTrace();
                 }
 
-                subscriber.onNext(about);
-                subscriber.onCompleted();
+                emitter.onNext(about);
+                emitter.onComplete();
             }
         });
         aboutObservable.subscribeOn(Schedulers.io());
         aboutObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(aboutObservable.subscribe(new Observer<List<About>>() {
+        mCompositeDisposable.add(aboutObservable.subscribeWith(new DisposableObserver<List<About>>() {
             @Override
-            public void onCompleted() {
-                // Done
+            public void onNext(List<About> about) {
+                mView.showAboutData(about);
             }
 
             @Override
@@ -204,8 +205,8 @@ public class AboutPresenter implements AboutContract.Presenter {
             }
 
             @Override
-            public void onNext(List<About> about) {
-                mView.showAboutData(about);
+            public void onComplete() {
+                // Done.
             }
         }));
     }

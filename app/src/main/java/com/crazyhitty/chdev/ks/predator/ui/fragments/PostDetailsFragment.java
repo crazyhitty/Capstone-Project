@@ -65,9 +65,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -172,9 +172,9 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
                 PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new DisposableObserver<String>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         // Done
                     }
 

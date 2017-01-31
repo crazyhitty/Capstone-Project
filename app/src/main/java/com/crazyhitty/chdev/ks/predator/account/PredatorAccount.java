@@ -38,8 +38,10 @@ import android.support.annotation.RequiresPermission;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+
 
 /**
  * Author:      Kartik Sharma
@@ -92,9 +94,9 @@ public class PredatorAccount {
     public static Observable<String> getAuthToken(final Activity activity,
                                                   final String accountType,
                                                   final String authTokenType) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(final Subscriber<? super String> subscriber) {
+            public void subscribe(final ObservableEmitter<String> emitter) throws Exception {
                 AccountManager accountManager = AccountManager.get(activity.getApplicationContext());
                 accountManager.getAuthTokenByFeatures(accountType,
                         authTokenType,
@@ -109,11 +111,11 @@ public class PredatorAccount {
                                 try {
                                     bundle = future.getResult();
                                     final String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                                    subscriber.onNext(authToken);
-                                    subscriber.onCompleted();
+                                    emitter.onNext(authToken);
+                                    emitter.onComplete();
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    subscriber.onError(e);
+                                    emitter.onError(e);
                                 }
                             }
                         },

@@ -47,13 +47,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Author:      Kartik Sharma
@@ -74,11 +77,11 @@ public class PostsPresenter implements PostsContract.Presenter {
     @NonNull
     private PostsContract.View mView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public PostsPresenter(@NonNull PostsContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -88,14 +91,14 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     @Override
     public void getOfflinePosts(boolean latest) {
-        Observable<List<Post>> postsDataObservable = Observable.create(new Observable.OnSubscribe<List<Post>>() {
+        Observable<List<Post>> postsDataObservable = Observable.create(new ObservableOnSubscribe<List<Post>>() {
             @Override
-            public void call(Subscriber<? super List<Post>> subscriber) {
+            public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
@@ -104,20 +107,20 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
                 if (cursor != null && cursor.getCount() != 0) {
                     dateMatcher(cursor);
-                    subscriber.onNext(getPostsFromCursor(cursor));
+                    emitter.onNext(getPostsFromCursor(cursor));
                     cursor.close();
                 } else {
-                    subscriber.onError(new NoPostsAvailableException());
+                    emitter.onError(new NoPostsAvailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
         postsDataObservable.subscribeOn(Schedulers.io());
         postsDataObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<List<Post>>() {
+        mCompositeDisposable.add(postsDataObservable.subscribeWith(new DisposableObserver<List<Post>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -147,9 +150,9 @@ public class PostsPresenter implements PostsContract.Presenter {
         }
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
-                .map(new Func1<PostsData, List<Post>>() {
+                .map(new Function<PostsData, List<Post>>() {
                     @Override
-                    public List<Post> call(PostsData postsData) {
+                    public List<Post> apply(PostsData postsData) throws Exception {
                         if (clearPrevious) {
                             MainApplication.getContentResolverInstance()
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
@@ -205,18 +208,18 @@ public class PostsPresenter implements PostsContract.Presenter {
                         return posts;
                     }
                 })
-                .flatMap(new Func1<List<Post>, Observable<List<Post>>>() {
+                .flatMap(new Function<List<Post>, ObservableSource<List<Post>>>() {
                     @Override
-                    public Observable<List<Post>> call(final List<Post> posts) {
-                        return Observable.create(new Observable.OnSubscribe<List<Post>>() {
+                    public ObservableSource<List<Post>> apply(final List<Post> posts) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<List<Post>>() {
                             @Override
-                            public void call(Subscriber<? super List<Post>> subscriber) {
+                            public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
                                 if (posts != null && posts.size() != 0) {
-                                    subscriber.onNext(posts);
+                                    emitter.onNext(posts);
                                 } else {
                                     loadMorePosts(token, categoryName, latest);
                                 }
-                                subscriber.onCompleted();
+                                emitter.onComplete();
                             }
                         });
                     }
@@ -224,9 +227,9 @@ public class PostsPresenter implements PostsContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<List<Post>>() {
+        mCompositeDisposable.add(postsDataObservable.subscribeWith(new DisposableObserver<List<Post>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 

@@ -37,12 +37,14 @@ import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Author:      Kartik Sharma
@@ -55,18 +57,18 @@ public class MediaDetailsPresenter implements MediaDetailsContract.Presenter {
     @NonNull
     private MediaDetailsContract.View mView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public MediaDetailsPresenter(@NonNull MediaDetailsContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void getMedia(final int postId, final int mediaId) {
-        Observable<MediaData> mediaObservable = Observable.create(new Observable.OnSubscribe<MediaData>() {
+        Observable<MediaData> mediaObservable = Observable.create(new ObservableOnSubscribe<MediaData>() {
             @Override
-            public void call(Subscriber<? super MediaData> subscriber) {
+            public void subscribe(ObservableEmitter<MediaData> emitter) throws Exception {
                 // Fetch media from database.
                 Cursor mediaCursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.MediaEntry.CONTENT_URI_MEDIA,
@@ -101,20 +103,20 @@ public class MediaDetailsPresenter implements MediaDetailsContract.Presenter {
                         media.add(mediaObj);
                     }
                     mediaCursor.close();
-                    subscriber.onNext(new MediaData(media, defaultPosition));
+                    emitter.onNext(new MediaData(media, defaultPosition));
                 } else {
-                    subscriber.onError(new PostDetailsPresenter.MediaUnavailableException());
+                    emitter.onError(new PostDetailsPresenter.MediaUnavailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
 
         mediaObservable.subscribeOn(Schedulers.io());
         mediaObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(mediaObservable.subscribe(new Observer<MediaData>() {
+        mCompositeDisposable.add(mediaObservable.subscribeWith(new DisposableObserver<MediaData>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -137,7 +139,7 @@ public class MediaDetailsPresenter implements MediaDetailsContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     private static class MediaData {

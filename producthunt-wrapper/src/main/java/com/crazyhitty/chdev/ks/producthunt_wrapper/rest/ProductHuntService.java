@@ -35,13 +35,13 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 
 import java.util.HashMap;
 
+import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Author:      Kartik Sharma

@@ -45,13 +45,15 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
@@ -66,20 +68,20 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
     @NonNull
     private CollectionDetailsContract.View mView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     private Collection mCollection;
 
     public CollectionDetailsPresenter(@NonNull CollectionDetailsContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void getCollectionDetails(final int collectionId) {
-        Observable<Collection> collectionsCursorObservable = Observable.create(new Observable.OnSubscribe<Collection>() {
+        io.reactivex.Observable<Collection> collectionsCursorObservable = io.reactivex.Observable.create(new ObservableOnSubscribe<Collection>() {
             @Override
-            public void call(Subscriber<? super Collection> subscriber) {
+            public void subscribe(ObservableEmitter<Collection> emitter) throws Exception {
                 // Retrieve the results from the database.
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
@@ -88,21 +90,21 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
                                 null,
                                 null);
                 if (cursor != null && cursor.getCount() != 0) {
-                    subscriber.onNext(getCollectionFromCursor(cursor));
+                    emitter.onNext(getCollectionFromCursor(cursor));
                     cursor.close();
                 } else {
-                    subscriber.onError(new CollectionsPresenter.CollectionsUnavailableException());
+                    emitter.onError(new CollectionsPresenter.CollectionsUnavailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
 
         collectionsCursorObservable.subscribeOn(Schedulers.io());
         collectionsCursorObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(collectionsCursorObservable.subscribe(new Observer<Collection>() {
+        mCompositeDisposable.add(collectionsCursorObservable.subscribeWith(new DisposableObserver<Collection>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done.
             }
 
@@ -126,9 +128,9 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
 
     @Override
     public void getOfflinePosts(final int collectionId) {
-        Observable<List<Post>> postsDataObservable = Observable.create(new Observable.OnSubscribe<List<Post>>() {
+        Observable<List<Post>> postsDataObservable = Observable.create(new ObservableOnSubscribe<List<Post>>() {
             @Override
-            public void call(Subscriber<? super List<Post>> subscriber) {
+            public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
@@ -137,20 +139,20 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
                                 null,
                                 PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
                 if (cursor != null && cursor.getCount() != 0) {
-                    subscriber.onNext(getPostsFromCursor(cursor));
+                    emitter.onNext(getPostsFromCursor(cursor));
                     cursor.close();
                 } else {
-                    subscriber.onError(new PostsPresenter.NoPostsAvailableException());
+                    emitter.onError(new PostsPresenter.NoPostsAvailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
         postsDataObservable.subscribeOn(Schedulers.io());
         postsDataObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<List<Post>>() {
+        mCompositeDisposable.add(postsDataObservable.subscribeWith(new DisposableObserver<List<Post>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -171,9 +173,9 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
     public void getPosts(String token, final int collectionId) {
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
                 .getCollectionDetails(CoreUtils.getAuthToken(token), collectionId)
-                .map(new Func1<CollectionDetailsData, List<Post>>() {
+                .map(new Function<CollectionDetailsData, List<Post>>() {
                     @Override
-                    public List<Post> call(CollectionDetailsData collectionDetailsData) {
+                    public List<Post> apply(CollectionDetailsData collectionDetailsData) throws Exception {
                         // Remove old posts for that collection id
                         MainApplication.getContentResolverInstance()
                                 .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
@@ -216,18 +218,18 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
                         return posts;
                     }
                 })
-                .flatMap(new Func1<List<Post>, Observable<List<Post>>>() {
+                .flatMap(new Function<List<Post>, ObservableSource<List<Post>>>() {
                     @Override
-                    public Observable<List<Post>> call(final List<Post> posts) {
-                        return Observable.create(new Observable.OnSubscribe<List<Post>>() {
+                    public ObservableSource<List<Post>> apply(final List<Post> posts) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<List<Post>>() {
                             @Override
-                            public void call(Subscriber<? super List<Post>> subscriber) {
+                            public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
                                 if (posts != null && posts.size() != 0) {
-                                    subscriber.onNext(posts);
+                                    emitter.onNext(posts);
                                 } else {
-                                    subscriber.onError(new NoCollectionPostsAvailableException());
+                                    emitter.onError(new NoCollectionPostsAvailableException());
                                 }
-                                subscriber.onCompleted();
+                                emitter.onComplete();
                             }
                         });
                     }
@@ -235,9 +237,9 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postsDataObservable.subscribe(new Observer<List<Post>>() {
+        mCompositeDisposable.add(postsDataObservable.subscribeWith(new DisposableObserver<List<Post>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -261,7 +263,7 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     private ContentValues getContentValuesForPosts(int collectionId, PostsData.Posts post) {

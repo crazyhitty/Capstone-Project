@@ -38,10 +38,10 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.OAuth;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -56,11 +56,11 @@ public class AuthPresenter implements AuthContract.Presenter {
     @NonNull
     private AuthContract.View mView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public AuthPresenter(@NonNull AuthContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -70,19 +70,19 @@ public class AuthPresenter implements AuthContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     @Override
     @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public void retrieveClientAuthToken(final Context context) {
-        mCompositeSubscription.add(ProductHuntRestApi.getApi()
+        mCompositeDisposable.add(ProductHuntRestApi.getApi()
                 .oAuthClient(OAuth.getClientAuthRequestBody())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<OAuthData>() {
+                .subscribeWith(new DisposableObserver<OAuthData>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         // Done
                     }
 
@@ -117,13 +117,13 @@ public class AuthPresenter implements AuthContract.Presenter {
 
     @Override
     public void retrieveUserAuthToken(final Context context, String token) {
-        mCompositeSubscription.add(ProductHuntRestApi.getApi()
+        mCompositeDisposable.add(ProductHuntRestApi.getApi()
                 .oAuthUser(OAuth.geUserAuthRequestBody(token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<OAuthData>() {
+                .subscribeWith(new DisposableObserver<OAuthData>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         // Done
                     }
 

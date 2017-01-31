@@ -31,12 +31,13 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Author:      Kartik Sharma
@@ -51,18 +52,18 @@ public class SettingsPresenter implements SettingsContract.Presenter {
     @NonNull
     private SettingsContract.View mView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public SettingsPresenter(@NonNull SettingsContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void clearCache() {
-        Observable<Boolean> clearCacheObservable = Observable.create(new Observable.OnSubscribe<Boolean>() {
+        io.reactivex.Observable<Boolean> clearCacheObservable = io.reactivex.Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
                 // Delete all values from all tables.
                 // Delete all values from posts_table.
                 MainApplication.getContentResolverInstance()
@@ -98,17 +99,17 @@ public class SettingsPresenter implements SettingsContract.Presenter {
                 // Clear fresco cache.
                 Fresco.getImagePipeline().clearCaches();
 
-                subscriber.onNext(true);
-                subscriber.onCompleted();
+                emitter.onNext(true);
+                emitter.onComplete();
             }
         });
 
         clearCacheObservable.subscribeOn(Schedulers.io());
         clearCacheObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(clearCacheObservable.subscribe(new Observer<Boolean>() {
+        mCompositeDisposable.add(clearCacheObservable.subscribeWith(new DisposableObserver<Boolean>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -133,8 +134,8 @@ public class SettingsPresenter implements SettingsContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        if (mCompositeSubscription != null) {
-            mCompositeSubscription.clear();
+        if (mCompositeDisposable != null) {
+            mCompositeDisposable.clear();
         }
     }
 }

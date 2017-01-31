@@ -40,13 +40,15 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -61,18 +63,18 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     private static int sPage = 1;
     @NonNull
     private CollectionsContract.View mView;
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public CollectionsPresenter(@NonNull CollectionsContract.View view) {
         mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void getOfflineCollections() {
-        Observable<List<Collection>> collectionsCursorObservable = Observable.create(new Observable.OnSubscribe<List<Collection>>() {
+        Observable<List<Collection>> collectionsCursorObservable = Observable.create(new ObservableOnSubscribe<List<Collection>>() {
             @Override
-            public void call(Subscriber<? super List<Collection>> subscriber) {
+            public void subscribe(ObservableEmitter<List<Collection>> emitter) throws Exception {
                 // Retrieve the results from the database.
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
@@ -81,21 +83,21 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                                 null,
                                 null);
                 if (cursor != null && cursor.getCount() != 0) {
-                    subscriber.onNext(getCollectionsFromCursor(cursor));
+                    emitter.onNext(getCollectionsFromCursor(cursor));
                     cursor.close();
                 } else {
-                    subscriber.onError(new CollectionsUnavailableException());
+                    emitter.onError(new CollectionsUnavailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
 
         collectionsCursorObservable.subscribeOn(Schedulers.io());
         collectionsCursorObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(collectionsCursorObservable.subscribe(new Observer<List<Collection>>() {
+        mCompositeDisposable.add(collectionsCursorObservable.subscribeWith(new DisposableObserver<List<Collection>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done.
             }
 
@@ -116,9 +118,9 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     public void getLatestCollections(final String token, final boolean clearPrevious) {
         Observable<List<Collection>> collectionsCursorObservable = ProductHuntRestApi.getApi()
                 .getCollections(CoreUtils.getAuthToken(token), sPage, PER_PAGE_COUNT, true)
-                .map(new Func1<CollectionsData, List<Collection>>() {
+                .map(new Function<CollectionsData, List<Collection>>() {
                     @Override
-                    public List<Collection> call(CollectionsData collectionsData) {
+                    public List<Collection> apply(CollectionsData collectionsData) throws Exception {
                         if (clearPrevious) {
                             // Clear previous collections from database.
                             MainApplication.getContentResolverInstance()
@@ -154,18 +156,18 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                         return collections;
                     }
                 })
-                .flatMap(new Func1<List<Collection>, Observable<List<Collection>>>() {
+                .flatMap(new Function<List<Collection>, ObservableSource<List<Collection>>>() {
                     @Override
-                    public Observable<List<Collection>> call(final List<Collection> collections) {
-                        return Observable.create(new Observable.OnSubscribe<List<Collection>>() {
+                    public ObservableSource<List<Collection>> apply(final List<Collection> collections) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<List<Collection>>() {
                             @Override
-                            public void call(Subscriber<? super List<Collection>> subscriber) {
+                            public void subscribe(ObservableEmitter<List<Collection>> emitter) throws Exception {
                                 if (collections != null && collections.size() != 0) {
-                                    subscriber.onNext(collections);
+                                    emitter.onNext(collections);
                                 } else {
-                                    subscriber.onError(new CollectionsUnavailableException());
+                                    emitter.onError(new CollectionsUnavailableException());
                                 }
-                                subscriber.onCompleted();
+                                emitter.onComplete();
                             }
                         });
                     }
@@ -173,9 +175,9 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(collectionsCursorObservable.subscribe(new Observer<List<Collection>>() {
+        mCompositeDisposable.add(collectionsCursorObservable.subscribeWith(new DisposableObserver<List<Collection>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done.
             }
 
@@ -206,7 +208,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 
     private ContentValues[] getBulkContentValuesForCollections(List<CollectionsData.Collections> collections) {

@@ -60,14 +60,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH;
 
@@ -96,12 +98,12 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             };
     @NonNull
     private PostDetailsContract.View mView;
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
     private Cursor mPostDetailsCursor;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
         mCustomTabsIntent = new CustomTabsIntent.Builder()
                 .enableUrlBarHiding()
                 .setShowTitle(true)
@@ -110,9 +112,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void getDetails(final int postId) {
-        Observable<Cursor> postDetailsObservable = Observable.create(new Observable.OnSubscribe<Cursor>() {
+        Observable<Cursor> postDetailsObservable = Observable.create(new ObservableOnSubscribe<Cursor>() {
             @Override
-            public void call(Subscriber<? super Cursor> subscriber) {
+            public void subscribe(ObservableEmitter<Cursor> emitter) throws Exception {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
@@ -121,20 +123,20 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (cursor != null && cursor.getCount() != 0) {
-                    subscriber.onNext(cursor);
+                    emitter.onNext(cursor);
                 } else {
-                    subscriber.onError(new PostDetailsUnavailableException());
+                    emitter.onError(new PostDetailsUnavailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
 
         postDetailsObservable.subscribeOn(Schedulers.io());
         postDetailsObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postDetailsObservable.subscribe(new Observer<Cursor>() {
+        mCompositeDisposable.add(postDetailsObservable.subscribeWith(new DisposableObserver<Cursor>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -155,9 +157,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void getUsers(final int postId) {
-        Observable<List<User>> postUsersObservable = Observable.create(new Observable.OnSubscribe<List<User>>() {
+        Observable<List<User>> postUsersObservable = Observable.create(new ObservableOnSubscribe<List<User>>() {
             @Override
-            public void call(Subscriber<? super List<User>> subscriber) {
+            public void subscribe(ObservableEmitter<List<User>> emitter) throws Exception {
                 Cursor cursorUsers = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                                 null,
@@ -204,20 +206,20 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     // Sort the users list on basis of user type.
                     Collections.sort(users, new UsersComparator());
 
-                    subscriber.onNext(users);
+                    emitter.onNext(users);
                 } else {
-                    subscriber.onError(new UsersUnavailableException());
+                    emitter.onError(new UsersUnavailableException());
                 }
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
 
         postUsersObservable.subscribeOn(Schedulers.computation());
         postUsersObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postUsersObservable.subscribe(new Observer<List<User>>() {
+        mCompositeDisposable.add(postUsersObservable.subscribeWith(new DisposableObserver<List<User>>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -239,12 +241,12 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 .getPostDetails(CoreUtils.getAuthToken(token), postId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .flatMap(new Func1<PostDetailsData, Observable<PostDetailsDataType>>() {
+                .flatMap(new Function<PostDetailsData, ObservableSource<PostDetailsDataType>>() {
                     @Override
-                    public Observable<PostDetailsDataType> call(final PostDetailsData postDetailsData) {
-                        return Observable.create(new Observable.OnSubscribe<PostDetailsDataType>() {
+                    public ObservableSource<PostDetailsDataType> apply(final PostDetailsData postDetailsData) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<PostDetailsDataType>() {
                             @Override
-                            public void call(Subscriber<? super PostDetailsDataType> subscriber) {
+                            public void subscribe(ObservableEmitter<PostDetailsDataType> emitter) throws Exception {
                                 // Add users who upvoted this post to database.
                                 MainApplication.getContentResolverInstance()
                                         .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
@@ -315,9 +317,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                     postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
                                     postDetailsDataType.setUsers(users);
 
-                                    subscriber.onNext(postDetailsDataType);
+                                    emitter.onNext(postDetailsDataType);
                                 } else {
-                                    subscriber.onError(new VotedUsersUnavailableException());
+                                    emitter.onError(new VotedUsersUnavailableException());
                                 }
 
                                 // Clear media for that particular post.
@@ -362,10 +364,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                     postDetailsDataType.setMedia(media);
                                     postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
 
-                                    subscriber.onNext(postDetailsDataType);
+                                    emitter.onNext(postDetailsDataType);
                                     mediaCursor.close();
                                 } else {
-                                    subscriber.onError(new MediaUnavailableException());
+                                    emitter.onError(new MediaUnavailableException());
                                 }
 
                                 // Clear comments for that particular post.
@@ -383,9 +385,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                                     postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
                                     postDetailsDataType.setComments(comments);
-                                    subscriber.onNext(postDetailsDataType);
+                                    emitter.onNext(postDetailsDataType);
                                 } else {
-                                    subscriber.onError(new CommentsUnavailableException());
+                                    emitter.onError(new CommentsUnavailableException());
                                 }
 
                                 // Clear install links for that particular post.
@@ -429,22 +431,22 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                     postDetailsDataType.setInstallLinks(installLinks);
                                     postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
 
-                                    subscriber.onNext(postDetailsDataType);
+                                    emitter.onNext(postDetailsDataType);
                                     installLinksCursor.close();
                                 } else {
-                                    subscriber.onError(new InstallLinksUnavailableException());
+                                    emitter.onError(new InstallLinksUnavailableException());
                                 }
 
-                                subscriber.onCompleted();
+                                emitter.onComplete();
                             }
                         });
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postDetailsCursorTypeObservable.subscribe(new Observer<PostDetailsDataType>() {
+        mCompositeDisposable.add(postDetailsCursorTypeObservable.subscribeWith(new DisposableObserver<PostDetailsDataType>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -485,9 +487,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void getExtraDetailsOffline(final int postId) {
-        Observable<PostDetailsDataType> postDetailsCursorTypeObservable = Observable.create(new Observable.OnSubscribe<PostDetailsDataType>() {
+        Observable<PostDetailsDataType> postDetailsCursorTypeObservable = Observable.create(new ObservableOnSubscribe<PostDetailsDataType>() {
             @Override
-            public void call(Subscriber<? super PostDetailsDataType> subscriber) {
+            public void subscribe(ObservableEmitter<PostDetailsDataType> emitter) throws Exception {
                 Cursor cursorUsers = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                                 null,
@@ -553,9 +555,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
                     postDetailsDataType.setUsers(users);
 
-                    subscriber.onNext(postDetailsDataType);
+                    emitter.onNext(postDetailsDataType);
                 } else {
-                    subscriber.onError(new VotedUsersUnavailableException());
+                    emitter.onError(new VotedUsersUnavailableException());
                     return;
                 }
 
@@ -590,10 +592,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     postDetailsDataType.setMedia(media);
                     postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
 
-                    subscriber.onNext(postDetailsDataType);
+                    emitter.onNext(postDetailsDataType);
                     mediaCursor.close();
                 } else {
-                    subscriber.onError(new MediaUnavailableException());
+                    emitter.onError(new MediaUnavailableException());
                     return;
                 }
 
@@ -603,9 +605,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                     postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
                     postDetailsDataType.setComments(comments);
-                    subscriber.onNext(postDetailsDataType);
+                    emitter.onNext(postDetailsDataType);
                 } else {
-                    subscriber.onError(new CommentsUnavailableException());
+                    emitter.onError(new CommentsUnavailableException());
                     return;
                 }
 
@@ -639,21 +641,21 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     postDetailsDataType.setInstallLinks(installLinks);
                     postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
 
-                    subscriber.onNext(postDetailsDataType);
+                    emitter.onNext(postDetailsDataType);
                     installLinksCursor.close();
                 } else {
-                    subscriber.onError(new InstallLinksUnavailableException());
+                    emitter.onError(new InstallLinksUnavailableException());
                 }
 
-                subscriber.onCompleted();
+                emitter.onComplete();
             }
         });
         postDetailsCursorTypeObservable.subscribeOn(Schedulers.computation());
         postDetailsCursorTypeObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeSubscription.add(postDetailsCursorTypeObservable.subscribe(new Observer<PostDetailsDataType>() {
+        mCompositeDisposable.add(postDetailsCursorTypeObservable.subscribeWith(new DisposableObserver<PostDetailsDataType>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 // Done
             }
 
@@ -742,7 +744,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void unSubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
         Logger.d(TAG, "unSubscribe: cursor closed");
         if (mPostDetailsCursor != null) {
             mPostDetailsCursor.close();
