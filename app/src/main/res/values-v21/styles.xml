@@ -24,7 +24,7 @@
 
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
@@ -32,6 +32,9 @@
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
         <item name="android:textColorTertiary">@color/text_color_tertiary</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary_inverse</item>
         <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
         <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
         <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
@@ -42,8 +45,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@color/color_primary</item>
     </style>
 
     <style name="AppTheme.Dashboard">

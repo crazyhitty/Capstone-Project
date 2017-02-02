@@ -29,4 +29,6 @@
         <attr name="negativeButtonText" format="string" />
     </declare-styleable>
 
+    <!--Custom attributes for theming the entire application-->
+
 </resources>

@@ -95,7 +95,6 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        getWindow().setBackgroundDrawableResource(R.color.color_primary);
         ButterKnife.bind(this);
         initNetworKBroadcastReceiver();
         initToolbar();

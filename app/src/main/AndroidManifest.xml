@@ -22,7 +22,7 @@
         <activity
             android:name=".ui.activities.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Splash">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,36 +31,36 @@
 
         <activity
             android:name=".ui.activities.OnboardActivity"
-            android:theme="@style/AppTheme.Onboard" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.Dashboard" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.PostDetailsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.PostDetails" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.CollectionDetailsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.CollectionDetails" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.MediaFullScreenActivity"
             android:parentActivityName=".ui.activities.PostDetailsActivity"
-            android:theme="@style/AppTheme.MediaFullScreen" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.Settings" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.AboutActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.About" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.activities.AuthenticatorActivity"

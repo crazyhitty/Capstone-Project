@@ -32,7 +32,6 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -54,12 +53,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private static final String TAG = "BaseAppCompatActivity";
     private static final int ANIM_TOOLBAR_TITLE_APPEARING_DURATION = 300;
     private static final int ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION = 300;
-
-    // Supporting vector drawable resources on pre lollipop devices.
-    // Source: http://stackoverflow.com/a/38012842
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
 
     private Toolbar mToolbar;
     private String mCurrentFragmentTag;

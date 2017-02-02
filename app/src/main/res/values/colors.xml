@@ -6,10 +6,13 @@
     <color name="text_color_primary">@color/material_grey_900</color>
     <color name="text_color_secondary">@color/material_grey_700</color>
     <color name="text_color_tertiary">@color/material_grey_500</color>
+    <color name="text_color_primary_inverse">@color/material_grey_100</color>
+    <color name="text_color_secondary_inverse">@color/material_grey_300</color>
+    <color name="text_color_tertiary_inverse">@color/material_grey_500</color>
     <color name="nav_bar_color">#64eeeeee</color>
 
     <color name="color_black_dark">#212121</color>
-    <color name="color_black_alpha">#c8212121</color>
+    <color name="color_black_alpha">#32212121</color>
     <color name="color_grey_alpha">#7d757575</color>
     <color name="color_collection_overlay">#7d212121</color>
     <color name="light_blue_grey">#cfd8dc</color>

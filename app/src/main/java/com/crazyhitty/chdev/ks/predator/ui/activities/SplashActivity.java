@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 
@@ -41,6 +42,7 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 public class SplashActivity extends BaseAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        applyTheme();
         super.onCreate(savedInstanceState);
 
         // check if user has a already completed onboarding or not, if not then redirect him/her to
@@ -54,5 +56,9 @@ public class SplashActivity extends BaseAppCompatActivity {
                     Intent.FLAG_ACTIVITY_NO_ANIMATION);
             finish();
         }
+    }
+
+    private void applyTheme() {
+        getWindow().setBackgroundDrawableResource(R.drawable.ll_app_logo);
     }
 }

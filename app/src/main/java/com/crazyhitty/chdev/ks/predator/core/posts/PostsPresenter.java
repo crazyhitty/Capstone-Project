@@ -173,7 +173,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                         }
 
                         if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
-                            return null;
+                            return new ArrayList<Post>();
                         }
 
                         for (PostsData.Posts post : postsData.getPosts()) {
@@ -199,12 +199,13 @@ public class PostsPresenter implements PostsContract.Presenter {
                                         null,
                                         PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
 
-                        List<Post> posts = null;
+                        List<Post> posts = new ArrayList<Post>();
                         if (cursor != null && cursor.getCount() != 0) {
                             dateMatcher(cursor);
                             posts = getPostsFromCursor(cursor);
                             cursor.close();
                         }
+                        Logger.d(TAG, "apply: posts: " + posts);
                         return posts;
                     }
                 })

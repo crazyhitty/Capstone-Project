@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
@@ -42,6 +43,12 @@ import java.lang.ref.WeakReference;
 
 public class MainApplication extends Application {
     private static WeakReference<ContentResolver> sContentResolverWeakReference;
+
+    static {
+        // Supporting vector drawable resources on pre lollipop devices.
+        // Source: http://stackoverflow.com/a/38012842
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     public static ContentResolver getContentResolverInstance() {
         return sContentResolverWeakReference.get();

@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -33,6 +34,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -79,6 +82,7 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        applyTheme();
         setContentView(R.layout.activity_collection_details);
         ButterKnife.bind(this);
         initAppBarLayout();
@@ -88,6 +92,14 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
         // This is done inorder to stop reloading fragment on orientation changes.
         if (savedInstanceState == null) {
             initCollectionDetailsFragment();
+        }
+    }
+
+    private void applyTheme() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
     }
 

@@ -106,7 +106,6 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboard);
-        getWindow().setBackgroundDrawableResource(R.color.color_primary);
         ButterKnife.bind(this);
         initViewPager();
         setPresenter(new AuthPresenter(this));

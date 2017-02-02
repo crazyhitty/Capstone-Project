@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -35,6 +36,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -82,6 +85,20 @@ public class MediaFullScreenActivity extends BaseAppCompatActivity implements Me
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            return false;
+        }
+    };
     @BindView(R.id.coordinatar_layout_full_screen)
     CoordinatorLayout coordinatorLayoutFullScreen;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -129,20 +146,6 @@ public class MediaFullScreenActivity extends BaseAppCompatActivity implements Me
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
 
     public static void startActivity(Context context, int mediaId, int postId) {
         Intent intent = new Intent(context, MediaFullScreenActivity.class);
@@ -155,6 +158,7 @@ public class MediaFullScreenActivity extends BaseAppCompatActivity implements Me
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        applyTheme();
         setContentView(R.layout.activity_media_full_screen);
         ButterKnife.bind(this);
         setPresenter(new MediaDetailsPresenter(this));
@@ -164,6 +168,16 @@ public class MediaFullScreenActivity extends BaseAppCompatActivity implements Me
         // Fetch media details.
         mMediaDetailsPresenter.getMedia(getIntent().getExtras().getInt(ARG_MEDIA_TABLE_POST_ID),
                 getIntent().getExtras().getInt(ARG_MEDIA_TABLE_MEDIA_ID));
+    }
+
+    private void applyTheme() {
+        getWindow().setBackgroundDrawableResource(android.R.color.black);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.color_black_alpha));
+        }
     }
 
     @Override
