@@ -25,6 +25,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:predator="http://schemas.android.com/apk/res/com.crazyhitty.chdev.ks.predator.debug">
 
+    <PreferenceCategory android:title="@string/settings_user_interface">
+
+        <ListPreference
+            android:defaultValue="@string/settings_manage_themes_default_value"
+            android:dialogTitle="@string/settings_manage_themes_dialog_title"
+            android:entries="@array/settings_manage_themes_entries"
+            android:entryValues="@array/settings_manage_themes_entry_values"
+            android:key="@string/settings_manage_themes_key"
+            android:summary="@string/settings_manage_themes_summary"
+            android:title="@string/settings_manage_themes_title" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/settings_system">
 
         <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference

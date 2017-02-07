@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.AboutFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
@@ -130,16 +131,19 @@ public class AboutActivity extends BaseAppCompatActivity {
      * vector drawables cannot be directly accessed in buttons(xml).
      */
     private void addIconsToButtons() {
+        boolean isLightTheme = PredatorSharedPreferences.getCurrentTheme(getApplicationContext()) ==
+                PredatorSharedPreferences.THEME_TYPE.LIGHT;
+
         Drawable githubDrawable = AppCompatResources.getDrawable(getApplicationContext(),
-                R.drawable.ic_github_24dp);
+                isLightTheme ? R.drawable.ic_github_24dp : R.drawable.ic_github_inverse_24dp);
         btnGithub.setCompoundDrawablesWithIntrinsicBounds(githubDrawable, null, null, null);
 
         Drawable googlePlusDrawable = AppCompatResources.getDrawable(getApplicationContext(),
-                R.drawable.ic_google_plus_24dp);
+                isLightTheme ? R.drawable.ic_google_plus_24dp : R.drawable.ic_google_plus_inverse_24dp);
         btnGooglePlus.setCompoundDrawablesWithIntrinsicBounds(googlePlusDrawable, null, null, null);
 
         Drawable mailDrawable = AppCompatResources.getDrawable(getApplicationContext(),
-                R.drawable.ic_mail_24dp);
+                isLightTheme ? R.drawable.ic_mail_24dp : R.drawable.ic_mail_inverse_24dp);
         btnMail.setCompoundDrawablesWithIntrinsicBounds(mailDrawable, null, null, null);
     }
 

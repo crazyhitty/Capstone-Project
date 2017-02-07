@@ -93,6 +93,27 @@ public class PredatorSharedPreferences {
         return DateUtils.hoursToMillis(hours);
     }
 
+    public static THEME_TYPE getCurrentTheme(Context context) {
+        switch (PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.settings_manage_themes_key),
+                        context.getString(R.string.settings_manage_themes_default_value))) {
+            case "light":
+                return THEME_TYPE.LIGHT;
+            case "dark":
+                return THEME_TYPE.DARK;
+            case "amoled":
+                return THEME_TYPE.AMOLED;
+            default:
+                return THEME_TYPE.LIGHT;
+        }
+    }
+
+    public enum THEME_TYPE {
+        LIGHT,
+        DARK,
+        AMOLED
+    }
+
     private static class SharedPreferencesManager {
         private SharedPreferencesManager() {
 

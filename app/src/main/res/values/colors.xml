@@ -3,6 +3,9 @@
     <color name="color_primary">@color/material_grey_200</color>
     <color name="color_primary_dark">@color/material_grey_400</color>
     <color name="color_accent">#ff5722</color>
+    <color name="color_primary_inverse">@color/material_blue_grey_700</color>
+    <color name="color_primary_dark_inverse">@color/material_blue_grey_900</color>
+    <color name="color_accent_inverse">@color/material_teal_500</color>
     <color name="text_color_primary">@color/material_grey_900</color>
     <color name="text_color_secondary">@color/material_grey_700</color>
     <color name="text_color_tertiary">@color/material_grey_500</color>
@@ -10,12 +13,34 @@
     <color name="text_color_secondary_inverse">@color/material_grey_300</color>
     <color name="text_color_tertiary_inverse">@color/material_grey_500</color>
     <color name="nav_bar_color">#64eeeeee</color>
+    <color name="nav_item_color">@color/material_grey_700</color>
+    <color name="nav_item_color_inverse">@color/material_grey_200</color>
+    <color name="color_dark">@color/material_grey_900</color>
+    <color name="color_dark_inverse">@color/material_grey_100</color>
+    <color name="predator_button_text_color">@color/material_grey_200</color>
+    <color name="predator_button_text_color_inverse">@color/material_grey_800</color>
+    <color name="date_color">@color/material_grey_400</color>
+    <color name="date_color_inverse">@color/material_grey_500</color>
+    <color name="comment_color">@color/material_grey_700</color>
+    <color name="comment_color_inverse">@color/material_grey_300</color>
+    <color name="about_version_color">@color/material_grey_400</color>
+    <color name="about_version_color_inverse">@color/material_grey_600</color>
+    <color name="color_media_bg">#c8212121</color>
+    <color name="color_media_bg_inverse">#c8f5f5f5</color>
+    <color name="library_license_color">@color/material_grey_400</color>
+    <color name="library_license_color_inverse">@color/material_grey_600</color>
+    <color name="default_placeholder_color">@color/color_primary</color>
+    <color name="default_placeholder_color_inverse">@color/color_black_dark</color>
+    <color name="title_placeholder_color">@color/color_primary</color>
+    <color name="title_placeholder_color_inverse">@color/color_primary_inverse</color>
+    <color name="background_color">@color/color_primary</color>
+    <color name="background_color_inverse">@color/color_black_dark</color>
+    <color name="background_color_amoled">@android:color/black</color>
 
     <color name="color_black_dark">#212121</color>
     <color name="color_black_alpha">#32212121</color>
     <color name="color_grey_alpha">#7d757575</color>
     <color name="color_collection_overlay">#7d212121</color>
     <color name="light_blue_grey">#cfd8dc</color>
-    <color name="color_media_bg">#c8212121</color>
     <color name="widget_posts_background">#263238</color>
 </resources>

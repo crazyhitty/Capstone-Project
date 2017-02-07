@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2016 Kartik Sharma
@@ -22,31 +22,12 @@
   ~ SOFTWARE.
   -->
 
-<resources>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@android:integer/config_shortAnimTime"
+    android:shareInterpolator="@android:anim/decelerate_interpolator">
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1" />
 
-    <style name="AppThemeDark.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
-
-    <style name="AppThemeAmoled.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
-
-    <style name="AppTheme.Splash">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowBackground">@drawable/ll_app_logo</item>
-    </style>
-
-</resources>
+</set>

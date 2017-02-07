@@ -104,6 +104,9 @@ public class AboutFragment extends BaseSupportFragment implements AboutContract.
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_about, menu);
+
+        // Change menu item icons based on theme
+        changeMenuItemColorBasedOnTheme(menu);
     }
 
     @Override

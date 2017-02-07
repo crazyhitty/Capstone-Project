@@ -29,10 +29,13 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 
 
 /**
@@ -44,7 +47,7 @@ import com.crazyhitty.chdev.ks.predator.R;
 
 public class ListItemDecorator extends RecyclerView.ItemDecoration {
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
-    private Drawable divider;
+    private Drawable mDivider;
 
     private int mDividerLeftPadding;
     private int mSpacingPx;
@@ -54,7 +57,15 @@ public class ListItemDecorator extends RecyclerView.ItemDecoration {
         mSpacingPx = ScreenUtils.dpToPxInt(context, 16);
         mDividerLeftPadding = ScreenUtils.dpToPxInt(context, dividerLeftPaddingDp);
         final TypedArray styledAttributes = context.obtainStyledAttributes(ATTRS);
-        divider = styledAttributes.getDrawable(0);
+        mDivider = styledAttributes.getDrawable(0);
+        switch (PredatorSharedPreferences.getCurrentTheme(context)) {
+            case DARK:
+                DrawableCompat.setTint(mDivider, ContextCompat.getColor(context, R.color.material_grey_400));
+                break;
+            case AMOLED:
+                DrawableCompat.setTint(mDivider, ContextCompat.getColor(context, R.color.material_grey_400));
+                break;
+        }
         styledAttributes.recycle();
     }
 
@@ -67,15 +78,15 @@ public class ListItemDecorator extends RecyclerView.ItemDecoration {
             int left = mDividerLeftPadding;
             int top = child.getBottom() + layoutParams.bottomMargin;
             int right = child.getRight();
-            int bottom = top + divider.getIntrinsicHeight();
+            int bottom = top + mDivider.getIntrinsicHeight();
 
             if (parent.getResources().getBoolean(R.bool.is_right_to_left)) {
                 left = child.getLeft();
                 right = child.getRight() - mDividerLeftPadding;
             }
 
-            divider.setBounds(left, top, right, bottom);
-            divider.draw(c);
+            mDivider.setBounds(left, top, right, bottom);
+            mDivider.draw(c);
         }
     }
 

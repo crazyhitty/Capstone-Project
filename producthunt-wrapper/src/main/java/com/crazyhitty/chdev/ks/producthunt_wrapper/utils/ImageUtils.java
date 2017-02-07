@@ -24,6 +24,10 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.utils;
 
+import android.net.Uri;
+
+import java.util.Set;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -37,11 +41,43 @@ public class ImageUtils {
     }
 
     public static String getCustomPostThumbnailImageUrl(String imageUrl, int heightPx, int widthPx) {
-        return imageUrl.replace("h=570&w=430", "h=" + heightPx + "&w=" + widthPx);
+        Uri uri = Uri.parse(imageUrl);
+        final Set<String> params = uri.getQueryParameterNames();
+        final Uri.Builder newUri = uri.buildUpon().clearQuery();
+        for (String param : params) {
+            String value;
+            if (param.equals("h")) {
+                value = String.valueOf(heightPx);
+            } else if (param.equals("w")) {
+                value = String.valueOf(widthPx);
+            } else {
+                value = uri.getQueryParameter(param);
+            }
+
+            newUri.appendQueryParameter(param, value);
+        }
+
+        return newUri.build().toString();
     }
 
     public static String getCustomUserThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
-        return imageUrl.replace("w=100&h=100", "w=" + widthPx + "&h=" + heightPx);
+        Uri uri = Uri.parse(imageUrl);
+        final Set<String> params = uri.getQueryParameterNames();
+        final Uri.Builder newUri = uri.buildUpon().clearQuery();
+        for (String param : params) {
+            String value;
+            if (param.equals("h")) {
+                value = String.valueOf(heightPx);
+            } else if (param.equals("w")) {
+                value = String.valueOf(widthPx);
+            } else {
+                value = uri.getQueryParameter(param);
+            }
+
+            newUri.appendQueryParameter(param, value);
+        }
+
+        return newUri.build().toString();
     }
 
     public static String getCustomMediaImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
@@ -49,7 +85,23 @@ public class ImageUtils {
     }
 
     public static String getCustomCommentUserImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
-        return imageUrl.replace("w=100&h=100", "w=" + widthPx + "&h=" + heightPx);
+        Uri uri = Uri.parse(imageUrl);
+        final Set<String> params = uri.getQueryParameterNames();
+        final Uri.Builder newUri = uri.buildUpon().clearQuery();
+        for (String param : params) {
+            String value;
+            if (param.equals("h")) {
+                value = String.valueOf(heightPx);
+            } else if (param.equals("w")) {
+                value = String.valueOf(widthPx);
+            } else {
+                value = uri.getQueryParameter(param);
+            }
+
+            newUri.appendQueryParameter(param, value);
+        }
+
+        return newUri.build().toString();
     }
 
     public static String getCustomCollectionImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {

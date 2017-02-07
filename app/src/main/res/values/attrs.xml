@@ -30,5 +30,20 @@
     </declare-styleable>
 
     <!--Custom attributes for theming the entire application-->
+    <attr name="navItemColor" format="reference" />
+    <attr name="appBarOverlay" format="reference" />
+    <attr name="popupOverlay" format="reference" />
+    <attr name="colorDark" format="reference" />
+    <attr name="predatorButtonTextColor" format="reference" />
+    <attr name="postDateColor" format="reference" />
+    <attr name="commentColor" format="reference" />
+    <attr name="aboutVersionColor" format="reference" />
+    <attr name="libraryLicenseColor" format="reference" />
+    <attr name="defaultPlaceholderColor" format="reference" />
+    <attr name="titlePlaceholderColor" format="reference" />
+    <attr name="backgroundColor" format="reference" />
+    <attr name="drawableDone" format="reference" />
+    <attr name="drawableErrorAlternative" format="reference" />
+    <attr name="drawableImageBrokenError" format="reference" />
 
 </resources>

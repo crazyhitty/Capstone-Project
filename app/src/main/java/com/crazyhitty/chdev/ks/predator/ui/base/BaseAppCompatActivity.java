@@ -27,7 +27,9 @@ package com.crazyhitty.chdev.ks.predator.ui.base;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +40,7 @@ import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 
@@ -58,6 +61,26 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        manageThemes();
+    }
+
+    private void manageThemes() {
+        switch (PredatorSharedPreferences.getCurrentTheme(getApplicationContext())) {
+            case LIGHT:
+                setTheme(R.style.AppTheme_NoActionBar);
+                break;
+            case DARK:
+                setTheme(R.style.AppThemeDark_NoActionBar);
+                break;
+            case AMOLED:
+                setTheme(R.style.AppThemeAmoled_NoActionBar);
+                break;
+        }
+    }
 
     protected void attachToolbar(Toolbar toolbar) {
         mToolbar = toolbar;

@@ -232,6 +232,9 @@ public class PostDetailsFragment extends BaseSupportFragment implements PostDeta
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_post_details, menu);
+
+        // Change menu item icons based on theme
+        changeMenuItemColorBasedOnTheme(menu);
     }
 
     @Override

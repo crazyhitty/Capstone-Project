@@ -36,8 +36,8 @@
         android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
         android:contentDescription="@string/item_post_details_comment_user_image_desc"
         android:padding="@dimen/item_post_details_comment_image_padding"
-        fresco:failureImage="@drawable/ic_image_broken_error"
-        fresco:placeholderImage="@color/color_primary"
+        fresco:failureImage="?attr/drawableImageBrokenError"
+        fresco:placeholderImage="?attr/defaultPlaceholderColor"
         fresco:roundedCornerRadius="@dimen/item_post_details_comment_image_corner_padding" />
 
     <TextView

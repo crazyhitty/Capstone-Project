@@ -40,6 +40,7 @@ import com.crazyhitty.chdev.ks.predator.core.settings.SettingsContract;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSyncAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.activities.SettingsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 
@@ -51,6 +52,7 @@ import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
  */
 
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
+    private ListPreference mListPreferenceManageThemes;
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
     private SwitchPreference mSwitchPreferenceBackgroundSync;
     private ListPreference mListPreferenceSyncInterval;
@@ -74,6 +76,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
         bindPreferences();
 
+        manageThemesPreferences();
+
         manageCachePreferences();
 
         manageBackgroundSyncPreferences();
@@ -88,9 +92,20 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
     }
 
     private void bindPreferences() {
+        mListPreferenceManageThemes = (ListPreference) findPreference(getString(R.string.settings_manage_themes_key));
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
+    }
+
+    private void manageThemesPreferences() {
+        mListPreferenceManageThemes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SettingsActivity.startActivity(getActivity(), true);
+                return true;
+            }
+        });
     }
 
     private void manageCachePreferences() {

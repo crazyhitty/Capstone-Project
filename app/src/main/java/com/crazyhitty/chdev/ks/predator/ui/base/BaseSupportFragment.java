@@ -24,12 +24,17 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
@@ -67,5 +72,26 @@ public abstract class BaseSupportFragment extends Fragment {
 
     protected void showLongToast(@StringRes int messageRes) {
         Toast.makeText(getContext(), messageRes, Toast.LENGTH_LONG).show();
+    }
+
+    protected void changeMenuItemColorBasedOnTheme(Menu menu) {
+        int color = ContextCompat.getColor(getContext(), R.color.material_grey_900);
+        switch (PredatorSharedPreferences.getCurrentTheme(getContext())) {
+            case LIGHT:
+                color = ContextCompat.getColor(getContext(), R.color.material_grey_900);
+                break;
+            case DARK:
+                color = ContextCompat.getColor(getContext(), R.color.material_grey_100);
+                break;
+            case AMOLED:
+                color = ContextCompat.getColor(getContext(), R.color.material_grey_100);
+                break;
+        }
+
+        for (int i = 0; i < menu.size(); i++) {
+            menu.getItem(i).getIcon()
+                    .mutate()
+                    .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+        }
     }
 }

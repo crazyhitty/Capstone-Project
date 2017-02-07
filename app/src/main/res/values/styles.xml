@@ -22,7 +22,7 @@
   ~ SOFTWARE.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
@@ -30,6 +30,7 @@
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="colorControlHighlight">@color/color_accent</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">@color/color_accent</item>
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
         <item name="android:textColorTertiary">@color/text_color_tertiary</item>
@@ -39,52 +40,107 @@
         <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
         <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
         <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color</item>
+        <item name="android:windowBackground">?attr/backgroundColor</item>
+        <item name="navItemColor">@color/nav_item_color</item>
+        <item name="appBarOverlay">@style/AppTheme.AppBarOverlay</item>
+        <item name="popupOverlay">@style/AppTheme.PopupOverlay</item>
+        <item name="colorDark">@color/color_dark</item>
+        <item name="predatorButtonTextColor">@color/predator_button_text_color</item>
+        <item name="postDateColor">@color/date_color</item>
+        <item name="commentColor">@color/comment_color</item>
+        <item name="aboutVersionColor">@color/about_version_color</item>
+        <item name="libraryLicenseColor">@color/library_license_color</item>
+        <item name="defaultPlaceholderColor">@color/default_placeholder_color</item>
+        <item name="titlePlaceholderColor">@color/title_placeholder_color</item>
+        <item name="drawableDone">@drawable/ic_done</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative</item>
+        <item name="drawableImageBrokenError">@drawable/ic_image_broken_error</item>
+    </style>
+
+    <style name="AppThemeDark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/color_primary_inverse</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark_inverse</item>
+        <item name="colorAccent">@color/color_accent_inverse</item>
+        <item name="colorControlHighlight">@color/color_accent_inverse</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">
+            @color/color_accent_inverse
+        </item>
+        <item name="android:textColorPrimary">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiary">@color/text_color_tertiary_inverse</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color_inverse</item>
+        <item name="android:windowBackground">?attr/backgroundColor</item>
+        <item name="navItemColor">@color/nav_item_color_inverse</item>
+        <item name="appBarOverlay">@style/AppTheme.AppBarOverlayDark</item>
+        <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
+        <item name="colorDark">@color/color_dark_inverse</item>
+        <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
+        <item name="postDateColor">@color/date_color_inverse</item>
+        <item name="commentColor">@color/comment_color_inverse</item>
+        <item name="aboutVersionColor">@color/about_version_color_inverse</item>
+        <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
+        <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
+        <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
+        <item name="drawableDone">@drawable/ic_done_inverse</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
+        <item name="drawableImageBrokenError">@drawable/ic_image_broken_error_inverse</item>
+    </style>
+
+    <style name="AppThemeAmoled" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/color_primary_inverse</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark_inverse</item>
+        <item name="colorAccent">@color/color_accent_inverse</item>
+        <item name="colorControlHighlight">@color/color_accent_inverse</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">
+            @color/color_accent_inverse
+        </item>
+        <item name="android:textColorPrimary">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiary">@color/text_color_tertiary_inverse</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color_amoled</item>
+        <item name="android:windowBackground">?attr/backgroundColor</item>
+        <item name="navItemColor">@color/nav_item_color_inverse</item>
+        <item name="appBarOverlay">@style/AppTheme.AppBarOverlayDark</item>
+        <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
+        <item name="colorDark">@color/color_dark_inverse</item>
+        <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
+        <item name="postDateColor">@color/date_color_inverse</item>
+        <item name="commentColor">@color/comment_color_inverse</item>
+        <item name="aboutVersionColor">@color/about_version_color_inverse</item>
+        <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
+        <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
+        <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
+        <item name="drawableDone">@drawable/ic_done_inverse</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
+        <item name="drawableImageBrokenError">@drawable/ic_image_broken_error_inverse</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/color_primary</item>
     </style>
 
-    <style name="AppTheme.Dashboard">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/ll_app_logo</item>
-    </style>
-
-    <style name="AppTheme.Onboard">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/ll_app_logo</item>
-    </style>
-
-    <style name="AppTheme.PostDetails">
+    <style name="AppThemeDark.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.CollectionDetails">
+    <style name="AppThemeAmoled.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/color_primary</item>
-    </style>
-
-    <style name="AppTheme.MediaFullScreen">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/black</item>
-    </style>
-
-    <style name="AppTheme.Settings">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.About">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/color_primary</item>
     </style>
 
     <style name="AppTheme.Splash">
@@ -100,49 +156,56 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlHighlight">@color/color_accent</item>
-        <item name="android:textColorSecondary">@color/color_black_dark</item>
+        <item name="colorControlHighlight">?attr/colorAccent</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="DarkButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/color_primary_dark</item>
-        <item name="colorButtonNormal">@color/color_black_dark</item>
-        <item name="android:textColorPrimary">@color/material_grey_200</item>
+    <style name="AppTheme.AppBarOverlayDark" parent="ThemeOverlay.AppCompat">
+        <item name="colorControlHighlight">?attr/colorAccent</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlayDark" parent="ThemeOverlay.AppCompat" />
+
+    <style name="PredatorButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">?attr/colorPrimaryDark</item>
+        <item name="colorButtonNormal">?attr/colorDark</item>
+        <item name="android:textColorPrimary">?attr/predatorButtonTextColor</item>
     </style>
 
     <style name="TextAppearanceLarge" parent="TextAppearance.AppCompat.Large">
         <item name="android:textSize">@dimen/text_size_large</item>
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TextAppearanceMedium" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TextAppearanceSmall" parent="TextAppearance.AppCompat.Small">
         <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TextAppearanceDate" parent="@style/TextAppearance.AppCompat.Display1">
-        <item name="android:textColor">@color/color_accent</item>
+        <item name="android:textColor">?attr/colorAccent</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearancePostTitle" parent="TextAppearanceLarge">
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?attr/colorDark</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearancePostDesc" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/material_grey_700</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearancePostDate" parent="TextAppearanceSmall">
-        <item name="android:textColor">@color/material_grey_400</item>
+        <item name="android:textColor">?attr/postDateColor</item>
     </style>
 
     <style name="Divider">
@@ -152,42 +215,42 @@
     </style>
 
     <style name="TextAppearanceComment" parent="@style/TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/material_grey_700</item>
+        <item name="android:textColor">?attr/commentColor</item>
     </style>
 
     <style name="TextAppearanceCollectionTitle" parent="@style/TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearanceCollectionDesc" parent="@style/TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/material_grey_700</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearanceCollectionDetailTitle" parent="TextAppearanceLarge">
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearanceCollectionDetailDesc" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/material_grey_700</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearanceAboutTitle" parent="TextAppearanceLarge">
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearanceAboutDesc" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/material_grey_700</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearanceAboutVersion" parent="TextAppearanceSmall">
-        <item name="android:textColor">@color/material_grey_400</item>
+        <item name="android:textColor">?attr/aboutVersionColor</item>
     </style>
 
     <style name="TextAppearanceMediaImageNumber" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/material_grey_200</item>
+        <item name="android:textColor">@color/material_grey_100</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -199,19 +262,19 @@
     </style>
 
     <style name="TextAppearanceLibraryName" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/color_accent</item>
+        <item name="android:textColor">?attr/colorAccent</item>
     </style>
 
     <style name="TextAppearanceLibraryCreator" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/color_black_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TextAppearanceLibraryLicense" parent="TextAppearanceSmall">
-        <item name="android:textColor">@color/material_grey_400</item>
+        <item name="android:textColor">?attr/libraryLicenseColor</item>
     </style>
 
     <style name="TextAppearanceWidgetPostTitle" parent="TextAppearanceMedium">
-        <item name="android:textColor">@color/material_grey_200</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearanceWidgetPostDesc" parent="TextAppearance.AppCompat.Small">

@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="false"
         android:stateListAnimator="@drawable/selector_app_bar_elevated"
-        android:theme="@style/AppTheme.AppBarOverlay"
+        android:theme="?attr/appBarOverlay"
         tools:targetApi="lollipop">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -65,8 +65,8 @@
                     android:layout_marginTop="@dimen/margin_min"
                     android:contentDescription="@string/activity_collection_details_image_desc"
                     android:padding="@dimen/activity_collection_details_image_padding"
-                    fresco:failureImage="@drawable/ic_image_broken_error"
-                    fresco:placeholderImage="@color/color_primary"
+                    fresco:failureImage="?attr/drawableImageBrokenError"
+                    fresco:placeholderImage="?attr/titlePlaceholderColor"
                     fresco:roundedCornerRadius="@dimen/activity_collection_details_image_corner_padding" />
 
                 <TextView
@@ -98,7 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="?attr/popupOverlay" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

@@ -24,7 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,12 +50,16 @@ public class SettingsActivity extends BaseAppCompatActivity {
     /**
      * Start this activity.
      *
-     * @param context Current context of the application.
+     * @param activity Current activity which wants to fire this intent.
      */
-    public static void startActivity(Context context) {
-        Intent intent = new Intent(context, SettingsActivity.class);
+    public static void startActivity(Activity activity, boolean withFadeAnim) {
+        Intent intent = new Intent(activity, SettingsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        activity.startActivity(intent);
+
+        if (withFadeAnim) {
+            activity.overridePendingTransition(R.anim.anim_fade_in, R.anim.anim_fade_out);
+        }
     }
 
     @Override
@@ -77,5 +81,10 @@ public class SettingsActivity extends BaseAppCompatActivity {
 
         // Add back button to go back to the previous screen.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DashboardActivity.startActivity(getApplicationContext(), Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 }

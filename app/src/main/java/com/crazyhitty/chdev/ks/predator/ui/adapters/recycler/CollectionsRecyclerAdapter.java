@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -38,6 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.utils.MaterialColorPalette;
 
@@ -135,7 +137,11 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         collectionViewHolder.txtDescription.setText(description);
 
         if (!mColorHashMap.containsKey(position)) {
-            mColorHashMap.put(position, MaterialColorPalette.getRandomColor("100"));
+            if (PredatorSharedPreferences.getCurrentTheme(collectionViewHolder.itemView.getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT) {
+                mColorHashMap.put(position, MaterialColorPalette.getRandomColor("100"));
+            } else {
+                mColorHashMap.put(position, ContextCompat.getColor(collectionViewHolder.itemView.getContext(), R.color.color_primary_inverse));
+            }
         }
         ((CardView) collectionViewHolder.itemView).setCardBackgroundColor(mColorHashMap.get(position));
 

@@ -25,7 +25,32 @@
 <changelog bulletedList="true">
 
     <changelogversion
-        changeDate="Jan 27, 2016"
+        changeDate="Feb 7, 2017"
+        versionName="0.14">
+        <changelogtext>[b]New![/b] Integrated light, dark and amoled themes.</changelogtext>
+        <changelogtext>Bug fixes and performance improvements.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Feb 1, 2017"
+        versionName="0.13">
+        <changelogtext>Bug fixes and performance improvements.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jan 31, 2017"
+        versionName="0.12">
+        <changelogtext>Bug fixes and performance improvements.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jan 30, 2017"
+        versionName="0.11">
+        <changelogtext>Minor bug fixes.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jan 27, 2017"
         versionName="0.1">
         <changelogtext>Initial release.</changelogtext>
     </changelogversion>

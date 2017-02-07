@@ -172,6 +172,25 @@
 
     <!--settings-->
     <string name="settings_name">Settings</string>
+
+    <string name="settings_user_interface">User Interface</string>
+
+    <string name="settings_manage_themes_key">manage_themes</string>
+    <string name="settings_manage_themes_title">Manage themes</string>
+    <string name="settings_manage_themes_summary">Modify the application theme according your preferences.</string>
+    <string name="settings_manage_themes_dialog_title">Manage themes</string>
+    <string name="settings_manage_themes_default_value">light</string>
+    <string-array name="settings_manage_themes_entries">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Amoled</item>
+    </string-array>
+    <string-array name="settings_manage_themes_entry_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>amoled</item>
+    </string-array>
+
     <string name="settings_system">System</string>
 
     <string name="settings_clear_cache_key">clear_cache</string>

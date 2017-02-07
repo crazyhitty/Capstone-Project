@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="false"
         android:stateListAnimator="@drawable/selector_app_bar_elevated"
-        android:theme="@style/AppTheme.AppBarOverlay"
+        android:theme="?attr/appBarOverlay"
         tools:targetApi="lollipop">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -121,7 +121,7 @@
                             android:drawablePadding="@dimen/padding_min"
                             android:text="@string/activity_about_github"
                             android:textAllCaps="false"
-                            android:theme="@style/DarkButton" />
+                            android:theme="@style/PredatorButton" />
 
                         <Button
                             android:id="@+id/button_google_plus"
@@ -135,7 +135,7 @@
                             android:padding="@dimen/activity_about_icon_padding"
                             android:text="@string/activity_about_google_plus"
                             android:textAllCaps="false"
-                            android:theme="@style/DarkButton" />
+                            android:theme="@style/PredatorButton" />
 
                         <Button
                             android:id="@+id/button_mail"
@@ -149,7 +149,7 @@
                             android:padding="@dimen/activity_about_icon_padding"
                             android:text="@string/activity_about_mail"
                             android:textAllCaps="false"
-                            android:theme="@style/DarkButton" />
+                            android:theme="@style/PredatorButton" />
 
                     </RelativeLayout>
 
@@ -162,7 +162,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="?attr/popupOverlay" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

@@ -37,8 +37,8 @@
         android:contentDescription="@string/loading_view_image_desc"
         android:padding="@dimen/view_loading_image_padding"
         android:visibility="gone"
-        fresco:failureImage="@drawable/ic_image_broken_error"
-        fresco:placeholderImage="@drawable/ic_error_alternative"
+        fresco:failureImage="?attr/drawableImageBrokenError"
+        fresco:placeholderImage="?attr/drawableErrorAlternative"
         fresco:roundedCornerRadius="@dimen/view_loading_image_corner_padding" />
 
     <TextView

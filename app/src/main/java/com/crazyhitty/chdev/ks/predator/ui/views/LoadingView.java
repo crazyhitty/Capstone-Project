@@ -39,6 +39,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -114,7 +115,17 @@ public class LoadingView extends RelativeLayout {
         ButterKnife.bind(this);
 
         // Set layout properties.
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_primary));
+        switch (PredatorSharedPreferences.getCurrentTheme(getContext())) {
+            case LIGHT:
+                setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_primary));
+                break;
+            case DARK:
+                setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_black_dark));
+                break;
+            case AMOLED:
+                setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_black_dark));
+                break;
+        }
 
         // Set animation.
         manageAnimation(true);
@@ -207,7 +218,10 @@ public class LoadingView extends RelativeLayout {
                 progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
                 btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
                 GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
-                hierarchy.setPlaceholderImage(R.drawable.ic_done);
+
+                boolean isLightTheme = PredatorSharedPreferences.getCurrentTheme(getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT;
+                hierarchy.setPlaceholderImage(isLightTheme ? R.drawable.ic_done : R.drawable.ic_done_inverse);
+
                 imgViewLoading.setHierarchy(hierarchy);
 
                 txtMessage.setAlpha(0.0f);
