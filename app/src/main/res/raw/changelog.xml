@@ -26,6 +26,12 @@
 
     <changelogversion
         changeDate="Feb 7, 2017"
+        versionName="0.15">
+        <changelogbug>Fixed a bug where app was crashing on settings screen.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Feb 7, 2017"
         versionName="0.14">
         <changelogtext>[b]New![/b] Integrated light, dark and amoled themes.</changelogtext>
         <changelogtext>Bug fixes and performance improvements.</changelogtext>
