@@ -26,6 +26,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_refresh"
+        android:icon="@drawable/selector_refresh"
+        android:orderInCategory="99"
+        android:title="@string/menu_post_details_refresh"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_open_redirect_url"
         android:icon="@drawable/ic_open_redirect_url_24dp"
         android:orderInCategory="99"

@@ -16,6 +16,7 @@
     <string name="retry">Retry</string>
     <string name="not_connected_to_network_err">Not connected to network!</string>
     <string name="not_yet_implemented">Not yet implemented!</string>
+    <string name="not_yet_supported">Not yet supported!</string>
     <string name="share_using">Share using&#8230;</string>
     <string name="permission_denied_err_msg">Permission denied!\nPlease accept the permission inorder to make the application work properly!</string>
 
@@ -43,6 +44,7 @@
     <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
 
     <!--menu_post_details.xml-->
+    <string name="menu_post_details_refresh">Refresh</string>
     <string name="menu_post_details_share">Share</string>
     <string name="menu_post_details_open_redirect_url">Open redirect url</string>
 
@@ -95,6 +97,7 @@
     <string name="loading_view_latest_posts">latest posts</string>
     <string name="loading_view_latest_collections">latest collections</string>
     <string name="loading_view_collections_posts">all of the posts available in this collection</string>
+    <string name="loading_view_Comments">latest comments</string>
     <string name="loading_view_image_desc">Notification image</string>
 
     <!--post details-->
@@ -104,7 +107,9 @@
     <string name="post_details_comments">Comments</string>
     <string name="post_details_loading_please_wait">Please wait&#8230;</string>
     <string name="post_details_unavailable">Unavailable currently.</string>
-    <string name="post_details_no_redirect_url_available">No redirect url avaiable.</string>
+    <string name="post_details_no_redirect_url_available">No redirect url available.</string>
+    <string name="post_details_refreshing">Refreshing&#8230;</string>
+    <string name="post_details_updated_details">Updated details</string>
 
     <!--item post user-->
     <string name="item_post_user_image_desc">User image</string>
@@ -112,6 +117,7 @@
     <string name="item_post_user_hunter">Hunter</string>
     <string name="item_post_user_maker">Maker</string>
     <string name="item_post_user_voted">Voted</string>
+    <string name="item_post_user_name_alternative">\@%s</string>
 
     <!--item media-->
     <string name="item_media_image_desc">Media Image</string>
@@ -150,14 +156,24 @@
     <string name="activity_about_google_plus">google plus</string>
     <string name="activity_about_mail">mail</string>
     <string name="activity_about_version">Version %s</string>
-    <string name="activity_about_title_developer">Developer</string>
-    <string name="activity_about_developer_username">Kartik Sharma</string>
-    <string name="activity_about_developer_type">Maker</string>
+    <string name="activity_about_developer_title">Developer</string>
+    <string name="activity_about_developer_name">Kartik Sharma</string>
+    <string name="activity_about_developer_username">\@cr42yh17m4n</string>
+    <string name="activity_about_developer_type">Predator Dev</string>
+    <string name="activity_about_developed_by_title">Made with love by</string>
+    <string name="activity_about_contributions_title">Contributions</string>
+    <string name="activity_about_kajal_mittal">Kajal Mittal</string>
+    <string name="activity_about_kajal_mittal_type">For her regular and relevant feedback.</string>
+    <string name="activity_about_kajal_mittal_username"></string>
     <string name="activity_about_special_thanks_title">Special Thanks</string>
-    <string name="activity_about_special_thanks_desc"><![CDATA[To <a href="https://github.com/kajal-mittal">Kajal Mittal</a> for her regular and relevant feedback. Application icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>. Other icons provided by <a href="https://material.io/icons/">Google</a> and <a href="https://materialdesignicons.com/">Material Design Icons</a>.]]></string>
+    <string name="activity_about_extra_desc"><![CDATA[Application icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>. Other icons provided by <a href="https://material.io/icons/">Google</a> and <a href="https://materialdesignicons.com/">Material Design Icons</a>.]]></string>
     <string name="activity_about_library_title">Libraries</string>
     <string name="activity_about_mail_subject">Regarding Predator</string>
     <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
+
+    <!--fragment_comments.xml-->
+    <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>
+    <string name="fragment_comments_unavailable">Comments unavailable currently.</string>
 
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>

@@ -27,21 +27,26 @@ package com.crazyhitty.chdev.ks.predator.ui.base;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 
 
@@ -190,5 +195,34 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
         sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_using)));
+    }
+
+    protected boolean isNetworkAvailable(boolean showToastMessage) {
+        boolean isNetworkAvailable = NetworkConnectionUtil.isNetworkAvailable(getApplicationContext());
+        if (!isNetworkAvailable && showToastMessage) {
+            showLongToast(R.string.not_connected_to_network_err);
+        }
+        return isNetworkAvailable;
+    }
+
+    protected void changeMenuItemColorBasedOnTheme(Menu menu) {
+        int color = ContextCompat.getColor(getApplicationContext(), R.color.material_grey_900);
+        switch (PredatorSharedPreferences.getCurrentTheme(getApplicationContext())) {
+            case LIGHT:
+                color = ContextCompat.getColor(getApplicationContext(), R.color.material_grey_900);
+                break;
+            case DARK:
+                color = ContextCompat.getColor(getApplicationContext(), R.color.material_grey_100);
+                break;
+            case AMOLED:
+                color = ContextCompat.getColor(getApplicationContext(), R.color.material_grey_100);
+                break;
+        }
+
+        for (int i = 0; i < menu.size(); i++) {
+            menu.getItem(i).getIcon()
+                    .mutate()
+                    .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+        }
     }
 }

@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthContract;
@@ -59,6 +60,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         setContentView(R.layout.activity_authenticator);
         ButterKnife.bind(this);
         setPresenter(new AuthPresenter(this));
+        Toast.makeText(getApplicationContext(), R.string.not_yet_implemented, Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @OnClick(R.id.button_continue)

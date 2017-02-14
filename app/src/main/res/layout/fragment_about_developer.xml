@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2016 Kartik Sharma
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v4.widget.Space
+            android:id="@+id/space"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_avg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:text="@string/activity_about_developed_by_title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <View
+            style="@style/Divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:layout_marginTop="@dimen/margin_min" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view_kartik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:stateListAnimator="@drawable/selector_lift_on_touch"
+            app:cardCornerRadius="@dimen/item_library_card_corner_radius"
+            app:cardElevation="@dimen/item_library_card_elevation"
+            app:contentPaddingBottom="@dimen/padding_avg"
+            app:contentPaddingLeft="@dimen/padding_avg"
+            app:contentPaddingRight="@dimen/padding_avg"
+            app:contentPaddingTop="@dimen/padding_avg"
+            tools:targetApi="lollipop">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/image_view_user_kartik"
+                    android:layout_width="@dimen/item_post_user_image_width"
+                    android:layout_height="@dimen/item_post_user_image_height"
+                    android:contentDescription="@string/item_post_user_image_desc"
+                    android:padding="@dimen/item_post_user_image_padding"
+                    fresco:placeholderImage="@drawable/ic_kartik"
+                    fresco:roundedCornerRadius="@dimen/item_post_user_image_corner_padding" />
+
+                <TextView
+                    android:id="@+id/text_view_name_kartik"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_min"
+                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_toEndOf="@+id/image_view_user_kartik"
+                    android:layout_toStartOf="@+id/text_view_username"
+                    android:text="@string/activity_about_developer_name"
+                    android:textAppearance="@style/TextAppearanceUserName" />
+
+                <TextView
+                    android:id="@+id/text_view_user_type_kartik"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_view_name_kartik"
+                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_toEndOf="@+id/image_view_user_kartik"
+                    android:text="@string/activity_about_developer_type"
+                    android:textAppearance="@style/TextAppearanceUserType" />
+
+                <TextView
+                    android:id="@+id/text_view_username_kartik"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/margin_min"
+                    android:text="@string/activity_about_developer_username"
+                    android:textAppearance="@style/TextAppearanceUserNameAlternate" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_avg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:text="@string/activity_about_contributions_title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <View
+            style="@style/Divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:layout_marginTop="@dimen/margin_min" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view_kajal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:stateListAnimator="@drawable/selector_lift_on_touch"
+            app:cardCornerRadius="@dimen/item_library_card_corner_radius"
+            app:cardElevation="@dimen/item_library_card_elevation"
+            app:contentPaddingBottom="@dimen/padding_avg"
+            app:contentPaddingLeft="@dimen/padding_avg"
+            app:contentPaddingRight="@dimen/padding_avg"
+            app:contentPaddingTop="@dimen/padding_avg"
+            tools:targetApi="lollipop">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/image_view_user_kajal"
+                    android:layout_width="@dimen/item_post_user_image_width"
+                    android:layout_height="@dimen/item_post_user_image_height"
+                    android:contentDescription="@string/item_post_user_image_desc"
+                    android:padding="@dimen/item_post_user_image_padding"
+                    fresco:placeholderImage="@drawable/ic_kajal"
+                    fresco:roundedCornerRadius="@dimen/item_post_user_image_corner_padding" />
+
+                <TextView
+                    android:id="@+id/text_view_name_kajal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_min"
+                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_toEndOf="@+id/image_view_user_kajal"
+                    android:layout_toStartOf="@+id/text_view_username_kajal"
+                    android:text="@string/activity_about_kajal_mittal"
+                    android:textAppearance="@style/TextAppearanceUserName" />
+
+                <TextView
+                    android:id="@+id/text_view_user_type_kajal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_view_name_kajal"
+                    android:layout_marginStart="@dimen/margin_avg"
+                    android:layout_toEndOf="@+id/image_view_user_kajal"
+                    android:text="@string/activity_about_kajal_mittal_type"
+                    android:textAppearance="@style/TextAppearanceUserType" />
+
+                <TextView
+                    android:id="@+id/text_view_username_kajal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/margin_min"
+                    android:text="@string/activity_about_kajal_mittal_username"
+                    android:textAppearance="@style/TextAppearanceUserNameAlternate" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_avg" />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/text_view_extra_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_avg"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:linksClickable="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="Extra description" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_avg" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

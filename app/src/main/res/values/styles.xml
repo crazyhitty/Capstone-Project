@@ -51,6 +51,7 @@
         <item name="commentColor">@color/comment_color</item>
         <item name="aboutVersionColor">@color/about_version_color</item>
         <item name="libraryLicenseColor">@color/library_license_color</item>
+        <item name="userNameAlternativeColor">@color/username_alternative_color</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color</item>
         <item name="drawableDone">@drawable/ic_done</item>
@@ -86,6 +87,7 @@
         <item name="commentColor">@color/comment_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
+        <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
         <item name="drawableDone">@drawable/ic_done_inverse</item>
@@ -121,6 +123,7 @@
         <item name="commentColor">@color/comment_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
+        <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
         <item name="drawableDone">@drawable/ic_done_inverse</item>
@@ -271,6 +274,18 @@
 
     <style name="TextAppearanceLibraryLicense" parent="TextAppearanceSmall">
         <item name="android:textColor">?attr/libraryLicenseColor</item>
+    </style>
+
+    <style name="TextAppearanceUserName" parent="TextAppearanceMedium">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="TextAppearanceUserType" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="TextAppearanceUserNameAlternate" parent="TextAppearanceSmall">
+        <item name="android:textColor">?attr/userNameAlternativeColor</item>
     </style>
 
     <style name="TextAppearanceWidgetPostTitle" parent="TextAppearanceMedium">

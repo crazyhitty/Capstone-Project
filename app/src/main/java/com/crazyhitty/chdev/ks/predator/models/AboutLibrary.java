@@ -27,22 +27,15 @@ package com.crazyhitty.chdev.ks.predator.models;
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/13/2017 9:01 AM
- * Description: Useful for sending post details.
+ * Created:     1/25/2017 11:57 AM
+ * Description: Unavailable
  */
 
-public class PostDetails {
+public class AboutLibrary {
     private String title;
-    private String description;
-    private String day;
-    private String date;
-    private String backdropUrl;
+    private String creator;
+    private String licenseType;
     private String redirectUrl;
-    private String tagline;
-    private String discussionUrl;
-
-    public PostDetails() {
-    }
 
     public String getTitle() {
         return title;
@@ -52,36 +45,20 @@ public class PostDetails {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
-    public String getDay() {
-        return day;
+    public String getLicenseType() {
+        return licenseType;
     }
 
-    public void setDay(String day) {
-        this.day = day;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getBackdropUrl() {
-        return backdropUrl;
-    }
-
-    public void setBackdropUrl(String backdropUrl) {
-        this.backdropUrl = backdropUrl;
+    public void setLicenseType(String licenseType) {
+        this.licenseType = licenseType;
     }
 
     public String getRedirectUrl() {
@@ -90,33 +67,5 @@ public class PostDetails {
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
-    }
-
-    public String getTagline() {
-        return tagline;
-    }
-
-    public void setTagline(String tagline) {
-        this.tagline = tagline;
-    }
-
-    public String getDiscussionUrl() {
-        return discussionUrl;
-    }
-
-    public void setDiscussionUrl(String discussionUrl) {
-        this.discussionUrl = discussionUrl;
-    }
-
-    @Override
-    public String toString() {
-        return "title: " + title +
-                ", description: " + description +
-                ", day: " + day +
-                ", date: " + date +
-                ", backdropUrl: " + backdropUrl +
-                ", redirectUrl: " + redirectUrl +
-                ", tagline: " + tagline +
-                ", discussionUrl: " + discussionUrl;
     }
 }

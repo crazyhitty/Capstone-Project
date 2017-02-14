@@ -22,10 +22,70 @@
   ~ SOFTWARE.
   -->
 
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recycler_view_users"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:nestedScrollingEnabled="false"
-    tools:targetApi="lollipop" />
+    android:layout_marginEnd="@dimen/margin_avg"
+    android:layout_marginStart="@dimen/margin_avg"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:stateListAnimator="@drawable/selector_lift_on_touch"
+    app:cardCornerRadius="@dimen/item_library_card_corner_radius"
+    app:cardElevation="@dimen/item_library_card_elevation"
+    app:contentPaddingBottom="@dimen/padding_avg"
+    app:contentPaddingLeft="@dimen/padding_avg"
+    app:contentPaddingRight="@dimen/padding_avg"
+    app:contentPaddingTop="@dimen/padding_avg"
+    tools:targetApi="lollipop">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_view_user"
+            android:layout_width="@dimen/item_post_user_image_width"
+            android:layout_height="@dimen/item_post_user_image_height"
+            android:contentDescription="@string/item_post_user_image_desc"
+            android:padding="@dimen/item_post_user_image_padding"
+            fresco:failureImage="?attr/drawableImageBrokenError"
+            fresco:placeholderImage="?attr/defaultPlaceholderColor"
+            fresco:roundedCornerRadius="@dimen/item_post_user_image_corner_padding" />
+
+        <TextView
+            android:id="@+id/text_view_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_min"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:layout_toEndOf="@+id/image_view_user"
+            android:layout_toStartOf="@+id/text_view_username"
+            android:textAppearance="@style/TextAppearanceUserName"
+            tools:text="Name" />
+
+        <TextView
+            android:id="@+id/text_view_user_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_view_name"
+            android:layout_marginStart="@dimen/margin_avg"
+            android:layout_toEndOf="@+id/image_view_user"
+            android:textAppearance="@style/TextAppearanceUserType"
+            tools:text="User Type" />
+
+        <TextView
+            android:id="@+id/text_view_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/margin_min"
+            android:textAppearance="@style/TextAppearanceUserNameAlternate"
+            tools:text="Username" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

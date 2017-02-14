@@ -168,10 +168,26 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/frame_layout_about_container"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout_about"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_about_tab_layout_height"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorPrimary"
+        android:stateListAnimator="@drawable/selector_app_bar_elevated"
+        app:layout_anchor="@+id/app_bar_layout"
+        app:layout_anchorGravity="bottom"
+        app:tabGravity="fill"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="?android:attr/textColorPrimary"
+        app:tabTextColor="?android:attr/textColorTertiary"
+        tools:targetApi="lollipop" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager_about"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_about_tab_layout_height"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

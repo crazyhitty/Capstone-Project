@@ -28,6 +28,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -44,32 +46,37 @@ import butterknife.ButterKnife;
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/14/2017 8:58 PM
+ * Created:     2/11/2017 4:12 PM
  * Description: Unavailable
  */
 
-public class PostUsersRecyclerAdapter extends RecyclerView.Adapter<PostUsersRecyclerAdapter.UsersViewHolder> {
+public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdapter.UserViewHolder> {
     private List<User> mUsers;
+    private int mLastPosition = -1;
 
-    public PostUsersRecyclerAdapter(List<User> users) {
+    public UsersRecyclerAdapter(List<User> users) {
         mUsers = users;
     }
 
     public void updateUsers(List<User> users) {
+        mLastPosition = -1;
         mUsers = users;
         notifyDataSetChanged();
     }
 
     @Override
-    public UsersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_about_user, parent, false);
-        return new UsersViewHolder(view);
+        View view = layoutInflater.inflate(R.layout.item_post_details_users, parent, false);
+        return new UserViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(UsersViewHolder holder, int position) {
+    public void onBindViewHolder(UserViewHolder holder, int position) {
         String name = mUsers.get(position).getName();
+        String username = holder.itemView
+                .getResources()
+                .getString(R.string.item_post_user_name_alternative, mUsers.get(position).getUsername());
 
         String userImageUrl = mUsers.get(position).getThumbnail();
         userImageUrl = ImageUtils.getCustomUserThumbnailUrl(userImageUrl,
@@ -77,6 +84,7 @@ public class PostUsersRecyclerAdapter extends RecyclerView.Adapter<PostUsersRecy
                 ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44));
 
         holder.txtUserName.setText(name);
+        holder.txtUserNameAlternative.setText(username);
         holder.imgViewUser.setImageURI(userImageUrl);
 
         int userTypeRes = 0;
@@ -96,6 +104,17 @@ public class PostUsersRecyclerAdapter extends RecyclerView.Adapter<PostUsersRecy
         }
 
         holder.txtUserType.setText(userTypeRes);
+
+        manageAnimation(holder.itemView, position);
+    }
+
+    private void manageAnimation(View view, int position) {
+        if (position > mLastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.anim_bottom_top_fade_in);
+            view.startAnimation(animation);
+            mLastPosition = position;
+        }
     }
 
     @Override
@@ -103,17 +122,29 @@ public class PostUsersRecyclerAdapter extends RecyclerView.Adapter<PostUsersRecy
         return mUsers != null ? mUsers.size() : 0;
     }
 
-    public static class UsersViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.text_view_user_name)
+    @Override
+    public void onViewDetachedFromWindow(UserViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.clearAnimation();
+    }
+
+    public static class UserViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.text_view_name)
         TextView txtUserName;
         @BindView(R.id.text_view_user_type)
         TextView txtUserType;
+        @BindView(R.id.text_view_username)
+        TextView txtUserNameAlternative;
         @BindView(R.id.image_view_user)
         SimpleDraweeView imgViewUser;
 
-        public UsersViewHolder(View itemView) {
+        public UserViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        protected void clearAnimation() {
+            itemView.clearAnimation();
         }
     }
 }

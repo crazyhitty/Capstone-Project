@@ -22,29 +22,10 @@
   ~ SOFTWARE.
   -->
 
-<resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <declare-styleable name="PredatorDialogPreference">
-        <attr name="positiveButtonText" format="string" />
-        <attr name="negativeButtonText" format="string" />
-    </declare-styleable>
+    <item android:drawable="@drawable/ic_refresh_24dp" android:state_enabled="true" />
 
-    <!--Custom attributes for theming the entire application-->
-    <attr name="navItemColor" format="reference" />
-    <attr name="appBarOverlay" format="reference" />
-    <attr name="popupOverlay" format="reference" />
-    <attr name="colorDark" format="reference" />
-    <attr name="predatorButtonTextColor" format="reference" />
-    <attr name="postDateColor" format="reference" />
-    <attr name="commentColor" format="reference" />
-    <attr name="aboutVersionColor" format="reference" />
-    <attr name="userNameAlternativeColor" format="reference" />
-    <attr name="libraryLicenseColor" format="reference" />
-    <attr name="defaultPlaceholderColor" format="reference" />
-    <attr name="titlePlaceholderColor" format="reference" />
-    <attr name="backgroundColor" format="reference" />
-    <attr name="drawableDone" format="reference" />
-    <attr name="drawableErrorAlternative" format="reference" />
-    <attr name="drawableImageBrokenError" format="reference" />
+    <item android:drawable="@drawable/ic_refresh_alternative_24dp" android:state_enabled="false" />
 
-</resources>
+</selector>

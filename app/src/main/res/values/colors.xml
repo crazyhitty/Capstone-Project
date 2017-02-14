@@ -29,6 +29,8 @@
     <color name="color_media_bg_inverse">#c8f5f5f5</color>
     <color name="library_license_color">@color/material_grey_400</color>
     <color name="library_license_color_inverse">@color/material_grey_600</color>
+    <color name="username_alternative_color">@color/material_grey_400</color>
+    <color name="username_alternative_color_inverse">@color/material_grey_600</color>
     <color name="default_placeholder_color">@color/color_primary</color>
     <color name="default_placeholder_color_inverse">@color/color_black_dark</color>
     <color name="title_placeholder_color">@color/color_primary</color>

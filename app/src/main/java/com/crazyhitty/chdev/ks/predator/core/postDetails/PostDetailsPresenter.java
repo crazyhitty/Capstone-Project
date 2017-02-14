@@ -43,6 +43,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.ui.activities.MediaFullScreenActivity;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -99,7 +100,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     @NonNull
     private PostDetailsContract.View mView;
     private CompositeDisposable mCompositeDisposable;
-    private Cursor mPostDetailsCursor;
+    private PostDetails mPostDetails;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
@@ -112,9 +113,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void getDetails(final int postId) {
-        Observable<Cursor> postDetailsObservable = Observable.create(new ObservableOnSubscribe<Cursor>() {
+        Observable<PostDetails> postDetailsObservable = Observable.create(new ObservableOnSubscribe<PostDetails>() {
             @Override
-            public void subscribe(ObservableEmitter<Cursor> emitter) throws Exception {
+            public void subscribe(ObservableEmitter<PostDetails> emitter) throws Exception {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
@@ -123,7 +124,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (cursor != null && cursor.getCount() != 0) {
-                    emitter.onNext(cursor);
+                    emitter.onNext(getPostDetailsFromCursor(cursor));
                 } else {
                     emitter.onError(new PostDetailsUnavailableException());
                 }
@@ -134,7 +135,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         postDetailsObservable.subscribeOn(Schedulers.io());
         postDetailsObservable.observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeDisposable.add(postDetailsObservable.subscribeWith(new DisposableObserver<Cursor>() {
+        mCompositeDisposable.add(postDetailsObservable.subscribeWith(new DisposableObserver<PostDetails>() {
             @Override
             public void onComplete() {
                 // Done
@@ -146,11 +147,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             }
 
             @Override
-            public void onNext(Cursor cursor) {
-                mPostDetailsCursor = cursor;
-                Logger.d(TAG, "onNext: " + mPostDetailsCursor.getCount());
-                mPostDetailsCursor.moveToFirst();
-                mView.showDetails(mPostDetailsCursor);
+            public void onNext(PostDetails postDetails) {
+                Logger.d(TAG, "onNext: postDetails: " + postDetails.toString());
+                mPostDetails = postDetails;
+                mView.showDetails(mPostDetails);
             }
         }));
     }
@@ -168,40 +168,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (cursorUsers != null && cursorUsers.getCount() != 0) {
-                    List<User> users = new ArrayList<User>();
-                    for (int i = 0; i < cursorUsers.getCount(); i++) {
-                        cursorUsers.moveToPosition(i);
-
-                        User user = new User();
-                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
-                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-                        // Check if user is hunter, maker or both.
-                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
-
-                        if (!TextUtils.isEmpty(hunterPostIds) &&
-                                !TextUtils.isEmpty(makersPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId)) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is both hunter and maker.
-                            user.setType(User.TYPE.BOTH);
-                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId))) {
-                            // User is hunter.
-                            user.setType(User.TYPE.HUNTER);
-                        } else if (!TextUtils.isEmpty(makersPostIds) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is maker.
-                            user.setType(User.TYPE.MAKER);
-                        }
-                        users.add(user);
-                    }
-                    cursorUsers.close();
+                    List<User> users = getUsersFromCursor(cursorUsers, postId);
 
                     // Sort the users list on basis of user type.
                     Collections.sort(users, new UsersComparator());
@@ -252,7 +219,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                         .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
                                                 getBulkContentValuesForUsers(postId, postDetailsData.getPost().getVotes()));
 
-                                Cursor cursorUsers = MainApplication.getContentResolverInstance()
+                                Cursor usersCursor = MainApplication.getContentResolverInstance()
                                         .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                                                 null,
                                                 PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
@@ -270,45 +237,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 null,
                                                 null);
 
-                                if (cursorUsers != null && cursorUsers.getCount() != 0) {
-                                    List<User> users = new ArrayList<User>();
-                                    for (int i = 0; i < cursorUsers.getCount(); i++) {
-                                        cursorUsers.moveToPosition(i);
-
-                                        User user = new User();
-                                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
-                                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-                                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-                                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-                                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-                                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-                                        // Check if user is hunter, maker, both or a user who just
-                                        // upvoted this post.
-                                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-                                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
-
-                                        if (!TextUtils.isEmpty(hunterPostIds) &&
-                                                !TextUtils.isEmpty(makersPostIds) &&
-                                                hunterPostIds.contains(String.valueOf(postId)) &&
-                                                makersPostIds.contains(String.valueOf(postId))) {
-                                            // User is both hunter and maker.
-                                            user.setType(User.TYPE.BOTH);
-                                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
-                                                hunterPostIds.contains(String.valueOf(postId))) {
-                                            // User is hunter.
-                                            user.setType(User.TYPE.HUNTER);
-                                        } else if (!TextUtils.isEmpty(makersPostIds) &&
-                                                makersPostIds.contains(String.valueOf(postId))) {
-                                            // User is maker.
-                                            user.setType(User.TYPE.MAKER);
-                                        } else {
-                                            // User upvoted this post.
-                                            user.setType(User.TYPE.UPVOTER);
-                                        }
-                                        users.add(user);
-                                    }
-                                    cursorUsers.close();
+                                if (usersCursor != null && usersCursor.getCount() != 0) {
+                                    List<User> users = getUsersFromCursor(usersCursor, postId);
 
                                     // Sort the users list on basis of user type.
                                     Collections.sort(users, new UsersComparator());
@@ -342,23 +272,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 null);
 
                                 if (mediaCursor != null && mediaCursor.getCount() != 0) {
-                                    List<Media> media = new ArrayList<Media>();
-                                    for (int i = 0; i < mediaCursor.getCount(); i++) {
-                                        mediaCursor.moveToPosition(i);
-
-                                        Media mediaObj = new Media();
-                                        mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
-                                        mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
-                                        mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
-                                        mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
-                                        mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
-                                        mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
-                                        mediaObj.setOriginalWidth(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH));
-                                        mediaObj.setOriginalHeight(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT));
-                                        mediaObj.setImageUrl(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
-
-                                        media.add(mediaObj);
-                                    }
+                                    List<Media> media = getMediaFromCursor(mediaCursor);
 
                                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                                     postDetailsDataType.setMedia(media);
@@ -410,22 +324,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 null);
 
                                 if (installLinksCursor != null && installLinksCursor.getCount() != 0) {
-                                    List<InstallLink> installLinks = new ArrayList<InstallLink>();
-
-                                    for (int i = 0; i < installLinksCursor.getCount(); i++) {
-                                        installLinksCursor.moveToPosition(i);
-
-                                        InstallLink installLink = new InstallLink();
-                                        installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
-                                        installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
-                                        installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
-                                        installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
-                                        installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
-                                        installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
-                                        installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
-
-                                        installLinks.add(installLink);
-                                    }
+                                    List<InstallLink> installLinks = getInstallLinksFromCursor(installLinksCursor);
 
                                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                                     postDetailsDataType.setInstallLinks(installLinks);
@@ -490,7 +389,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         Observable<PostDetailsDataType> postDetailsCursorTypeObservable = Observable.create(new ObservableOnSubscribe<PostDetailsDataType>() {
             @Override
             public void subscribe(ObservableEmitter<PostDetailsDataType> emitter) throws Exception {
-                Cursor cursorUsers = MainApplication.getContentResolverInstance()
+                Cursor usersCursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                                 null,
                                 PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
@@ -508,45 +407,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null,
                                 null);
 
-                if (cursorUsers != null && cursorUsers.getCount() != 0) {
-                    List<User> users = new ArrayList<User>();
-                    for (int i = 0; i < cursorUsers.getCount(); i++) {
-                        cursorUsers.moveToPosition(i);
-
-                        User user = new User();
-                        user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
-                        user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-                        user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-                        user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-                        user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-                        user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-                        // Check if user is hunter, maker, both or a user who just
-                        // upvoted this post.
-                        String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-                        String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
-
-                        if (!TextUtils.isEmpty(hunterPostIds) &&
-                                !TextUtils.isEmpty(makersPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId)) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is both hunter and maker.
-                            user.setType(User.TYPE.BOTH);
-                        } else if (!TextUtils.isEmpty(hunterPostIds) &&
-                                hunterPostIds.contains(String.valueOf(postId))) {
-                            // User is hunter.
-                            user.setType(User.TYPE.HUNTER);
-                        } else if (!TextUtils.isEmpty(makersPostIds) &&
-                                makersPostIds.contains(String.valueOf(postId))) {
-                            // User is maker.
-                            user.setType(User.TYPE.MAKER);
-                        } else {
-                            // User upvoted this post.
-                            user.setType(User.TYPE.UPVOTER);
-                        }
-                        users.add(user);
-                    }
-                    cursorUsers.close();
+                if (usersCursor != null && usersCursor.getCount() != 0) {
+                    List<User> users = getUsersFromCursor(usersCursor, postId);
 
                     // Sort the users list on basis of user type.
                     Collections.sort(users, new UsersComparator());
@@ -570,23 +432,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (mediaCursor != null && mediaCursor.getCount() != 0) {
-                    List<Media> media = new ArrayList<Media>();
-                    for (int i = 0; i < mediaCursor.getCount(); i++) {
-                        mediaCursor.moveToPosition(i);
-
-                        Media mediaObj = new Media();
-                        mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
-                        mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
-                        mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
-                        mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
-                        mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
-                        mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
-                        mediaObj.setOriginalWidth(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH));
-                        mediaObj.setOriginalHeight(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT));
-                        mediaObj.setImageUrl(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
-
-                        media.add(mediaObj);
-                    }
+                    List<Media> media = getMediaFromCursor(mediaCursor);
 
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                     postDetailsDataType.setMedia(media);
@@ -620,22 +466,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 null);
 
                 if (installLinksCursor != null && installLinksCursor.getCount() != 0) {
-                    List<InstallLink> installLinks = new ArrayList<InstallLink>();
-
-                    for (int i = 0; i < installLinksCursor.getCount(); i++) {
-                        installLinksCursor.moveToPosition(i);
-
-                        InstallLink installLink = new InstallLink();
-                        installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
-                        installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
-                        installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
-                        installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
-                        installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
-                        installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
-                        installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
-
-                        installLinks.add(installLink);
-                    }
+                    List<InstallLink> installLinks = getInstallLinksFromCursor(installLinksCursor);
 
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                     postDetailsDataType.setInstallLinks(installLinks);
@@ -697,7 +528,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void openRedirectUrl(Activity activity) {
-        String redirectUrl = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
+        String redirectUrl = mPostDetails.getRedirectUrl();
 
         CustomTabsHelperFragment.open(activity,
                 mCustomTabsIntent,
@@ -707,9 +538,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void sharePostDetails(Context context) {
-        String title = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_NAME);
-        String body = CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_TAGLINE) + "\n" +
-                CursorUtils.getString(mPostDetailsCursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL);
+        String title = mPostDetails.getTitle();
+        String body = mPostDetails.getTagline() + "\n" +
+                mPostDetails.getDiscussionUrl();
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
@@ -738,6 +569,11 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
+    public PostDetails getPostDetails() {
+        return mPostDetails;
+    }
+
+    @Override
     public void subscribe() {
 
     }
@@ -745,10 +581,120 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     @Override
     public void unSubscribe() {
         mCompositeDisposable.clear();
-        Logger.d(TAG, "unSubscribe: cursor closed");
-        if (mPostDetailsCursor != null) {
-            mPostDetailsCursor.close();
+    }
+
+    private PostDetails getPostDetailsFromCursor(Cursor cursor) {
+        cursor.moveToFirst();
+
+        String title = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_NAME);
+        String description = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
+        String day = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
+        String date = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_CREATED_AT);
+        String backdropUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL);
+        String redirectUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
+        String tagline = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
+        String discussionUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL);
+
+        PostDetails postDetails = new PostDetails();
+        postDetails.setTitle(title);
+        postDetails.setDescription(description);
+        postDetails.setDay(day);
+        postDetails.setDate(date);
+        postDetails.setBackdropUrl(backdropUrl);
+        postDetails.setRedirectUrl(redirectUrl);
+        postDetails.setTagline(tagline);
+        postDetails.setDiscussionUrl(discussionUrl);
+
+        cursor.close();
+
+        return postDetails;
+    }
+
+    private List<User> getUsersFromCursor(Cursor cursorUsers, int postId) {
+        List<User> users = new ArrayList<User>();
+        for (int i = 0; i < cursorUsers.getCount(); i++) {
+            cursorUsers.moveToPosition(i);
+
+            User user = new User();
+            user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
+            user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
+            user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
+            user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
+            user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+            user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+
+            // Check if user is hunter, maker, both or a user who just
+            // upvoted this post.
+            String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+            String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+
+            if (!TextUtils.isEmpty(hunterPostIds) &&
+                    !TextUtils.isEmpty(makersPostIds) &&
+                    hunterPostIds.contains(String.valueOf(postId)) &&
+                    makersPostIds.contains(String.valueOf(postId))) {
+                // User is both hunter and maker.
+                user.setType(User.TYPE.BOTH);
+            } else if (!TextUtils.isEmpty(hunterPostIds) &&
+                    hunterPostIds.contains(String.valueOf(postId))) {
+                // User is hunter.
+                user.setType(User.TYPE.HUNTER);
+            } else if (!TextUtils.isEmpty(makersPostIds) &&
+                    makersPostIds.contains(String.valueOf(postId))) {
+                // User is maker.
+                user.setType(User.TYPE.MAKER);
+            } else {
+                // User upvoted this post.
+                user.setType(User.TYPE.UPVOTER);
+            }
+            users.add(user);
         }
+        cursorUsers.close();
+
+        return users;
+    }
+
+    private List<Media> getMediaFromCursor(Cursor mediaCursor) {
+        List<Media> media = new ArrayList<Media>();
+
+        for (int i = 0; i < mediaCursor.getCount(); i++) {
+            mediaCursor.moveToPosition(i);
+
+            Media mediaObj = new Media();
+            mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
+            mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
+            mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
+            mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
+            mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
+            mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
+            mediaObj.setOriginalWidth(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH));
+            mediaObj.setOriginalHeight(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT));
+            mediaObj.setImageUrl(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
+
+            media.add(mediaObj);
+        }
+
+        return media;
+    }
+
+    private List<InstallLink> getInstallLinksFromCursor(Cursor installLinksCursor) {
+        List<InstallLink> installLinks = new ArrayList<InstallLink>();
+
+        for (int i = 0; i < installLinksCursor.getCount(); i++) {
+            installLinksCursor.moveToPosition(i);
+
+            InstallLink installLink = new InstallLink();
+            installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
+            installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
+            installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
+            installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
+            installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
+            installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
+            installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
+
+            installLinks.add(installLink);
+        }
+
+        return installLinks;
     }
 
     private void addCommentsToDatabase(List<PostCommentsData.Comments> comments) {

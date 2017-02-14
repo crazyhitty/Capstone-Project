@@ -22,45 +22,34 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.about;
+package com.crazyhitty.chdev.ks.predator.events;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v4.app.FragmentManager;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.About;
+import com.crazyhitty.chdev.ks.predator.models.Comment;
 
 import java.util.List;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/25/2017 11:52 AM
- * Description: Unavailable
+ * Created:     2/11/2017 12:24 PM
+ * Description: Event for managing comments.
  */
 
-public interface AboutContract {
-    interface View extends BaseView<Presenter> {
-        void showAboutData(List<About> about);
+public class CommentsEvent {
+    private List<Comment> comments;
 
-        void unableToShowAboutData(String errorMessage);
+    public CommentsEvent() {
     }
 
-    interface Presenter extends BasePresenter {
-        void fetchAboutData(Context context);
+    public CommentsEvent(List<Comment> comments) {
+        this.comments = comments;
+    }
 
-        void openGithub(Activity activity);
+    public List<Comment> getComments() {
+        return comments;
+    }
 
-        void openGooglePlus(Context context);
-
-        void openMail(Context context);
-
-        void openLibraryRedirectUrl(Activity activity, String redirectUrl);
-
-        void openFeedback(Activity activity);
-
-        void openChangelog(FragmentManager fragmentManager);
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

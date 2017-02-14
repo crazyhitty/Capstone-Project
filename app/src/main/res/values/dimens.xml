@@ -35,6 +35,7 @@
     <!--common-->
     <dimen name="divider_small">0.5dp</dimen>
     <dimen name="space_avg">16dp</dimen>
+    <dimen name="space_huge">32dp</dimen>
     <dimen name="padding_min">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_avg">16dp</dimen>
@@ -71,8 +72,9 @@
     <dimen name="activity_post_details_app_bar_height">400dp</dimen>
     <dimen name="activity_post_details_media_view_pager_height">200dp</dimen>
     <dimen name="activity_post_details_margin_content_start">12dp</dimen>
+    <dimen name="activity_post_details_tab_layout_height">46dp</dimen>
 
-    <!--item_post_user.xml-->
+    <!--item_about_user.xmll-->
     <dimen name="item_post_user_image_width">44dp</dimen>
     <dimen name="item_post_user_image_height">44dp</dimen>
     <dimen name="item_post_user_image_padding">2dp</dimen>
@@ -121,8 +123,9 @@
     <dimen name="activity_about_margin_content_start_icons">8dp</dimen>
     <dimen name="activity_about_icon_padding">12dp</dimen>
     <dimen name="activity_about_fading_edge">4dp</dimen>
+    <dimen name="activity_about_tab_layout_height">46dp</dimen>
 
-    <!--item_library.xml-->
+    <!--item_about_libraryibrary.xml-->
     <dimen name="item_library_card_corner_radius">4dp</dimen>
     <dimen name="item_library_card_elevation">2dp</dimen>
 

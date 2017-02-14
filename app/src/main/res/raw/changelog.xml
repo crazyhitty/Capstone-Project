@@ -25,6 +25,12 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Feb 14, 2017"
+        versionName="0.16">
+        <changelogtext>Modified the Post details and About screens for better UX.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Feb 7, 2017"
         versionName="0.15">
         <changelogbug>Fixed a bug where app was crashing on settings screen.</changelogbug>

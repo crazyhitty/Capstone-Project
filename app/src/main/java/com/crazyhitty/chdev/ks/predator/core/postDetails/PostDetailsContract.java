@@ -26,13 +26,13 @@ package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 
 import java.util.List;
@@ -46,7 +46,7 @@ import java.util.List;
 
 public interface PostDetailsContract {
     interface View extends BaseView<Presenter> {
-        void showDetails(Cursor cursor);
+        void showDetails(PostDetails postDetails);
 
         void showUsers(List<User> users);
 
@@ -89,5 +89,7 @@ public interface PostDetailsContract {
         void sharePostDetails(Context context);
 
         void openMedia(Context context, Media media);
+
+        PostDetails getPostDetails();
     }
 }
