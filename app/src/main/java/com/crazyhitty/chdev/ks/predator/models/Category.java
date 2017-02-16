@@ -22,38 +22,68 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
-
-import android.content.Context;
-
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Post;
-
-import java.util.HashMap;
-import java.util.List;
+package com.crazyhitty.chdev.ks.predator.models;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     2/15/2017 2:52 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
-    interface View extends BaseView<Presenter> {
-        void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
+public class Category {
+    private int id;
+    private int categoryId;
+    private String slug;
+    private String name;
+    private String color;
+    private String itemName;
 
-        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
+    public int getId() {
+        return id;
     }
 
-    interface Presenter extends BasePresenter {
-        void getOfflinePosts();
+    public void setId(int id) {
+        this.id = id;
+    }
 
-        void getPosts(String token, boolean clearPrevious);
+    public int getCategoryId() {
+        return categoryId;
+    }
 
-        void loadMorePosts(String token);
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
 
-        void updateWidgets(Context context);
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 }

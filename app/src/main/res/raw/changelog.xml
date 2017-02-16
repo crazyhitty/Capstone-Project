@@ -25,9 +25,20 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Feb 16, 2017"
+        versionName="0.17">
+        <changelogtext>From now on, PostDetails screen will show its category and votes count.
+        </changelogtext>
+        <changelogbug>Fixed a bug where app was crashing on sharing post from PostDetails screen on
+            pre-nougat devices.
+        </changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Feb 14, 2017"
         versionName="0.16">
         <changelogtext>Modified the Post details and About screens for better UX.</changelogtext>
+        <changelogtext>Bug fixes and performance improvements.</changelogtext>
     </changelogversion>
 
     <changelogversion

@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,6 +87,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH;
+
 
 /**
  * Author:      Kartik Sharma
@@ -94,7 +97,8 @@ import io.reactivex.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class PostDetailsActivity extends BaseAppCompatActivity implements MediaRecyclerAdapter.OnMediaItemClickListener, PostDetailsContract.View {
+public class PostDetailsActivity extends BaseAppCompatActivity implements MediaRecyclerAdapter.OnMediaItemClickListener,
+        PostDetailsContract.View {
     public static final String ARG_POST_TABLE_POST_ID = "post_id";
     private static final String TAG = "PostDetailsActivity";
     private static final int DELAY_MS = 600;
@@ -109,8 +113,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     TextView txtPostTitle;
     @BindView(R.id.text_view_post_short_desc)
     TextView txtPostShortDesc;
-    @BindView(R.id.text_view_post_date)
-    TextView txtPostDate;
+    @BindView(R.id.text_view_extra_details)
+    TextView txtPostExtraDetails;
     @BindView(R.id.image_view_post)
     SimpleDraweeView imgViewPost;
     @BindView(R.id.relative_layout_post_details_toolbar)
@@ -270,10 +274,16 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         String date = DateUtils.getPredatorPostCompleteDate(postDetails.getDate());
 
         if (TextUtils.isEmpty(date)) {
-            txtPostDate.setText(postDetails.getDay());
-        } else {
-            txtPostDate.setText(date);
+            date = postDetails.getDay();
         }
+
+        String extraDetails = String.format("%s \u2022 %s \u2022 %d %s",
+                date,
+                postDetails.getCategory(),
+                postDetails.getVoteCount(),
+                getString(R.string.post_details_votes));
+
+        txtPostExtraDetails.setText(extraDetails);
 
         String postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postDetails.getBackdropUrl(),
                 ScreenUtils.dpToPxInt(getApplicationContext(), 44.0f),
@@ -425,7 +435,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
 
     @Override
     public void onMediaItemClick(int position, Media media) {
-        mPostDetailsPresenter.openMedia(getApplicationContext(), media);
+        openMedia(media);
     }
 
     /*@OnClick(R.id.fab_bookmark)
@@ -481,7 +491,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 mPostDetailsPresenter.openRedirectUrl(this);
                 break;
             case R.id.menu_share:
-                mPostDetailsPresenter.sharePostDetails(getApplicationContext());
+                sharePostDetails();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -490,6 +500,34 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     @Override
     public void setPresenter(PostDetailsContract.Presenter presenter) {
         mPostDetailsPresenter = presenter;
+    }
+
+    public void sharePostDetails() {
+        String title = mPostDetailsPresenter.getPostDetails().getTitle();
+        String body = mPostDetailsPresenter.getPostDetails().getTagline() + "\n" +
+                mPostDetailsPresenter.getPostDetails().getDiscussionUrl();
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_using)));
+    }
+
+    public void openMedia(Media media) {
+        switch (media.getMediaType()) {
+            case Constants.Media.IMAGE:
+                MediaFullScreenActivity.startActivity(getApplicationContext(),
+                        media.getMediaId(),
+                        media.getPostId());
+                break;
+            case Constants.Media.VIDEO:
+                Intent videoIntent = new Intent();
+                videoIntent.setAction(Intent.ACTION_VIEW);
+                videoIntent.setData(Uri.parse(YOUTUBE_PATH.concat(media.getVideoId())));
+                startActivity(videoIntent);
+                break;
+        }
     }
 
     @Override

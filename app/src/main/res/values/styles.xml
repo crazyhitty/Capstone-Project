@@ -47,7 +47,7 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlay</item>
         <item name="colorDark">@color/color_dark</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color</item>
-        <item name="postDateColor">@color/date_color</item>
+        <item name="postExtraDetailsColor">@color/date_color</item>
         <item name="commentColor">@color/comment_color</item>
         <item name="aboutVersionColor">@color/about_version_color</item>
         <item name="libraryLicenseColor">@color/library_license_color</item>
@@ -83,7 +83,7 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
         <item name="colorDark">@color/color_dark_inverse</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
-        <item name="postDateColor">@color/date_color_inverse</item>
+        <item name="postExtraDetailsColor">@color/date_color_inverse</item>
         <item name="commentColor">@color/comment_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
@@ -119,7 +119,7 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
         <item name="colorDark">@color/color_dark_inverse</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
-        <item name="postDateColor">@color/date_color_inverse</item>
+        <item name="postExtraDetailsColor">@color/date_color_inverse</item>
         <item name="commentColor">@color/comment_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
@@ -207,8 +207,8 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
-    <style name="TextAppearancePostDate" parent="TextAppearanceSmall">
-        <item name="android:textColor">?attr/postDateColor</item>
+    <style name="TextAppearancePostExtraDetails" parent="TextAppearanceSmall">
+        <item name="android:textColor">?attr/postExtraDetailsColor</item>
     </style>
 
     <style name="Divider">

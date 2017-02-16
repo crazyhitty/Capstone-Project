@@ -159,7 +159,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     private void getOfflinePosts() {
-        mPostsPresenter.getOfflinePosts(true);
+        mPostsPresenter.getOfflinePosts();
     }
 
     /**
@@ -184,7 +184,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, Constants.Posts.CATEGORY_TECH, true, true);
+                        mPostsPresenter.getPosts(s, true);
                     }
                 });
     }
@@ -209,7 +209,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
-                        mPostsPresenter.loadMorePosts(s, Constants.Posts.CATEGORY_TECH, true);
+                        mPostsPresenter.loadMorePosts(s);
                     }
                 });
     }
@@ -277,7 +277,6 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         // TODO: Implement post listing menu functionality.
-        // Don't inflate menu until the functionality supporting it is completed.
         //inflater.inflate(R.menu.menu_posts, menu);
     }
 

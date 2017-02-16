@@ -40,6 +40,7 @@ class ApiUrls {
     static final String GET_COLLECTIONS = "collections";
     static final String GET_COLLECTIONS_DETAILS = "collections/{collection_id}";
     static final String GET_USER_PROFILE = "users/{user_id}";
+    static final String GET_CATEGORIES = "categories";
 
     // Requires public+private auth token
     static final String MY_PROFILE = "me";

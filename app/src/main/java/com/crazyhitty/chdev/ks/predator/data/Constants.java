@@ -72,7 +72,7 @@ public class Constants {
     }
 
     public static class Posts {
-        public static final String CATEGORY_TECH = "tech";
+        public static final String CATEGORY_ALL = "all";
 
         private Posts() {
 

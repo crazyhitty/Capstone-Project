@@ -33,7 +33,6 @@ import com.crazyhitty.chdev.ks.predator.models.AboutLibrary;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -104,27 +103,23 @@ public class AboutLibrariesPresenter implements AboutLibrariesContract.Presenter
                 }
 
                 // Convert librariesJsonStr to jsonObject for further parsing.
-                try {
-                    JSONObject jsonObjectLibraries = new JSONObject(librariesJsonStr);
-                    JSONArray jsonArrayLibraries = jsonObjectLibraries.getJSONArray(Constants.Library.LIBRARIES);
-                    for (int i = 0; i < jsonArrayLibraries.length(); i++) {
-                        JSONObject jsonObjectLibrary = jsonArrayLibraries.getJSONObject(i);
+                JSONObject jsonObjectLibraries = new JSONObject(librariesJsonStr);
+                JSONArray jsonArrayLibraries = jsonObjectLibraries.getJSONArray(Constants.Library.LIBRARIES);
+                for (int i = 0; i < jsonArrayLibraries.length(); i++) {
+                    JSONObject jsonObjectLibrary = jsonArrayLibraries.getJSONObject(i);
 
-                        String libraryTitle = jsonObjectLibrary.getString(Constants.Library.LIBRARY_TITLE);
-                        String libraryCreator = jsonObjectLibrary.getString(Constants.Library.LIBRARY_CREATOR);
-                        String libraryLicenseType = jsonObjectLibrary.getString(Constants.Library.LIBRARY_LICENSE_TYPE);
-                        String libraryRedirectUrl = jsonObjectLibrary.getString(Constants.Library.LIBRARY_REDIRECT_URL);
+                    String libraryTitle = jsonObjectLibrary.getString(Constants.Library.LIBRARY_TITLE);
+                    String libraryCreator = jsonObjectLibrary.getString(Constants.Library.LIBRARY_CREATOR);
+                    String libraryLicenseType = jsonObjectLibrary.getString(Constants.Library.LIBRARY_LICENSE_TYPE);
+                    String libraryRedirectUrl = jsonObjectLibrary.getString(Constants.Library.LIBRARY_REDIRECT_URL);
 
-                        AboutLibrary library = new AboutLibrary();
-                        library.setTitle(libraryTitle);
-                        library.setCreator(libraryCreator);
-                        library.setLicenseType(libraryLicenseType);
-                        library.setRedirectUrl(libraryRedirectUrl);
+                    AboutLibrary library = new AboutLibrary();
+                    library.setTitle(libraryTitle);
+                    library.setCreator(libraryCreator);
+                    library.setLicenseType(libraryLicenseType);
+                    library.setRedirectUrl(libraryRedirectUrl);
 
-                        aboutLibraries.add(library);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    aboutLibraries.add(library);
                 }
 
                 emitter.onNext(aboutLibraries);

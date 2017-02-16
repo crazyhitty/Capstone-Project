@@ -339,4 +339,50 @@ public class PredatorContract {
             return ContentUris.withAppendedId(CONTENT_URI_COLLECTIONS, id);
         }
     }
+
+    /**
+     * CategoryEntry table definition.
+     */
+    public static class CategoryEntry implements BaseColumns {
+        // A list of possible paths that will be appended to the base URI for CategoryEntry table.
+        public static final String PATH_CATEGORY = "category";
+        public static final String PATH_CATEGORY_ADD = "category_add";
+        public static final String PATH_CATEGORY_DELETE_ALL = "category_delete_all";
+
+        // Content URI represents the base location for the table
+        public static final Uri CONTENT_URI_CATEGORY = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_CATEGORY)
+                .build();
+
+        public static final Uri CONTENT_URI_CATEGORY_ADD = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_CATEGORY_ADD)
+                .build();
+
+        public static final Uri CONTENT_URI_CATEGORY_DELETE = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_CATEGORY_DELETE_ALL)
+                .build();
+
+        // These are special type prefixes that specify if a URI returns a list or a specific item.
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_URI_CATEGORY + "/" + PATH_CATEGORY;
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_URI_CATEGORY + "/" + PATH_CATEGORY;
+
+        public static final String TABLE_NAME = "category_table";
+
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_CATEGORY_ID = "category_id";
+        public static final String COLUMN_SLUG = "slug";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_COLOR = "color";
+        public static final String COLUMN_ITEM_NAME = "item_name";
+
+        // Define a function to build a URI to find a specific post by it's identifier
+        public static Uri buildCategoryUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI_CATEGORY, id);
+        }
+    }
 }

@@ -33,6 +33,7 @@ import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
@@ -56,6 +57,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getInt;
 
 
 /**
@@ -95,7 +98,7 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getOfflinePosts(boolean latest) {
+    public void getOfflinePosts() {
         Observable<List<Post>> postsDataObservable = Observable.create(new ObservableOnSubscribe<List<Post>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
@@ -139,8 +142,6 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     @Override
     public void getPosts(final String token,
-                         final String categoryName,
-                         final boolean latest,
                          final boolean clearPrevious) {
         Logger.d(TAG, "getPosts: called");
         if (clearPrevious) {
@@ -149,7 +150,7 @@ public class PostsPresenter implements PostsContract.Presenter {
             mDateHashMap = new HashMap<>();
         }
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
-                .getPostsCategoryWise(CoreUtils.getAuthToken(token), categoryName, mLastDate)
+                .getPostsCategoryWise(CoreUtils.getAuthToken(token), Constants.Posts.CATEGORY_ALL, mLastDate)
                 .map(new Function<PostsData, List<Post>>() {
                     @Override
                     public List<Post> apply(PostsData postsData) throws Exception {
@@ -192,6 +193,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                                 getContentValuesForMakerUser(post.getId(), maker));
                             }
                         }
+
                         Cursor cursor = MainApplication.getContentResolverInstance()
                                 .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                         null,
@@ -218,7 +220,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 if (posts != null && posts.size() != 0) {
                                     emitter.onNext(posts);
                                 } else {
-                                    loadMorePosts(token, categoryName, latest);
+                                    loadMorePosts(token);
                                 }
                                 emitter.onComplete();
                             }
@@ -248,10 +250,10 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void loadMorePosts(String token, String categoryName, boolean latest) {
+    public void loadMorePosts(String token) {
         mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
         mLoadMore = true;
-        getPosts(token, categoryName, latest, false);
+        getPosts(token, false);
     }
 
     @Override
@@ -361,6 +363,23 @@ public class PostsPresenter implements PostsContract.Presenter {
             posts.add(post);
         }
         return posts;
+    }
+
+    private int getCategoryId(String categoryName) {
+        Cursor cursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                        null,
+                        PredatorContract.CategoryEntry.COLUMN_SLUG + " = '" + categoryName + "'",
+                        null,
+                        null);
+
+        cursor.moveToFirst();
+
+        int categoryId = getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID);
+
+        cursor.close();
+
+        return categoryId;
     }
 
     public static class NoPostsAvailableException extends Throwable {

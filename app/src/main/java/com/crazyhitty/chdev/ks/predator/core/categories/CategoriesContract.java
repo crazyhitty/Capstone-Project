@@ -22,38 +22,29 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.posts;
+package com.crazyhitty.chdev.ks.predator.core.categories;
 
 import android.content.Context;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.models.Category;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/2/2017 10:05 PM
+ * Created:     2/15/2017 2:50 PM
  * Description: Unavailable
  */
 
-public interface PostsContract {
+public interface CategoriesContract {
     interface View extends BaseView<Presenter> {
-        void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
-
-        void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
+        void showCategories(List<Category> categories);
     }
 
     interface Presenter extends BasePresenter {
-        void getOfflinePosts();
-
-        void getPosts(String token, boolean clearPrevious);
-
-        void loadMorePosts(String token);
-
-        void updateWidgets(Context context);
+        void fetchCategories(Context context, String token, boolean loadOffline);
     }
 }

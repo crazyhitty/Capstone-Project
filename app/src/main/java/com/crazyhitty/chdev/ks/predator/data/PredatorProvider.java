@@ -67,6 +67,10 @@ public class PredatorProvider extends ContentProvider {
     private static final int COLLECTIONS_DELETE = 601;
     private static final int COLLECTIONS_GET = 602;
     private static final int COLLECTIONS_GET_BY_ID = 603;
+    private static final int CATEGORY_ADD = 700;
+    private static final int CATEGORY_DELETE = 7601;
+    private static final int CATEGORY_GET = 702;
+    private static final int CATEGORY_GET_BY_ID = 703;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private PredatorDbHelper mPredatorDbHelper;
@@ -97,6 +101,10 @@ public class PredatorProvider extends ContentProvider {
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CollectionsEntry.PATH_COLLECTIONS_DELETE_ALL, COLLECTIONS_DELETE);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CollectionsEntry.PATH_COLLECTIONS, COLLECTIONS_GET);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CollectionsEntry.PATH_COLLECTIONS + "/#", COLLECTIONS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CategoryEntry.PATH_CATEGORY_ADD, CATEGORY_ADD);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CategoryEntry.PATH_CATEGORY_DELETE_ALL, CATEGORY_DELETE);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CategoryEntry.PATH_CATEGORY, CATEGORY_GET);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.CategoryEntry.PATH_CATEGORY + "/#", CATEGORY_GET_BY_ID);
         return uriMatcher;
     }
 
@@ -122,6 +130,8 @@ public class PredatorProvider extends ContentProvider {
                 return mPredatorDbHelper.getMedia(projection, selection, selectionArgs, sortOrder);
             case COLLECTIONS_GET:
                 return mPredatorDbHelper.getCollections(projection, selection, selectionArgs, sortOrder);
+            case CATEGORY_GET:
+                return mPredatorDbHelper.getCategories(projection, selection, selectionArgs, sortOrder);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -155,6 +165,10 @@ public class PredatorProvider extends ContentProvider {
                 return PredatorContract.CollectionsEntry.CONTENT_TYPE;
             case COLLECTIONS_GET_BY_ID:
                 return PredatorContract.CollectionsEntry.CONTENT_ITEM_TYPE;
+            case CATEGORY_GET:
+                return PredatorContract.CategoryEntry.CONTENT_TYPE;
+            case CATEGORY_GET_BY_ID:
+                return PredatorContract.CategoryEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -215,6 +229,14 @@ public class PredatorProvider extends ContentProvider {
                     throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
                 }
                 return returnUri;
+            case CATEGORY_ADD:
+                id = mPredatorDbHelper.addCategory(values);
+                if (id > 0) {
+                    returnUri = PredatorContract.CategoryEntry.buildCategoryUri(id);
+                } else {
+                    throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                }
+                return returnUri;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
@@ -236,6 +258,8 @@ public class PredatorProvider extends ContentProvider {
                 return mPredatorDbHelper.deleteAllMedia(selection, selectionArgs);
             case COLLECTIONS_DELETE:
                 return mPredatorDbHelper.deleteAllCollections(selection, selectionArgs);
+            case CATEGORY_DELETE:
+                return mPredatorDbHelper.deleteAllCategories(selection, selectionArgs);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 

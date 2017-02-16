@@ -38,17 +38,23 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthContract;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthPresenter;
+import com.crazyhitty.chdev.ks.predator.core.categories.CategoriesContract;
+import com.crazyhitty.chdev.ks.predator.core.categories.CategoriesPresenter;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.OAuthTokenEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardContinueEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardSecondAnimateEvent;
 import com.crazyhitty.chdev.ks.predator.events.OnboardThirdAnimateEvent;
+import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.OnboardPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.views.OnboardingSecondView;
 import com.crazyhitty.chdev.ks.predator.ui.views.OnboardingThirdView;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.OAuth;
 import com.rd.PageIndicatorView;
 import com.rd.animation.AnimationType;
@@ -57,9 +63,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -88,6 +99,23 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
     private OnboardPagerAdapter mOnboardPagerAdapter;
 
     private AuthContract.Presenter mAuthPresenter;
+    private CategoriesContract.Presenter mCategoriesPresenter;
+
+    private CategoriesContract.View mCategoriesView = new CategoriesContract.View() {
+        @Override
+        public void showCategories(List<Category> categories) {
+            dismissLoadingDialog();
+            PredatorSharedPreferences.setOnboardingComplete(getApplicationContext(),
+                    true);
+            DashboardActivity.startActivity(getApplicationContext());
+            finish();
+        }
+
+        @Override
+        public void setPresenter(CategoriesContract.Presenter presenter) {
+            mCategoriesPresenter = presenter;
+        }
+    };
 
     /**
      * Start this activity with any extra intent flags
@@ -108,6 +136,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
         setContentView(R.layout.activity_onboard);
         ButterKnife.bind(this);
         initViewPager();
+        mCategoriesView.setPresenter(new CategoriesPresenter(mCategoriesView));
         setPresenter(new AuthPresenter(this));
     }
 
@@ -271,11 +300,29 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
 
     @Override
     public void onAuthTokenRetrieved(Bundle args, String message) {
-        dismissLoadingDialog();
-        PredatorSharedPreferences.setOnboardingComplete(getApplicationContext(),
-                true);
-        DashboardActivity.startActivity(getApplicationContext());
-        finish();
+        PredatorAccount.getAuthToken(this,
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                PredatorSharedPreferences.getAuthTokenType(getApplicationContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<String>() {
+                    @Override
+                    public void onComplete() {
+                        // Done
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.e(TAG, "onError: " + e.getMessage(), e);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        mCategoriesPresenter.fetchCategories(getApplicationContext(),
+                                s,
+                                isNetworkAvailable(false));
+                    }
+                });
     }
 
     @Override

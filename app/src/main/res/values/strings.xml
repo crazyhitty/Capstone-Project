@@ -110,6 +110,7 @@
     <string name="post_details_no_redirect_url_available">No redirect url available.</string>
     <string name="post_details_refreshing">Refreshing&#8230;</string>
     <string name="post_details_updated_details">Updated details</string>
+    <string name="post_details_votes">votes</string>
 
     <!--item post user-->
     <string name="item_post_user_image_desc">User image</string>

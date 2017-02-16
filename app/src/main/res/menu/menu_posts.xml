@@ -22,10 +22,9 @@
   ~ SOFTWARE.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu>
 
-    <item
+    <!--<item
         android:icon="@drawable/ic_sort_24dp"
         android:orderInCategory="99"
         android:title="@string/menu_posts_sort"
@@ -42,9 +41,9 @@
                     android:title="@string/menu_posts_sort_oldest" />
             </group>
         </menu>
-    </item>
+    </item>-->
 
-    <item
+    <!--<item
         android:icon="@drawable/ic_switch_layout_24dp"
         android:orderInCategory="100"
         android:title="@string/menu_posts_switch_layout"
@@ -65,7 +64,5 @@
                     android:title="@string/menu_posts_switch_layout_large_cards" />
             </group>
         </menu>
-    </item>
-
-
+    </item>-->
 </menu>

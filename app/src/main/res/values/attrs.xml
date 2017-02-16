@@ -35,7 +35,7 @@
     <attr name="popupOverlay" format="reference" />
     <attr name="colorDark" format="reference" />
     <attr name="predatorButtonTextColor" format="reference" />
-    <attr name="postDateColor" format="reference" />
+    <attr name="postExtraDetailsColor" format="reference" />
     <attr name="commentColor" format="reference" />
     <attr name="aboutVersionColor" format="reference" />
     <attr name="userNameAlternativeColor" format="reference" />

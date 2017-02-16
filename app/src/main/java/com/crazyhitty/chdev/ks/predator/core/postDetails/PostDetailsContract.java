@@ -25,7 +25,6 @@
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -85,10 +84,6 @@ public interface PostDetailsContract {
         void getExtraDetailsOffline(int postId);
 
         void openRedirectUrl(Activity activity);
-
-        void sharePostDetails(Context context);
-
-        void openMedia(Context context, Media media);
 
         PostDetails getPostDetails();
     }

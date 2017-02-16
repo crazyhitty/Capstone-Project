@@ -27,7 +27,6 @@ package com.crazyhitty.chdev.ks.predator.core.postDetails;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -38,14 +37,12 @@ import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
-import com.crazyhitty.chdev.ks.predator.ui.activities.MediaFullScreenActivity;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
@@ -72,7 +69,8 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
-import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH;
+import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getInt;
+import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
 
 /**
  * Author:      Kartik Sharma
@@ -537,38 +535,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public void sharePostDetails(Context context) {
-        String title = mPostDetails.getTitle();
-        String body = mPostDetails.getTagline() + "\n" +
-                mPostDetails.getDiscussionUrl();
-
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
-        sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(Intent.createChooser(sharingIntent, context.getString(R.string.share_using)));
-    }
-
-    @Override
-    public void openMedia(Context context, Media media) {
-        switch (media.getMediaType()) {
-            case Constants.Media.IMAGE:
-                MediaFullScreenActivity.startActivity(context,
-                        media.getMediaId(),
-                        media.getPostId());
-                break;
-            case Constants.Media.VIDEO:
-                Intent videoIntent = new Intent();
-                videoIntent.setAction(Intent.ACTION_VIEW);
-                videoIntent.setData(Uri.parse(YOUTUBE_PATH.concat(media.getVideoId())));
-                videoIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(videoIntent);
-                break;
-        }
-    }
-
-    @Override
     public PostDetails getPostDetails() {
         return mPostDetails;
     }
@@ -586,14 +552,16 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private PostDetails getPostDetailsFromCursor(Cursor cursor) {
         cursor.moveToFirst();
 
-        String title = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_NAME);
-        String description = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
-        String day = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
-        String date = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_CREATED_AT);
-        String backdropUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL);
-        String redirectUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
-        String tagline = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
-        String discussionUrl = CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL);
+        String title = getString(cursor, PredatorContract.PostsEntry.COLUMN_NAME);
+        String description = getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
+        String day = getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY);
+        String date = getString(cursor, PredatorContract.PostsEntry.COLUMN_CREATED_AT);
+        String backdropUrl = getString(cursor, PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL);
+        String redirectUrl = getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
+        String tagline = getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE);
+        String discussionUrl = getString(cursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL);
+        String category = getCategoryName(getInt(cursor, PredatorContract.PostsEntry.COLUMN_CATEGORY_ID));
+        int voteCount = getInt(cursor, PredatorContract.PostsEntry.COLUMN_VOTES_COUNT);
 
         PostDetails postDetails = new PostDetails();
         postDetails.setTitle(title);
@@ -604,6 +572,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         postDetails.setRedirectUrl(redirectUrl);
         postDetails.setTagline(tagline);
         postDetails.setDiscussionUrl(discussionUrl);
+        postDetails.setCategory(category);
+        postDetails.setVoteCount(voteCount);
 
         cursor.close();
 
@@ -618,15 +588,15 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             User user = new User();
             user.setId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_ID));
             user.setUserId(CursorUtils.getInt(cursorUsers, PredatorContract.UsersEntry.COLUMN_USER_ID));
-            user.setName(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
-            user.setUsername(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
-            user.setThumbnail(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-            user.setImage(CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+            user.setName(getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_NAME));
+            user.setUsername(getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_USERNAME));
+            user.setThumbnail(getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+            user.setImage(getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
 
             // Check if user is hunter, maker, both or a user who just
             // upvoted this post.
-            String hunterPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
-            String makersPostIds = CursorUtils.getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
+            String hunterPostIds = getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+            String makersPostIds = getString(cursorUsers, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
 
             if (!TextUtils.isEmpty(hunterPostIds) &&
                     !TextUtils.isEmpty(makersPostIds) &&
@@ -663,12 +633,12 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
             mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
             mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
-            mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
-            mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
-            mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
+            mediaObj.setMediaType(getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
+            mediaObj.setPlatform(getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
+            mediaObj.setVideoId(getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
             mediaObj.setOriginalWidth(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH));
             mediaObj.setOriginalHeight(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT));
-            mediaObj.setImageUrl(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
+            mediaObj.setImageUrl(getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
 
             media.add(mediaObj);
         }
@@ -686,10 +656,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             installLink.setId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_ID));
             installLink.setInstallLinkId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_INSTALL_LINK_ID));
             installLink.setPostId(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_POST_ID));
-            installLink.setCreatedAt(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
+            installLink.setCreatedAt(getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_CREATED_AT));
             installLink.setPrimaryLink(CursorUtils.getInt(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK) == 1);
-            installLink.setRedirectUrl(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
-            installLink.setPlatform(CursorUtils.getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
+            installLink.setRedirectUrl(getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL));
+            installLink.setPlatform(getString(installLinksCursor, PredatorContract.InstallLinksEntry.COLUMN_PLATFORM));
 
             installLinks.add(installLink);
         }
@@ -730,15 +700,15 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 comment.setId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_ID));
                 comment.setCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_COMMENT_ID));
                 comment.setParentCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID));
-                comment.setBody(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_BODY));
-                comment.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT));
+                comment.setBody(getString(cursor, PredatorContract.CommentsEntry.COLUMN_BODY));
+                comment.setCreatedAt(getString(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT));
                 comment.setCreatedAtMillis(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS));
                 comment.setPostId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_POST_ID));
                 comment.setUserId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_USER_ID));
-                comment.setUsername(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_NAME));
-                comment.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_USERNAME));
-                comment.setUserHeadline(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE));
-                comment.setUserImageThumbnailUrl(CursorUtils.getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX));
+                comment.setUsername(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_NAME));
+                comment.setUsernameAlternative(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_USERNAME));
+                comment.setUserHeadline(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE));
+                comment.setUserImageThumbnailUrl(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX));
                 comment.setVotes(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_VOTES));
                 comment.setSticky(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_STICKY) == 1);
                 comment.setMaker(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_MAKER) == 1);
@@ -834,6 +804,23 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             contentValuesArr[i] = contentValues;
         }
         return contentValuesArr;
+    }
+
+    private String getCategoryName(int categoryId) {
+        Cursor cursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                        null,
+                        PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID + " = " + categoryId,
+                        null,
+                        null);
+
+        cursor.moveToFirst();
+
+        String categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+
+        cursor.close();
+
+        return categoryName;
     }
 
     public static class PostDetailsUnavailableException extends Throwable {

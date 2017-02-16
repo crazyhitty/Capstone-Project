@@ -56,9 +56,6 @@ dependencies {
     // java test
     testCompile 'junit:junit:4.12'
 
-    // support libs
-    compile 'com.android.support:appcompat-v7:25.1.0'
-
     // reactiveX
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     // Because RxAndroid releases are few and far between, it is recommended you also

@@ -40,6 +40,8 @@ public class PostDetails {
     private String redirectUrl;
     private String tagline;
     private String discussionUrl;
+    private String category;
+    private int voteCount;
 
     public PostDetails() {
     }
@@ -108,6 +110,22 @@ public class PostDetails {
         this.discussionUrl = discussionUrl;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
     @Override
     public String toString() {
         return "title: " + title +
@@ -117,6 +135,8 @@ public class PostDetails {
                 ", backdropUrl: " + backdropUrl +
                 ", redirectUrl: " + redirectUrl +
                 ", tagline: " + tagline +
-                ", discussionUrl: " + discussionUrl;
+                ", discussionUrl: " + discussionUrl +
+                ", category: " + category +
+                ", voteCount: " + voteCount;
     }
 }

@@ -64,7 +64,7 @@ public class SettingsPresenter implements SettingsContract.Presenter {
         io.reactivex.Observable<Boolean> clearCacheObservable = io.reactivex.Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
-                // Delete all values from all tables.
+                // Delete all values from all tables except CATEGORY TABLE AS IT MUST STAY AS IT IS.
                 // Delete all values from posts_table.
                 MainApplication.getContentResolverInstance()
                         .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,

@@ -101,16 +101,15 @@
                     tools:text="Description" />
 
                 <TextView
-                    android:id="@+id/text_view_post_date"
+                    android:id="@+id/text_view_extra_details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/text_view_post_short_desc"
-                    android:layout_marginBottom="@dimen/margin_avg"
                     android:layout_marginEnd="@dimen/margin_avg"
                     android:layout_marginStart="@dimen/activity_post_details_margin_content_start"
                     android:layout_toEndOf="@+id/image_view_post"
-                    android:textAppearance="@style/TextAppearancePostDate"
-                    tools:text="Date" />
+                    android:textAppearance="@style/TextAppearancePostExtraDetails"
+                    tools:text="Date &#8226; CategoryName &#8226; 1337 votes" />
 
             </RelativeLayout>
 

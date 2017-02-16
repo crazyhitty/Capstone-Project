@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CategoriesData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.MyProfileData;
@@ -87,6 +88,9 @@ public interface ProductHuntService {
     @GET(ApiUrls.GET_USER_PROFILE)
     Observable<UserProfileData> getUserProfile(@Header(Constants.AUTHORIZATION) String authorization,
                                                @Path(Constants.USER_ID) int userId);
+
+    @GET(ApiUrls.GET_CATEGORIES)
+    Observable<CategoriesData> getCategories(@Header(Constants.AUTHORIZATION) String authorization);
 
     @POST(ApiUrls.OAUTH_GET_TOKEN)
     Observable<OAuthData> oAuthClient(@Body HashMap<String, String> params);

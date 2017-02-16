@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -82,6 +82,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         db.execSQL(getCreateInstallLinksTableSqlQuery());
         db.execSQL(getCreateMediaTableSqlQuery());
         db.execSQL(getCreateCollectionsTableSqlQuery());
+        db.execSQL(getCreateCategoryTableSqlQuery());
     }
 
     private String getCreatePostsTableSqlQuery() {
@@ -194,6 +195,16 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT);";
     }
 
+    private String getCreateCategoryTableSqlQuery() {
+        return "CREATE TABLE " + PredatorContract.CategoryEntry.TABLE_NAME + "(" +
+                PredatorContract.CategoryEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID + " INTEGER UNIQUE, " +
+                PredatorContract.CategoryEntry.COLUMN_SLUG + " TEXT, " +
+                PredatorContract.CategoryEntry.COLUMN_NAME + " TEXT, " +
+                PredatorContract.CategoryEntry.COLUMN_COLOR + " TEXT, " +
+                PredatorContract.CategoryEntry.COLUMN_ITEM_NAME + " TEXT);";
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Remove existing tables from database.
@@ -203,6 +214,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.InstallLinksEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.MediaEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.CollectionsEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PredatorContract.CategoryEntry.TABLE_NAME);
 
         // Recreate the tables.
         onCreate(db);
@@ -580,6 +592,59 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Logger.e(TAG, "Error while trying to delete collections from database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return numOfRowsAffected;
+    }
+
+    public int addCategory(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.insertOrThrow(PredatorContract.CategoryEntry.TABLE_NAME, null, contentValues);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to add category to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID);
+    }
+
+    public Cursor getCategories(String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getReadableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        return db.query(PredatorContract.CategoryEntry.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    public int deleteAllCategories(String selection, String[] selectionArgs) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        int numOfRowsAffected = 0;
+        try {
+            numOfRowsAffected = db.delete(PredatorContract.CategoryEntry.TABLE_NAME,
+                    selection,
+                    selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to delete categories from database", e);
         } finally {
             db.endTransaction();
         }

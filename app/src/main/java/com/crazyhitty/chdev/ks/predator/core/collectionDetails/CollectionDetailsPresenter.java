@@ -79,7 +79,7 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
 
     @Override
     public void getCollectionDetails(final int collectionId) {
-        io.reactivex.Observable<Collection> collectionsCursorObservable = io.reactivex.Observable.create(new ObservableOnSubscribe<Collection>() {
+        Observable<Collection> collectionsCursorObservable = Observable.create(new ObservableOnSubscribe<Collection>() {
             @Override
             public void subscribe(ObservableEmitter<Collection> emitter) throws Exception {
                 // Retrieve the results from the database.
