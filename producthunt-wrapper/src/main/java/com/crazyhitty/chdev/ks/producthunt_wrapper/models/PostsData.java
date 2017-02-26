@@ -350,6 +350,9 @@ public class PostsData {
             private int id;
             private String name;
             private String username;
+            private String headline;
+            @SerializedName("website_url")
+            private String websiteUrl;
             @SerializedName("image_url")
             private ImageUrl imageUrl;
 
@@ -375,6 +378,22 @@ public class PostsData {
 
             public void setUsername(String username) {
                 this.username = username;
+            }
+
+            public String getWebsiteUrl() {
+                return websiteUrl;
+            }
+
+            public void setWebsiteUrl(String websiteUrl) {
+                this.websiteUrl = websiteUrl;
+            }
+
+            public String getHeadline() {
+                return headline;
+            }
+
+            public void setHeadline(String headline) {
+                this.headline = headline;
             }
 
             public ImageUrl getImageUrl() {
@@ -427,6 +446,9 @@ public class PostsData {
             private String createdAt;
             private String name;
             private String username;
+            private String headline;
+            @SerializedName("website_url")
+            private String websiteUrl;
             @SerializedName("image_url")
             private ImageUrlMaker imageUrlMaker;
 
@@ -460,6 +482,22 @@ public class PostsData {
 
             public void setUsername(String username) {
                 this.username = username;
+            }
+
+            public String getHeadline() {
+                return headline;
+            }
+
+            public void setHeadline(String headline) {
+                this.headline = headline;
+            }
+
+            public String getWebsiteUrl() {
+                return websiteUrl;
+            }
+
+            public void setWebsiteUrl(String websiteUrl) {
+                this.websiteUrl = websiteUrl;
             }
 
             public ImageUrlMaker getImageUrlMaker() {

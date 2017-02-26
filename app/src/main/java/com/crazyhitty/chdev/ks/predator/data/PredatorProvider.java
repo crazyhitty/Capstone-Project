@@ -182,7 +182,7 @@ public class PredatorProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)) {
             case POSTS_ADD:
-                id = mPredatorDbHelper.addPost(values);
+                id = mPredatorDbHelper.addOrUpdatePost(values);
                 if (id > 0) {
                     returnUri = PredatorContract.PostsEntry.buildPostsUri(id);
                 } else {

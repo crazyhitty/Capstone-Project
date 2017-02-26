@@ -53,6 +53,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".ui.activities.UserProfileActivity"
+            android:parentActivityName=".ui.activities.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />

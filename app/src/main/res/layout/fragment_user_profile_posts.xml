@@ -22,38 +22,40 @@
   ~ SOFTWARE.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_layout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_posts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout_loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
-        android:theme="?attr/appBarOverlay">
+        android:layout_marginBottom="@dimen/margin_avg"
+        android:layout_marginEnd="@dimen/margin_avg"
+        android:layout_marginStart="@dimen/margin_avg"
+        android:layout_marginTop="@dimen/margin_avg"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <TextView
+            android:id="@+id/text_view_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_user_profile_posts_loading_please_wait"
+            android:textAppearance="@style/TextAppearance.Design.Hint" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="?attr/popupOverlay" />
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
 
-    </android.support.design.widget.AppBarLayout>
+    </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/frame_layout_settings_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <View
-        android:id="@+id/view_toolbar_shadow_pre_lollipop"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow"
-        android:background="@drawable/background_toolbar_shadow"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

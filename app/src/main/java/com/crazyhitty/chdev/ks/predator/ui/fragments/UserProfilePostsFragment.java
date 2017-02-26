@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,25 +37,30 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.events.CommentsEvent;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CommentsRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.events.UserPostsEvent;
+import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
-import com.crazyhitty.chdev.ks.predator.utils.CommentItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.UserProfilePostItemDecorator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     2/10/2017 5:02 PM
+ * Created:     2/16/2017 4:55 PM
  * Description: Unavailable
  */
 
-public class CommentsFragment extends BaseSupportFragment {
-    @BindView(R.id.recycler_view_comments)
-    RecyclerView recyclerViewComments;
+public class UserProfilePostsFragment extends BaseSupportFragment {
+    public static final String POSTS_TYPE_UPVOTES = "UPVOTES";
+    public static final String POSTS_TYPE_SUBMITTED = "SUBMITTED";
+    public static final String POSTS_TYPE_MADE = "MADE";
+    private static final String TAG = "UserProfilePostsFragment";
+    private static final String ARG_POSTS_TYPE = "posts_type";
+    @BindView(R.id.recycler_view_posts)
+    RecyclerView recyclerViewPosts;
     @BindView(R.id.linear_layout_loading)
     LinearLayout linearLayoutLoading;
     @BindView(R.id.text_view_message)
@@ -62,16 +68,20 @@ public class CommentsFragment extends BaseSupportFragment {
     @BindView(R.id.progress_bar_loading)
     ProgressBar progressBarLoading;
 
-    private CommentsRecyclerAdapter mCommentsRecyclerAdapter;
+    private PostsRecyclerAdapter mPostsRecyclerAdapter;
 
-    public static CommentsFragment newInstance() {
-        return new CommentsFragment();
+    public static UserProfilePostsFragment newInstance(String postType) {
+        Bundle args = new Bundle();
+        args.putString(ARG_POSTS_TYPE, postType);
+        UserProfilePostsFragment fragment = new UserProfilePostsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comments, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_profile_posts, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -85,23 +95,33 @@ public class CommentsFragment extends BaseSupportFragment {
     private void setRecyclerViewProperties() {
         // Create a list type layout manager.
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerViewComments.setLayoutManager(layoutManager);
+        recyclerViewPosts.setLayoutManager(layoutManager);
 
         // Add appropriate decorations to the recycler view items.
-        final CommentItemDecorator commentItemDecorator = new CommentItemDecorator(getContext());
-        recyclerViewComments.addItemDecoration(commentItemDecorator);
+        final UserProfilePostItemDecorator userProfilePostItemDecorator = new UserProfilePostItemDecorator(getContext(), 72);
+        recyclerViewPosts.addItemDecoration(userProfilePostItemDecorator);
 
-        mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null);
-        recyclerViewComments.setAdapter(mCommentsRecyclerAdapter);
+        mPostsRecyclerAdapter = new PostsRecyclerAdapter(null, PostsRecyclerAdapter.TYPE.LIST);
+        recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
+
+        mPostsRecyclerAdapter.setOnItemClickListener(new PostsRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                PostDetailsActivity.startActivity(getContext(), mPostsRecyclerAdapter.getPostId(position));
+            }
+        });
     }
 
-    public void updateComments(CommentsEvent commentsEvent) {
-        if (commentsEvent.getComments() != null && commentsEvent.getComments().size() != 0) {
-            linearLayoutLoading.setVisibility(View.GONE);
-            mCommentsRecyclerAdapter.updateComments(commentsEvent.getComments());
-        } else if (mCommentsRecyclerAdapter.getItemCount() == 0) {
-            txtMessage.setText(R.string.fragment_comments_unavailable);
-            progressBarLoading.setVisibility(View.GONE);
+    public void updateUserPosts(UserPostsEvent userPostsEvent) {
+        if (TextUtils.equals(getArguments().getString(ARG_POSTS_TYPE),
+                userPostsEvent.getPostType().toString())) {
+            if (userPostsEvent.getPosts() != null && userPostsEvent.getPosts().size() != 0) {
+                linearLayoutLoading.setVisibility(View.GONE);
+                mPostsRecyclerAdapter.updateDataset(userPostsEvent.getPosts(), userPostsEvent.isForceReplace());
+            } else if (mPostsRecyclerAdapter.getItemCount() == 0) {
+                txtMessage.setText(R.string.fragment_user_profile_posts_unavailable);
+                progressBarLoading.setVisibility(View.GONE);
+            }
         }
     }
 }

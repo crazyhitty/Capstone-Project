@@ -526,6 +526,11 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void openRedirectUrl(Activity activity) {
+        if (mPostDetails == null ||
+                TextUtils.isEmpty(mPostDetails.getRedirectUrl())) {
+            Toast.makeText(activity.getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
+            return;
+        }
         String redirectUrl = mPostDetails.getRedirectUrl();
 
         CustomTabsHelperFragment.open(activity,
@@ -797,6 +802,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, vote.getUser().getCreatedAt());
             contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, vote.getUser().getName());
             contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, vote.getUser().getUsername());
+            contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, vote.getUser().getHeadline());
             contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, vote.getUser().getWebsiteUrl());
             contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, vote.getUser().getImageUrl().getValue100px());
             contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, vote.getUser().getImageUrl().getOriginal());

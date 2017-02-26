@@ -190,4 +190,12 @@
         android:layout_marginTop="@dimen/activity_about_tab_layout_height"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <View
+        android:id="@+id/view_toolbar_shadow_pre_lollipop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow"
+        android:layout_marginTop="@dimen/activity_about_tab_layout_height"
+        android:background="@drawable/background_toolbar_shadow"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 </android.support.design.widget.CoordinatorLayout>

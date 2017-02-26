@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -40,6 +41,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
@@ -71,6 +73,18 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manageThemes();
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        View viewToolbarShadow = findViewById(R.id.view_toolbar_shadow_pre_lollipop);
+
+        // Hide artificial shadow for post lollipop devices.
+        if (viewToolbarShadow != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            viewToolbarShadow.setVisibility(View.GONE);
+        }
     }
 
     private void manageThemes() {

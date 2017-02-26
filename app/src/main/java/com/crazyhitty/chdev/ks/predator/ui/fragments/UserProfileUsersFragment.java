@@ -28,48 +28,58 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.events.UsersEvent;
+import com.crazyhitty.chdev.ks.predator.events.UserFollowersFollowingEvent;
 import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
-import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.UsersRecyclerAdapter;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.UserProfileUsersRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.UserItemDecorator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     2/10/2017 5:02 PM
+ * Created:     2/16/2017 4:55 PM
  * Description: Unavailable
  */
 
-public class UsersFragment extends BaseSupportFragment implements UsersRecyclerAdapter.OnUserItemClickListener {
+public class UserProfileUsersFragment extends BaseSupportFragment {
+    public static final String USERS_TYPE_FOLLOWERS = "FOLLOWERS";
+    public static final String USERS_TYPE_FOLLOWING = "FOLLOWING";
+    private static final String ARG_USERS_TYPE = "users_type";
     @BindView(R.id.recycler_view_users)
     RecyclerView recyclerViewUsers;
     @BindView(R.id.linear_layout_loading)
     LinearLayout linearLayoutLoading;
     @BindView(R.id.text_view_message)
     TextView txtMessage;
+    @BindView(R.id.progress_bar_loading)
+    ProgressBar progressBarLoading;
 
-    private UsersRecyclerAdapter mUsersRecyclerAdapter;
+    private UserProfileUsersRecyclerAdapter mUserProfileUsersRecyclerAdapter;
 
-    public static UsersFragment newInstance() {
-        return new UsersFragment();
+    public static UserProfileUsersFragment newInstance(String userType) {
+        Bundle args = new Bundle();
+        args.putString(ARG_USERS_TYPE, userType);
+        UserProfileUsersFragment fragment = new UserProfileUsersFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_users, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_profile_users, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -89,21 +99,26 @@ public class UsersFragment extends BaseSupportFragment implements UsersRecyclerA
         final UserItemDecorator userItemDecorator = new UserItemDecorator(getContext());
         recyclerViewUsers.addItemDecoration(userItemDecorator);
 
-        mUsersRecyclerAdapter = new UsersRecyclerAdapter(null, this);
-        recyclerViewUsers.setAdapter(mUsersRecyclerAdapter);
+        mUserProfileUsersRecyclerAdapter = new UserProfileUsersRecyclerAdapter(null, new UserProfileUsersRecyclerAdapter.OnUserItemClickListener() {
+            @Override
+            public void onUserClick(int position) {
+                UserProfileActivity.startActivity(getContext(), mUserProfileUsersRecyclerAdapter.getUserId(position));
+            }
+        });
+        recyclerViewUsers.setAdapter(mUserProfileUsersRecyclerAdapter);
     }
 
-    public void updateUsers(UsersEvent usersEvent) {
-        if (usersEvent.getUsers() != null && usersEvent.getUsers().size() != 0) {
-            linearLayoutLoading.setVisibility(View.GONE);
-            mUsersRecyclerAdapter.updateUsers(usersEvent.getUsers());
-        } else if (mUsersRecyclerAdapter.getItemCount() == 0) {
-            txtMessage.setText(R.string.fragment_comments_unavailable);
+    public void updateUsers(UserFollowersFollowingEvent userFollowersFollowingEvent) {
+        if (TextUtils.equals(getArguments().getString(ARG_USERS_TYPE),
+                userFollowersFollowingEvent.getUserType().toString())) {
+            if (userFollowersFollowingEvent.getUsers() != null && userFollowersFollowingEvent.getUsers().size() != 0) {
+                linearLayoutLoading.setVisibility(View.GONE);
+                mUserProfileUsersRecyclerAdapter.updateUsers(userFollowersFollowingEvent.getUsers(),
+                        userFollowersFollowingEvent.isForceReplace());
+            } else if (mUserProfileUsersRecyclerAdapter.getItemCount() == 0) {
+                txtMessage.setText(R.string.fragment_user_profile_users_unavailable);
+                progressBarLoading.setVisibility(View.GONE);
+            }
         }
-    }
-
-    @Override
-    public void onUserClick(int position) {
-        UserProfileActivity.startActivity(getContext(), mUsersRecyclerAdapter.getUserId(position));
     }
 }

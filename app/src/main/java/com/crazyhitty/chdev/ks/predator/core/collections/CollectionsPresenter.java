@@ -131,7 +131,8 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                             // Clear posts currently available for collections from database.
                             MainApplication.getContentResolverInstance()
                                     .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                                            PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
+                                            PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
+                                                    PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
                                             null);
                         }
 

@@ -48,6 +48,9 @@
     <string name="menu_post_details_share">Share</string>
     <string name="menu_post_details_open_redirect_url">Open redirect url</string>
 
+    <!--menu_user_profile.xml-->
+    <string name="menu_user_profile_refresh">Refresh</string>
+
     <!--menu_about.xml-->
     <string name="menu_about_feedback">Feedback</string>
     <string name="menu_about_changelog">Changelog</string>
@@ -108,6 +111,7 @@
     <string name="post_details_loading_please_wait">Please wait&#8230;</string>
     <string name="post_details_unavailable">Unavailable currently.</string>
     <string name="post_details_no_redirect_url_available">No redirect url available.</string>
+    <string name="post_details_cannot_share_app">Unable to share this post, please try again!</string>
     <string name="post_details_refreshing">Refreshing&#8230;</string>
     <string name="post_details_updated_details">Updated details</string>
     <string name="post_details_votes">votes</string>
@@ -119,6 +123,9 @@
     <string name="item_post_user_maker">Maker</string>
     <string name="item_post_user_voted">Voted</string>
     <string name="item_post_user_name_alternative">\@%s</string>
+
+    <!--item user profile users-->
+    <string name="item_user_profile_users_headline_unavailable">Unavailable</string>
 
     <!--item media-->
     <string name="item_media_image_desc">Media Image</string>
@@ -172,9 +179,29 @@
     <string name="activity_about_mail_subject">Regarding Predator</string>
     <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
 
+    <!--activity_user_profile.xml-->
+    <string name="activity_user_profile_user_image_desc">User image</string>
+    <string-array name="activity_user_profile_titles">
+        <item>Upvotes</item>
+        <item>Submitted</item>
+        <item>Made</item>
+        <item>Followers</item>
+        <item>Following</item>
+    </string-array>
+    <string name="activity_user_profile">User Profile</string>
+    <string name="activity_user_profile_updated_details">Updated details</string>
+
     <!--fragment_comments.xml-->
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>
     <string name="fragment_comments_unavailable">Comments unavailable currently.</string>
+
+    <!--fragment_user_profile_posts.xml-->
+    <string name="fragment_user_profile_posts_loading_please_wait">Loading, please wait&#8230;</string>
+    <string name="fragment_user_profile_posts_unavailable">Posts unavailable currently.</string>
+
+    <!--fragment_user_profile_users.xml-->
+    <string name="fragment_user_profile_users_loading_please_wait">Loading, please wait&#8230;</string>
+    <string name="fragment_user_profile_users_unavailable">Users unavailable currently.</string>
 
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>

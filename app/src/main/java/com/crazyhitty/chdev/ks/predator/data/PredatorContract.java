@@ -69,6 +69,7 @@ public class PredatorContract {
         public static final String COLUMN_USER_IMAGE_URL_100PX = "user_image_url_100px";
         public static final String COLUMN_USER_IMAGE_URL_ORIGINAL = "user_image_url_original";
         public static final String COLUMN_IS_IN_COLLECTION = "is_in_collection";
+        public static final String COLUMN_FOR_DASHBOARD = "for_dashboard";
 
         // Define a function to build a URI to find a specific post by it's identifier
         public static Uri buildPostsUri(long id) {
@@ -115,12 +116,15 @@ public class PredatorContract {
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_USERNAME = "username";
+        public static final String COLUMN_HEADLINE = "headline";
         public static final String COLUMN_WEBSITE_URL = "website_url";
         public static final String COLUMN_IMAGE_URL_100PX = "image_url_100px";
         public static final String COLUMN_IMAGE_URL_ORIGINAL = "image_url_original";
         public static final String COLUMN_MAKER_POST_IDS = "maker_post_ids";
         public static final String COLUMN_HUNTER_POST_IDS = "hunter_post_ids";
         public static final String COLUMN_VOTED_POST_IDS = "voted_post_ids";
+        public static final String COLUMN_FOLLOWER_USER_IDS = "follower_user_ids";
+        public static final String COLUMN_FOLLOWING_USER_IDS = "following_user_ids";
 
         // Define a function to build a URI to find a specific post by it's identifier
         public static Uri buildUsersUri(long id) {

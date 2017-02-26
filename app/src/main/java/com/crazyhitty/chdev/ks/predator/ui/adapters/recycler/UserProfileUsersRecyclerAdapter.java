@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,18 +53,20 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdapter.UserViewHolder> {
+public class UserProfileUsersRecyclerAdapter extends RecyclerView.Adapter<UserProfileUsersRecyclerAdapter.UserViewHolder> {
     private List<User> mUsers;
     private OnUserItemClickListener mOnUserItemClickListener;
     private int mLastPosition = -1;
 
-    public UsersRecyclerAdapter(@Nullable List<User> users, @NonNull OnUserItemClickListener onUserItemClickListener) {
+    public UserProfileUsersRecyclerAdapter(@Nullable List<User> users, @NonNull OnUserItemClickListener onUserItemClickListener) {
         mUsers = users;
         mOnUserItemClickListener = onUserItemClickListener;
     }
 
-    public void updateUsers(@Nullable List<User> users) {
-        mLastPosition = -1;
+    public void updateUsers(@Nullable List<User> users, boolean forceReplace) {
+        if (forceReplace) {
+            mLastPosition = -1;
+        }
         mUsers = users;
         notifyDataSetChanged();
     }
@@ -71,7 +74,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_post_details_users, parent, false);
+        View view = layoutInflater.inflate(R.layout.item_user_profile_users, parent, false);
         return new UserViewHolder(view);
     }
 
@@ -81,33 +84,18 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         String username = holder.itemView
                 .getResources()
                 .getString(R.string.item_post_user_name_alternative, mUsers.get(position).getUsername());
+        String headline = TextUtils.isEmpty(mUsers.get(position).getHeadline()) ?
+                holder.itemView.getResources().getString(R.string.item_user_profile_users_headline_unavailable) :
+                mUsers.get(position).getHeadline();
 
-        String userImageUrl = mUsers.get(position).getThumbnail();
-        userImageUrl = ImageUtils.getCustomUserThumbnailUrl(userImageUrl,
+        String userImageUrl = ImageUtils.getCustomUserThumbnailUrl(mUsers.get(position).getImage(),
                 ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44),
                 ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44));
 
         holder.txtUserName.setText(name);
         holder.txtUserNameAlternative.setText(username);
         holder.imgViewUser.setImageURI(userImageUrl);
-
-        int userTypeRes = 0;
-
-        switch (mUsers.get(position).getType()) {
-            case BOTH:
-                userTypeRes = R.string.item_post_user_both;
-                break;
-            case HUNTER:
-                userTypeRes = R.string.item_post_user_hunter;
-                break;
-            case MAKER:
-                userTypeRes = R.string.item_post_user_maker;
-                break;
-            case UPVOTER:
-                userTypeRes = R.string.item_post_user_voted;
-        }
-
-        holder.txtUserType.setText(userTypeRes);
+        holder.txtUserHeadline.setText(headline);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,8 +144,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.text_view_name)
         TextView txtUserName;
-        @BindView(R.id.text_view_user_type)
-        TextView txtUserType;
+        @BindView(R.id.text_view_user_headline)
+        TextView txtUserHeadline;
         @BindView(R.id.text_view_username)
         TextView txtUserNameAlternative;
         @BindView(R.id.image_view_user)

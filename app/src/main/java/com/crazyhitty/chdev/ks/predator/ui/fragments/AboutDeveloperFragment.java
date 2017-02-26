@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
+import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
@@ -101,7 +102,8 @@ public class AboutDeveloperFragment extends BaseSupportFragment {
 
     @OnClick(R.id.card_view_kartik)
     public void onCardViewKartikClick() {
-
+        UserProfileActivity.startActivity(getContext(),
+                Constants.About.DEV_KARTIK_PRODUCT_HUNT_USER_ID);
     }
 
     @OnClick(R.id.card_view_kajal)

@@ -94,7 +94,7 @@
                     android:layout_marginEnd="@dimen/margin_min"
                     android:layout_marginStart="@dimen/margin_avg"
                     android:layout_toEndOf="@+id/image_view_user_kartik"
-                    android:layout_toStartOf="@+id/text_view_username"
+                    android:layout_toStartOf="@+id/text_view_username_kartik"
                     android:text="@string/activity_about_developer_name"
                     android:textAppearance="@style/TextAppearanceUserName" />
 

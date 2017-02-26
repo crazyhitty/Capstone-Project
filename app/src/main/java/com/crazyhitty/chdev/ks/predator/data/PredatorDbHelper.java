@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -109,7 +109,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.PostsEntry.COLUMN_USER_ID + " INTEGER, " +
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
-                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + " INTEGER DEFAULT 0);";
+                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + " INTEGER DEFAULT 0, " +
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + " INTEGER DEFAULT 0);";
     }
 
     private String getCreateUsersTableSqlQuery() {
@@ -119,12 +120,15 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.UsersEntry.COLUMN_CREATED_AT + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_NAME + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_USERNAME + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_HEADLINE + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_WEBSITE_URL + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS + " TEXT, " +
                 PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS + " TEXT, " +
-                PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS + " TEXT);";
+                PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS + " TEXT, " +
+                PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS + " TEXT);";
     }
 
     private String getCreateCommentsTableSqlQuery() {
@@ -220,7 +224,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public int addPost(ContentValues contentValues) {
+    public int addOrUpdatePost(ContentValues contentValues) {
         // Create and/or open the database for writing
         SQLiteDatabase db = getWritableDatabase();
 
@@ -228,7 +232,37 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
         // consistency of the database.
         db.beginTransaction();
         try {
-            db.insertOrThrow(PredatorContract.PostsEntry.TABLE_NAME, null, contentValues);
+            // Check if this post exists already.
+            Cursor cursorPosts = db.query(PredatorContract.PostsEntry.TABLE_NAME,
+                    null,
+                    PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + contentValues.getAsInteger(PredatorContract.PostsEntry.COLUMN_POST_ID),
+                    null,
+                    null,
+                    null,
+                    null);
+
+            if (cursorPosts != null && cursorPosts.getCount() != 0) {
+                cursorPosts.moveToFirst();
+
+                if (!contentValues.containsKey(PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION)) {
+                    contentValues.put(PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION,
+                            CursorUtils.getInt(cursorPosts, PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION));
+                }
+
+                if (!contentValues.containsKey(PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD)) {
+                    contentValues.put(PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD,
+                            CursorUtils.getInt(cursorPosts, PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD));
+                }
+
+                cursorPosts.close();
+
+                db.update(PredatorContract.PostsEntry.TABLE_NAME,
+                        contentValues,
+                        PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + contentValues.getAsInteger(PredatorContract.PostsEntry.COLUMN_POST_ID),
+                        null);
+            } else {
+                db.insertOrThrow(PredatorContract.PostsEntry.TABLE_NAME, null, contentValues);
+            }
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Logger.e(TAG, "Error while trying to add post to database", e);
@@ -305,6 +339,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                         !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS))) {
                     makerPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS);
                     contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, makerPostIds);
+                } else {
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, makerPostIds);
                 }
 
                 String hunterPostIds = CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
@@ -317,6 +353,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                         TextUtils.isEmpty(hunterPostIds) &&
                         !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS))) {
                     hunterPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS);
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, hunterPostIds);
+                } else {
                     contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, hunterPostIds);
                 }
 
@@ -331,6 +369,18 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                         !TextUtils.isEmpty(contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS))) {
                     votedPostIds = contentValues.getAsString(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS);
                     contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, votedPostIds);
+                } else {
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, votedPostIds);
+                }
+
+                if (!contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS)) {
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS,
+                            CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS));
+                }
+
+                if (!contentValues.containsKey(PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS)) {
+                    contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS,
+                            CursorUtils.getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS));
                 }
 
                 cursor.close();

@@ -296,4 +296,17 @@
         <item name="android:textColor">@color/material_grey_400</item>
     </style>
 
+    <style name="TextAppearanceUserProfile.Name" parent="TextAppearanceLarge">
+        <item name="android:textColor">?attr/colorDark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearanceUserProfile.Tagline" parent="TextAppearanceMedium">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="TextAppearanceUserProfile.ExtraDetails" parent="TextAppearanceSmall">
+        <item name="android:textColor">?attr/postExtraDetailsColor</item>
+    </style>
+
 </resources>

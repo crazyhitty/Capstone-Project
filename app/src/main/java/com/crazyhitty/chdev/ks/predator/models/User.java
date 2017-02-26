@@ -24,6 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.models;
 
+import android.text.TextUtils;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -36,8 +38,15 @@ public class User {
     private int userId;
     private String name;
     private String username;
+    private String headline;
+    private String websiteUrl;
     private String thumbnail;
     private String image;
+    private String huntedPostIds;
+    private String madePostIds;
+    private String votedPostIds;
+    private String followerUserIds;
+    private String followingUserIds;
     private TYPE type;
 
     public int getId() {
@@ -72,6 +81,22 @@ public class User {
         this.username = username;
     }
 
+    public String getHeadline() {
+        return headline;
+    }
+
+    public void setHeadline(String headline) {
+        this.headline = headline;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
     public String getThumbnail() {
         return thumbnail;
     }
@@ -86,6 +111,101 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getHuntedPostIds() {
+        return huntedPostIds;
+    }
+
+    public void setHuntedPostIds(String huntedPostIds) {
+        this.huntedPostIds = huntedPostIds;
+    }
+
+    public String getHuntedPostIdsQuery() {
+        if (!TextUtils.isEmpty(huntedPostIds)) {
+            String[] huntedPostIdsArr = huntedPostIds.split(",");
+            for (int i = 0; i < huntedPostIdsArr.length; i++) {
+                huntedPostIdsArr[i] = "'" + huntedPostIdsArr[i] + "'";
+            }
+            return TextUtils.join(", ", huntedPostIdsArr);
+        }
+        return huntedPostIds;
+    }
+
+    public String getMadePostIds() {
+        return madePostIds;
+    }
+
+    public void setMadePostIds(String madePostIds) {
+        this.madePostIds = madePostIds;
+    }
+
+    public String getMadePostIdsQuery() {
+        if (!TextUtils.isEmpty(madePostIds)) {
+            String[] madePostIdsArr = madePostIds.split(",");
+            for (int i = 0; i < madePostIdsArr.length; i++) {
+                madePostIdsArr[i] = "'" + madePostIdsArr[i] + "'";
+            }
+            return TextUtils.join(", ", madePostIdsArr);
+        }
+        return madePostIds;
+    }
+
+    public String getVotedPostIds() {
+        return votedPostIds;
+    }
+
+    public void setVotedPostIds(String votedPostIds) {
+        this.votedPostIds = votedPostIds;
+    }
+
+    public String getVotedPostIdsQuery() {
+        if (!TextUtils.isEmpty(votedPostIds)) {
+            String[] votedPostIdsArr = votedPostIds.split(",");
+            for (int i = 0; i < votedPostIdsArr.length; i++) {
+                votedPostIdsArr[i] = "'" + votedPostIdsArr[i] + "'";
+            }
+            return TextUtils.join(", ", votedPostIdsArr);
+        }
+        return votedPostIds;
+    }
+
+    public String getFollowerUserIds() {
+        return followerUserIds;
+    }
+
+    public void setFollowerUserIds(String followerUserIds) {
+        this.followerUserIds = followerUserIds;
+    }
+
+    public String getFollowerUserIdsQuery() {
+        if (!TextUtils.isEmpty(followerUserIds)) {
+            String[] followerUserIdsArr = followerUserIds.split(",");
+            for (int i = 0; i < followerUserIdsArr.length; i++) {
+                followerUserIdsArr[i] = "'" + followerUserIdsArr[i] + "'";
+            }
+            return TextUtils.join(", ", followerUserIdsArr);
+        }
+        return followerUserIds;
+    }
+
+    public String getFollowingUserIds() {
+        return followingUserIds;
+    }
+
+    public void setFollowingUserIds(String followingUserIds) {
+        this.followingUserIds = followingUserIds;
+    }
+
+    public String getFollowingUserIdsQuery() {
+        if (!TextUtils.isEmpty(followingUserIds)) {
+            String[] followingUserIdsArr = followingUserIds.split(",");
+            for (int i = 0; i < followingUserIdsArr.length; i++) {
+                followingUserIdsArr[i] = "'" + followingUserIdsArr[i] + "'";
+            }
+            return TextUtils.join(", ", followingUserIdsArr);
+        }
+        return followingUserIds;
     }
 
     public TYPE getType() {
@@ -104,6 +224,9 @@ public class User {
                 ", username: " + username +
                 ", thumbnail: " + thumbnail +
                 ", image: " + image +
+                ", huntedPostIds: " + huntedPostIds +
+                ", madePostIds: " + madePostIds +
+                ", votedPostIds: " + votedPostIds +
                 ", type: " + type;
     }
 

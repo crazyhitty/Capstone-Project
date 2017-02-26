@@ -58,8 +58,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getInt;
-
 
 /**
  * Author:      Kartik Sharma
@@ -105,7 +103,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                 Cursor cursor = MainApplication.getContentResolverInstance()
                         .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                 null,
-                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                                 null,
                                 PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
                 if (cursor != null && cursor.getCount() != 0) {
@@ -197,7 +195,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                         Cursor cursor = MainApplication.getContentResolverInstance()
                                 .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                                         null,
-                                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=0",
+                                        PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                                         null,
                                         PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
 
@@ -308,6 +306,7 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, post.getUser().getId());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, post.getUser().getImageUrl().getValue100px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD, 1);
         return contentValues;
     }
 
@@ -316,6 +315,8 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, user.getId());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, user.getName());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, user.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, user.getHeadline());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, user.getWebsiteUrl());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, user.getImageUrl().getValue100px());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, user.getImageUrl().getOriginal());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, postId);
@@ -328,6 +329,8 @@ public class PostsPresenter implements PostsContract.Presenter {
         contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, maker.getCreatedAt());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, maker.getName());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, maker.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, maker.getHeadline());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, maker.getWebsiteUrl());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, maker.getImageUrlMaker().getValue48px());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, maker.getImageUrlMaker().getOriginal());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, postId);
@@ -363,23 +366,6 @@ public class PostsPresenter implements PostsContract.Presenter {
             posts.add(post);
         }
         return posts;
-    }
-
-    private int getCategoryId(String categoryName) {
-        Cursor cursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                        null,
-                        PredatorContract.CategoryEntry.COLUMN_SLUG + " = '" + categoryName + "'",
-                        null,
-                        null);
-
-        cursor.moveToFirst();
-
-        int categoryId = getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID);
-
-        cursor.close();
-
-        return categoryId;
     }
 
     public static class NoPostsAvailableException extends Throwable {

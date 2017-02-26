@@ -96,6 +96,7 @@ public class Constants {
         public static final String URL_GITHUB = "https://github.com/crazyhitty/Capstone-Project";
         public static final String URL_GOOGLE_PLUS = "https://plus.google.com/communities/102250921213849521349";
         public static final String MAIL_ID = "cr42yh17m4n@gmail.com";
+        public static final int DEV_KARTIK_PRODUCT_HUNT_USER_ID = 425173;
 
         private About() {
 

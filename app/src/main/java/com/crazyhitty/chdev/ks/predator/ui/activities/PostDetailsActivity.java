@@ -48,6 +48,7 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
@@ -76,8 +77,6 @@ import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.predator.utils.StartSnapHelper;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -119,7 +118,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     SimpleDraweeView imgViewPost;
     @BindView(R.id.relative_layout_post_details_toolbar)
     RelativeLayout relativeLayoutPostDetailsToolbar;
-    @BindView((R.id.view_pager_post_details))
+    @BindView(R.id.view_pager_post_details)
     ViewPager viewPagerPostDetails;
     @BindView(R.id.tab_layout_post_details)
     TabLayout tabLayoutPostDetails;
@@ -133,6 +132,10 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     private PostDetailsContract.Presenter mPostDetailsPresenter;
 
     private View mMenuItemRefreshActionView = null;
+
+    // Viewpager fragments.
+    private CommentsFragment mCommentsFragment;
+    private UsersFragment mUsersFragment;
 
     public static void startActivity(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
@@ -204,8 +207,11 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     private void initViewPager() {
+        mCommentsFragment = CommentsFragment.newInstance();
+        mUsersFragment = UsersFragment.newInstance();
+
         PostDetailsPagerAdapter postDetailsPagerAdapter = new PostDetailsPagerAdapter(getSupportFragmentManager(),
-                new BaseSupportFragment[]{CommentsFragment.newInstance(), UsersFragment.newInstance()},
+                new BaseSupportFragment[]{mCommentsFragment, mUsersFragment},
                 new String[]{getString(R.string.post_details_comments), getString(R.string.post_details_users)});
         viewPagerPostDetails.setAdapter(postDetailsPagerAdapter);
 
@@ -302,7 +308,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                EventBus.getDefault().post(new UsersEvent(users));
+                updateUsers(users);
             }
         }, DELAY_MS);
     }
@@ -335,7 +341,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             @Override
             public void run() {
                 mFirstTimeLoading = false;
-                EventBus.getDefault().post(new UsersEvent(users));
+                updateUsers(users);
             }
         }, DELAY_MS);
     }
@@ -350,7 +356,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             @Override
             public void run() {
                 mFirstTimeLoading = false;
-                EventBus.getDefault().post(new CommentsEvent(comments));
+                updateComments(comments);
             }
         }, DELAY_MS);
     }
@@ -367,7 +373,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                EventBus.getDefault().post(new UsersEvent());
+                updateUsers(null);
             }
         }, DELAY_MS);
     }
@@ -389,7 +395,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                EventBus.getDefault().post(new UsersEvent());
+                updateUsers(null);
             }
         }, DELAY_MS);
     }
@@ -401,7 +407,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                EventBus.getDefault().post(new CommentsEvent());
+                updateComments(null);
             }
         }, DELAY_MS);
     }
@@ -415,8 +421,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    EventBus.getDefault().post(new CommentsEvent());
-                    EventBus.getDefault().post(new UsersEvent());
+                    updateComments(null);
+                    updateUsers(null);
                 }
             }, DELAY_MS);
         }
@@ -427,7 +433,12 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         Logger.d(TAG, "dismissLoading: Stop refreshing");
         // Only show toast once as this method will be called multiple times.
         if (mRefreshing) {
-            showShortToast(R.string.post_details_updated_details);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showShortToast(R.string.post_details_updated_details);
+                }
+            }, DELAY_MS);
         }
         mRefreshing = false;
         invalidateOptionsMenu();
@@ -503,6 +514,13 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     public void sharePostDetails() {
+        if (mPostDetailsPresenter.getPostDetails() == null ||
+                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTitle()) ||
+                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTagline())) {
+            Toast.makeText(getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String title = mPostDetailsPresenter.getPostDetails().getTitle();
         String body = mPostDetailsPresenter.getPostDetails().getTagline() + "\n" +
                 mPostDetailsPresenter.getPostDetails().getDiscussionUrl();
@@ -534,5 +552,13 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     protected void onDestroy() {
         super.onDestroy();
         mPostDetailsPresenter.unSubscribe();
+    }
+
+    private void updateComments(List<Comment> comments) {
+        mCommentsFragment.updateComments(new CommentsEvent(comments));
+    }
+
+    private void updateUsers(List<User> users) {
+        mUsersFragment.updateUsers(new UsersEvent(users));
     }
 }

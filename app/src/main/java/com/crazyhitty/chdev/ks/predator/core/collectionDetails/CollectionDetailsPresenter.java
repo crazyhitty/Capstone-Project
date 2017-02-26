@@ -298,6 +298,8 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, user.getId());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, user.getName());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, user.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, user.getHeadline());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, user.getWebsiteUrl());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, user.getImageUrl().getValue100px());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, user.getImageUrl().getOriginal());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, postId);
@@ -310,6 +312,8 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
         contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, maker.getCreatedAt());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, maker.getName());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, maker.getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, maker.getHeadline());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, maker.getWebsiteUrl());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, maker.getImageUrlMaker().getValue48px());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, maker.getImageUrlMaker().getOriginal());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, postId);

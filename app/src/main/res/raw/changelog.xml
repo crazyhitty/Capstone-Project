@@ -25,6 +25,13 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Feb 26, 2017"
+        versionName="0.18">
+        <changelogtext>[b]New![/b] It is now possible to view user profiles!</changelogtext>
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Feb 16, 2017"
         versionName="0.17">
         <changelogtext>From now on, PostDetails screen will show its category and votes count.

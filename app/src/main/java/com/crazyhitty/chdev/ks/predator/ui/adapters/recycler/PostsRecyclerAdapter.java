@@ -75,14 +75,14 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean mLoadMoreNotRequired = false;
 
     /**
-     * Initialize using this constructor if load more and dates functionalilties are not required.
+     * Initialize using this constructor if load more and dates functionalities are not required.
      *
-     * @param mPosts List containing posts
-     * @param mType  Type of data to be displayed
+     * @param posts List containing posts
+     * @param type  Type of data to be displayed
      */
-    public PostsRecyclerAdapter(List<Post> mPosts, TYPE mType) {
-        this.mPosts = mPosts;
-        this.mType = mType;
+    public PostsRecyclerAdapter(List<Post> posts, TYPE type) {
+        mPosts = posts;
+        mType = type;
         mLoadMoreNotRequired = true;
     }
 
@@ -143,11 +143,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mPosts = posts;
         if (forceReplace) {
             mLastPosition = -1;
-            notifyDataSetChanged();
-        } else {
-            int oldCount = mPosts.size();
-            notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
         }
+        notifyDataSetChanged();
     }
 
     public void setNetworkStatus(boolean status, String message) {
