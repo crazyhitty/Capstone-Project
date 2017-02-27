@@ -44,6 +44,10 @@ public class PredatorSharedPreferences {
 
     }
 
+    public static void clear(Context context) {
+        SharedPreferencesManager.clear(context);
+    }
+
     public static void setValidToken(Context context, boolean status) {
         SharedPreferencesManager.saveBoolean(context,
                 Constants.SharedPreferences.IS_TOKEN_VALID,
@@ -168,6 +172,13 @@ public class PredatorSharedPreferences {
         private static int getInt(Context context, String key, int defaultValue) {
             return context.getSharedPreferences(SP_TAG, Context.MODE_PRIVATE)
                     .getInt(key, defaultValue);
+        }
+
+        private static void clear(Context context) {
+            context.getSharedPreferences(SP_TAG, Context.MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .apply();
         }
     }
 }

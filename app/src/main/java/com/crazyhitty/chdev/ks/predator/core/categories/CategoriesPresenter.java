@@ -30,7 +30,6 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
-import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -57,6 +56,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.crazyhitty.chdev.ks.predator.R.raw.categories;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -78,113 +79,54 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     }
 
     @Override
-    public void fetchCategories(final Context context, final String token, boolean loadOffline) {
-        Observable<List<Category>> categoriesObservable;
+    public void fetchCategories(final Context context, final String token) {
+        Observable<List<Category>> categoriesObservable = ProductHuntRestApi.getApi()
+                .getCategories(CoreUtils.getAuthToken(token))
+                .map(new Function<CategoriesData, List<Category>>() {
+                    @Override
+                    public List<Category> apply(CategoriesData categoriesData) throws Exception {
+                        // Delete existing categories from category table.
+                        MainApplication.getContentResolverInstance()
+                                .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
 
-        if (loadOffline) {
-            categoriesObservable = Observable.create(new ObservableOnSubscribe<List<Category>>() {
-                @Override
-                public void subscribe(ObservableEmitter<List<Category>> emitter) throws Exception {
-                    // Add categories.
-                    // Fetch categories from categories.json located in res/raw.
-                    InputStream inputStream = context.getResources().openRawResource(R.raw.categories);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String categoriesJsonStr = "";
-                    try {
-                        String value;
-                        while ((value = reader.readLine()) != null) {
-                            categoriesJsonStr = categoriesJsonStr.concat(value);
+                        // Insert new categories into category table.
+                        MainApplication.getContentResolverInstance()
+                                .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
+                                        getBulkContentValuesForCategories(categoriesData.getCategories()));
+
+                        Cursor cursor = MainApplication.getContentResolverInstance()
+                                .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                                        null,
+                                        null,
+                                        null,
+                                        null);
+
+                        List<Category> categories = new ArrayList<Category>();
+                        if (cursor != null && cursor.getCount() != 0) {
+                            categories = getCategoriesFromCursor(cursor);
+                            cursor.close();
                         }
-                        reader.close();
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                        return categories;
                     }
-
-                    // Convert librariesJsonStr to CategoriesData object via gson.
-                    CategoriesData categoriesData = new Gson().fromJson(categoriesJsonStr, CategoriesData.class);
-
-                    // Delete existing categories from category table.
-                    MainApplication.getContentResolverInstance()
-                            .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
-
-                    // Insert new categories into category table.
-                    MainApplication.getContentResolverInstance()
-                            .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
-                                    getBulkContentValuesForCategories(categoriesData.getCategories()));
-
-                    Cursor cursor = MainApplication.getContentResolverInstance()
-                            .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                                    null,
-                                    null,
-                                    null,
-                                    null);
-
-                    List<Category> categories = new ArrayList<Category>();
-                    if (cursor != null && cursor.getCount() != 0) {
-                        categories = getCategoriesFromCursor(cursor);
-                        cursor.close();
-                    }
-
-                    if (categories != null && categories.size() != 0) {
-                        emitter.onNext(categories);
-                    } else {
-                        emitter.onError(new NoCategoriesAvailableException());
-                    }
-                    emitter.onComplete();
-                }
-            });
-        } else {
-            categoriesObservable = ProductHuntRestApi.getApi()
-                    .getCategories(CoreUtils.getAuthToken(token))
-                    .map(new Function<CategoriesData, List<Category>>() {
-                        @Override
-                        public List<Category> apply(CategoriesData categoriesData) throws Exception {
-                            // Delete existing categories from category table.
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
-
-                            // Insert new categories into category table.
-                            MainApplication.getContentResolverInstance()
-                                    .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
-                                            getBulkContentValuesForCategories(categoriesData.getCategories()));
-
-                            Cursor cursor = MainApplication.getContentResolverInstance()
-                                    .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                                            null,
-                                            null,
-                                            null,
-                                            null);
-
-                            List<Category> categories = new ArrayList<Category>();
-                            if (cursor != null && cursor.getCount() != 0) {
-                                categories = getCategoriesFromCursor(cursor);
-                                cursor.close();
-                            }
-
-                            return categories;
-                        }
-                    })
-                    .flatMap(new Function<List<Category>, ObservableSource<List<Category>>>() {
-                        @Override
-                        public ObservableSource<List<Category>> apply(final List<Category> categories) throws Exception {
-                            return Observable.create(new ObservableOnSubscribe<List<Category>>() {
-                                @Override
-                                public void subscribe(ObservableEmitter<List<Category>> emitter) throws Exception {
-                                    if (categories != null && categories.size() != 0) {
-                                        emitter.onNext(categories);
-                                    } else {
-                                        emitter.onError(new NoCategoriesAvailableException());
-                                    }
-                                    emitter.onComplete();
+                })
+                .flatMap(new Function<List<Category>, ObservableSource<List<Category>>>() {
+                    @Override
+                    public ObservableSource<List<Category>> apply(final List<Category> categories) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<List<Category>>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<List<Category>> emitter) throws Exception {
+                                if (categories != null && categories.size() != 0) {
+                                    emitter.onNext(categories);
+                                } else {
+                                    emitter.onError(new NoCategoriesAvailableException());
                                 }
-                            });
-                        }
-                    });
-        }
-
-        categoriesObservable.subscribeOn(Schedulers.io());
-        categoriesObservable.observeOn(AndroidSchedulers.mainThread());
+                                emitter.onComplete();
+                            }
+                        });
+                    }
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
         mCompositeDisposable.add(categoriesObservable.subscribeWith(new DisposableObserver<List<Category>>() {
             @Override
@@ -196,7 +138,130 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
-                fetchCategories(context, token, true);
+                fetchCategoriesOffline(context);
+            }
+
+            @Override
+            public void onComplete() {
+                // Done
+            }
+        }));
+    }
+
+    @Override
+    public void fetchCategoriesOffline(final Context context) {
+        Observable<List<Category>> categoriesObservable = Observable.create(new ObservableOnSubscribe<List<Category>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Category>> emitter) throws Exception {
+                // Add categories.
+                // Fetch categories from categories.json located in res/raw.
+                InputStream inputStream = context.getResources().openRawResource(categories);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String categoriesJsonStr = "";
+                try {
+                    String value;
+                    while ((value = reader.readLine()) != null) {
+                        categoriesJsonStr = categoriesJsonStr.concat(value);
+                    }
+                    reader.close();
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // Convert librariesJsonStr to CategoriesData object via gson.
+                CategoriesData categoriesData = new Gson().fromJson(categoriesJsonStr, CategoriesData.class);
+
+                // Delete existing categories from category table.
+                MainApplication.getContentResolverInstance()
+                        .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
+
+                // Insert new categories into category table.
+                MainApplication.getContentResolverInstance()
+                        .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
+                                getBulkContentValuesForCategories(categoriesData.getCategories()));
+
+                Cursor cursor = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                                null,
+                                null,
+                                null,
+                                null);
+
+                List<Category> categories = new ArrayList<Category>();
+                if (cursor != null && cursor.getCount() != 0) {
+                    categories = getCategoriesFromCursor(cursor);
+                    cursor.close();
+                }
+
+                if (categories != null && categories.size() != 0) {
+                    emitter.onNext(categories);
+                } else {
+                    emitter.onError(new NoCategoriesAvailableException());
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(categoriesObservable.subscribeWith(new DisposableObserver<List<Category>>() {
+            @Override
+            public void onNext(List<Category> categories) {
+                Logger.d(TAG, "onNext: CategoriesSize: " + categories.size());
+                mView.showCategories(categories);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.categoriesUnavailable();
+            }
+
+            @Override
+            public void onComplete() {
+                // Done
+            }
+        }));
+    }
+
+    @Override
+    public void checkIfCategoriesAreAvailable() {
+        Observable<Boolean> categoriesAvailableObservable = Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
+                Cursor cursor = MainApplication.getContentResolverInstance()
+                        .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                                null,
+                                null,
+                                null,
+                                null);
+
+                if (cursor != null && cursor.getCount() != 0) {
+                    emitter.onNext(true);
+                    cursor.close();
+                } else {
+                    emitter.onNext(false);
+                }
+
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(categoriesAvailableObservable.subscribeWith(new DisposableObserver<Boolean>() {
+            @Override
+            public void onNext(Boolean status) {
+                Logger.d(TAG, "onNext: categoriesAvailable: " + status);
+                if (status) {
+                    mView.categoriesAvailable();
+                } else {
+                    mView.categoriesUnavailable();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
             }
 
             @Override

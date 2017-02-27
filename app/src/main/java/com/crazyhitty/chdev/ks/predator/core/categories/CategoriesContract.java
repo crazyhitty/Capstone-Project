@@ -42,9 +42,17 @@ import java.util.List;
 public interface CategoriesContract {
     interface View extends BaseView<Presenter> {
         void showCategories(List<Category> categories);
+
+        void categoriesAvailable();
+
+        void categoriesUnavailable();
     }
 
     interface Presenter extends BasePresenter {
-        void fetchCategories(Context context, String token, boolean loadOffline);
+        void fetchCategories(Context context, String token);
+
+        void fetchCategoriesOffline(Context context);
+
+        void checkIfCategoriesAreAvailable();
     }
 }

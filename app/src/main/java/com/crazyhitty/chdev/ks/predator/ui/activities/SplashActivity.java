@@ -29,7 +29,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
+import com.crazyhitty.chdev.ks.predator.core.categories.CategoriesContract;
+import com.crazyhitty.chdev.ks.predator.core.categories.CategoriesPresenter;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.models.Category;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
+
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -38,21 +51,80 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
  * Description: Unavailable
  */
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity implements CategoriesContract.View {
+    private static final String TAG = "SplashActivity";
+
+    private CategoriesContract.Presenter mCategoriesPresenter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setPresenter(new CategoriesPresenter(this));
+        mCategoriesPresenter.subscribe();
         // check if user has a already completed onboarding or not, if not then redirect him/her to
         // the onboarding activity, otherwise redirect him/her to dashboard activity.
-        if (PredatorSharedPreferences.isOnboardingComplete(getApplicationContext())) {
-            DashboardActivity.startActivity(getApplicationContext(),
-                    Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
-        } else {
+        if (!PredatorSharedPreferences.isOnboardingComplete(getApplicationContext())) {
             OnboardActivity.startActivity(getApplicationContext(),
                     Intent.FLAG_ACTIVITY_NO_ANIMATION);
             finish();
+        } else {
+            mCategoriesPresenter.checkIfCategoriesAreAvailable();
         }
+    }
+
+    @Override
+    public void categoriesAvailable() {
+        DashboardActivity.startActivity(getApplicationContext(),
+                Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+    }
+
+    @Override
+    public void categoriesUnavailable() {
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            PredatorAccount.getAuthToken(this,
+                    Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                    PredatorSharedPreferences.getAuthTokenType(getApplicationContext()))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableObserver<String>() {
+                        @Override
+                        public void onComplete() {
+                            // Done
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+                            mCategoriesPresenter.fetchCategories(getApplicationContext(), s);
+                        }
+                    });
+        } else {
+            mCategoriesPresenter.fetchCategoriesOffline(getApplicationContext());
+        }
+    }
+
+    @Override
+    public void showCategories(List<Category> categories) {
+        Logger.d(TAG, "showCategories: categoriesSize: " + categories.size());
+
+        DashboardActivity.startActivity(getApplicationContext(),
+                Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+    }
+
+    @Override
+    public void setPresenter(CategoriesContract.Presenter presenter) {
+        mCategoriesPresenter = presenter;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCategoriesPresenter.unSubscribe();
     }
 }

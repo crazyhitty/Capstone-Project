@@ -112,6 +112,16 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
         }
 
         @Override
+        public void categoriesAvailable() {
+            // Do nothing.
+        }
+
+        @Override
+        public void categoriesUnavailable() {
+            // Do nothing.
+        }
+
+        @Override
         public void setPresenter(CategoriesContract.Presenter presenter) {
             mCategoriesPresenter = presenter;
         }
@@ -318,9 +328,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
 
                     @Override
                     public void onNext(String s) {
-                        mCategoriesPresenter.fetchCategories(getApplicationContext(),
-                                s,
-                                isNetworkAvailable(false));
+                        mCategoriesPresenter.fetchCategories(getApplicationContext(), s);
                     }
                 });
     }

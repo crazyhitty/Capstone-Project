@@ -27,6 +27,8 @@ Predator is a minimalistic client for ProductHunt. It shows latest products and 
 
 <img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/5.png" alt="alt text" width="400"> <img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/6.png" alt="alt text" width="400">
 
+<img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/7.png" alt="alt text" width="400">
+
 # Contributing
 You can contribute to the project by either finding out bugs or by requesting new features.
 

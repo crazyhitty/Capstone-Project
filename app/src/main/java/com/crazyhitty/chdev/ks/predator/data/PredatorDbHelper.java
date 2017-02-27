@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
