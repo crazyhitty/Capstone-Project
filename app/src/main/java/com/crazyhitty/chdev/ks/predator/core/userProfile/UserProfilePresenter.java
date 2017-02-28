@@ -89,12 +89,22 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 null,
                                 null);
                 List<User> currentUser = new ArrayList<User>();
-                currentUser.add(getCurrentUserFromCursor(cursorCurrentUser));
+                if (cursorCurrentUser != null && cursorCurrentUser.getCount() != 0) {
+                    currentUser.add(getCurrentUserFromCursor(cursorCurrentUser));
+                }
 
                 UserProfileDataType currentUserData = new UserProfileDataType();
                 currentUserData.setUsers(currentUser);
+                currentUserData.setUnAvailable(cursorCurrentUser == null || cursorCurrentUser.getCount() == 0);
                 currentUserData.setUserType(UserProfileContract.USER_TYPE.CURRENT);
                 emitter.onNext(currentUserData);
+
+                // If no current user was found, don't execute the future code that is dependent on
+                // that user.
+                if (currentUser.size() == 0) {
+                    emitter.onComplete();
+                    return;
+                }
 
                 // Fetch the voted posts of this user.
                 Cursor cursorVotedPosts = getContentResolverInstance()
@@ -426,6 +436,7 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
                 mView.onlineLoadingComplete();
+                mView.unableToFetchDataOnline(e.getMessage());
             }
 
             @Override

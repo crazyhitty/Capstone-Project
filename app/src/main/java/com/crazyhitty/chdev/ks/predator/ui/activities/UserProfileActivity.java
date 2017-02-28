@@ -267,6 +267,21 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
     }
 
     @Override
+    public void unableToFetchDataOnline(String errorMessage) {
+        showLongToast(errorMessage);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updatePosts(UserProfileContract.POST_TYPE.UPVOTES, null, false);
+                updatePosts(UserProfileContract.POST_TYPE.SUBMITTED, null, false);
+                updatePosts(UserProfileContract.POST_TYPE.MADE, null, false);
+                updateUsers(UserProfileContract.USER_TYPE.FOLLOWERS, null, false);
+                updateUsers(UserProfileContract.USER_TYPE.FOLLOWING, null, false);
+            }
+        }, DELAY_MS);
+    }
+
+    @Override
     public void unableToFetchUserDetails() {
         Logger.d(TAG, "unableToFetchUserDetails");
     }

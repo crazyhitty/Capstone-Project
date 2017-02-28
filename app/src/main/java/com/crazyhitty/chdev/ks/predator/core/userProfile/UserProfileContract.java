@@ -58,6 +58,8 @@ public interface UserProfileContract {
 
         void showUserDetails(User currentUser);
 
+        void unableToFetchDataOnline(String errorMessage);
+
         void unableToFetchUserDetails();
 
         void showPosts(POST_TYPE postType, List<Post> posts, boolean refresh);
