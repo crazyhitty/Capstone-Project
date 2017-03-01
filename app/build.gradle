@@ -107,10 +107,6 @@ dependencies {
     // For animated GIF support
     compile 'com.facebook.fresco:animated-gif:1.0.0'
 
-    // For WebP support, including animated WebP
-    compile 'com.facebook.fresco:animated-webp:1.0.0'
-    compile 'com.facebook.fresco:webpsupport:1.0.0'
-
     // changelog lib
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
