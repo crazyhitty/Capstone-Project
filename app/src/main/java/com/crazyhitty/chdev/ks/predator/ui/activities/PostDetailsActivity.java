@@ -554,11 +554,25 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         mPostDetailsPresenter.unSubscribe();
     }
 
-    private void updateComments(List<Comment> comments) {
-        mCommentsFragment.updateComments(new CommentsEvent(comments));
+    private void updateComments(final List<Comment> comments) {
+        // Run this after the view pager is set, because sometimes the data is fetched way too fast
+        // from the db and the fragments are not even properly initialized yet.
+        viewPagerPostDetails.post(new Runnable() {
+            @Override
+            public void run() {
+                mCommentsFragment.updateComments(new CommentsEvent(comments));
+            }
+        });
     }
 
-    private void updateUsers(List<User> users) {
-        mUsersFragment.updateUsers(new UsersEvent(users));
+    private void updateUsers(final List<User> users) {
+        // Run this after the view pager is set, because sometimes the data is fetched way too fast
+        // from the db and the fragments are not even properly initialized yet.
+        viewPagerPostDetails.post(new Runnable() {
+            @Override
+            public void run() {
+                mUsersFragment.updateUsers(new UsersEvent(users));
+            }
+        });
     }
 }
