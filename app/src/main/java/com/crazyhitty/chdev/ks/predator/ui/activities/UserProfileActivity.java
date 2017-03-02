@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -110,13 +111,6 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
 
     private View mMenuItemRefreshActionView = null;
 
-    // Viewpager fragments.
-    private UserProfilePostsFragment mUserProfilePostsFragmentUpvotes;
-    private UserProfilePostsFragment mUserProfilePostsFragmentSubmitted;
-    private UserProfilePostsFragment mUserProfilePostsFragmentMade;
-    private UserProfileUsersFragment mUserProfileUsersFragmentFollowers;
-    private UserProfileUsersFragment mUserProfileUsersFragmentFollowing;
-
     public static void startActivity(Context context, int userId) {
         Intent intent = new Intent(context, UserProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -175,18 +169,12 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
     }
 
     private void initViewPager() {
-        mUserProfilePostsFragmentUpvotes = UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_UPVOTES);
-        mUserProfilePostsFragmentSubmitted = UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_SUBMITTED);
-        mUserProfilePostsFragmentMade = UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_MADE);
-        mUserProfileUsersFragmentFollowers = UserProfileUsersFragment.newInstance(UserProfileUsersFragment.USERS_TYPE_FOLLOWERS);
-        mUserProfileUsersFragmentFollowing = UserProfileUsersFragment.newInstance(UserProfileUsersFragment.USERS_TYPE_FOLLOWING);
-
         BaseSupportFragment[] baseSupportFragments = new BaseSupportFragment[]{
-                mUserProfilePostsFragmentUpvotes,
-                mUserProfilePostsFragmentSubmitted,
-                mUserProfilePostsFragmentMade,
-                mUserProfileUsersFragmentFollowers,
-                mUserProfileUsersFragmentFollowing
+                UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_UPVOTES),
+                UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_SUBMITTED),
+                UserProfilePostsFragment.newInstance(UserProfilePostsFragment.POSTS_TYPE_MADE),
+                UserProfileUsersFragment.newInstance(UserProfileUsersFragment.USERS_TYPE_FOLLOWERS),
+                UserProfileUsersFragment.newInstance(UserProfileUsersFragment.USERS_TYPE_FOLLOWING)
         };
 
         String[] titles = getResources().getStringArray(R.array.activity_user_profile_titles);
@@ -437,27 +425,18 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
     }
 
     private void updatePosts(UserProfileContract.POST_TYPE postType, List<Post> posts, boolean refresh) {
-        switch (postType) {
-            case UPVOTES:
-                mUserProfilePostsFragmentUpvotes.updateUserPosts(new UserPostsEvent(postType, posts, refresh));
-                break;
-            case SUBMITTED:
-                mUserProfilePostsFragmentSubmitted.updateUserPosts(new UserPostsEvent(postType, posts, refresh));
-                break;
-            case MADE:
-                mUserProfilePostsFragmentMade.updateUserPosts(new UserPostsEvent(postType, posts, refresh));
-                break;
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && fragment instanceof UserProfilePostsFragment) {
+                ((UserProfilePostsFragment) fragment).updateUserPosts(new UserPostsEvent(postType, posts, refresh));
+            }
         }
     }
 
     private void updateUsers(UserProfileContract.USER_TYPE userType, List<User> users, boolean refresh) {
-        switch (userType) {
-            case FOLLOWERS:
-                mUserProfileUsersFragmentFollowers.updateUsers(new UserFollowersFollowingEvent(userType, users, refresh));
-                break;
-            case FOLLOWING:
-                mUserProfileUsersFragmentFollowing.updateUsers(new UserFollowersFollowingEvent(userType, users, refresh));
-                break;
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && fragment instanceof UserProfileUsersFragment) {
+                ((UserProfileUsersFragment) fragment).updateUsers(new UserFollowersFollowingEvent(userType, users, refresh));
+            }
         }
     }
 }

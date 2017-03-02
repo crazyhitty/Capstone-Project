@@ -26,7 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.adapters.pager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 
@@ -37,7 +37,7 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
  * Description: Unavailable
  */
 
-public class PostDetailsPagerAdapter extends FragmentPagerAdapter {
+public class PostDetailsPagerAdapter extends FragmentStatePagerAdapter {
     private BaseSupportFragment[] mFragments;
     private String[] mTitles;
 

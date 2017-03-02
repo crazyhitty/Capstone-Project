@@ -26,6 +26,14 @@
 
     <changelogversion
         changeDate="Mar 1, 2017"
+        versionName="0.22">
+        <changelogbug>Fixed a bug where application was crashing on PostDetails and UserProfile
+            screens in some scenarios (like orientation changes).
+        </changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Mar 1, 2017"
         versionName="0.21">
         <changelogbug>Fixed a bug where application was crashing on PostDetails screen in some
             scenarios.

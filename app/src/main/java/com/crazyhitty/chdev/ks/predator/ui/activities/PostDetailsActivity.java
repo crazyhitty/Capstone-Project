@@ -33,6 +33,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -133,10 +134,6 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
 
     private View mMenuItemRefreshActionView = null;
 
-    // Viewpager fragments.
-    private CommentsFragment mCommentsFragment;
-    private UsersFragment mUsersFragment;
-
     public static void startActivity(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -207,11 +204,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     private void initViewPager() {
-        mCommentsFragment = CommentsFragment.newInstance();
-        mUsersFragment = UsersFragment.newInstance();
-
         PostDetailsPagerAdapter postDetailsPagerAdapter = new PostDetailsPagerAdapter(getSupportFragmentManager(),
-                new BaseSupportFragment[]{mCommentsFragment, mUsersFragment},
+                new BaseSupportFragment[]{CommentsFragment.newInstance(), UsersFragment.newInstance()},
                 new String[]{getString(R.string.post_details_comments), getString(R.string.post_details_users)});
         viewPagerPostDetails.setAdapter(postDetailsPagerAdapter);
 
@@ -555,24 +549,18 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     private void updateComments(final List<Comment> comments) {
-        // Run this after the view pager is set, because sometimes the data is fetched way too fast
-        // from the db and the fragments are not even properly initialized yet.
-        viewPagerPostDetails.post(new Runnable() {
-            @Override
-            public void run() {
-                mCommentsFragment.updateComments(new CommentsEvent(comments));
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && fragment instanceof CommentsFragment) {
+                ((CommentsFragment) fragment).updateComments(new CommentsEvent(comments));
             }
-        });
+        }
     }
 
     private void updateUsers(final List<User> users) {
-        // Run this after the view pager is set, because sometimes the data is fetched way too fast
-        // from the db and the fragments are not even properly initialized yet.
-        viewPagerPostDetails.post(new Runnable() {
-            @Override
-            public void run() {
-                mUsersFragment.updateUsers(new UsersEvent(users));
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && fragment instanceof UsersFragment) {
+                ((UsersFragment) fragment).updateUsers(new UsersEvent(users));
             }
-        });
+        }
     }
 }
