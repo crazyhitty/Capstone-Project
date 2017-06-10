@@ -74,7 +74,6 @@ public class AuthPresenter implements AuthContract.Presenter {
     }
 
     @Override
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public void retrieveClientAuthToken(final Context context) {
         mCompositeDisposable.add(ProductHuntRestApi.getApi()
                 .oAuthClient(OAuth.getClientAuthRequestBody())
@@ -91,7 +90,6 @@ public class AuthPresenter implements AuthContract.Presenter {
                         mView.unableToFetchAuthToken(e.getMessage());
                     }
 
-                    @SuppressWarnings("MissingPermission")
                     @Override
                     public void onNext(OAuthData oAuthData) {
                         Bundle args = new Bundle();
