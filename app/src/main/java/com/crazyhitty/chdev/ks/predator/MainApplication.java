@@ -89,7 +89,7 @@ public class MainApplication extends Application {
         if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
             Log.w(TAG, "re initializing calligraphy");
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                    .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(context)))
+                    .setDefaultFontPath(String.format("fonts/%s", fontName))
                     .setFontAttrId(R.attr.fontPath)
                     .build()
             );
