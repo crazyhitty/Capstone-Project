@@ -193,6 +193,8 @@ public class AboutActivity extends BaseAppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_about, menu);
+        // Change menu item icons based on theme
+        changeMenuItemColorBasedOnTheme(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -207,6 +209,9 @@ public class AboutActivity extends BaseAppCompatActivity {
                 break;
             case R.id.menu_changelog:
                 openFeedback();
+                break;
+            case R.id.menu_privacy_policy:
+                openPrivacyPolicy();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -223,6 +228,13 @@ public class AboutActivity extends BaseAppCompatActivity {
             fragmentTransaction.remove(prev);
         }
         ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
+    }
+
+    private void openPrivacyPolicy() {
+        CustomTabsHelperFragment.open(this,
+                mCustomTabsIntent,
+                Uri.parse(Constants.About.URL_PRIVACY_POLICY),
+                mCustomTabsFallback);
     }
 
     @OnClick(R.id.button_github)
