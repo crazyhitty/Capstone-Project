@@ -68,8 +68,8 @@
     <string name="onboard_feature_3_desc">Simple and easy to navigate throughout the application and use of small delightfull animations add a cherry on top.</string>
     <string name="onboard_feature_4">Background syncing</string>
     <string name="onboard_feature_4_desc">Synchronize data even if the application is offline and stay up to date always. (Optional, can be activated via application settings)</string>
-    <string name="onboard_authentication_alternate_title">Just, em&#8230; one more thing!</string>
-    <string name="onboard_authentication_desc">Inorder to communicate with ProductHunt api, we need to generate a authentication token, which will be securely saved in your device. But this requires <b>CONTACT</b> permission so that it can save that token securely. Don\'t worry we won\'t steal your contacts :)</string>
+    <string name="onboard_final_title">Just, em&#8230; one more thing!</string>
+    <string name="onboard_final_desc">This application is still in development, so you might face some bugs ;( . If you face any bugs, then please report them so I can fix them as soon as possible.</string>
     <string name="onboard_continue">Continue</string>
 
     <!--dashboard-->

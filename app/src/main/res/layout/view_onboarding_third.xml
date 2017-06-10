@@ -36,7 +36,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/onboard_authentication_alternate_title"
+        android:text="@string/onboard_final_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -51,7 +51,7 @@
         android:gravity="start"
         android:paddingEnd="@dimen/padding_avg"
         android:paddingStart="@dimen/padding_avg"
-        android:text="@string/onboard_authentication_desc"
+        android:text="@string/onboard_final_desc"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:translationX="@dimen/onboard_translation_x" />
 
@@ -59,7 +59,8 @@
         android:id="@+id/button_continue_as_regular_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_view_description"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/margin_avg"
         android:layout_marginEnd="@dimen/margin_avg"
         android:layout_marginStart="@dimen/margin_avg"
         android:layout_marginTop="@dimen/margin_large"
