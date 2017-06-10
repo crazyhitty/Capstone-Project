@@ -54,6 +54,7 @@
     <!--menu_about.xml-->
     <string name="menu_about_feedback">Feedback</string>
     <string name="menu_about_changelog">Changelog</string>
+    <string name="menu_about_privacy_policy">Privacy Policy</string>
 
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
