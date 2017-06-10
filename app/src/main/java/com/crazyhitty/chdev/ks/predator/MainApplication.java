@@ -26,8 +26,12 @@ package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
 
@@ -44,6 +48,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  */
 
 public class MainApplication extends Application {
+    private static final String TAG = "MainApplication";
+
     private static WeakReference<ContentResolver> sContentResolverWeakReference;
 
     static {
@@ -70,10 +76,23 @@ public class MainApplication extends Application {
         Fresco.initialize(this);
 
         // Initialize calligraphy.
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/Quicksand-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+        if (!TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext()))) {
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(getApplicationContext())))
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        }
+    }
+
+    public static void reInitializeCalligraphy(Context context, String fontName) {
+        if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
+            Log.w(TAG, "re initializing calligraphy");
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(context)))
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        }
     }
 }

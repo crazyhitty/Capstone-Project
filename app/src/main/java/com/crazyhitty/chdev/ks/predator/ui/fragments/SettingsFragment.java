@@ -35,6 +35,7 @@ import android.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsContract;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsPresenter;
@@ -101,8 +102,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
     }
 
-    private void manageFontsPreferences() {
-        mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+    private void manageThemesPreferences() {
+        mListPreferenceManageThemes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 SettingsActivity.startActivity(getActivity(), true);
@@ -111,10 +112,11 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         });
     }
 
-    private void manageThemesPreferences() {
-        mListPreferenceManageThemes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+    private void manageFontsPreferences() {
+        mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                MainApplication.reInitializeCalligraphy(getActivity().getApplicationContext(), (String)newValue);
                 SettingsActivity.startActivity(getActivity(), true);
                 return true;
             }
