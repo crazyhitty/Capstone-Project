@@ -33,6 +33,8 @@ import com.facebook.stetho.Stetho;
 
 import java.lang.ref.WeakReference;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 
 /**
  * Author:      Kartik Sharma
@@ -58,13 +60,20 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Initialize stetho
+        // Initialize stetho.
         Stetho.initializeWithDefaults(getApplicationContext());
 
         // Create a static reference to content resolver so that it can be accessed anywhere.
         sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
 
-        // Initialize fresco
+        // Initialize fresco.
         Fresco.initialize(this);
+
+        // Initialize calligraphy.
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Quicksand-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
     }
 }
