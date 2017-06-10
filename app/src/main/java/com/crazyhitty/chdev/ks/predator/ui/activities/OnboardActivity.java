@@ -279,11 +279,11 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onContinue(OnboardContinueEvent onboardContinueEvent) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) !=
+        /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) !=
                 PackageManager.PERMISSION_GRANTED) {
             requestPermission();
             return;
-        }
+        }*/
         showLoadingDialog(false);
         switch (onboardContinueEvent.getType()) {
             case REGULAR:
