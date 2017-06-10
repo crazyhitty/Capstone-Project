@@ -236,6 +236,20 @@
         <item>amoled</item>
     </string-array>
 
+    <string name="settings_change_font_key">change_font</string>
+    <string name="settings_change_font_title">Change font</string>
+    <string name="settings_change_font_summary">Change the font used by this application.</string>
+    <string name="settings_change_font_dialog_title">Change font</string>
+    <string name="settings_change_font_default_value">default</string>
+    <string-array name="settings_change_font_entries">
+        <item>Default</item>
+        <item>Quicksand</item>
+    </string-array>
+    <string-array name="settings_change_font_entry_values">
+        <item>default</item>
+        <item>Quicksand-Regular.ttf</item>
+    </string-array>
+
     <string name="settings_system">System</string>
 
     <string name="settings_clear_cache_key">clear_cache</string>

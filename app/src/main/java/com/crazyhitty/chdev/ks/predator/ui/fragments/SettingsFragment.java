@@ -52,7 +52,7 @@ import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
  */
 
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
-    private ListPreference mListPreferenceManageThemes;
+    private ListPreference mListPreferenceManageThemes, mListPreferenceChangeFont;
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
     private SwitchPreference mSwitchPreferenceBackgroundSync;
     private ListPreference mListPreferenceSyncInterval;
@@ -78,6 +78,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
         manageThemesPreferences();
 
+        manageFontsPreferences();
+
         manageCachePreferences();
 
         manageBackgroundSyncPreferences();
@@ -93,9 +95,20 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
     private void bindPreferences() {
         mListPreferenceManageThemes = (ListPreference) findPreference(getString(R.string.settings_manage_themes_key));
+        mListPreferenceChangeFont = (ListPreference) findPreference(getString(R.string.settings_change_font_key));
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
+    }
+
+    private void manageFontsPreferences() {
+        mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SettingsActivity.startActivity(getActivity(), true);
+                return true;
+            }
+        });
     }
 
     private void manageThemesPreferences() {

@@ -80,7 +80,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        // Attach calligraphy context if font name is not null. Font name will only be null if user
+        // has selected default font.
+
+        if (TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(newBase))) {
+            super.attachBaseContext(newBase);
+        } else {
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        }
     }
 
     @Override

@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.data;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
@@ -95,6 +96,17 @@ public class PredatorSharedPreferences {
                         context.getString(R.string.settings_sync_interval_default_value));
 
         return DateUtils.hoursToMillis(hours);
+    }
+
+    public static String getCurrentFont(Context context) {
+        String fontName = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.settings_change_font_key),
+                        context.getString(R.string.settings_change_font_default_value));
+        if (TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
+            return null;
+        } else {
+            return fontName;
+        }
     }
 
     public static THEME_TYPE getCurrentTheme(Context context) {
