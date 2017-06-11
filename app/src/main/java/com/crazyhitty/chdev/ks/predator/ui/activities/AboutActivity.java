@@ -188,6 +188,7 @@ public class AboutActivity extends BaseAppCompatActivity {
         viewPagerAbout.setAdapter(aboutPagerAdapter);
 
         tabLayoutAbout.setupWithViewPager(viewPagerAbout);
+        changeTabTypeface(tabLayoutAbout);
     }
 
     @Override

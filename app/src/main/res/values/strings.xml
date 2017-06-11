@@ -236,6 +236,53 @@
         <item>amoled</item>
     </string-array>
 
+    <string name="settings_experimental">Experimental</string>
+
+    <string name="settings_enable_experimental_features_key">enable_experimental_features</string>
+    <string name="settings_enable_experimental_features_title">Enable experimental features</string>
+    <string name="settings_enable_experimental_features_summary_on">Experimental features are currently turned on. These features can cause unexpected behaviour on your device, use it with caution.</string>
+    <string name="settings_enable_experimental_features_summary_off">Experimental features are currently turned off. These features can cause unexpected behaviour on your device, use it with caution.</string>
+
+    <string name="settings_change_font_key">change_font</string>
+    <string name="settings_change_font_title">Change font</string>
+    <string name="settings_change_font_summary">Change the font used by this application.</string>
+    <string name="settings_change_font_dialog_title">Change font</string>
+    <string name="settings_change_font_default_value">default</string>
+    <string-array name="settings_change_font_entries">
+        <item>Default</item>
+        <item>Droid Serif</item>
+        <item>Lato</item>
+        <item>Montserrat</item>
+        <item>Nunito</item>
+        <item>Nunito Sans</item>
+        <item>Oxygen</item>
+        <item>Quicksand</item>
+        <item>Raleway</item>
+        <item>Roboto Mono</item>
+        <item>Roboto Slab</item>
+        <item>Rubik</item>
+        <item>Slabo 27px</item>
+        <item>Source Sans Pro</item>
+        <item>Work Sans</item>
+    </string-array>
+    <string-array name="settings_change_font_entry_values">
+        <item>default</item>
+        <item>DroidSerif.ttf</item>
+        <item>Lato-Regular.ttf</item>
+        <item>Montserrat-Regular.ttf</item>
+        <item>Nunito-Regular.ttf</item>
+        <item>NunitoSans-Regular.ttf</item>
+        <item>Oxygen-Regular.ttf</item>
+        <item>Quicksand-Regular.ttf</item>
+        <item>Raleway-Regular.ttf</item>
+        <item>RobotoMono-Regular.ttf</item>
+        <item>RobotoSlab-Regular.ttf</item>
+        <item>Rubik-Regular.ttf</item>
+        <item>Slabo27px-Regular.ttf</item>
+        <item>SourceSansPro-Regular.ttf</item>
+        <item>WorkSans-Regular.ttf</item>
+    </string-array>
+
     <string name="settings_system">System</string>
 
     <string name="settings_clear_cache_key">clear_cache</string>

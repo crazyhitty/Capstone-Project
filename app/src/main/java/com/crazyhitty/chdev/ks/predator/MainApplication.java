@@ -26,12 +26,18 @@ package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
 
 import java.lang.ref.WeakReference;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 
 /**
@@ -42,6 +48,8 @@ import java.lang.ref.WeakReference;
  */
 
 public class MainApplication extends Application {
+    private static final String TAG = "MainApplication";
+
     private static WeakReference<ContentResolver> sContentResolverWeakReference;
 
     static {
@@ -58,13 +66,33 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Initialize stetho
+        // Initialize stetho.
         Stetho.initializeWithDefaults(getApplicationContext());
 
         // Create a static reference to content resolver so that it can be accessed anywhere.
         sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
 
-        // Initialize fresco
+        // Initialize fresco.
         Fresco.initialize(this);
+
+        // Initialize calligraphy.
+        if (!TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext()))) {
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(getApplicationContext())))
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        }
+    }
+
+    public static void reInitializeCalligraphy(Context context, String fontName) {
+        if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
+            Log.w(TAG, "re initializing calligraphy");
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(String.format("fonts/%s", fontName))
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        }
     }
 }

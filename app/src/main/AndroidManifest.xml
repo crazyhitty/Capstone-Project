@@ -60,7 +60,8 @@
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/settings_name"/>
 
         <activity
             android:name=".ui.activities.AboutActivity"

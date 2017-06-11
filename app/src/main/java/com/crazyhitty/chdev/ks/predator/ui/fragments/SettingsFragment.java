@@ -35,6 +35,7 @@ import android.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsContract;
 import com.crazyhitty.chdev.ks.predator.core.settings.SettingsPresenter;
@@ -52,9 +53,9 @@ import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
  */
 
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
-    private ListPreference mListPreferenceManageThemes;
+    private ListPreference mListPreferenceManageThemes, mListPreferenceChangeFont;
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
-    private SwitchPreference mSwitchPreferenceBackgroundSync;
+    private SwitchPreference mSwitchPreferenceEnableExperimentalFeatures, mSwitchPreferenceBackgroundSync;
     private ListPreference mListPreferenceSyncInterval;
 
     private SettingsContract.Presenter mSettingsPresenter;
@@ -78,6 +79,10 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
         manageThemesPreferences();
 
+        manageEnableExperimentalFeaturesPreferences();
+
+        manageFontsPreferences();
+
         manageCachePreferences();
 
         manageBackgroundSyncPreferences();
@@ -94,6 +99,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
     private void bindPreferences() {
         mListPreferenceManageThemes = (ListPreference) findPreference(getString(R.string.settings_manage_themes_key));
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
+        mSwitchPreferenceEnableExperimentalFeatures = (SwitchPreference) findPreference(getString(R.string.settings_enable_experimental_features_key));
+        mListPreferenceChangeFont = (ListPreference) findPreference(getString(R.string.settings_change_font_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
     }
@@ -102,6 +109,36 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         mListPreferenceManageThemes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SettingsActivity.startActivity(getActivity(), true);
+                return true;
+            }
+        });
+    }
+
+    private void manageEnableExperimentalFeaturesPreferences() {
+        mSwitchPreferenceEnableExperimentalFeatures.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean status = (Boolean) newValue;
+                mListPreferenceChangeFont.setEnabled(status);
+                if (!status) {
+                    PredatorSharedPreferences.restoreDefaultFont(getActivity().getApplicationContext());
+                    MainApplication.reInitializeCalligraphy(getActivity().getApplicationContext(),
+                            getString(R.string.settings_change_font_default_value));
+                    SettingsActivity.startActivity(getActivity(), false);
+                }
+                return true;
+            }
+        });
+    }
+
+    private void manageFontsPreferences() {
+        mListPreferenceChangeFont.setEnabled(PredatorSharedPreferences.isExperimentalFeaturesEnabled(getActivity().getApplicationContext()));
+
+        mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                MainApplication.reInitializeCalligraphy(getActivity().getApplicationContext(), (String)newValue);
                 SettingsActivity.startActivity(getActivity(), true);
                 return true;
             }
