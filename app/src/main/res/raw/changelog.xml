@@ -26,6 +26,13 @@
 
     <changelogversion
         changeDate="Jun 11, 2017"
+        versionName="0.24">
+        <changelogbug>Fixed a bug where application was crashing on Settings screen.
+        </changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jun 11, 2017"
         versionName="0.23">
         <changelogtext>[b]New![/b] Change application fonts via settings!</changelogtext>
         <changelogtext>Application doesn't require GET_ACCOUNTS permission for marshmallow and
