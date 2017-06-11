@@ -206,10 +206,10 @@ public class AboutActivity extends BaseAppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.menu_feedback:
-                openChangelog();
+                openFeedback();
                 break;
             case R.id.menu_changelog:
-                openFeedback();
+                openChangelog();
                 break;
             case R.id.menu_privacy_policy:
                 openPrivacyPolicy();
