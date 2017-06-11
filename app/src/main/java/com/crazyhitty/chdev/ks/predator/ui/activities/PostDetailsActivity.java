@@ -210,6 +210,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         viewPagerPostDetails.setAdapter(postDetailsPagerAdapter);
 
         tabLayoutPostDetails.setupWithViewPager(viewPagerPostDetails);
+        changeTabTypeface(tabLayoutPostDetails);
     }
 
     private void setMediaRecyclerViewProperties() {
