@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -219,6 +220,15 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
                 .alpha(1.0f)
                 .setDuration(withAnimation ? ANIM_TOOLBAR_TITLE_DISAPPEARING_DURATION : 0)
                 .start();
+    }
+
+    protected void rateApp() {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            showShortToast(R.string.rate_app_message);
+            startActivity(intent);
+        }
     }
 
     protected void shareApp() {

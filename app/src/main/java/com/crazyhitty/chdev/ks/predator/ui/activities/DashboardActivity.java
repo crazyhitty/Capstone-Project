@@ -198,6 +198,9 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             // TODO: Implement after donate(in app purchases) functionality is completed.
             /*case R.id.nav_donate:
                 return false;*/
+            case R.id.nav_rating:
+                rateApp();
+                return false;
             case R.id.nav_spread_love:
                 shareApp();
                 return false;
