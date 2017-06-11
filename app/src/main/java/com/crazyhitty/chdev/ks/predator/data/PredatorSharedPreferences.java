@@ -98,6 +98,11 @@ public class PredatorSharedPreferences {
         return DateUtils.hoursToMillis(hours);
     }
 
+    public static boolean isExperimentalFeaturesEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.settings_enable_experimental_features_key), false);
+    }
+
     public static String getCurrentFont(Context context) {
         String fontName = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_change_font_key),
@@ -107,6 +112,14 @@ public class PredatorSharedPreferences {
         } else {
             return fontName;
         }
+    }
+
+    public static void restoreDefaultFont(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.settings_change_font_key),
+                        context.getString(R.string.settings_change_font_default_value))
+                .apply();
     }
 
     public static THEME_TYPE getCurrentTheme(Context context) {

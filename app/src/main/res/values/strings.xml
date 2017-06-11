@@ -236,6 +236,13 @@
         <item>amoled</item>
     </string-array>
 
+    <string name="settings_experimental">Experimental</string>
+
+    <string name="settings_enable_experimental_features_key">enable_experimental_features</string>
+    <string name="settings_enable_experimental_features_title">Enable experimental features</string>
+    <string name="settings_enable_experimental_features_summary_on">Experimental features are currently turned on. These features can cause unexpected behaviour on your device, use it with caution.</string>
+    <string name="settings_enable_experimental_features_summary_off">Experimental features are currently turned off. These features can cause unexpected behaviour on your device, use it with caution.</string>
+
     <string name="settings_change_font_key">change_font</string>
     <string name="settings_change_font_title">Change font</string>
     <string name="settings_change_font_summary">Change the font used by this application.</string>

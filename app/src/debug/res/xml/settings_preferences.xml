@@ -36,6 +36,17 @@
             android:summary="@string/settings_manage_themes_summary"
             android:title="@string/settings_manage_themes_title" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_experimental">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_enable_experimental_features_key"
+            android:summaryOff="@string/settings_enable_experimental_features_summary_off"
+            android:summaryOn="@string/settings_enable_experimental_features_summary_on"
+            android:title="@string/settings_enable_experimental_features_title" />
+
         <ListPreference
             android:defaultValue="@string/settings_change_font_default_value"
             android:dialogTitle="@string/settings_change_font_dialog_title"
@@ -43,7 +54,8 @@
             android:entryValues="@array/settings_change_font_entry_values"
             android:key="@string/settings_change_font_key"
             android:summary="@string/settings_change_font_summary"
-            android:title="@string/settings_change_font_title" />
+            android:title="@string/settings_change_font_title"
+            android:shouldDisableView="true"/>
 
     </PreferenceCategory>
 
