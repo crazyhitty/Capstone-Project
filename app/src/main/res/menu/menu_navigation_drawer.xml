@@ -64,6 +64,10 @@
                 android:icon="@drawable/ic_donate_24dp"
                 android:title="@string/menu_nav_donate" />-->
             <item
+                android:id="@+id/nav_rating"
+                android:icon="@drawable/ic_rating_24dp"
+                android:title="@string/menu_nav_rating" />
+            <item
                 android:id="@+id/nav_spread_love"
                 android:icon="@drawable/ic_spread_love_24dp"
                 android:title="@string/menu_nav_spread_love" />
