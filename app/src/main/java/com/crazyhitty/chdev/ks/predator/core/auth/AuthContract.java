@@ -47,7 +47,6 @@ public interface AuthContract {
     }
 
     interface Presenter extends BasePresenter {
-        @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
         void retrieveClientAuthToken(Context context);
 
         void retrieveUserAuthToken(Context context, String token);

@@ -25,6 +25,31 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Jun 11, 2017"
+        versionName="0.25">
+        <changelogtext>Users can now rate the application from the navigation drawer.</changelogtext>
+        <changelogbug>Fix splash screen finish animation.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jun 11, 2017"
+        versionName="0.24">
+        <changelogbug>Fixed a bug where application was crashing on Settings screen.
+        </changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jun 11, 2017"
+        versionName="0.23">
+        <changelogtext>[b]New![/b] Change application fonts via settings!</changelogtext>
+        <changelogtext>Application doesn't require GET_ACCOUNTS permission for marshmallow and
+            above devices. Thus, users having devices running marshmallow and above doesn't need to
+            provide CONTACTS permission anymore.
+        </changelogtext>
+        <changelogtext>Add privacy policy.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Mar 1, 2017"
         versionName="0.22">
         <changelogbug>Fixed a bug where application was crashing on PostDetails and UserProfile

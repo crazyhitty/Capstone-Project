@@ -4,9 +4,6 @@
 
 Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt api. It also offers other information like media and comments associated with that product.
 
-# Permissions required
-* **CONTACTS:** This permission is added due to the usage of **android.permission.GET_ACCOUNTS** as the application uses android's account manager to store the auth token securely (token which is required while communicating with the server).
-
 # Installation instructions
 * Clone this repository using `git clone https://github.com/crazyhitty/Capstone-Project.git`
 * Download [Authorization.java](https://gist.github.com/crazyhitty/08fcf4b67d3e20a87e2bde8be7e5ead9) and paste it in `producthunt-wrapper\src\main\java\com\crazyhitty\chdev\ks\producthunt_wrapper\rest\`
@@ -18,6 +15,7 @@ Predator is a minimalistic client for ProductHunt. It shows latest products and 
 * View latest posts and collections from ProductHunt.
 * Checkout the media and comments of a particular post and share them with anyone.
 * Sync data in background even if the app is not running, so you can remain up to date with the latest posts and collections (Optional, can be activated via application settings).
+* Multiple font support.
 * Delightful animations to encourage the user experience.
 
 # Screenshots

@@ -25,15 +25,19 @@
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -42,14 +46,21 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 /**
@@ -73,6 +84,18 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manageThemes();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // Attach calligraphy context if font name is not null. Font name will only be null if user
+        // has selected default font.
+
+        if (TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(newBase))) {
+            super.attachBaseContext(newBase);
+        } else {
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        }
     }
 
     @Override
@@ -199,6 +222,15 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
                 .start();
     }
 
+    protected void rateApp() {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            showShortToast(R.string.rate_app_message);
+            startActivity(intent);
+        }
+    }
+
     protected void shareApp() {
         String title = getString(R.string.share_app_title);
         String body = getString(R.string.share_app_body, BuildConfig.APPLICATION_ID);
@@ -237,6 +269,35 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
             menu.getItem(i).getIcon()
                     .mutate()
                     .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+        }
+    }
+
+    protected void changeTabTypeface(TabLayout tabLayout) {
+        if (TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext()))) {
+            return;
+        }
+
+        Typeface fontTypeFace = Typeface.createFromAsset(getAssets(),
+                String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(getApplicationContext())));
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+
+            try {
+                Field tabViewField = TabLayout.Tab.class.getDeclaredField("mView");
+                tabViewField.setAccessible(true);
+                Object tabViewObject = tabViewField.get(tab);
+
+                Field textViewField = tabViewObject.getClass().getDeclaredField("mTextView");
+                textViewField.setAccessible(true);
+
+                TextView textView = (TextView) textViewField.get(tabViewObject);
+                textView.setTypeface(fontTypeFace);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

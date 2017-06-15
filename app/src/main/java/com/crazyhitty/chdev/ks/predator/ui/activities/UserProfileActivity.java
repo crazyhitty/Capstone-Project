@@ -186,6 +186,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         viewPagerUserProfile.setOffscreenPageLimit(4);
 
         tabLayoutUserProfile.setupWithViewPager(viewPagerUserProfile);
+        changeTabTypeface(tabLayoutUserProfile);
     }
 
     private void loadLatestDetails(final int userId, final boolean refresh) {

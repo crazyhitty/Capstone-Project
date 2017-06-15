@@ -150,6 +150,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/ll_app_logo</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
     <style name="DialogActivity" parent="Theme.AppCompat.Light.Dialog"></style>

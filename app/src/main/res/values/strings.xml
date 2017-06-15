@@ -32,6 +32,7 @@
     <string name="menu_nav_settings">Settings</string>
     <string name="menu_nav_about">About</string>
     <string name="menu_nav_donate">Donate</string>
+    <string name="menu_nav_rating">Rate on Playstore</string>
     <string name="menu_nav_spread_love">Spread love</string>
 
     <!--menu_posts.xml-->
@@ -54,6 +55,7 @@
     <!--menu_about.xml-->
     <string name="menu_about_feedback">Feedback</string>
     <string name="menu_about_changelog">Changelog</string>
+    <string name="menu_about_privacy_policy">Privacy Policy</string>
 
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
@@ -68,8 +70,8 @@
     <string name="onboard_feature_3_desc">Simple and easy to navigate throughout the application and use of small delightfull animations add a cherry on top.</string>
     <string name="onboard_feature_4">Background syncing</string>
     <string name="onboard_feature_4_desc">Synchronize data even if the application is offline and stay up to date always. (Optional, can be activated via application settings)</string>
-    <string name="onboard_authentication_alternate_title">Just, em&#8230; one more thing!</string>
-    <string name="onboard_authentication_desc">Inorder to communicate with ProductHunt api, we need to generate a authentication token, which will be securely saved in your device. But this requires <b>CONTACT</b> permission so that it can save that token securely. Don\'t worry we won\'t steal your contacts :)</string>
+    <string name="onboard_final_title">Just, em&#8230; one more thing!</string>
+    <string name="onboard_final_desc">This application is still in development, so you might face some bugs ;( . If you face any bugs, then please report them so I can fix them as soon as possible.</string>
     <string name="onboard_continue">Continue</string>
 
     <!--dashboard-->
@@ -210,6 +212,9 @@
     <string name="changelog_title">Changelog</string>
     <string name="changelog_ok">OK</string>
 
+    <!--rate_app-->
+    <string name="rate_app_message">Thanks for rating, You are awesome!</string>
+
     <!--share_app-->
     <string name="share_app_title">Predator for ProductHunt!</string>
     <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
@@ -233,6 +238,53 @@
         <item>light</item>
         <item>dark</item>
         <item>amoled</item>
+    </string-array>
+
+    <string name="settings_experimental">Experimental</string>
+
+    <string name="settings_enable_experimental_features_key">enable_experimental_features</string>
+    <string name="settings_enable_experimental_features_title">Enable experimental features</string>
+    <string name="settings_enable_experimental_features_summary_on">Experimental features are currently turned on. These features can cause unexpected behaviour on your device, use it with caution.</string>
+    <string name="settings_enable_experimental_features_summary_off">Experimental features are currently turned off. These features can cause unexpected behaviour on your device, use it with caution.</string>
+
+    <string name="settings_change_font_key">change_font</string>
+    <string name="settings_change_font_title">Change font</string>
+    <string name="settings_change_font_summary">Change the font used by this application.</string>
+    <string name="settings_change_font_dialog_title">Change font</string>
+    <string name="settings_change_font_default_value">default</string>
+    <string-array name="settings_change_font_entries">
+        <item>Default</item>
+        <item>Droid Serif</item>
+        <item>Lato</item>
+        <item>Montserrat</item>
+        <item>Nunito</item>
+        <item>Nunito Sans</item>
+        <item>Oxygen</item>
+        <item>Quicksand</item>
+        <item>Raleway</item>
+        <item>Roboto Mono</item>
+        <item>Roboto Slab</item>
+        <item>Rubik</item>
+        <item>Slabo 27px</item>
+        <item>Source Sans Pro</item>
+        <item>Work Sans</item>
+    </string-array>
+    <string-array name="settings_change_font_entry_values">
+        <item>default</item>
+        <item>DroidSerif.ttf</item>
+        <item>Lato-Regular.ttf</item>
+        <item>Montserrat-Regular.ttf</item>
+        <item>Nunito-Regular.ttf</item>
+        <item>NunitoSans-Regular.ttf</item>
+        <item>Oxygen-Regular.ttf</item>
+        <item>Quicksand-Regular.ttf</item>
+        <item>Raleway-Regular.ttf</item>
+        <item>RobotoMono-Regular.ttf</item>
+        <item>RobotoSlab-Regular.ttf</item>
+        <item>Rubik-Regular.ttf</item>
+        <item>Slabo27px-Regular.ttf</item>
+        <item>SourceSansPro-Regular.ttf</item>
+        <item>WorkSans-Regular.ttf</item>
     </string-array>
 
     <string name="settings_system">System</string>

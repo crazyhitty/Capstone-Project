@@ -31,8 +31,8 @@ android {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 13
-        versionName "0.22"
+        versionCode 16
+        versionName "0.25"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -113,6 +113,9 @@ dependencies {
     // firebase
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
+
+    // font
+    compile 'uk.co.chrisjenx:calligraphy:2.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

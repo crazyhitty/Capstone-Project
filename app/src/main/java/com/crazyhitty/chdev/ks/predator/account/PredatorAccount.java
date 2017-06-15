@@ -65,8 +65,6 @@ public class PredatorAccount {
      * @param authToken     Authentication token
      * @param authTokenType Type of the authentication token
      */
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void addAccount(Context context,
                                   String accountName,
                                   String accountType,
@@ -124,8 +122,6 @@ public class PredatorAccount {
         });
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static Account getAccount(Context context) {
         Account[] accounts = AccountManager.get(context)
                 .getAccountsByType(Constants.Authenticator.PREDATOR_ACCOUNT_TYPE);

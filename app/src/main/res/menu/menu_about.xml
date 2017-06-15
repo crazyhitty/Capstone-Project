@@ -39,4 +39,11 @@
         android:title="@string/menu_about_changelog"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_privacy_policy"
+        android:icon="@drawable/ic_privacy_policy_24dp"
+        android:orderInCategory="100"
+        android:title="@string/menu_about_privacy_policy"
+        app:showAsAction="ifRoom" />
+
 </menu>
