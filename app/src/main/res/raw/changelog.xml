@@ -25,6 +25,12 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Jun 17, 2017"
+        versionName="0.26">
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Jun 11, 2017"
         versionName="0.25">
         <changelogtext>Users can now rate the application from the navigation drawer.</changelogtext>
