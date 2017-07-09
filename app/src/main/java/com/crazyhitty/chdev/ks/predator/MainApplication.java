@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
@@ -71,6 +72,9 @@ public class MainApplication extends Application {
 
         // Create a static reference to content resolver so that it can be accessed anywhere.
         sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
+
+        // Initialize Predator Database.
+        PredatorDatabase.init(getApplicationContext());
 
         // Initialize fresco.
         Fresco.initialize(this);
