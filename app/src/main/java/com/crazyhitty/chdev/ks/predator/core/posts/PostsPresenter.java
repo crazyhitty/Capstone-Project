@@ -26,21 +26,16 @@ package com.crazyhitty.chdev.ks.predator.core.posts;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContentValuesHelper;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
@@ -56,7 +51,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -152,7 +146,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                     public List<Post> apply(PostsData postsData) throws Exception {
                         if (clearPrevious) {
                             PredatorDatabase.getInstance()
-                                    .deleteAllComments();
+                                    .deleteAllPosts();
                             PredatorDatabase.getInstance()
                                     .deleteAllUsers();
                             PredatorDatabase.getInstance()
@@ -168,14 +162,14 @@ public class PostsPresenter implements PostsContract.Presenter {
                         for (PostsData.Posts post : postsData.getPosts()) {
                             Logger.d(TAG, "post: " + post.getName());
                             PredatorDatabase.getInstance()
-                                    .insertPost(PredatorContentValuesHelper.getContentValuesForPosts(post));
+                                    .insertPost(PredatorDbValuesHelper.getContentValuesForPosts(post));
 
                             // Add/update users.
                             PredatorDatabase.getInstance()
-                                    .insertUser(PredatorContentValuesHelper.getContentValuesForHunterUser(post.getId(), post.getUser()));
+                                    .insertUser(PredatorDbValuesHelper.getContentValuesForHunterUser(post.getId(), post.getUser()));
                             for (PostsData.Posts.Makers maker : post.getMakers()) {
                                 PredatorDatabase.getInstance()
-                                        .insertUser(PredatorContentValuesHelper.getContentValuesForMakerUser(post.getId(), maker));
+                                        .insertUser(PredatorDbValuesHelper.getContentValuesForMakerUser(post.getId(), maker));
                             }
                         }
 
