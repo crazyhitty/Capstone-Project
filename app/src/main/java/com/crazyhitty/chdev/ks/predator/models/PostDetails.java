@@ -40,6 +40,7 @@ public class PostDetails {
     private String redirectUrl;
     private String tagline;
     private String discussionUrl;
+    private int categoryId;
     private String category;
     private int voteCount;
 
@@ -110,6 +111,14 @@ public class PostDetails {
         this.discussionUrl = discussionUrl;
     }
 
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -136,6 +145,7 @@ public class PostDetails {
                 ", redirectUrl: " + redirectUrl +
                 ", tagline: " + tagline +
                 ", discussionUrl: " + discussionUrl +
+                ", categoryId: " + categoryId +
                 ", category: " + category +
                 ", voteCount: " + voteCount;
     }
