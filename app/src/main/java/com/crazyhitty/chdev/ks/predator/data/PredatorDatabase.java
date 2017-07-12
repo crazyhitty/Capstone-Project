@@ -30,17 +30,21 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.models.InstallLink;
+import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.models.PostDetails;
+import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
-import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
 
 /**
  * Author:      Kartik Sharma
@@ -50,6 +54,8 @@ import io.reactivex.ObservableOnSubscribe;
  */
 
 public class PredatorDatabase {
+    private static final String TAG = PredatorDatabase.class.getSimpleName();
+
     private static PredatorDatabase sPredatorDatabase;
 
     private ContentResolver mContentResolver;
@@ -78,6 +84,25 @@ public class PredatorDatabase {
         mContentResolver.insert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD, contentValues);
     }
 
+    public void insertUsers(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD, bulkContentValues);
+    }
+
+    public void insertBulkMedia(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_ADD,
+                bulkContentValues);
+    }
+
+    public void insertComment(ContentValues contentValues) {
+        mContentResolver.insert(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_ADD,
+                contentValues);
+    }
+
+    public void insertInstallLinks(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_ADD,
+                        bulkContentValues);
+    }
+
     public List<Post> getPosts() {
         Cursor cursor = MainApplication.getContentResolverInstance()
                 .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
@@ -85,7 +110,197 @@ public class PredatorDatabase {
                         PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                         null,
                         PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-        return PredatorContentValuesHelper.getPostsFromCursor(cursor);
+        List<Post> posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+        closeCursor(cursor);
+        return posts;
+    }
+
+    public PostDetails getPostDetails(int postId) {
+        Cursor cursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                        null,
+                        null);
+
+        PostDetails postDetails = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            postDetails = PredatorDbValuesHelper.getPostDetailsFromCursor(cursor);
+            postDetails.setCategory(getCategoryName(postDetails.getCategoryId()));
+        }
+        closeCursor(cursor);
+
+        return postDetails;
+    }
+
+    public List<User> getUsers(int postId) {
+        Cursor cursorUsers = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                        null,
+                        PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS + "" +
+                                " LIKE '%" +
+                                postId +
+                                "%' OR " +
+                                PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
+                                " LIKE '%" +
+                                postId +
+                                "%'",
+                        null,
+                        null);
+
+        List<User> users = new ArrayList<>();
+        if (cursorUsers != null && cursorUsers.getCount() != 0) {
+            users = PredatorDbValuesHelper.getUsersFromCursor(cursorUsers, postId);
+            // Sort the users list on basis of user type.
+            Collections.sort(users, new UsersComparator());
+        }
+        closeCursor(cursorUsers);
+
+        return users;
+    }
+
+    public List<User> getAllUsersForPost(int postId) {
+        Cursor usersCursor = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                        null,
+                        PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS +
+                                " LIKE '%" +
+                                postId +
+                                "%' OR " +
+                                PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS +
+                                " LIKE '%" +
+                                postId +
+                                "%' OR " +
+                                PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS +
+                                " LIKE '%" +
+                                postId +
+                                "%'",
+                        null,
+                        null);
+
+        List<User> users = new ArrayList<>();
+        if (usersCursor != null && usersCursor.getCount() != 0) {
+            users = PredatorDbValuesHelper.getUsersFromCursor(usersCursor, postId);
+            // Sort the users list on basis of user type.
+            Collections.sort(users, new UsersComparator());
+        }
+        closeCursor(usersCursor);
+
+        return users;
+    }
+
+    public String getCategoryName(int categoryId) {
+        Cursor cursor = mContentResolver.query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                        null,
+                        PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID + " = " + categoryId,
+                        null,
+                        null);
+
+        cursor.moveToFirst();
+        String categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+        closeCursor(cursor);
+
+        return categoryName;
+    }
+
+    public List<Media> getMediaForPost(int postId) {
+        // Query the media available.
+        Cursor mediaCursor = mContentResolver.query(PredatorContract.MediaEntry.CONTENT_URI_MEDIA,
+                        null,
+                        PredatorContract.MediaEntry.COLUMN_POST_ID + " = " + postId,
+                        null,
+                        null);
+
+        List<Media> media = new ArrayList<>();
+        if (mediaCursor != null && mediaCursor.getCount() != 0) {
+            media = PredatorDbValuesHelper.getMediaFromCursor(mediaCursor);
+        }
+        closeCursor(mediaCursor);
+
+        return media;
+    }
+
+    public List<Comment> getCommentsForPost(int postId, int parentCommentId, List<Comment> comments, int childSpaces) {
+        String sortOrder = null;
+        if (childSpaces == 0) {
+            // If top level comments are being fetched, then sort them according to the vote count.
+            sortOrder = PredatorContract.CommentsEntry.COLUMN_VOTES + " DESC";
+        } else {
+            // If child comment, then sort according the time of their creation.
+            sortOrder = PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS + " ASC";
+        }
+
+        Cursor cursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS,
+                        null,
+                        PredatorContract.CommentsEntry.COLUMN_POST_ID + " = " + postId + " AND " +
+                                PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID + " = " + parentCommentId,
+                        null,
+                        sortOrder);
+        if (cursor != null && cursor.getCount() != 0) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+
+                Comment comment = new Comment();
+                comment.setId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_ID));
+                comment.setCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_COMMENT_ID));
+                comment.setParentCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID));
+                comment.setBody(getString(cursor, PredatorContract.CommentsEntry.COLUMN_BODY));
+                comment.setCreatedAt(getString(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT));
+                comment.setCreatedAtMillis(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS));
+                comment.setPostId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_POST_ID));
+                comment.setUserId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_USER_ID));
+                comment.setUsername(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_NAME));
+                comment.setUsernameAlternative(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_USERNAME));
+                comment.setUserHeadline(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE));
+                comment.setUserImageThumbnailUrl(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX));
+                comment.setVotes(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_VOTES));
+                comment.setSticky(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_STICKY) == 1);
+                comment.setMaker(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_MAKER) == 1);
+                comment.setHunter(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_HUNTER) == 1);
+                comment.setLiveGuest(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_LIVE_GUEST) == 1);
+                comment.setChildSpaces(childSpaces);
+                comments.add(comment);
+
+                getCommentsForPost(postId, comment.getCommentId(), comments, comment.getChildSpaces() + 1);
+            }
+        }
+        closeCursor(cursor);
+
+        return comments;
+    }
+
+    public List<InstallLink> getInstallLinksForPost(int postId) {
+        Cursor installLinksCursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS,
+                        null,
+                        PredatorContract.InstallLinksEntry.COLUMN_POST_ID + " = " + postId,
+                        null,
+                        null);
+
+        List<InstallLink> installLinks = new ArrayList<>();
+        if (installLinksCursor != null && installLinksCursor.getCount() != 0) {
+            installLinks = PredatorDbValuesHelper.getInstallLinksFromCursor(installLinksCursor);
+        }
+        closeCursor(installLinksCursor);
+
+        return installLinks;
+    }
+
+    public void deleteMediaForPost(int postId) {
+        mContentResolver.delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
+                        PredatorContract.MediaEntry.COLUMN_POST_ID + " = " + postId,
+                        null);
+    }
+
+    public void deleteCommentsForPost(int postId) {
+        mContentResolver.delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
+                        PredatorContract.CommentsEntry.COLUMN_POST_ID + " = " + postId,
+                        null);
+    }
+
+    public void deleteInstallLinksForPost(int postId) {
+        mContentResolver.delete(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_DELETE,
+                        PredatorContract.InstallLinksEntry.COLUMN_POST_ID + " = " + postId,
+                        null);
     }
 
     public void deleteAllPosts() {
@@ -110,5 +325,26 @@ public class PredatorDatabase {
         mContentResolver.delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
                 null,
                 null);
+    }
+
+    /**
+     * This method closes the cursor.
+     *
+     * @param cursor    Cursor to be closed.
+     * @return
+     * True, if closed successfully, otherwise false.
+     */
+    private boolean closeCursor(Cursor cursor) {
+        if (cursor == null) {
+            Logger.e(TAG, "closeCursor: Unable to close cursor as it is null");
+            return false;
+        }
+
+        if (cursor.isClosed()) {
+            return true;
+        }
+
+        cursor.close();
+        return true;
     }
 }
