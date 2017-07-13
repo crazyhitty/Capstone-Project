@@ -30,6 +30,8 @@ import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
@@ -76,15 +78,10 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter<List<Collection>> emitter) throws Exception {
                 // Retrieve the results from the database.
-                Cursor cursor = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
-                                null,
-                                null,
-                                null,
-                                null);
-                if (cursor != null && cursor.getCount() != 0) {
-                    emitter.onNext(getCollectionsFromCursor(cursor));
-                    cursor.close();
+                List<Collection> collections = PredatorDatabase.getInstance()
+                        .getCollections();
+                if (collections != null && !collections.isEmpty()) {
+                    emitter.onNext(collections);
                 } else {
                     emitter.onError(new CollectionsUnavailableException());
                 }
@@ -123,38 +120,21 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                     public List<Collection> apply(CollectionsData collectionsData) throws Exception {
                         if (clearPrevious) {
                             // Clear previous collections from database.
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
-                                            null,
-                                            null);
+                            PredatorDatabase.getInstance()
+                                    .deleteAllCollections();
 
                             // Clear posts currently available for collections from database.
-                            MainApplication.getContentResolverInstance()
-                                    .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                                            PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
-                                                    PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
-                                            null);
+                            PredatorDatabase.getInstance()
+                                    .deletePostsForCollections();
                         }
 
                         // Add content to the database.
-                        MainApplication.getContentResolverInstance()
-                                .bulkInsert(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_ADD,
-                                        getBulkContentValuesForCollections(collectionsData.getCollections()));
+                        PredatorDatabase.getInstance()
+                                .insertCollections(PredatorDbValuesHelper.getBulkContentValuesForCollections(collectionsData.getCollections()));
 
                         // Retrieve the results from the database.
-                        Cursor cursor = MainApplication.getContentResolverInstance()
-                                .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
-                                        null,
-                                        null,
-                                        null,
-                                        null);
-
-                        List<Collection> collections = null;
-                        if (cursor != null && cursor.getCount() != 0) {
-                            collections = getCollectionsFromCursor(cursor);
-                            cursor.close();
-                        }
-                        return collections;
+                        return PredatorDatabase.getInstance()
+                                .getCollections();
                     }
                 })
                 .flatMap(new Function<List<Collection>, ObservableSource<List<Collection>>>() {
@@ -210,62 +190,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     @Override
     public void unSubscribe() {
         mCompositeDisposable.clear();
-    }
-
-    private ContentValues[] getBulkContentValuesForCollections(List<CollectionsData.Collections> collections) {
-        ContentValues[] contentValuesArr = new ContentValues[collections.size()];
-
-        for (int i = 0; i < collections.size(); i++) {
-            CollectionsData.Collections collection = collections.get(i);
-
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID, collection.getId());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_NAME, collection.getName());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_TITLE, collection.getTitle());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_CREATED_AT, collection.getCreatedAt());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT, collection.getUpdatedAt());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT, collection.getFeaturedAt());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT, collection.getSubscriberCount());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID, collection.getCategoryId());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL, collection.getCollectionUrl());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS, collection.getPostsCount());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL, collection.getBackgroundImageUrl());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_NAME, collection.getUser().getName());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME, collection.getUser().getUsername());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_ID, collection.getUser().getId());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX, collection.getUser().getImageUrl().getValue100px());
-            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, collection.getUser().getImageUrl().getOriginal());
-            contentValuesArr[i] = contentValues;
-        }
-        return contentValuesArr;
-    }
-
-    private List<Collection> getCollectionsFromCursor(Cursor cursor) {
-        List<Collection> collections = new ArrayList<>();
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-
-            Collection collection = new Collection();
-            collection.setId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_ID));
-            collection.setCollectionId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID));
-            collection.setName(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_NAME));
-            collection.setTitle(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_TITLE));
-            collection.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_CREATED_AT));
-            collection.setUpdatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT));
-            collection.setFeaturedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT));
-            collection.setSubscriberCount(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT));
-            collection.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID));
-            collection.setCollectionUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL));
-            collection.setPostCounts(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS));
-            collection.setBackgroundImageUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL));
-            collection.setUsername(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_NAME));
-            collection.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME));
-            collection.setUserId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_ID));
-            collection.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX));
-            collection.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
-            collections.add(collection);
-        }
-        return collections;
     }
 
     public static class CollectionsUnavailableException extends Throwable {

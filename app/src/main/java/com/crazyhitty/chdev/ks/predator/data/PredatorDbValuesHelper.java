@@ -29,6 +29,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.Post;
@@ -36,6 +37,7 @@ import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
@@ -205,6 +207,34 @@ public class PredatorDbValuesHelper {
         return installLinks;
     }
 
+    public static List<Collection> getCollectionsFromCursor(Cursor cursor) {
+        List<Collection> collections = new ArrayList<>();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+
+            Collection collection = new Collection();
+            collection.setId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_ID));
+            collection.setCollectionId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID));
+            collection.setName(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_NAME));
+            collection.setTitle(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_TITLE));
+            collection.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_CREATED_AT));
+            collection.setUpdatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT));
+            collection.setFeaturedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT));
+            collection.setSubscriberCount(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT));
+            collection.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID));
+            collection.setCollectionUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL));
+            collection.setPostCounts(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS));
+            collection.setBackgroundImageUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL));
+            collection.setUsername(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_NAME));
+            collection.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME));
+            collection.setUserId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_ID));
+            collection.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX));
+            collection.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
+            collections.add(collection);
+        }
+        return collections;
+    }
+
     public static ContentValues getContentValuesForPosts(PostsData.Posts post) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
@@ -332,6 +362,33 @@ public class PredatorDbValuesHelper {
             contentValues.put(PredatorContract.InstallLinksEntry.COLUMN_IS_PRIMARY_LINK, installLink.isPrimaryLink() ? 1 : 0);
             contentValues.put(PredatorContract.InstallLinksEntry.COLUMN_REDIRECT_URL, installLink.getRedirectUrl());
             contentValues.put(PredatorContract.InstallLinksEntry.COLUMN_PLATFORM, installLink.getPlatform());
+            contentValuesArr[i] = contentValues;
+        }
+        return contentValuesArr;
+    }
+
+    public static ContentValues[] getBulkContentValuesForCollections(List<CollectionsData.Collections> collections) {
+        ContentValues[] contentValuesArr = new ContentValues[collections.size()];
+        for (int i = 0; i < collections.size(); i++) {
+            CollectionsData.Collections collection = collections.get(i);
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID, collection.getId());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_NAME, collection.getName());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_TITLE, collection.getTitle());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_CREATED_AT, collection.getCreatedAt());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT, collection.getUpdatedAt());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT, collection.getFeaturedAt());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT, collection.getSubscriberCount());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID, collection.getCategoryId());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL, collection.getCollectionUrl());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS, collection.getPostsCount());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL, collection.getBackgroundImageUrl());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_NAME, collection.getUser().getName());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME, collection.getUser().getUsername());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_ID, collection.getUser().getId());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX, collection.getUser().getImageUrl().getValue100px());
+            contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, collection.getUser().getImageUrl().getOriginal());
             contentValuesArr[i] = contentValues;
         }
         return contentValuesArr;

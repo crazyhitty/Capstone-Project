@@ -30,6 +30,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
@@ -103,6 +104,11 @@ public class PredatorDatabase {
                         bulkContentValues);
     }
 
+    public void insertCollections(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_ADD,
+                        bulkContentValues);
+    }
+
     public List<Post> getPosts() {
         Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
@@ -154,6 +160,23 @@ public class PredatorDatabase {
         closeCursor(cursorUsers);
 
         return users;
+    }
+
+    public List<Collection> getCollections() {
+        Cursor cursor = MainApplication.getContentResolverInstance()
+                .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
+                        null,
+                        null,
+                        null,
+                        null);
+
+        List<Collection> collections = new ArrayList<>();
+        if (cursor != null && cursor.getCount() != 0) {
+            collections = PredatorDbValuesHelper.getCollectionsFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return collections;
     }
 
     public List<User> getAllUsersForPost(int postId) {
@@ -321,6 +344,19 @@ public class PredatorDatabase {
         mContentResolver.delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
                 null,
                 null);
+    }
+
+    public void deleteAllCollections() {
+        mContentResolver.delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
+                        null,
+                        null);
+    }
+
+    public void deletePostsForCollections() {
+        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
+                                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
+                        null);
     }
 
     /**
