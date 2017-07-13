@@ -29,7 +29,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
@@ -163,8 +162,7 @@ public class PredatorDatabase {
     }
 
     public List<Collection> getCollections() {
-        Cursor cursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
+        Cursor cursor = mContentResolver.query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
                         null,
                         null,
                         null,
@@ -177,6 +175,39 @@ public class PredatorDatabase {
         closeCursor(cursor);
 
         return collections;
+    }
+
+    public Collection getCollectionDetails(int collectionId) {
+        Cursor cursor = mContentResolver.query(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS,
+                        null,
+                        PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID + "=" + collectionId,
+                        null,
+                        null);
+
+        Collection collection = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            collection = PredatorDbValuesHelper.getCollectionFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return collection;
+    }
+
+    public List<Post> getPostsForCollection(int collectionId) {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
+
+        List<Post> posts = new ArrayList<>();
+        if (cursor != null && cursor.getCount() != 0) {
+            posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return posts;
     }
 
     public List<User> getAllUsersForPost(int postId) {
@@ -356,6 +387,13 @@ public class PredatorDatabase {
         mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                         PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
                                 PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
+                        null);
+    }
+
+    public void deletePostsForCollection(int collectionId) {
+        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                        PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
                         null);
     }
 

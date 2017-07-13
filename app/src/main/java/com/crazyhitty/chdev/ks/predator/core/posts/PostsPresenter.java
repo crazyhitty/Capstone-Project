@@ -162,7 +162,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                         for (PostsData.Posts post : postsData.getPosts()) {
                             Logger.d(TAG, "post: " + post.getName());
                             PredatorDatabase.getInstance()
-                                    .insertPost(PredatorDbValuesHelper.getContentValuesForPosts(post));
+                                    .insertPost(PredatorDbValuesHelper.getContentValuesForPost(post));
 
                             // Add/update users.
                             PredatorDatabase.getInstance()

@@ -235,7 +235,32 @@ public class PredatorDbValuesHelper {
         return collections;
     }
 
-    public static ContentValues getContentValuesForPosts(PostsData.Posts post) {
+    public static Collection getCollectionFromCursor(Cursor cursor) {
+        cursor.moveToFirst();
+
+        Collection collection = new Collection();
+        collection.setId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_ID));
+        collection.setCollectionId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_ID));
+        collection.setName(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_NAME));
+        collection.setTitle(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_TITLE));
+        collection.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_CREATED_AT));
+        collection.setUpdatedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_UPDATED_AT));
+        collection.setFeaturedAt(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_FEATURED_AT));
+        collection.setSubscriberCount(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_SUBSCRIBER_COUNT));
+        collection.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_CATEGORY_ID));
+        collection.setCollectionUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_COLLECTION_URL));
+        collection.setPostCounts(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_POST_COUNTS));
+        collection.setBackgroundImageUrl(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_BACKGROUND_IMAGE_URL));
+        collection.setUsername(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_NAME));
+        collection.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_USERNAME));
+        collection.setUserId(CursorUtils.getInt(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_ID));
+        collection.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_100PX));
+        collection.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
+
+        return collection;
+    }
+
+    public static ContentValues getContentValuesForPost(PostsData.Posts post) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, post.getCategoryId());
@@ -258,6 +283,33 @@ public class PredatorDbValuesHelper {
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, post.getUser().getImageUrl().getValue100px());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
         contentValues.put(PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD, 1);
+        return contentValues;
+    }
+
+    public static ContentValues getContentValuesForPost(int collectionId, PostsData.Posts post) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_COLLECTION_ID, collectionId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, post.getCategoryId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, post.getDay());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, post.getName());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, post.getTagline());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, post.getCommentsCount());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, post.getCreatedAt());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(post.getCreatedAt()));
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, post.getDiscussionUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, post.getRedirectUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, post.getVotesCount());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, post.getThumbnail().getImageUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, post.getThumbnail().getOriginalImageUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, post.getScreenshotUrl().getValue300px());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, post.getScreenshotUrl().getValue850px());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, post.getUser().getName());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, post.getUser().getUsername());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, post.getUser().getId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, post.getUser().getImageUrl().getValue100px());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, post.getUser().getImageUrl().getOriginal());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION, 1);
         return contentValues;
     }
 
