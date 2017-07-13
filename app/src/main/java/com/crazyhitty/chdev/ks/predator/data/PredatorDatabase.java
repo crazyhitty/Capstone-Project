@@ -104,8 +104,7 @@ public class PredatorDatabase {
     }
 
     public List<Post> getPosts() {
-        Cursor cursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
                         PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                         null,
@@ -116,8 +115,7 @@ public class PredatorDatabase {
     }
 
     public PostDetails getPostDetails(int postId) {
-        Cursor cursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
                         PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
                         null,
@@ -228,8 +226,7 @@ public class PredatorDatabase {
             sortOrder = PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS + " ASC";
         }
 
-        Cursor cursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS,
+        Cursor cursor = mContentResolver.query(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS,
                         null,
                         PredatorContract.CommentsEntry.COLUMN_POST_ID + " = " + postId + " AND " +
                                 PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID + " = " + parentCommentId,
@@ -269,8 +266,7 @@ public class PredatorDatabase {
     }
 
     public List<InstallLink> getInstallLinksForPost(int postId) {
-        Cursor installLinksCursor = MainApplication.getContentResolverInstance()
-                .query(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS,
+        Cursor installLinksCursor = mContentResolver.query(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS,
                         null,
                         PredatorContract.InstallLinksEntry.COLUMN_POST_ID + " = " + postId,
                         null,
