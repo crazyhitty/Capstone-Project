@@ -29,8 +29,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.core.userProfile.UserProfileContract;
 import com.crazyhitty.chdev.ks.predator.core.userProfile.UserProfilePresenter;
+import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
@@ -112,6 +114,11 @@ public class PredatorDatabase {
 
     public void insertCollections(ContentValues[] bulkContentValues) {
         mContentResolver.bulkInsert(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_ADD,
+                        bulkContentValues);
+    }
+
+    public void insertCategories(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
                         bulkContentValues);
     }
 
@@ -358,6 +365,22 @@ public class PredatorDatabase {
         return categoryName;
     }
 
+    public List<Category> getCategories() {
+        Cursor cursor = mContentResolver.query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
+                        null,
+                        null,
+                        null,
+                        null);
+
+        List<Category> categories = new ArrayList<Category>();
+        if (cursor != null && cursor.getCount() != 0) {
+            categories = PredatorDbValuesHelper.getCategoriesFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return categories;
+    }
+
     public List<Media> getMediaForPost(int postId) {
         // Query the media available.
         Cursor mediaCursor = mContentResolver.query(PredatorContract.MediaEntry.CONTENT_URI_MEDIA,
@@ -486,6 +509,12 @@ public class PredatorDatabase {
         mContentResolver.delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
                         null,
                         null);
+    }
+
+    public void deleteAllCategories() {
+        mContentResolver.delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE,
+                null,
+                null);
     }
 
     public void deletePostsForCollections() {

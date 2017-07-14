@@ -29,6 +29,7 @@ import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
+import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
@@ -37,6 +38,7 @@ import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CategoriesData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
@@ -303,6 +305,26 @@ public class PredatorDbValuesHelper {
         collection.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
 
         return collection;
+    }
+
+    public static List<Category> getCategoriesFromCursor(Cursor cursor) {
+        List<Category> categories = new ArrayList<>();
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            Category category = new Category();
+
+            category.setId(CursorUtils.getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID));
+            category.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID));
+            category.setSlug(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_SLUG));
+            category.setName(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME));
+            category.setColor(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_COLOR));
+            category.setItemName(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_ITEM_NAME));
+
+            categories.add(category);
+        }
+
+        return categories;
     }
 
     public static ContentValues getContentValuesForPost(PostsData.Posts post) {
@@ -666,6 +688,24 @@ public class PredatorDbValuesHelper {
             contentValues.put(PredatorContract.CollectionsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, collection.getUser().getImageUrl().getOriginal());
             contentValuesArr[i] = contentValues;
         }
+        return contentValuesArr;
+    }
+
+    public static ContentValues[] getBulkContentValuesForCategories(List<CategoriesData.Categories> categories) {
+        ContentValues[] contentValuesArr = new ContentValues[categories.size()];
+        for (int i = 0; i < categories.size(); i++) {
+            CategoriesData.Categories category = categories.get(i);
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID, category.getId());
+            contentValues.put(PredatorContract.CategoryEntry.COLUMN_SLUG, category.getSlug());
+            contentValues.put(PredatorContract.CategoryEntry.COLUMN_NAME, category.getName());
+            contentValues.put(PredatorContract.CategoryEntry.COLUMN_COLOR, category.getColor());
+            contentValues.put(PredatorContract.CategoryEntry.COLUMN_ITEM_NAME, category.getItemName());
+
+            contentValuesArr[i] = contentValues;
+        }
+
         return contentValuesArr;
     }
 }
