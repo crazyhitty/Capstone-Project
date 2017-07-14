@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolverInstance;
 import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
 
 /**
@@ -151,8 +150,7 @@ public class PredatorDatabase {
     }
 
     public List<Post> getSubmittedPosts(String huntedPostIdsQuery) {
-        Cursor cursorSubmittedPosts = getContentResolverInstance()
-                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+        Cursor cursorSubmittedPosts = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
                         PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + huntedPostIdsQuery + ")",
                         null,
@@ -258,8 +256,7 @@ public class PredatorDatabase {
     }
 
     public List<User> getFollowingUsers(String followingUserIdsQuery) {
-        Cursor cursorFollowing = getContentResolverInstance()
-                .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+        Cursor cursorFollowing = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                         null,
                         PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + followingUserIdsQuery + ")",
                         null,

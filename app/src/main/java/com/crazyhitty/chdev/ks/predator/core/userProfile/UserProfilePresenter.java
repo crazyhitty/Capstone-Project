@@ -54,9 +54,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolverInstance;
-import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
-
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com

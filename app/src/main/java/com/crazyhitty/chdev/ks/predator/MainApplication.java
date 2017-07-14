@@ -51,16 +51,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
 
-    private static WeakReference<ContentResolver> sContentResolverWeakReference;
-
     static {
         // Supporting vector drawable resources on pre lollipop devices.
         // Source: http://stackoverflow.com/a/38012842
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
-
-    public static ContentResolver getContentResolverInstance() {
-        return sContentResolverWeakReference.get();
     }
 
     @Override
@@ -69,9 +63,6 @@ public class MainApplication extends Application {
 
         // Initialize stetho.
         Stetho.initializeWithDefaults(getApplicationContext());
-
-        // Create a static reference to content resolver so that it can be accessed anywhere.
-        sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
 
         // Initialize Predator Database.
         PredatorDatabase.init(getApplicationContext());
