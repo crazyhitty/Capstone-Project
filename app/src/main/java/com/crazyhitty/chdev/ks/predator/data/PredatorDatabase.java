@@ -29,6 +29,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.crazyhitty.chdev.ks.predator.core.userProfile.UserProfileContract;
+import com.crazyhitty.chdev.ks.predator.core.userProfile.UserProfilePresenter;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.crazyhitty.chdev.ks.predator.MainApplication.getContentResolverInstance;
 import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
 
 /**
@@ -78,6 +81,10 @@ public class PredatorDatabase {
 
     public void insertPost(ContentValues contentValues) {
         mContentResolver.insert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD, contentValues);
+    }
+
+    public void insertPosts(ContentValues[] bulkContentValues) {
+        mContentResolver.bulkInsert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD, bulkContentValues);
     }
 
     public void insertUser(ContentValues contentValues) {
@@ -117,6 +124,55 @@ public class PredatorDatabase {
         List<Post> posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
         closeCursor(cursor);
         return posts;
+    }
+
+    public List<Post> getVotedPosts(String votedPostIdsQuery) {
+        Cursor cursorVotedPosts = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + votedPostIdsQuery + ")",
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+
+        List<Post> votedPosts = new ArrayList<>();
+        if (cursorVotedPosts != null && cursorVotedPosts.getCount() != 0) {
+            votedPosts = PredatorDbValuesHelper.getPostsFromCursor(cursorVotedPosts);
+        }
+        closeCursor(cursorVotedPosts);
+
+        return votedPosts;
+    }
+
+    public List<Post> getSubmittedPosts(String huntedPostIdsQuery) {
+        Cursor cursorSubmittedPosts = getContentResolverInstance()
+                .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + huntedPostIdsQuery + ")",
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+
+        List<Post> submittedPosts = new ArrayList<>();
+        if (cursorSubmittedPosts != null && cursorSubmittedPosts.getCount() != 0) {
+            submittedPosts = PredatorDbValuesHelper.getPostsFromCursor(cursorSubmittedPosts);
+        }
+        closeCursor(cursorSubmittedPosts);
+
+        return submittedPosts;
+    }
+
+    public List<Post> getMadePosts(String madePostIdsQuery) {
+        Cursor cursorMadePosts = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + madePostIdsQuery + ")",
+                        null,
+                        PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
+
+        List<Post> madePosts = new ArrayList<>();
+        if (cursorMadePosts != null && cursorMadePosts.getCount() != 0) {
+            madePosts = PredatorDbValuesHelper.getPostsFromCursor(cursorMadePosts);
+        }
+        closeCursor(cursorMadePosts);
+
+        return madePosts;
     }
 
     public PostDetails getPostDetails(int postId) {
@@ -159,6 +215,55 @@ public class PredatorDatabase {
         closeCursor(cursorUsers);
 
         return users;
+    }
+
+    public User getUser(int userId) {
+        Cursor cursorUser = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                        null,
+                        PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + userId,
+                        null,
+                        null);
+
+        User user = null;
+        if (cursorUser != null && cursorUser.getCount() != 0) {
+            user = PredatorDbValuesHelper.getUserFromCursor(cursorUser);
+        }
+        closeCursor(cursorUser);
+
+        return user;
+    }
+
+    public List<User> getFollowerUsers(String followerUserIdsQuery) {
+        Cursor cursorFollowers = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                        null,
+                        PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + followerUserIdsQuery + ")",
+                        null,
+                        null);
+
+        List<User> followerUsers = new ArrayList<>();
+        if (cursorFollowers != null && cursorFollowers.getCount() != 0) {
+            followerUsers = PredatorDbValuesHelper.getUsersFromCursor(cursorFollowers);
+        }
+        closeCursor(cursorFollowers);
+
+        return followerUsers;
+    }
+
+    public List<User> getFollowingUsers(String followingUserIdsQuery) {
+        Cursor cursorFollowing = getContentResolverInstance()
+                .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                        null,
+                        PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + followingUserIdsQuery + ")",
+                        null,
+                        null);
+
+        List<User> followingUsers = new ArrayList<>();
+        if (cursorFollowing != null && cursorFollowing.getCount() != 0) {
+            followingUsers = PredatorDbValuesHelper.getUsersFromCursor(cursorFollowing);
+        }
+        closeCursor(cursorFollowing);
+
+        return followingUsers;
     }
 
     public List<Collection> getCollections() {

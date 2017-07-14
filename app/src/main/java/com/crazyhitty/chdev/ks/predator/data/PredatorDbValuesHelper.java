@@ -41,6 +41,7 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CollectionsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +162,50 @@ public class PredatorDbValuesHelper {
         }
 
         return users;
+    }
+
+    public static List<User> getUsersFromCursor(Cursor cursor) {
+        List<User> users = new ArrayList<>();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+
+            User user = new User();
+            user.setId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_ID));
+            user.setUserId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_USER_ID));
+            user.setName(getString(cursor, PredatorContract.UsersEntry.COLUMN_NAME));
+            user.setHeadline(getString(cursor, PredatorContract.UsersEntry.COLUMN_HEADLINE));
+            user.setUsername(getString(cursor, PredatorContract.UsersEntry.COLUMN_USERNAME));
+            user.setThumbnail(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+            user.setImage(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+
+            users.add(user);
+        }
+
+        cursor.close();
+
+        return users;
+    }
+
+    public static User getUserFromCursor(Cursor cursor) {
+        cursor.moveToFirst();
+
+        User user = new User();
+        user.setId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_ID));
+        user.setUserId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_USER_ID));
+        user.setName(getString(cursor, PredatorContract.UsersEntry.COLUMN_NAME));
+        user.setUsername(getString(cursor, PredatorContract.UsersEntry.COLUMN_USERNAME));
+        user.setHeadline(getString(cursor, PredatorContract.UsersEntry.COLUMN_HEADLINE));
+        user.setWebsiteUrl(getString(cursor, PredatorContract.UsersEntry.COLUMN_WEBSITE_URL));
+        user.setThumbnail(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
+        user.setImage(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
+        user.setHuntedPostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS));
+        user.setMadePostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS));
+        user.setVotedPostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS));
+        user.setFollowerUserIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS));
+        user.setFollowingUserIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS));
+
+        return user;
     }
 
     public static List<Media> getMediaFromCursor(Cursor mediaCursor) {
@@ -313,6 +358,144 @@ public class PredatorDbValuesHelper {
         return contentValues;
     }
 
+    public static ContentValues[] getBulkContentValuesForPostUsers(UserProfileData userProfileData) {
+        List<ContentValues> contentValues = new ArrayList<ContentValues>();
+
+        for (UserProfileData.User.Votes vote : userProfileData.getUser().getVotes()) {
+            contentValues.add(getContentValuesForHunterUser(vote.getPost().getId(), vote.getPost().getUser()));
+            for (PostsData.Posts.Makers maker : vote.getPost().getMakers()) {
+                contentValues.add(getContentValuesForMakerUser(vote.getPost().getId(), maker));
+            }
+        }
+
+        for (PostsData.Posts post : userProfileData.getUser().getPosts()) {
+            contentValues.add(getContentValuesForHunterUser(post.getId(), post.getUser()));
+            for (PostsData.Posts.Makers maker : post.getMakers()) {
+                contentValues.add(getContentValuesForMakerUser(post.getId(), maker));
+            }
+        }
+
+        for (PostsData.Posts post : userProfileData.getUser().getMakerOf()) {
+            contentValues.add(getContentValuesForHunterUser(post.getId(), post.getUser()));
+            for (PostsData.Posts.Makers maker : post.getMakers()) {
+                contentValues.add(getContentValuesForMakerUser(post.getId(), maker));
+            }
+        }
+
+        return contentValues.toArray(new ContentValues[contentValues.size()]);
+    }
+
+    public static ContentValues[] getBulkContentValuesForPosts(UserProfileData userProfileData) {
+        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
+
+        if (userProfileData.getUser().getVotes() != null) {
+            for (UserProfileData.User.Votes vote : userProfileData.getUser().getVotes()) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, vote.getPost().getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, vote.getPost().getCategoryId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, vote.getPost().getDay());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, vote.getPost().getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, vote.getPost().getTagline());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, vote.getPost().getCommentsCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, vote.getPost().getCreatedAt());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(vote.getPost().getCreatedAt()));
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, vote.getPost().getDiscussionUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, vote.getPost().getRedirectUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, vote.getPost().getVotesCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, vote.getPost().getThumbnail().getImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, vote.getPost().getThumbnail().getOriginalImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, vote.getPost().getScreenshotUrl().getValue300px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, vote.getPost().getScreenshotUrl().getValue850px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, vote.getPost().getUser().getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, vote.getPost().getUser().getUsername());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, vote.getPost().getUser().getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, vote.getPost().getUser().getImageUrl().getValue100px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, vote.getPost().getUser().getImageUrl().getOriginal());
+
+                contentValuesList.add(contentValues);
+            }
+        }
+
+        if (userProfileData.getUser().getMakerOf() != null) {
+            for (PostsData.Posts makerOf : userProfileData.getUser().getMakerOf()) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, makerOf.getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, makerOf.getCategoryId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, makerOf.getDay());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, makerOf.getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, makerOf.getTagline());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, makerOf.getCommentsCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, makerOf.getCreatedAt());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(makerOf.getCreatedAt()));
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, makerOf.getDiscussionUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, makerOf.getRedirectUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, makerOf.getVotesCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, makerOf.getThumbnail().getImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, makerOf.getThumbnail().getOriginalImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, makerOf.getScreenshotUrl().getValue300px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, makerOf.getScreenshotUrl().getValue850px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, makerOf.getUser().getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, makerOf.getUser().getUsername());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, makerOf.getUser().getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, makerOf.getUser().getImageUrl().getValue100px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, makerOf.getUser().getImageUrl().getOriginal());
+
+                contentValuesList.add(contentValues);
+            }
+        }
+
+        if (userProfileData.getUser().getPosts() != null) {
+            for (PostsData.Posts submitted : userProfileData.getUser().getPosts()) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, submitted.getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, submitted.getCategoryId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, submitted.getDay());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, submitted.getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, submitted.getTagline());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, submitted.getCommentsCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, submitted.getCreatedAt());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(submitted.getCreatedAt()));
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, submitted.getDiscussionUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, submitted.getRedirectUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, submitted.getVotesCount());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, submitted.getThumbnail().getImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, submitted.getThumbnail().getOriginalImageUrl());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, submitted.getScreenshotUrl().getValue300px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, submitted.getScreenshotUrl().getValue850px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, submitted.getUser().getName());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, submitted.getUser().getUsername());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, submitted.getUser().getId());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, submitted.getUser().getImageUrl().getValue100px());
+                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, submitted.getUser().getImageUrl().getOriginal());
+
+                contentValuesList.add(contentValues);
+            }
+        }
+
+        return contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
+    }
+
+    public static ContentValues getContentValuesForCurrentUser(UserProfileData userProfileData) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, userProfileData.getUser().getId());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, userProfileData.getUser().getCreatedAt());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, userProfileData.getUser().getName());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, userProfileData.getUser().getUsername());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, userProfileData.getUser().getHeadline());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, userProfileData.getUser().getWebsiteUrl());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, userProfileData.getUser().getImageUrl().getValue100px());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, userProfileData.getUser().getImageUrl().getOriginal());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, userProfileData.getUser().getHuntedPostsIds());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, userProfileData.getUser().getMadePostsIds());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, userProfileData.getUser().getVotedPostsIds());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS, userProfileData.getUser().getFollowerUserIds());
+        contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS, userProfileData.getUser().getFollowingUserIds());
+        return contentValues;
+    }
+
     public static ContentValues getContentValuesForHunterUser(int postId, PostsData.Posts.User user) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, user.getId());
@@ -338,6 +521,46 @@ public class PredatorDbValuesHelper {
         contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, maker.getImageUrlMaker().getOriginal());
         contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, postId);
         return contentValues;
+    }
+
+    public static ContentValues[] getBulkContentValuesForFollowingFollowerUsers(UserProfileData userProfileData) {
+        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
+
+        if (userProfileData.getUser().getFollowers() != null) {
+            for (UserProfileData.User.Followers follower : userProfileData.getUser().getFollowers()) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, follower.getId());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, follower.getCreatedAt());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, follower.getName());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, follower.getUsername());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, follower.getHeadline());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, follower.getWebsiteUrl());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, follower.getImageUrl().getValue100px());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, follower.getImageUrl().getOriginal());
+
+                contentValuesList.add(contentValues);
+            }
+        }
+
+        if (userProfileData.getUser().getFollowings() != null) {
+            for (UserProfileData.User.Followings following : userProfileData.getUser().getFollowings()) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, following.getId());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, following.getCreatedAt());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, following.getName());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, following.getUsername());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, following.getHeadline());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, following.getWebsiteUrl());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, following.getImageUrl().getValue100px());
+                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, following.getImageUrl().getOriginal());
+
+                contentValuesList.add(contentValues);
+            }
+        }
+
+        return contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
     }
 
     public static ContentValues[] getBulkContentValuesForUsers(int postId, List<PostDetailsData.PostDetails.Votes> votes) {

@@ -29,6 +29,8 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -82,20 +84,16 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter<UserProfileDataType> emitter) throws Exception {
                 // Fetch current user.
-                Cursor cursorCurrentUser = getContentResolverInstance()
-                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                null,
-                                PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + userId,
-                                null,
-                                null);
                 List<User> currentUser = new ArrayList<User>();
-                if (cursorCurrentUser != null && cursorCurrentUser.getCount() != 0) {
-                    currentUser.add(getCurrentUserFromCursor(cursorCurrentUser));
+                User user = PredatorDatabase.getInstance()
+                        .getUser(userId);
+                if (user != null) {
+                    currentUser.add(user);
                 }
 
                 UserProfileDataType currentUserData = new UserProfileDataType();
                 currentUserData.setUsers(currentUser);
-                currentUserData.setUnAvailable(cursorCurrentUser == null || cursorCurrentUser.getCount() == 0);
+                currentUserData.setUnAvailable(user == null);
                 currentUserData.setUserType(UserProfileContract.USER_TYPE.CURRENT);
                 emitter.onNext(currentUserData);
 
@@ -107,14 +105,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 }
 
                 // Fetch the voted posts of this user.
-                Cursor cursorVotedPosts = getContentResolverInstance()
-                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getVotedPostIdsQuery() + ")",
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                if (cursorVotedPosts != null && cursorVotedPosts.getCount() != 0) {
-                    List<Post> votedPosts = getPostsFromCursor(cursorVotedPosts);
+                List<Post> votedPosts = PredatorDatabase.getInstance()
+                        .getVotedPosts(currentUser.get(0).getVotedPostIdsQuery());
+                if (votedPosts != null && !votedPosts.isEmpty()) {
                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                     currentUserPostsData.setPosts(votedPosts);
                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.UPVOTES);
@@ -122,14 +115,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 }
 
                 // Fetch the submitted posts of this user.
-                Cursor cursorSubmittedPosts = getContentResolverInstance()
-                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getHuntedPostIdsQuery() + ")",
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                if (cursorSubmittedPosts != null && cursorSubmittedPosts.getCount() != 0) {
-                    List<Post> submittedPosts = getPostsFromCursor(cursorSubmittedPosts);
+                List<Post> submittedPosts = PredatorDatabase.getInstance()
+                        .getSubmittedPosts(currentUser.get(0).getHuntedPostIdsQuery());
+                if (submittedPosts != null && !submittedPosts.isEmpty()) {
                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                     currentUserPostsData.setPosts(submittedPosts);
                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.SUBMITTED);
@@ -137,14 +125,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 }
 
                 // Fetch the posts which this user made (maker).
-                Cursor cursorMadePosts = getContentResolverInstance()
-                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getMadePostIdsQuery() + ")",
-                                null,
-                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                if (cursorMadePosts != null && cursorMadePosts.getCount() != 0) {
-                    List<Post> madePosts = getPostsFromCursor(cursorMadePosts);
+                List<Post> madePosts = PredatorDatabase.getInstance()
+                        .getMadePosts(currentUser.get(0).getMadePostIdsQuery());
+                if (madePosts != null && !madePosts.isEmpty()) {
                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                     currentUserPostsData.setPosts(madePosts);
                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.MADE);
@@ -152,14 +135,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 }
 
                 // Fetch followers users.
-                Cursor cursorFollowers = getContentResolverInstance()
-                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                null,
-                                PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + currentUser.get(0).getFollowerUserIdsQuery() + ")",
-                                null,
-                                null);
-                if (cursorFollowers != null && cursorFollowers.getCount() != 0) {
-                    List<User> followerUsers = getUsersFromCursor(cursorFollowers);
+                List<User> followerUsers = PredatorDatabase.getInstance()
+                        .getFollowerUsers(currentUser.get(0).getFollowerUserIdsQuery());
+                if (followerUsers != null && !followerUsers.isEmpty()) {
                     UserProfileDataType followerUsersData = new UserProfileDataType();
                     followerUsersData.setUsers(followerUsers);
                     followerUsersData.setUserType(UserProfileContract.USER_TYPE.FOLLOWERS);
@@ -167,14 +145,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 }
 
                 // Fetch following users.
-                Cursor cursorFollowing = getContentResolverInstance()
-                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                null,
-                                PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + currentUser.get(0).getFollowingUserIdsQuery() + ")",
-                                null,
-                                null);
-                if (cursorFollowing != null && cursorFollowing.getCount() != 0) {
-                    List<User> followingUsers = getUsersFromCursor(cursorFollowing);
+                List<User> followingUsers = PredatorDatabase.getInstance()
+                        .getFollowingUsers(currentUser.get(0).getFollowingUserIdsQuery());
+                if (followerUsers != null && !followerUsers.isEmpty()) {
                     UserProfileDataType followingUsersData = new UserProfileDataType();
                     followingUsersData.setUsers(followingUsers);
                     followingUsersData.setUserType(UserProfileContract.USER_TYPE.FOLLOWING);
@@ -252,34 +225,23 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                             @Override
                             public void subscribe(ObservableEmitter<UserProfileDataType> emitter) throws Exception {
                                 // Save current user in db.
-                                getContentResolverInstance()
-                                        .insert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
-                                                getContentValuesForCurrentUser(userProfileData));
-
+                                PredatorDatabase.getInstance()
+                                        .insertUser(PredatorDbValuesHelper.getContentValuesForCurrentUser(userProfileData));
                                 // Save other users in db (followers and followings).
-                                getContentResolverInstance()
-                                        .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
-                                                getBulkContentValuesForFollowingFollowerUsers(userProfileData));
-
+                                PredatorDatabase.getInstance()
+                                        .insertUsers(PredatorDbValuesHelper.getBulkContentValuesForFollowingFollowerUsers(userProfileData));
                                 // Save the posts in db.
-                                getContentResolverInstance()
-                                        .bulkInsert(PredatorContract.PostsEntry.CONTENT_URI_POSTS_ADD,
-                                                getBulkContentValuesForPosts(userProfileData));
-
+                                PredatorDatabase.getInstance()
+                                        .insertPosts(PredatorDbValuesHelper.getBulkContentValuesForPosts(userProfileData));
                                 // Save the users associated with above posts.
-                                getContentResolverInstance()
-                                        .bulkInsert(PredatorContract.UsersEntry.CONTENT_URI_USERS_ADD,
-                                                getBulkContentValuesForPostUsers(userProfileData));
+                                PredatorDatabase.getInstance()
+                                        .insertUsers(PredatorDbValuesHelper.getBulkContentValuesForPostUsers(userProfileData));
 
                                 // Fetch current user.
-                                Cursor cursorCurrentUser = getContentResolverInstance()
-                                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                                null,
-                                                PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + userId,
-                                                null,
-                                                null);
+                                User user = PredatorDatabase.getInstance()
+                                        .getUser(userId);
                                 List<User> currentUser = new ArrayList<User>();
-                                currentUser.add(getCurrentUserFromCursor(cursorCurrentUser));
+                                currentUser.add(user);
 
                                 UserProfileDataType currentUserData = new UserProfileDataType();
                                 currentUserData.setUsers(currentUser);
@@ -287,14 +249,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 emitter.onNext(currentUserData);
 
                                 // Fetch the voted posts of this user.
-                                Cursor cursorVotedPosts = getContentResolverInstance()
-                                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getVotedPostIdsQuery() + ")",
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                                if (cursorVotedPosts != null && cursorVotedPosts.getCount() != 0) {
-                                    List<Post> votedPosts = getPostsFromCursor(cursorVotedPosts);
+                                List<Post> votedPosts = PredatorDatabase.getInstance()
+                                        .getVotedPosts(currentUser.get(0).getVotedPostIdsQuery());
+                                if (votedPosts != null && !votedPosts.isEmpty()) {
                                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                                     currentUserPostsData.setPosts(votedPosts);
                                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.UPVOTES);
@@ -307,14 +264,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 }
 
                                 // Fetch the submitted posts of this user.
-                                Cursor cursorSubmittedPosts = getContentResolverInstance()
-                                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getHuntedPostIdsQuery() + ")",
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                                if (cursorSubmittedPosts != null && cursorSubmittedPosts.getCount() != 0) {
-                                    List<Post> submittedPosts = getPostsFromCursor(cursorSubmittedPosts);
+                                List<Post> submittedPosts = PredatorDatabase.getInstance()
+                                        .getSubmittedPosts(currentUser.get(0).getHuntedPostIdsQuery());
+                                if (submittedPosts != null && !submittedPosts.isEmpty()) {
                                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                                     currentUserPostsData.setPosts(submittedPosts);
                                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.SUBMITTED);
@@ -327,14 +279,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 }
 
                                 // Fetch the posts which this user made (maker).
-                                Cursor cursorMadePosts = getContentResolverInstance()
-                                        .query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_POST_ID + " in (" + currentUser.get(0).getMadePostIdsQuery() + ")",
-                                                null,
-                                                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-                                if (cursorMadePosts != null && cursorMadePosts.getCount() != 0) {
-                                    List<Post> madePosts = getPostsFromCursor(cursorMadePosts);
+                                List<Post> madePosts = PredatorDatabase.getInstance()
+                                        .getMadePosts(currentUser.get(0).getMadePostIdsQuery());
+                                if (madePosts != null && !madePosts.isEmpty()) {
                                     UserProfileDataType currentUserPostsData = new UserProfileDataType();
                                     currentUserPostsData.setPosts(madePosts);
                                     currentUserPostsData.setPostType(UserProfileContract.POST_TYPE.MADE);
@@ -347,14 +294,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 }
 
                                 // Fetch followers users.
-                                Cursor cursorFollowers = getContentResolverInstance()
-                                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                                null,
-                                                PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + currentUser.get(0).getFollowerUserIdsQuery() + ")",
-                                                null,
-                                                null);
-                                if (cursorFollowers != null && cursorFollowers.getCount() != 0) {
-                                    List<User> followerUsers = getUsersFromCursor(cursorFollowers);
+                                List<User> followerUsers = PredatorDatabase.getInstance()
+                                        .getFollowerUsers(currentUser.get(0).getFollowerUserIdsQuery());
+                                if (followerUsers != null && !followerUsers.isEmpty()) {
                                     UserProfileDataType followerUsersData = new UserProfileDataType();
                                     followerUsersData.setUsers(followerUsers);
                                     followerUsersData.setUserType(UserProfileContract.USER_TYPE.FOLLOWERS);
@@ -367,14 +309,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                                 }
 
                                 // Fetch following users.
-                                Cursor cursorFollowing = getContentResolverInstance()
-                                        .query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
-                                                null,
-                                                PredatorContract.UsersEntry.COLUMN_USER_ID + " in (" + currentUser.get(0).getFollowingUserIdsQuery() + ")",
-                                                null,
-                                                null);
-                                if (cursorFollowing != null && cursorFollowing.getCount() != 0) {
-                                    List<User> followingUsers = getUsersFromCursor(cursorFollowing);
+                                List<User> followingUsers =PredatorDatabase.getInstance()
+                                        .getFollowingUsers(currentUser.get(0).getFollowingUserIdsQuery());
+                                if (followingUsers != null && !followingUsers.isEmpty()) {
                                     UserProfileDataType followingUsersData = new UserProfileDataType();
                                     followingUsersData.setUsers(followingUsers);
                                     followingUsersData.setUserType(UserProfileContract.USER_TYPE.FOLLOWING);
@@ -459,291 +396,6 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
     @Override
     public void unSubscribe() {
         mCompositeDisposable.clear();
-    }
-
-    private ContentValues[] getBulkContentValuesForPosts(UserProfileData userProfileData) {
-        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
-
-        if (userProfileData.getUser().getVotes() != null) {
-            for (UserProfileData.User.Votes vote : userProfileData.getUser().getVotes()) {
-                ContentValues contentValues = new ContentValues();
-
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, vote.getPost().getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, vote.getPost().getCategoryId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, vote.getPost().getDay());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, vote.getPost().getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, vote.getPost().getTagline());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, vote.getPost().getCommentsCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, vote.getPost().getCreatedAt());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(vote.getPost().getCreatedAt()));
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, vote.getPost().getDiscussionUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, vote.getPost().getRedirectUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, vote.getPost().getVotesCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, vote.getPost().getThumbnail().getImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, vote.getPost().getThumbnail().getOriginalImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, vote.getPost().getScreenshotUrl().getValue300px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, vote.getPost().getScreenshotUrl().getValue850px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, vote.getPost().getUser().getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, vote.getPost().getUser().getUsername());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, vote.getPost().getUser().getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, vote.getPost().getUser().getImageUrl().getValue100px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, vote.getPost().getUser().getImageUrl().getOriginal());
-
-                contentValuesList.add(contentValues);
-            }
-        }
-
-        if (userProfileData.getUser().getMakerOf() != null) {
-            for (PostsData.Posts makerOf : userProfileData.getUser().getMakerOf()) {
-                ContentValues contentValues = new ContentValues();
-
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, makerOf.getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, makerOf.getCategoryId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, makerOf.getDay());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, makerOf.getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, makerOf.getTagline());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, makerOf.getCommentsCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, makerOf.getCreatedAt());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(makerOf.getCreatedAt()));
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, makerOf.getDiscussionUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, makerOf.getRedirectUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, makerOf.getVotesCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, makerOf.getThumbnail().getImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, makerOf.getThumbnail().getOriginalImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, makerOf.getScreenshotUrl().getValue300px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, makerOf.getScreenshotUrl().getValue850px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, makerOf.getUser().getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, makerOf.getUser().getUsername());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, makerOf.getUser().getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, makerOf.getUser().getImageUrl().getValue100px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, makerOf.getUser().getImageUrl().getOriginal());
-
-                contentValuesList.add(contentValues);
-            }
-        }
-
-        if (userProfileData.getUser().getPosts() != null) {
-            for (PostsData.Posts submitted : userProfileData.getUser().getPosts()) {
-                ContentValues contentValues = new ContentValues();
-
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, submitted.getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, submitted.getCategoryId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, submitted.getDay());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, submitted.getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, submitted.getTagline());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT, submitted.getCommentsCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, submitted.getCreatedAt());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(submitted.getCreatedAt()));
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, submitted.getDiscussionUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, submitted.getRedirectUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, submitted.getVotesCount());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL, submitted.getThumbnail().getImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL, submitted.getThumbnail().getOriginalImageUrl());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX, submitted.getScreenshotUrl().getValue300px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX, submitted.getScreenshotUrl().getValue850px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_NAME, submitted.getUser().getName());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_USERNAME, submitted.getUser().getUsername());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_ID, submitted.getUser().getId());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX, submitted.getUser().getImageUrl().getValue100px());
-                contentValues.put(PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL, submitted.getUser().getImageUrl().getOriginal());
-
-                contentValuesList.add(contentValues);
-            }
-        }
-
-        return contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
-    }
-
-    private ContentValues getContentValuesForCurrentUser(UserProfileData userProfileData) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, userProfileData.getUser().getId());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, userProfileData.getUser().getCreatedAt());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, userProfileData.getUser().getName());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, userProfileData.getUser().getUsername());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, userProfileData.getUser().getHeadline());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, userProfileData.getUser().getWebsiteUrl());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, userProfileData.getUser().getImageUrl().getValue100px());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, userProfileData.getUser().getImageUrl().getOriginal());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, userProfileData.getUser().getHuntedPostsIds());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, userProfileData.getUser().getMadePostsIds());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS, userProfileData.getUser().getVotedPostsIds());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS, userProfileData.getUser().getFollowerUserIds());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS, userProfileData.getUser().getFollowingUserIds());
-        return contentValues;
-    }
-
-    private ContentValues[] getBulkContentValuesForPostUsers(UserProfileData userProfileData) {
-        List<ContentValues> contentValues = new ArrayList<ContentValues>();
-
-        for (UserProfileData.User.Votes vote : userProfileData.getUser().getVotes()) {
-            contentValues.add(getContentValuesForHunterUser(vote.getPost().getId(), vote.getPost().getUser()));
-            for (PostsData.Posts.Makers maker : vote.getPost().getMakers()) {
-                contentValues.add(getContentValuesForMakerUser(vote.getPost().getId(), maker));
-            }
-        }
-
-        for (PostsData.Posts post : userProfileData.getUser().getPosts()) {
-            contentValues.add(getContentValuesForHunterUser(post.getId(), post.getUser()));
-            for (PostsData.Posts.Makers maker : post.getMakers()) {
-                contentValues.add(getContentValuesForMakerUser(post.getId(), maker));
-            }
-        }
-
-        for (PostsData.Posts post : userProfileData.getUser().getMakerOf()) {
-            contentValues.add(getContentValuesForHunterUser(post.getId(), post.getUser()));
-            for (PostsData.Posts.Makers maker : post.getMakers()) {
-                contentValues.add(getContentValuesForMakerUser(post.getId(), maker));
-            }
-        }
-
-        return contentValues.toArray(new ContentValues[contentValues.size()]);
-    }
-
-    private ContentValues getContentValuesForHunterUser(int postId, PostsData.Posts.User user) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, user.getId());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, user.getName());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, user.getUsername());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, user.getHeadline());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, user.getWebsiteUrl());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, user.getImageUrl().getValue100px());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, user.getImageUrl().getOriginal());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS, postId);
-        return contentValues;
-    }
-
-    private ContentValues getContentValuesForMakerUser(int postId, PostsData.Posts.Makers maker) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, maker.getId());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, maker.getCreatedAt());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, maker.getName());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, maker.getUsername());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, maker.getHeadline());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, maker.getWebsiteUrl());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, maker.getImageUrlMaker().getValue48px());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, maker.getImageUrlMaker().getOriginal());
-        contentValues.put(PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS, postId);
-        return contentValues;
-    }
-
-    private ContentValues[] getBulkContentValuesForFollowingFollowerUsers(UserProfileData userProfileData) {
-        List<ContentValues> contentValuesList = new ArrayList<ContentValues>();
-
-        if (userProfileData.getUser().getFollowers() != null) {
-            for (UserProfileData.User.Followers follower : userProfileData.getUser().getFollowers()) {
-                ContentValues contentValues = new ContentValues();
-
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, follower.getId());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, follower.getCreatedAt());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, follower.getName());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, follower.getUsername());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, follower.getHeadline());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, follower.getWebsiteUrl());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, follower.getImageUrl().getValue100px());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, follower.getImageUrl().getOriginal());
-
-                contentValuesList.add(contentValues);
-            }
-        }
-
-        if (userProfileData.getUser().getFollowings() != null) {
-            for (UserProfileData.User.Followings following : userProfileData.getUser().getFollowings()) {
-                ContentValues contentValues = new ContentValues();
-
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_USER_ID, following.getId());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_CREATED_AT, following.getCreatedAt());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_NAME, following.getName());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_USERNAME, following.getUsername());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_HEADLINE, following.getHeadline());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_WEBSITE_URL, following.getWebsiteUrl());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX, following.getImageUrl().getValue100px());
-                contentValues.put(PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL, following.getImageUrl().getOriginal());
-
-                contentValuesList.add(contentValues);
-            }
-        }
-
-        return contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
-    }
-
-    private User getCurrentUserFromCursor(Cursor cursor) {
-        cursor.moveToFirst();
-
-        User user = new User();
-        user.setId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_ID));
-        user.setUserId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_USER_ID));
-        user.setName(getString(cursor, PredatorContract.UsersEntry.COLUMN_NAME));
-        user.setUsername(getString(cursor, PredatorContract.UsersEntry.COLUMN_USERNAME));
-        user.setHeadline(getString(cursor, PredatorContract.UsersEntry.COLUMN_HEADLINE));
-        user.setWebsiteUrl(getString(cursor, PredatorContract.UsersEntry.COLUMN_WEBSITE_URL));
-        user.setThumbnail(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-        user.setImage(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-        user.setHuntedPostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_HUNTER_POST_IDS));
-        user.setMadePostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_MAKER_POST_IDS));
-        user.setVotedPostIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_VOTED_POST_IDS));
-        user.setFollowerUserIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWER_USER_IDS));
-        user.setFollowingUserIds(getString(cursor, PredatorContract.UsersEntry.COLUMN_FOLLOWING_USER_IDS));
-
-        cursor.close();
-
-        return user;
-    }
-
-    private List<User> getUsersFromCursor(Cursor cursor) {
-        List<User> users = new ArrayList<>();
-
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-
-            User user = new User();
-            user.setId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_ID));
-            user.setUserId(CursorUtils.getInt(cursor, PredatorContract.UsersEntry.COLUMN_USER_ID));
-            user.setName(getString(cursor, PredatorContract.UsersEntry.COLUMN_NAME));
-            user.setHeadline(getString(cursor, PredatorContract.UsersEntry.COLUMN_HEADLINE));
-            user.setUsername(getString(cursor, PredatorContract.UsersEntry.COLUMN_USERNAME));
-            user.setThumbnail(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_100PX));
-            user.setImage(getString(cursor, PredatorContract.UsersEntry.COLUMN_IMAGE_URL_ORIGINAL));
-
-            users.add(user);
-        }
-
-        cursor.close();
-
-        return users;
-    }
-
-    private List<Post> getPostsFromCursor(Cursor cursor) {
-        List<Post> posts = new ArrayList<>();
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-            Post post = new Post();
-            post.setId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_ID));
-            post.setPostId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_POST_ID));
-            post.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_CATEGORY_ID));
-            post.setDay(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DAY));
-            post.setName(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_NAME));
-            post.setTagline(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_TAGLINE));
-            post.setCommentCount(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_COMMENT_COUNT));
-            post.setCreatedAt(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_CREATED_AT));
-            post.setCreatedAtMillis(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS));
-            post.setDiscussionUrl(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL));
-            post.setRedirectUrl(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL));
-            post.setVotesCount(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_VOTES_COUNT));
-            post.setThumbnailImageUrl(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL));
-            post.setThumbnailImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL));
-            post.setScreenshotUrl300px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_300PX));
-            post.setScreenshotUrl850px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_SCREENSHOT_URL_850PX));
-            post.setUsername(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_NAME));
-            post.setUsernameAlternative(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_USERNAME));
-            post.setUserId(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_USER_ID));
-            post.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX));
-            post.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
-            posts.add(post);
-        }
-
-        cursor.close();
-
-        return posts;
     }
 
     private static class UserProfileDataType {
