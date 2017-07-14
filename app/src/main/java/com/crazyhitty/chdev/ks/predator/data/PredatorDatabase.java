@@ -482,6 +482,20 @@ public class PredatorDatabase {
                         null);
     }
 
+    public void deletePostsForCollections() {
+        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
+                        PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
+                null);
+    }
+
+    public void deletePostsForCollection(int collectionId) {
+        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
+                PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
+                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
+                null);
+    }
+
     public void deleteAllPosts() {
         mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
                         null,
@@ -518,17 +532,9 @@ public class PredatorDatabase {
                 null);
     }
 
-    public void deletePostsForCollections() {
-        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                        PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1 AND " +
-                                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=0",
-                        null);
-    }
-
-    public void deletePostsForCollection(int collectionId) {
-        mContentResolver.delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                        PredatorContract.PostsEntry.COLUMN_COLLECTION_ID + "=" + collectionId + " AND " +
-                                PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + "=1",
+    public void deleteAllInstallLinks() {
+        mContentResolver.delete(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_DELETE,
+                        null,
                         null);
     }
 
