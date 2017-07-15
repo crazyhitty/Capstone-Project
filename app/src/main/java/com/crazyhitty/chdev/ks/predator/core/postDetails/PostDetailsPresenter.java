@@ -26,18 +26,14 @@ package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
@@ -46,8 +42,6 @@ import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
-import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
@@ -70,9 +64,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
-
-import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getInt;
-import static com.crazyhitty.chdev.ks.predator.utils.CursorUtils.getString;
 
 /**
  * Author:      Kartik Sharma

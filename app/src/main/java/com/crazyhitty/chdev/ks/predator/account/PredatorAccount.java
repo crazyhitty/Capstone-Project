@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.predator.account;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -34,7 +33,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.annotation.RequiresPermission;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 

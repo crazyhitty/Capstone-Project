@@ -24,20 +24,14 @@
 
 package com.crazyhitty.chdev.ks.predator.core.userProfile;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
-import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 

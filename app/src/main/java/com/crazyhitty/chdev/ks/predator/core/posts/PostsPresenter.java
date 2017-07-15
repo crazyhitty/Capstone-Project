@@ -31,8 +31,8 @@ import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;

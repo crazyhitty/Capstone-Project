@@ -24,10 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.core.auth;
 
-import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;

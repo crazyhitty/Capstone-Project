@@ -25,7 +25,6 @@
 package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
@@ -35,8 +34,6 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
-
-import java.lang.ref.WeakReference;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 

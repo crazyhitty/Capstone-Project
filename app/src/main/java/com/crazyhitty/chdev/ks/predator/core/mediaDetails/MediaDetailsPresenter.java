@@ -24,18 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.core.mediaDetails;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.core.postDetails.PostDetailsPresenter;
-import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.models.Media;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;

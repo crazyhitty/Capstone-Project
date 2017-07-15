@@ -24,18 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.core.categories;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CategoriesData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
@@ -45,7 +40,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
