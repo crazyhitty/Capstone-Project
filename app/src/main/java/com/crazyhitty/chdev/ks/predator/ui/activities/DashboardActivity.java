@@ -100,7 +100,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         applyTheme();
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
-        initNetworKBroadcastReceiver();
+        initNetworkBroadcastReceiver();
         initToolbar();
         initDrawer();
 
@@ -121,7 +121,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
     /**
      * Initialize network braodcast receiver.
      */
-    private void initNetworKBroadcastReceiver() {
+    private void initNetworkBroadcastReceiver() {
         mNetworkBroadcastReceiver = new NetworkBroadcastReceiver();
         registerReceiver(mNetworkBroadcastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
