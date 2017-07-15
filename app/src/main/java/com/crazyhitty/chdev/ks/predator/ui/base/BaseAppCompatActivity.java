@@ -53,10 +53,12 @@ import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -224,7 +226,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
         if (intent.resolveActivity(getPackageManager()) != null) {
-            showShortToast(R.string.rate_app_message);
+            showLongToast(R.string.rate_app_message);
             startActivity(intent);
         }
     }

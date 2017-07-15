@@ -199,10 +199,22 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
             /*case R.id.nav_donate:
                 return false;*/
             case R.id.nav_rating:
-                rateApp();
+                // Start after a delay
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rateApp();
+                    }
+                }, 300);
                 return false;
             case R.id.nav_spread_love:
-                shareApp();
+                // Start after a delay
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        shareApp();
+                    }
+                }, 300);
                 return false;
             default:
                 return false;
