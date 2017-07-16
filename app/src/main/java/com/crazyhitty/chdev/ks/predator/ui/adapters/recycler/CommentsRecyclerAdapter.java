@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.PluralsRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -98,7 +99,8 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
         // Set extra details.
         String extraDetails = String.format("%s \u2022 %s",
-                holder.getString(R.string.item_post_details_comment_votes,
+                holder.getQuantityString(R.plurals.item_post_details_comment_votes,
+                        mComments.get(position).getVotes(),
                         mComments.get(position).getVotes()),
                 holder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
                         mComments.get(position).getTimeAgo()));
@@ -164,14 +166,6 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
                 return R.string.item_post_details_comment_day_ago;
             case DAY_AGO_PLURAL:
                 return R.string.item_post_details_comment_day_ago_plural;
-            case MONTH_AGO:
-                return R.string.item_post_details_comment_month_ago;
-            case MONTH_AGO_PLURAL:
-                return R.string.item_post_details_comment_month_ago_plural;
-            case YEAR_AGO:
-                return R.string.item_post_details_comment_year_ago;
-            case YEAR_AGO_PLURAL:
-                return R.string.item_post_details_comment_year_ago_plural;
             default:
                 throw new IllegalArgumentException("Provided TIME_UNIT is not valid.");
         }
@@ -197,6 +191,13 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
         protected void clearAnimation() {
             itemView.clearAnimation();
+        }
+
+        public String getQuantityString(@PluralsRes int resId, int quantity, Object... args) {
+            return itemView.getResources()
+                    .getQuantityString(R.plurals.item_post_details_comment_votes,
+                            quantity,
+                            args);
         }
 
         public String getString(@StringRes int resId, Object... args) {
