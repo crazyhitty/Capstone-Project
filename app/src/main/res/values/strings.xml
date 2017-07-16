@@ -224,6 +224,16 @@
     <string name="fragment_user_profile_users_loading_please_wait">Loading, please wait&#8230;</string>
     <string name="fragment_user_profile_users_unavailable">Users unavailable currently.</string>
 
+    <!--dialog_comment_user_preview.xml-->
+    <string name="dialog_comment_user_preview_user_image_desc">User image</string>
+    <string name="dialog_comment_user_preview_positive_button">Profile</string>
+    <string name="dialog_comment_user_preview_negative_button">Cool</string>
+    <string name="dialog_comment_user_preview_neutral_button">Share</string>
+    <!--suppress AndroidDomInspection -->
+    <string name="dialog_comment_user_preview_username_alternative">@%s</string>
+    <!--suppress AndroidDomInspection -->
+    <!--<string name="dialog_comment_user_preview_share_content">@%s\'s thoughts on %s @ProductHunt %s</string>-->
+
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>
 

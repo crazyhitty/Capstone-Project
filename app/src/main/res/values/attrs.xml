@@ -47,5 +47,7 @@
     <attr name="drawableDone" format="reference" />
     <attr name="drawableErrorAlternative" format="reference" />
     <attr name="drawableImageBrokenError" format="reference" />
+    <attr name="imageUserBorderColor" format="reference" />
+    <attr name="dialogHeaderColor" format="reference" />
 
 </resources>

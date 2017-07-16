@@ -58,6 +58,8 @@
         <item name="drawableDone">@drawable/ic_done</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative</item>
         <item name="drawableImageBrokenError">@drawable/ic_image_broken_error</item>
+        <item name="imageUserBorderColor">@color/image_user_border_color</item>
+        <item name="dialogHeaderColor">@color/dialog_header_color</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat">
@@ -95,6 +97,8 @@
         <item name="drawableDone">@drawable/ic_done_inverse</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
         <item name="drawableImageBrokenError">@drawable/ic_image_broken_error_inverse</item>
+        <item name="imageUserBorderColor">@color/image_user_border_color_inverse</item>
+        <item name="dialogHeaderColor">@color/dialog_header_color_inverse</item>
     </style>
 
     <style name="AppThemeAmoled" parent="Theme.AppCompat">
@@ -132,6 +136,8 @@
         <item name="drawableDone">@drawable/ic_done_inverse</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
         <item name="drawableImageBrokenError">@drawable/ic_image_broken_error_inverse</item>
+        <item name="imageUserBorderColor">@color/image_user_border_color_amoled</item>
+        <item name="dialogHeaderColor">@color/dialog_header_color_amoled</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

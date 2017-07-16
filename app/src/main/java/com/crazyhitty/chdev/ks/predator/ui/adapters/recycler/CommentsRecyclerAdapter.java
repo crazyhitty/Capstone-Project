@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.ui.dialog.CommentUserPreviewDialog;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -81,7 +82,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
     }
 
     @Override
-    public void onBindViewHolder(CommentViewHolder holder, int position) {
+    public void onBindViewHolder(final CommentViewHolder holder, int position) {
         holder.txtUsername.setText(mComments.get(position).getUsername());
         holder.txtUserHeadline.setText(mComments.get(position).getUserHeadline());
         holder.txtCommentBody.setText(Html.fromHtml(mComments.get(position).getBody()));
@@ -105,6 +106,14 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
                 holder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
                         mComments.get(position).getTimeAgo()));
         holder.txtCommentExtraDetails.setText(extraDetails);
+
+        holder.imgViewUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommentUserPreviewDialog.show(holder.itemView.getContext(),
+                        mComments.get(holder.getAdapterPosition()));
+            }
+        });
 
         // Set extra internal padding if this was a child comment.
         int paddingLeftPx = ScreenUtils.dpToPxInt(holder.itemView.getContext(),
