@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -95,6 +96,14 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         holder.txtUserHeadline.setVisibility(TextUtils.isEmpty(mComments.get(position).getUserHeadline()) ?
                 View.GONE : View.VISIBLE);
 
+        // Set extra details.
+        String extraDetails = String.format("%s \u2022 %s",
+                holder.getString(R.string.item_post_details_comment_votes,
+                        mComments.get(position).getVotes()),
+                holder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
+                        mComments.get(position).getTimeAgo()));
+        holder.txtCommentExtraDetails.setText(extraDetails);
+
         // Set extra internal padding if this was a child comment.
         int paddingLeftPx = ScreenUtils.dpToPxInt(holder.itemView.getContext(),
                 54.0f * mComments.get(position).getChildSpaces());
@@ -137,6 +146,37 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         holder.clearAnimation();
     }
 
+    private int getStringResourceIdForTimeUnit(Comment.TIME_UNIT timeUnit) {
+        switch (timeUnit){
+            case SECOND_AGO:
+                return R.string.item_post_details_comment_second_ago;
+            case SECOND_AGO_PLURAL:
+                return R.string.item_post_details_comment_second_ago_plural;
+            case MINUTE_AGO:
+                return R.string.item_post_details_comment_minute_ago;
+            case MINUTE_AGO_PLURAL:
+                return R.string.item_post_details_comment_minute_ago_plural;
+            case HOUR_AGO:
+                return R.string.item_post_details_comment_hour_ago;
+            case HOUR_AGO_PLURAL:
+                return R.string.item_post_details_comment_hour_ago_plural;
+            case DAY_AGO:
+                return R.string.item_post_details_comment_day_ago;
+            case DAY_AGO_PLURAL:
+                return R.string.item_post_details_comment_day_ago_plural;
+            case MONTH_AGO:
+                return R.string.item_post_details_comment_month_ago;
+            case MONTH_AGO_PLURAL:
+                return R.string.item_post_details_comment_month_ago_plural;
+            case YEAR_AGO:
+                return R.string.item_post_details_comment_year_ago;
+            case YEAR_AGO_PLURAL:
+                return R.string.item_post_details_comment_year_ago_plural;
+            default:
+                throw new IllegalArgumentException("Provided TIME_UNIT is not valid.");
+        }
+    }
+
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_view_user)
         SimpleDraweeView imgViewUser;
@@ -146,6 +186,8 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         TextView txtUserHeadline;
         @BindView(R.id.text_view_comment_body)
         TextView txtCommentBody;
+        @BindView(R.id.text_view_comment_extra_details)
+        TextView txtCommentExtraDetails;
 
         public CommentViewHolder(View itemView) {
             super(itemView);
@@ -155,6 +197,11 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
         protected void clearAnimation() {
             itemView.clearAnimation();
+        }
+
+        public String getString(@StringRes int resId, Object... args) {
+            return itemView.getContext()
+                    .getString(resId, args);
         }
     }
 }

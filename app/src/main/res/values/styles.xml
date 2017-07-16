@@ -47,8 +47,9 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlay</item>
         <item name="colorDark">@color/color_dark</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color</item>
-        <item name="postExtraDetailsColor">@color/date_color</item>
+        <item name="postExtraDetailsColor">@color/post_extra_details_color</item>
         <item name="commentColor">@color/comment_color</item>
+        <item name="commentExtraDetailsColor">@color/comment_extra_details_color</item>
         <item name="aboutVersionColor">@color/about_version_color</item>
         <item name="libraryLicenseColor">@color/library_license_color</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color</item>
@@ -83,8 +84,9 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
         <item name="colorDark">@color/color_dark_inverse</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
-        <item name="postExtraDetailsColor">@color/date_color_inverse</item>
+        <item name="postExtraDetailsColor">@color/post_extra_details_color_inverse</item>
         <item name="commentColor">@color/comment_color_inverse</item>
+        <item name="commentExtraDetailsColor">@color/comment_extra_details_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
@@ -119,8 +121,9 @@
         <item name="popupOverlay">@style/AppTheme.PopupOverlayDark</item>
         <item name="colorDark">@color/color_dark_inverse</item>
         <item name="predatorButtonTextColor">@color/predator_button_text_color_inverse</item>
-        <item name="postExtraDetailsColor">@color/date_color_inverse</item>
+        <item name="postExtraDetailsColor">@color/post_extra_details_color_inverse</item>
         <item name="commentColor">@color/comment_color_inverse</item>
+        <item name="commentExtraDetailsColor">@color/comment_extra_details_color_inverse</item>
         <item name="aboutVersionColor">@color/about_version_color_inverse</item>
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
@@ -220,6 +223,10 @@
 
     <style name="TextAppearanceComment" parent="@style/TextAppearance.AppCompat.Small">
         <item name="android:textColor">?attr/commentColor</item>
+    </style>
+
+    <style name="TextAppearanceCommentExtraDetails" parent="TextAppearanceSmall">
+        <item name="android:textColor">?attr/commentExtraDetailsColor</item>
     </style>
 
     <style name="TextAppearanceCollectionTitle" parent="@style/TextAppearance.AppCompat.Medium">

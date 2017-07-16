@@ -37,7 +37,7 @@ public class Comment {
     private int parentCommentId;
     private String body;
     private String createdAt;
-    private int createdAtMillis;
+    private long createdAtMillis;
     private int postId;
     private int userId;
     private String username;
@@ -50,6 +50,8 @@ public class Comment {
     private boolean isHunter;
     private boolean isLiveGuest;
     private int childSpaces;
+    private long timeAgo;
+    private TIME_UNIT timeUnit;
 
     public int getId() {
         return id;
@@ -91,11 +93,11 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
-    public int getCreatedAtMillis() {
+    public long getCreatedAtMillis() {
         return createdAtMillis;
     }
 
-    public void setCreatedAtMillis(int createdAtMillis) {
+    public void setCreatedAtMillis(long createdAtMillis) {
         this.createdAtMillis = createdAtMillis;
     }
 
@@ -193,5 +195,36 @@ public class Comment {
 
     public void setChildSpaces(int childSpaces) {
         this.childSpaces = childSpaces;
+    }
+
+    public long getTimeAgo() {
+        return timeAgo;
+    }
+
+    public void setTimeAgo(long timeAgo) {
+        this.timeAgo = timeAgo;
+    }
+
+    public TIME_UNIT getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(TIME_UNIT timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public enum TIME_UNIT {
+        SECOND_AGO,
+        SECOND_AGO_PLURAL,
+        MINUTE_AGO,
+        MINUTE_AGO_PLURAL,
+        HOUR_AGO,
+        HOUR_AGO_PLURAL,
+        DAY_AGO,
+        DAY_AGO_PLURAL,
+        MONTH_AGO,
+        MONTH_AGO_PLURAL,
+        YEAR_AGO,
+        YEAR_AGO_PLURAL
     }
 }

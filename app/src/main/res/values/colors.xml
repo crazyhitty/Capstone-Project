@@ -19,6 +19,10 @@
     <color name="color_dark_inverse">@color/material_grey_100</color>
     <color name="predator_button_text_color">@color/material_grey_200</color>
     <color name="predator_button_text_color_inverse">@color/material_grey_800</color>
+    <color name="post_extra_details_color">@color/material_grey_400</color>
+    <color name="post_extra_details_color_inverse">@color/material_grey_500</color>
+    <color name="comment_extra_details_color">@color/material_grey_400</color>
+    <color name="comment_extra_details_color_inverse">@color/material_grey_500</color>
     <color name="date_color">@color/material_grey_400</color>
     <color name="date_color_inverse">@color/material_grey_500</color>
     <color name="comment_color">@color/material_grey_700</color>
