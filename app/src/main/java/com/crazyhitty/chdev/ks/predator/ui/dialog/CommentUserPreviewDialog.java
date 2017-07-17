@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,14 +36,19 @@ import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -58,6 +64,8 @@ import butterknife.ButterKnife;
  */
 
 public class CommentUserPreviewDialog extends AlertDialog {
+    private static final String TAG = "CommentUserPreviewDialog";
+
     @BindView(R.id.image_view_user)
     SimpleDraweeView imgViewUser;
     @BindView(R.id.text_view_user_name_alternate)
@@ -70,6 +78,12 @@ public class CommentUserPreviewDialog extends AlertDialog {
     TextView txtCommentBody;
     @BindView(R.id.text_view_comment_extra_details)
     TextView txtCommentExtraDetails;
+    @BindView(R.id.scroll_view_comment_content)
+    ScrollView scrollViewCommentContent;
+    @BindView(R.id.relative_layout_comment_content)
+    RelativeLayout relativeLayoutCommentContent;
+    @BindView(R.id.view_divider)
+    View viewDivider;
 
     public static void show(Context context, Comment comment) {
         CommentUserPreviewDialog commentUserPreviewDialog = new CommentUserPreviewDialog(context,
@@ -159,6 +173,33 @@ public class CommentUserPreviewDialog extends AlertDialog {
                 getContext().getString(getStringResourceIdForTimeUnit(comment.getTimeUnit()),
                         comment.getTimeAgo()));
         txtCommentExtraDetails.setText(extraDetails);
+
+        ViewTreeObserver observer = scrollViewCommentContent.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onGlobalLayout() {
+                int viewHeight = scrollViewCommentContent.getMeasuredHeight();
+                int contentHeight = relativeLayoutCommentContent.getHeight();
+                Logger.d(TAG, "viewHeight: " + viewHeight + " ; contentHeight: " + contentHeight);
+                if (viewHeight  - contentHeight < 0) {
+                    // Scrollable.
+                    Logger.d(TAG, "View is scrollable.");
+                    viewDivider.setVisibility(View.VISIBLE);
+                    relativeLayoutCommentContent.setPadding(0,
+                            0,
+                            0,
+                            ScreenUtils.dpToPxInt(getContext(), 8));
+                } else {
+                    Logger.d(TAG, "View is not scrollable.");
+                    viewDivider.setVisibility(View.GONE);
+                    relativeLayoutCommentContent.setPadding(0,
+                            0,
+                            0,
+                            0);
+                }
+            }
+        });
     }
 
     private int getStringResourceIdForTimeUnit(Comment.TIME_UNIT timeUnit) {
