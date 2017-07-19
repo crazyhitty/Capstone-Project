@@ -42,7 +42,7 @@
     <color name="background_color">@color/color_primary</color>
     <color name="background_color_inverse">@color/color_black_dark</color>
     <color name="background_color_amoled">@android:color/black</color>
-    <color name="image_user_border_color">@color/material_grey_900</color>
+    <color name="image_user_border_color">@color/material_grey_100</color>
     <color name="image_user_border_color_inverse">@color/material_grey_100</color>
     <color name="image_user_border_color_amoled">@color/material_grey_100</color>
     <color name="dialog_header_color">@color/color_accent</color>
