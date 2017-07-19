@@ -85,31 +85,36 @@ public class CommentUserPreviewDialog extends AlertDialog {
     @BindView(R.id.view_divider)
     View viewDivider;
 
-    public static void show(Context context, Comment comment) {
+    public static void show(Context context, Comment comment, String postTitle) {
         CommentUserPreviewDialog commentUserPreviewDialog = new CommentUserPreviewDialog(context,
-                comment);
+                comment,
+                postTitle);
         commentUserPreviewDialog.show();
     }
 
-    protected CommentUserPreviewDialog(@NonNull Context context, Comment comment) {
+    protected CommentUserPreviewDialog(@NonNull Context context, Comment comment, String postTitle) {
         super(context);
-        initializeViews(context, comment);
+        initializeViews(context, comment, postTitle);
     }
 
-    protected CommentUserPreviewDialog(@NonNull Context context, int themeResId, Comment comment) {
+    protected CommentUserPreviewDialog(@NonNull Context context,
+                                       int themeResId,
+                                       Comment comment,
+                                       String postTitle) {
         super(context, themeResId);
-        initializeViews(context, comment);
+        initializeViews(context, comment, postTitle);
     }
 
     protected CommentUserPreviewDialog(@NonNull Context context,
                                        boolean cancelable,
                                        @Nullable OnCancelListener cancelListener,
-                                       Comment comment) {
+                                       Comment comment,
+                                       String postTitle) {
         super(context, cancelable, cancelListener);
-        initializeViews(context, comment);
+        initializeViews(context, comment, postTitle);
     }
 
-    private void initializeViews(Context context, final Comment comment) {
+    private void initializeViews(Context context, final Comment comment, final String postTitle) {
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_comment_user_preview, null);
         setView(view);
@@ -138,8 +143,7 @@ public class CommentUserPreviewDialog extends AlertDialog {
                 new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getContext(), "Not yet implemented!", Toast.LENGTH_SHORT).show();
-                        //shareComment(comment);
+                        shareComment(comment, postTitle);
                     }
                 });
 
@@ -225,15 +229,15 @@ public class CommentUserPreviewDialog extends AlertDialog {
         }
     }
 
-    private void shareComment(Comment comment) {
-        /*String body = getContext().getString(R.string.dialog_comment_user_preview_share_content,
+    private void shareComment(Comment comment, String postTitle) {
+        String body = getContext().getString(R.string.dialog_comment_user_preview_share_content,
                 comment.getUsernameAlternative(),
-                "",
-                "");*/
+                postTitle,
+                comment.getUrl());
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
         sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getContext().startActivity(Intent.createChooser(sharingIntent,
                 getContext().getString(R.string.share_using)));

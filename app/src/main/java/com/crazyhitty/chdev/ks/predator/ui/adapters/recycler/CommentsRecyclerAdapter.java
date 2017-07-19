@@ -62,15 +62,18 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
     public static final int VIEW_TYPE_CHILD_COMMENT = 2;
 
     private List<Comment> mComments;
+    private String mPostTitle;
     private int mLastPosition = -1;
 
-    public CommentsRecyclerAdapter(@Nullable List<Comment> comments) {
+    public CommentsRecyclerAdapter(@Nullable List<Comment> comments, @Nullable String postTitle) {
         mComments = comments;
+        mPostTitle = postTitle;
     }
 
-    public void updateComments(@Nullable List<Comment> comments) {
+    public void updateComments(@Nullable List<Comment> comments, @Nullable String postTitle) {
         mLastPosition = -1;
         mComments = comments;
+        mPostTitle = postTitle;
         notifyDataSetChanged();
     }
 
@@ -111,7 +114,8 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
             @Override
             public void onClick(View v) {
                 CommentUserPreviewDialog.show(holder.itemView.getContext(),
-                        mComments.get(holder.getAdapterPosition()));
+                        mComments.get(holder.getAdapterPosition()),
+                        mPostTitle);
             }
         });
 

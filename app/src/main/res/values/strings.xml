@@ -232,7 +232,7 @@
     <!--suppress AndroidDomInspection -->
     <string name="dialog_comment_user_preview_username_alternative">@%s</string>
     <!--suppress AndroidDomInspection -->
-    <!--<string name="dialog_comment_user_preview_share_content">@%s\'s thoughts on %s @ProductHunt %s</string>-->
+    <string name="dialog_comment_user_preview_share_content" formatted="false">@%s\'s thoughts on %s @ProductHunt %s</string>
 
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>

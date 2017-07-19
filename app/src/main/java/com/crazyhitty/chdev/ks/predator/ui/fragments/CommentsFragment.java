@@ -91,14 +91,14 @@ public class CommentsFragment extends BaseSupportFragment {
         final CommentItemDecorator commentItemDecorator = new CommentItemDecorator(getContext());
         recyclerViewComments.addItemDecoration(commentItemDecorator);
 
-        mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null);
+        mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null, null);
         recyclerViewComments.setAdapter(mCommentsRecyclerAdapter);
     }
 
-    public void updateComments(CommentsEvent commentsEvent) {
+    public void updateComments(CommentsEvent commentsEvent, String postTitle) {
         if (commentsEvent.getComments() != null && commentsEvent.getComments().size() != 0) {
             linearLayoutLoading.setVisibility(View.GONE);
-            mCommentsRecyclerAdapter.updateComments(commentsEvent.getComments());
+            mCommentsRecyclerAdapter.updateComments(commentsEvent.getComments(), postTitle);
         } else if (mCommentsRecyclerAdapter.getItemCount() == 0) {
             txtMessage.setText(R.string.fragment_comments_unavailable);
             progressBarLoading.setVisibility(View.GONE);
