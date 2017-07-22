@@ -303,11 +303,11 @@
     </style>
 
     <style name="TextAppearanceWidgetPostTitle" parent="TextAppearanceMedium">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textColor">@color/material_grey_300</item>
     </style>
 
     <style name="TextAppearanceWidgetPostDesc" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/material_grey_400</item>
+        <item name="android:textColor">@color/material_grey_500</item>
     </style>
 
     <style name="TextAppearanceUserProfile.Name" parent="TextAppearanceLarge">
