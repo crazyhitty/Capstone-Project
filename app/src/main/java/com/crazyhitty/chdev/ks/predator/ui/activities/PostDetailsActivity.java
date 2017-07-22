@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -351,7 +352,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             @Override
             public void run() {
                 mFirstTimeLoading = false;
-                updateComments(comments);
+                updateComments(comments, txtPostTitle.getText().toString());
             }
         }, DELAY_MS);
     }
@@ -402,7 +403,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateComments(null);
+                updateComments(null, null);
             }
         }, DELAY_MS);
     }
@@ -416,7 +417,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    updateComments(null);
+                    updateComments(null, null);
                     updateUsers(null);
                 }
             }, DELAY_MS);
@@ -549,14 +550,16 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         mPostDetailsPresenter.unSubscribe();
     }
 
-    private void updateComments(final List<Comment> comments) {
+    @SuppressLint("RestrictedApi")
+    private void updateComments(final List<Comment> comments, String postTitle) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof CommentsFragment) {
-                ((CommentsFragment) fragment).updateComments(new CommentsEvent(comments));
+                ((CommentsFragment) fragment).updateComments(new CommentsEvent(comments), postTitle);
             }
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void updateUsers(final List<User> users) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof UsersFragment) {

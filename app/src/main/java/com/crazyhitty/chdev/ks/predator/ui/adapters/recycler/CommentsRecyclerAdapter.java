@@ -25,6 +25,8 @@
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.PluralsRes;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -38,6 +40,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.ui.dialog.CommentUserPreviewDialog;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -59,15 +62,18 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
     public static final int VIEW_TYPE_CHILD_COMMENT = 2;
 
     private List<Comment> mComments;
+    private String mPostTitle;
     private int mLastPosition = -1;
 
-    public CommentsRecyclerAdapter(@Nullable List<Comment> comments) {
+    public CommentsRecyclerAdapter(@Nullable List<Comment> comments, @Nullable String postTitle) {
         mComments = comments;
+        mPostTitle = postTitle;
     }
 
-    public void updateComments(@Nullable List<Comment> comments) {
+    public void updateComments(@Nullable List<Comment> comments, @Nullable String postTitle) {
         mLastPosition = -1;
         mComments = comments;
+        mPostTitle = postTitle;
         notifyDataSetChanged();
     }
 
@@ -79,7 +85,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
     }
 
     @Override
-    public void onBindViewHolder(CommentViewHolder holder, int position) {
+    public void onBindViewHolder(final CommentViewHolder holder, int position) {
         holder.txtUsername.setText(mComments.get(position).getUsername());
         holder.txtUserHeadline.setText(mComments.get(position).getUserHeadline());
         holder.txtCommentBody.setText(Html.fromHtml(mComments.get(position).getBody()));
@@ -94,6 +100,24 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         // Hide headline text if headline is empty.
         holder.txtUserHeadline.setVisibility(TextUtils.isEmpty(mComments.get(position).getUserHeadline()) ?
                 View.GONE : View.VISIBLE);
+
+        // Set extra details.
+        String extraDetails = String.format("%s \u2022 %s",
+                holder.getQuantityString(R.plurals.item_post_details_comment_votes,
+                        mComments.get(position).getVotes(),
+                        mComments.get(position).getVotes()),
+                holder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
+                        mComments.get(position).getTimeAgo()));
+        holder.txtCommentExtraDetails.setText(extraDetails);
+
+        holder.imgViewUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommentUserPreviewDialog.show(holder.itemView.getContext(),
+                        mComments.get(holder.getAdapterPosition()),
+                        mPostTitle);
+            }
+        });
 
         // Set extra internal padding if this was a child comment.
         int paddingLeftPx = ScreenUtils.dpToPxInt(holder.itemView.getContext(),
@@ -137,6 +161,29 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         holder.clearAnimation();
     }
 
+    private int getStringResourceIdForTimeUnit(Comment.TIME_UNIT timeUnit) {
+        switch (timeUnit){
+            case SECOND_AGO:
+                return R.string.item_post_details_comment_second_ago;
+            case SECOND_AGO_PLURAL:
+                return R.string.item_post_details_comment_second_ago_plural;
+            case MINUTE_AGO:
+                return R.string.item_post_details_comment_minute_ago;
+            case MINUTE_AGO_PLURAL:
+                return R.string.item_post_details_comment_minute_ago_plural;
+            case HOUR_AGO:
+                return R.string.item_post_details_comment_hour_ago;
+            case HOUR_AGO_PLURAL:
+                return R.string.item_post_details_comment_hour_ago_plural;
+            case DAY_AGO:
+                return R.string.item_post_details_comment_day_ago;
+            case DAY_AGO_PLURAL:
+                return R.string.item_post_details_comment_day_ago_plural;
+            default:
+                throw new IllegalArgumentException("Provided TIME_UNIT is not valid.");
+        }
+    }
+
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_view_user)
         SimpleDraweeView imgViewUser;
@@ -146,6 +193,8 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         TextView txtUserHeadline;
         @BindView(R.id.text_view_comment_body)
         TextView txtCommentBody;
+        @BindView(R.id.text_view_comment_extra_details)
+        TextView txtCommentExtraDetails;
 
         public CommentViewHolder(View itemView) {
             super(itemView);
@@ -155,6 +204,18 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
         protected void clearAnimation() {
             itemView.clearAnimation();
+        }
+
+        public String getQuantityString(@PluralsRes int resId, int quantity, Object... args) {
+            return itemView.getResources()
+                    .getQuantityString(R.plurals.item_post_details_comment_votes,
+                            quantity,
+                            args);
+        }
+
+        public String getString(@StringRes int resId, Object... args) {
+            return itemView.getContext()
+                    .getString(resId, args);
         }
     }
 }

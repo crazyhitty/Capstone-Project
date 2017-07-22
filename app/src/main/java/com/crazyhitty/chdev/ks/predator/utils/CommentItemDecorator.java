@@ -44,7 +44,7 @@ public class CommentItemDecorator extends RecyclerView.ItemDecoration {
 
     public CommentItemDecorator(Context context) {
         super();
-        mSpacingPx = ScreenUtils.dpToPxInt(context, 12);
+        mSpacingPx = ScreenUtils.dpToPxInt(context, 16);
         mTopSpacingPx = ScreenUtils.dpToPxInt(context, 16);
     }
 

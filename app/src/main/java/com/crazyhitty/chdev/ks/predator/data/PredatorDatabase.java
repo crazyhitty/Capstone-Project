@@ -37,6 +37,7 @@ import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.utils.CommentTimeCalculator;
 import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
@@ -392,7 +393,11 @@ public class PredatorDatabase {
         return media;
     }
 
-    public List<Comment> getCommentsForPost(int postId, int parentCommentId, List<Comment> comments, int childSpaces) {
+    public List<Comment> getCommentsForPost(int postId,
+                                            int parentCommentId,
+                                            List<Comment> comments,
+                                            int childSpaces,
+                                            CommentTimeCalculator commentTimeCalculator) {
         String sortOrder = null;
         if (childSpaces == 0) {
             // If top level comments are being fetched, then sort them according to the vote count.
@@ -418,22 +423,32 @@ public class PredatorDatabase {
                 comment.setParentCommentId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_PARENT_COMMENT_ID));
                 comment.setBody(getString(cursor, PredatorContract.CommentsEntry.COLUMN_BODY));
                 comment.setCreatedAt(getString(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT));
-                comment.setCreatedAtMillis(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS));
+                comment.setCreatedAtMillis(CursorUtils.getLong(cursor, PredatorContract.CommentsEntry.COLUMN_CREATED_AT_MILLIS));
                 comment.setPostId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_POST_ID));
                 comment.setUserId(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_USER_ID));
                 comment.setUsername(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_NAME));
                 comment.setUsernameAlternative(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_USERNAME));
                 comment.setUserHeadline(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE));
                 comment.setUserImageThumbnailUrl(getString(cursor, PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX));
+                comment.setUrl(getString(cursor, PredatorContract.CommentsEntry.COLUMN_URL));
                 comment.setVotes(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_VOTES));
                 comment.setSticky(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_STICKY) == 1);
                 comment.setMaker(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_MAKER) == 1);
                 comment.setHunter(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_HUNTER) == 1);
                 comment.setLiveGuest(CursorUtils.getInt(cursor, PredatorContract.CommentsEntry.COLUMN_IS_LIVE_GUEST) == 1);
                 comment.setChildSpaces(childSpaces);
+
+                CommentTimeCalculator.CommentTime commentTime = commentTimeCalculator.getTimeAgo(comment.getCreatedAtMillis());
+                comment.setTimeAgo(commentTime.getTimeAgo());
+                comment.setTimeUnit(commentTime.getTimeUnit());
+
                 comments.add(comment);
 
-                getCommentsForPost(postId, comment.getCommentId(), comments, comment.getChildSpaces() + 1);
+                getCommentsForPost(postId,
+                        comment.getCommentId(),
+                        comments,
+                        comment.getChildSpaces() + 1,
+                        commentTimeCalculator);
             }
         }
         closeCursor(cursor);

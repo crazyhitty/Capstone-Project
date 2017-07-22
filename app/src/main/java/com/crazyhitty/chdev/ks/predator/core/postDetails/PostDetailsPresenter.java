@@ -41,6 +41,7 @@ import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.utils.CommentTimeCalculator;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
@@ -52,7 +53,10 @@ import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -74,6 +78,7 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private static final String TAG = "PostDetailsPresenter";
+
     private final CustomTabsIntent mCustomTabsIntent;
     private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
             new CustomTabsActivityHelper.CustomTabsFallback() {
@@ -237,7 +242,11 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
                                 // Query the comments available.
                                 List<Comment> comments = PredatorDatabase.getInstance()
-                                        .getCommentsForPost(postId, 0, new ArrayList<Comment>(), 0);
+                                        .getCommentsForPost(postId,
+                                                0,
+                                                new ArrayList<Comment>(),
+                                                0,
+                                                CommentTimeCalculator.getInstance());
                                 if (comments != null && comments.size() != 0) {
                                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                                     postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
@@ -354,7 +363,11 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
                 // Query the comments available.
                 List<Comment> comments = PredatorDatabase.getInstance()
-                        .getCommentsForPost(postId, 0, new ArrayList<Comment>(), 0);
+                        .getCommentsForPost(postId,
+                                0,
+                                new ArrayList<Comment>(),
+                                0,
+                                CommentTimeCalculator.getInstance());
                 if (comments != null && comments.size() != 0) {
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
                     postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);

@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -147,6 +147,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.CommentsEntry.COLUMN_USER_HEADLINE + " TEXT, " +
                 PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
                 PredatorContract.CommentsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
+                PredatorContract.CommentsEntry.COLUMN_URL + " TEXT, " +
                 PredatorContract.CommentsEntry.COLUMN_VOTES + " INTEGER, " +
                 PredatorContract.CommentsEntry.COLUMN_IS_STICKY + " INTEGER, " +
                 PredatorContract.CommentsEntry.COLUMN_IS_MAKER + " INTEGER, " +

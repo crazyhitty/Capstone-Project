@@ -37,6 +37,7 @@
     <attr name="predatorButtonTextColor" format="reference" />
     <attr name="postExtraDetailsColor" format="reference" />
     <attr name="commentColor" format="reference" />
+    <attr name="commentExtraDetailsColor" format="reference" />
     <attr name="aboutVersionColor" format="reference" />
     <attr name="userNameAlternativeColor" format="reference" />
     <attr name="libraryLicenseColor" format="reference" />
@@ -46,5 +47,7 @@
     <attr name="drawableDone" format="reference" />
     <attr name="drawableErrorAlternative" format="reference" />
     <attr name="drawableImageBrokenError" format="reference" />
+    <attr name="imageUserBorderColor" format="reference" />
+    <attr name="dialogHeaderColor" format="reference" />
 
 </resources>

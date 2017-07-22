@@ -60,4 +60,15 @@ public class CursorUtils {
     public static int getInt(@NonNull Cursor cursor, @NonNull String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
+
+    /**
+     * Get the long value for that particular column.
+     *
+     * @param cursor     Cursor containing database data.
+     * @param columnName Column name, whose data you will be getting.
+     * @return long value of that particular column.
+     */
+    public static long getLong(@NonNull Cursor cursor, @NonNull String columnName) {
+        return cursor.getLong(cursor.getColumnIndex(columnName));
+    }
 }
