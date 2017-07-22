@@ -26,6 +26,12 @@
 
     <changelogversion
         changeDate="July 22, 2017"
+        versionName="0.28">
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="July 22, 2017"
         versionName="0.27">
         <changelogtext>[b]New![/b] Updated comments UI!</changelogtext>
         <changelogtext>[b]New![/b] Tap on user image in comments section for extra details.</changelogtext>
