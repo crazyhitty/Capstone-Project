@@ -24,8 +24,10 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
@@ -73,6 +76,7 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
 /**
@@ -365,6 +369,19 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         }, DELAY_MS);
     }
 
+    @Override
+    public void websiteAvailable(String url) {
+        CustomTabsHelperFragment.open(this,
+                getCustomTabsIntent(),
+                Uri.parse(url),
+                getCustomTabsFallback());
+    }
+
+    @Override
+    public void websiteUnavailable() {
+        showShortToast(R.string.activity_user_profile_website_unavailable);
+    }
+
 
     @Override
     public void setPresenter(UserProfileContract.Presenter presenter) {
@@ -415,6 +432,9 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
                     loadLatestDetails(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID), true);
                 }
                 break;
+            case R.id.menu_open_user_website:
+                mUserProfilePresenter.getWebsite(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -425,6 +445,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         mUserProfilePresenter.unSubscribe();
     }
 
+    @SuppressLint("RestrictedApi")
     private void updatePosts(UserProfileContract.POST_TYPE postType, List<Post> posts, boolean refresh) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof UserProfilePostsFragment) {
@@ -433,6 +454,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void updateUsers(UserProfileContract.USER_TYPE userType, List<User> users, boolean refresh) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof UserProfileUsersFragment) {

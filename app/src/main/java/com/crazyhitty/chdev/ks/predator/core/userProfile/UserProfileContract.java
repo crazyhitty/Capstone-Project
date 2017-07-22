@@ -75,11 +75,17 @@ public interface UserProfileContract {
         void onlineLoadingComplete();
 
         void onRefreshComplete();
+
+        void websiteAvailable(String url);
+
+        void websiteUnavailable();
     }
 
     interface Presenter extends BasePresenter {
         void getOfflineData(int userId);
 
         void getLatestData(String token, int userId, boolean refresh);
+
+        void getWebsite(int userId);
     }
 }

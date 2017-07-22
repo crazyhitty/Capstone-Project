@@ -236,6 +236,24 @@ public class PredatorDatabase {
         return user;
     }
 
+    public String getWebsiteForUser(int userId) {
+        Cursor cursorWebsite = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
+                new String[]{PredatorContract.UsersEntry.COLUMN_WEBSITE_URL},
+                PredatorContract.UsersEntry.COLUMN_USER_ID + "=" + userId,
+                null,
+                null);
+
+        String website = null;
+        if (cursorWebsite != null && cursorWebsite.getCount() != 0) {
+            cursorWebsite.moveToFirst();
+            website = CursorUtils.getString(cursorWebsite,
+                    PredatorContract.UsersEntry.COLUMN_WEBSITE_URL);
+        }
+        closeCursor(cursorWebsite);
+
+        return website;
+    }
+
     public List<User> getFollowerUsers(String followerUserIdsQuery) {
         Cursor cursorFollowers = mContentResolver.query(PredatorContract.UsersEntry.CONTENT_URI_USERS,
                         null,

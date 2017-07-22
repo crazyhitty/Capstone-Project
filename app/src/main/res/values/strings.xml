@@ -51,6 +51,7 @@
 
     <!--menu_user_profile.xml-->
     <string name="menu_user_profile_refresh">Refresh</string>
+    <string name="menu_user_open_website">Open user\'s website</string>
 
     <!--menu_about.xml-->
     <string name="menu_about_feedback">Feedback</string>
@@ -192,6 +193,7 @@
     </string-array>
     <string name="activity_user_profile">User Profile</string>
     <string name="activity_user_profile_updated_details">Updated details</string>
+    <string name="activity_user_profile_website_unavailable">No website available for this user.</string>
 
     <!--fragment_comments.xml-->
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>

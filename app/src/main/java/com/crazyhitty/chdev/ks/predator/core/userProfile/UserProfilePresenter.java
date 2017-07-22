@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.core.userProfile;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
@@ -42,6 +43,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
@@ -375,6 +377,45 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 if (refresh) {
                     mView.onRefreshComplete();
                 }
+            }
+        }));
+    }
+
+    @Override
+    public void getWebsite(final int userId) {
+        Observable<String> observableWebsite = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                String website = PredatorDatabase.getInstance()
+                        .getWebsiteForUser(userId);
+                if (!TextUtils.isEmpty(website)) {
+                    emitter.onNext(website);
+                } else {
+                    emitter.onError(new NullPointerException("No website available for this user."));
+                }
+                emitter.onComplete();
+            }
+        });
+
+        observableWebsite.subscribeOn(Schedulers.io());
+        observableWebsite.observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(observableWebsite.subscribeWith(new DisposableObserver<String>(){
+            @Override
+            public void onNext(String value) {
+                Logger.d("onNext: getWebsite: " + value);
+                mView.websiteAvailable(value);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.websiteUnavailable();
+            }
+
+            @Override
+            public void onComplete() {
+                Logger.d(TAG, "onComplete: fetched user website");
             }
         }));
     }
