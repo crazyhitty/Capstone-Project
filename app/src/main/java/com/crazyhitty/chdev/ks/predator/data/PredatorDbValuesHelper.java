@@ -379,6 +379,21 @@ public class PredatorDbValuesHelper {
         return contentValues;
     }
 
+    public static ContentValues getContentValuesForPost(PostDetailsData.PostDetails post) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, post.getId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CATEGORY_ID, post.getCategoryId());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_DAY, post.getDay());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_NAME, post.getName());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_TAGLINE, post.getTagline());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT, post.getCreatedAt());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS, DateUtils.predatorDateToMillis(post.getCreatedAt()));
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_DISCUSSION_URL, post.getDiscussionUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_REDIRECT_URL, post.getRedirectUrl());
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_VOTES_COUNT, post.getVotesCount());
+        return contentValues;
+    }
+
     public static ContentValues[] getBulkContentValuesForPostUsers(UserProfileData userProfileData) {
         List<ContentValues> contentValues = new ArrayList<ContentValues>();
 

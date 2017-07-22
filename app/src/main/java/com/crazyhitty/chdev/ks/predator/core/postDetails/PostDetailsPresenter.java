@@ -39,6 +39,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CommentTimeCalculator;
@@ -195,6 +196,17 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         return Observable.create(new ObservableOnSubscribe<PostDetailsDataType>() {
                             @Override
                             public void subscribe(ObservableEmitter<PostDetailsDataType> emitter) throws Exception {
+                                // Update post details.
+                                PredatorDatabase.getInstance()
+                                        .insertPost(PredatorDbValuesHelper.getContentValuesForPost(postDetailsData.getPost()));
+
+                                // Get post details.
+                                PostDetailsDataType postDetails = new PostDetailsDataType();
+                                postDetails.setPostDetails(PredatorDatabase.getInstance()
+                                        .getPostDetails(postId));
+                                postDetails.setType(PostDetailsDataType.TYPE.POST_DETAILS);
+                                emitter.onNext(postDetails);
+
                                 // Add users who upvoted this post to database.
                                 PredatorDatabase.getInstance()
                                         .insertUsers(PredatorDbValuesHelper.getBulkContentValuesForUsers(postId,
@@ -308,6 +320,9 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onNext(PostDetailsDataType postDetailsDataType) {
                 switch (postDetailsDataType.getType()) {
+                    case POST_DETAILS:
+                        mView.showDetails(postDetailsDataType.getPostDetails());
+                        break;
                     case MEDIA:
                         mView.showMedia(postDetailsDataType.getMedia());
                         break;
@@ -521,6 +536,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     public static class PostDetailsDataType {
         private TYPE type;
+        private PostDetails postDetails;
         private List<User> users;
         private List<Comment> comments;
         private List<Media> media;
@@ -532,6 +548,14 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
         public void setType(TYPE type) {
             this.type = type;
+        }
+
+        public PostDetails getPostDetails() {
+            return postDetails;
+        }
+
+        public void setPostDetails(PostDetails postDetails) {
+            this.postDetails = postDetails;
         }
 
         public List<User> getUsers() {
@@ -567,6 +591,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }
 
         enum TYPE {
+            POST_DETAILS,
             MEDIA,
             COMMENTS,
             INSTALL_LINKS,

@@ -321,6 +321,8 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 recyclerViewMedia.setVisibility(View.VISIBLE);
             }
         });
+
+        appBarLayout.setExpanded(true);
     }
 
     @Override

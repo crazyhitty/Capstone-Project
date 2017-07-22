@@ -52,6 +52,35 @@ public class PostDetailsData {
     }
 
     public static class PostDetails {
+        /**
+         * category_id : 1
+         * day : 2017-07-22
+         * id : 104205
+         * name : PickedMail
+         * tagline : Inbox that learns, picking only the emails you care about.
+         * created_at : 2017-07-22T04:05:45.475-07:00
+         * discussion_url : https://www.producthunt.com/posts/pickedmail?utm_campaign=producthunt-api&utm_medium=api&utm_source=Application%3A+Predator+%28ID%3A+3937%29
+         * featured : true
+         * redirect_url : https://www.producthunt.com/r/e5631635e9db9d/104205?app_id=3937
+         * votes_count : 3
+         */
+
+        @SerializedName("category_id")
+        private int categoryId;
+        private String day;
+        private int id;
+        private String name;
+        private String tagline;
+        @SerializedName("created_at")
+        private String createdAt;
+        @SerializedName("discussion_url")
+        private String discussionUrl;
+        private boolean featured;
+        @SerializedName("redirect_url")
+        private String redirectUrl;
+        @SerializedName("votes_count")
+        private int votesCount;
+
         private List<Votes> votes;
         @SerializedName("related_links")
         private List<?> relatedLinks;
@@ -108,6 +137,86 @@ public class PostDetailsData {
 
         public void setComments(List<PostCommentsData.Comments> comments) {
             this.comments = comments;
+        }
+
+        public int getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(int categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public String getDay() {
+            return day;
+        }
+
+        public void setDay(String day) {
+            this.day = day;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTagline() {
+            return tagline;
+        }
+
+        public void setTagline(String tagline) {
+            this.tagline = tagline;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getDiscussionUrl() {
+            return discussionUrl;
+        }
+
+        public void setDiscussionUrl(String discussionUrl) {
+            this.discussionUrl = discussionUrl;
+        }
+
+        public boolean isFeatured() {
+            return featured;
+        }
+
+        public void setFeatured(boolean featured) {
+            this.featured = featured;
+        }
+
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
+
+        public void setRedirectUrl(String redirectUrl) {
+            this.redirectUrl = redirectUrl;
+        }
+
+        public int getVotesCount() {
+            return votesCount;
+        }
+
+        public void setVotesCount(int votesCount) {
+            this.votesCount = votesCount;
         }
 
         public static class Votes {
