@@ -44,6 +44,7 @@ public class Comment {
     private String usernameAlternative;
     private String userHeadline;
     private String userImageThumbnailUrl;
+    private String userWebsiteUrl;
     private String url;
     private int votes;
     private boolean isSticky;
@@ -148,6 +149,14 @@ public class Comment {
 
     public void setUserImageThumbnailUrl(String userImageThumbnailUrl) {
         this.userImageThumbnailUrl = userImageThumbnailUrl;
+    }
+
+    public String getUserWebsiteUrl() {
+        return userWebsiteUrl;
+    }
+
+    public void setUserWebsiteUrl(String userWebsiteUrl) {
+        this.userWebsiteUrl = userWebsiteUrl;
     }
 
     public String getUrl() {

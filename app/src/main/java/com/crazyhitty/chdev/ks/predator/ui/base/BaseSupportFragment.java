@@ -24,10 +24,15 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.net.Uri;
 import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
@@ -38,6 +43,8 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
+import org.chromium.customtabsclient.CustomTabsActivityHelper;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -46,6 +53,24 @@ import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
  */
 
 public abstract class BaseSupportFragment extends Fragment {
+    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
+            .enableUrlBarHiding()
+            .setShowTitle(true)
+            .build();
+    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
+            new CustomTabsActivityHelper.CustomTabsFallback() {
+                @Override
+                public void openUri(Activity activity, Uri uri) {
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            };
+
     protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
     }
@@ -93,5 +118,13 @@ public abstract class BaseSupportFragment extends Fragment {
                     .mutate()
                     .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
         }
+    }
+
+    protected CustomTabsIntent getCustomTabsIntent() {
+        return mCustomTabsIntent;
+    }
+
+    protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
+        return mCustomTabsFallback;
     }
 }

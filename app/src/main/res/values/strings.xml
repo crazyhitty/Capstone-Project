@@ -169,7 +169,10 @@
     <string name="activity_about_version">Version %s</string>
     <string name="activity_about_developer_title">Developer</string>
     <string name="activity_about_developer_name">Kartik Sharma</string>
-    <string name="activity_about_developer_username">\@cr42yh17m4n</string>
+    <string name="activity_about_developer_name_short">Kartik</string>
+    <string name="activity_about_developer_username">cr42yh17m4n</string>
+    <string name="activity_about_developer_username_formatted">\@cr42yh17m4n</string>
+    <string name="activity_about_developer_headline">Android dev</string>
     <string name="activity_about_developer_type">Predator Dev</string>
     <string name="activity_about_developed_by_title">Made with love by</string>
     <string name="activity_about_contributions_title">Contributions</string>

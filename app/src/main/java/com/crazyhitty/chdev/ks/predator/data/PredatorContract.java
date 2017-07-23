@@ -179,6 +179,7 @@ public class PredatorContract {
         public static final String COLUMN_USER_HEADLINE = "user_headline";
         public static final String COLUMN_USER_IMAGE_URL_100PX = "user_image_url_100px";
         public static final String COLUMN_USER_IMAGE_URL_ORIGINAL = "user_image_url_original";
+        public static final String COLUMN_USER_WEBSITE_URL = "user_website_url";
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_VOTES = "votes";
         public static final String COLUMN_IS_STICKY = "is_sticky";

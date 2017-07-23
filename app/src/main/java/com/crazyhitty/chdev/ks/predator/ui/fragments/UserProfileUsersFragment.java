@@ -102,7 +102,9 @@ public class UserProfileUsersFragment extends BaseSupportFragment {
         mUserProfileUsersRecyclerAdapter = new UserProfileUsersRecyclerAdapter(null, new UserProfileUsersRecyclerAdapter.OnUserItemClickListener() {
             @Override
             public void onUserClick(int position) {
-                UserProfileActivity.startActivity(getContext(), mUserProfileUsersRecyclerAdapter.getUserId(position));
+                UserProfileActivity.startActivity(getContext(),
+                        mUserProfileUsersRecyclerAdapter.getUserId(position),
+                        mUserProfileUsersRecyclerAdapter.getUserFallback(position));
             }
         });
         recyclerViewUsers.setAdapter(mUserProfileUsersRecyclerAdapter);

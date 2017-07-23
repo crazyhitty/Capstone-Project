@@ -24,27 +24,21 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
+import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
-
-import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,23 +54,6 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
  */
 
 public class AboutDeveloperFragment extends BaseSupportFragment {
-    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .build();
-    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
-            new CustomTabsActivityHelper.CustomTabsFallback() {
-                @Override
-                public void openUri(Activity activity, Uri uri) {
-                    try {
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-            };
     @BindView(R.id.text_view_extra_desc)
     TextView txtExtraDesc;
 
@@ -102,15 +79,23 @@ public class AboutDeveloperFragment extends BaseSupportFragment {
 
     @OnClick(R.id.card_view_kartik)
     public void onCardViewKartikClick() {
+        UserFallback userFallback = new UserFallback();
+        userFallback.setName(getString(R.string.activity_about_developer_name_short));
+        userFallback.setUsername(getString(R.string.activity_about_developer_username));
+        userFallback.setHeadline(getString(R.string.activity_about_developer_headline));
+        userFallback.setWebsiteUrl(Constants.About.URL_DEVELOPER_WEBSITE);
+        userFallback.setImage(Constants.About.URL_DEVELOPER_IMAGE);
+
         UserProfileActivity.startActivity(getContext(),
-                Constants.About.DEV_KARTIK_PRODUCT_HUNT_USER_ID);
+                Constants.About.DEV_KARTIK_PRODUCT_HUNT_USER_ID,
+                userFallback);
     }
 
     @OnClick(R.id.card_view_kajal)
     public void onCardViewKajalClick() {
         CustomTabsHelperFragment.open(getActivity(),
-                mCustomTabsIntent,
+                getCustomTabsIntent(),
                 Uri.parse(Constants.About.URL_GITHUB_KAJAL),
-                mCustomTabsFallback);
+                getCustomTabsFallback());
     }
 }

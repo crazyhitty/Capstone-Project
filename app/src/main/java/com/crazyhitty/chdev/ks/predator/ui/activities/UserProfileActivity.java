@@ -58,6 +58,7 @@ import com.crazyhitty.chdev.ks.predator.events.UserFollowersFollowingEvent;
 import com.crazyhitty.chdev.ks.predator.events.UserPostsEvent;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.UserProfilePagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
@@ -89,6 +90,7 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 public class UserProfileActivity extends BaseAppCompatActivity implements UserProfileContract.View {
     private static final String TAG = "UserProfileActivity";
     private static final String ARG_USERS_TABLE_USER_ID = "user_id";
+    private static final String ARG_USERS_TABLE_USER_FALLBACK = "user_fallback";
     private static final int DELAY_MS = 600;
 
     @BindView(R.id.app_bar_layout)
@@ -115,10 +117,16 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
 
     private View mMenuItemRefreshActionView = null;
 
-    public static void startActivity(Context context, int userId) {
+    public static void startActivity(Context context, int userId, UserFallback userFallback) {
         Intent intent = new Intent(context, UserProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ARG_USERS_TABLE_USER_ID, userId);
+
+        Bundle args = new Bundle();
+        args.putInt(ARG_USERS_TABLE_USER_ID, userId);
+        args.putParcelable(ARG_USERS_TABLE_USER_FALLBACK, userFallback);
+
+        intent.putExtras(args);
+
         context.startActivity(intent);
     }
 
@@ -131,6 +139,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         initAppBarLayout();
         initToolbar();
         initViewPager();
+        setFallbackData();
         setPresenter(new UserProfilePresenter(this));
         mUserProfilePresenter.subscribe();
         mUserProfilePresenter.getOfflineData(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID));
@@ -216,6 +225,19 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
                         mUserProfilePresenter.getLatestData(s, userId, refresh);
                     }
                 });
+    }
+
+    private void setFallbackData() {
+        UserFallback userFallback = getIntent().getParcelableExtra(ARG_USERS_TABLE_USER_FALLBACK);
+
+        User user = new User();
+        user.setName(userFallback.getName());
+        user.setImage(userFallback.getImage());
+        user.setHeadline(userFallback.getHeadline());
+        user.setUsername(userFallback.getUsername());
+        user.setWebsiteUrl(userFallback.getWebsiteUrl());
+
+        showUserDetails(user);
     }
 
     @Override

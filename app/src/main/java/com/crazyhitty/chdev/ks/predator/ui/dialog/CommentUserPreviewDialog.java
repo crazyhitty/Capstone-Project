@@ -47,6 +47,7 @@ import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
+import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
@@ -114,7 +115,9 @@ public class CommentUserPreviewDialog extends AlertDialog {
         initializeViews(context, comment, postTitle);
     }
 
-    private void initializeViews(Context context, final Comment comment, final String postTitle) {
+    private void initializeViews(Context context,
+                                 final Comment comment,
+                                 final String postTitle) {
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_comment_user_preview, null);
         setView(view);
@@ -125,7 +128,9 @@ public class CommentUserPreviewDialog extends AlertDialog {
                 new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserProfileActivity.startActivity(getContext(), comment.getUserId());
+                        UserProfileActivity.startActivity(getContext(),
+                                comment.getUserId(),
+                                getUserFallback(comment));
                     }
                 });
 
@@ -241,5 +246,17 @@ public class CommentUserPreviewDialog extends AlertDialog {
         sharingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getContext().startActivity(Intent.createChooser(sharingIntent,
                 getContext().getString(R.string.share_using)));
+    }
+
+    private UserFallback getUserFallback(Comment comment) {
+        UserFallback userFallback = new UserFallback();
+        userFallback.setName(comment.getUsername());
+        userFallback.setUsername(comment.getUsernameAlternative());
+        userFallback.setHeadline(comment.getUserHeadline());
+        userFallback.setWebsiteUrl(comment.getUserWebsiteUrl());
+        userFallback.setImage(comment.getUserImageThumbnailUrl());
+        userFallback.setThumbnail(comment.getUserImageThumbnailUrl());
+
+        return userFallback;
     }
 }
