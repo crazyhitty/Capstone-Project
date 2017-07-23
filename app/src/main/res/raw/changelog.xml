@@ -26,6 +26,12 @@
 
     <changelogversion
         changeDate="July 23, 2017"
+        versionName="0.31">
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="July 23, 2017"
         versionName="0.30">
         <changelogbug>Bug fixes and performance improvements.</changelogbug>
     </changelogversion>
