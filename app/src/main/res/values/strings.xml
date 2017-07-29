@@ -283,7 +283,7 @@
 
     <string name="settings_change_font_key">change_font</string>
     <string name="settings_change_font_title">Change font</string>
-    <string name="settings_change_font_summary">Change the font used by this application.</string>
+    <string name="settings_change_font_summary">Change the font used by this application. My favorite is \"Work Sans\".</string>
     <string name="settings_change_font_dialog_title">Change font</string>
     <string name="settings_change_font_default_value">default</string>
     <string-array name="settings_change_font_entries">
