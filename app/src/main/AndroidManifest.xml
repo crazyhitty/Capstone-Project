@@ -69,6 +69,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".ui.activities.FontSelectionActivity"
+            android:parentActivityName=".ui.activities.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".ui.activities.AuthenticatorActivity"
             android:theme="@style/DialogActivity.NoTitle" />
 

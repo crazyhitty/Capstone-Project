@@ -28,6 +28,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <CheckBox
+        android:id="@+id/checkbox_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/item_list_post_checkbox_select_top_margin"
+        android:layout_marginStart="@dimen/material_component_lists_icon_left_padding"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/text_view_date"
         android:layout_width="wrap_content"

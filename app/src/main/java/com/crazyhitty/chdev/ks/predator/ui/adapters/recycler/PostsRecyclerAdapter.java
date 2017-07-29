@@ -73,6 +73,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean mNetworkAvailable;
     private String mErrorMessage;
     private boolean mLoadMoreNotRequired = false;
+    private boolean mIsDummy = false;
 
     /**
      * Initialize using this constructor if load more and dates functionalities are not required.
@@ -104,6 +105,18 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mDateHashMap = dateHashMap;
         mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
         mLoadMoreNotRequired = false;
+    }
+
+    public PostsRecyclerAdapter(List<Post> posts,
+                                TYPE type,
+                                HashMap<Integer, String> dateHashMap,
+                                boolean isDummy) {
+        mPosts = posts;
+        mType = type;
+        mDateHashMap = dateHashMap;
+        mOnPostsLoadMoreRetryListener = null;
+        mLoadMoreNotRequired = isDummy;
+        mIsDummy = isDummy;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -209,6 +222,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             }
         });
+
+        if (mIsDummy) {
+            listItemViewHolder.relativeLayoutPost.setClickable(false);
+        }
     }
 
     private void onBindLoadMoreViewHolder(LoadMoreViewHolder loadMoreViewHolder, int position) {
@@ -226,7 +243,9 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         loadMoreViewHolder.btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnPostsLoadMoreRetryListener.onLoadMore();
+                if (mOnPostsLoadMoreRetryListener != null) {
+                    mOnPostsLoadMoreRetryListener.onLoadMore();
+                }
             }
         });
     }

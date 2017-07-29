@@ -50,6 +50,7 @@
     <dimen name="toolbar_shadow">4dp</dimen>
 
     <!--item_list_post.xml-->
+    <dimen name="item_list_post_checkbox_select_top_margin">38dp</dimen>
     <dimen name="item_list_post_image_height">44dp</dimen>
     <dimen name="item_list_post_image_width">44dp</dimen>
     <dimen name="item_list_post_image_padding">2dp</dimen>

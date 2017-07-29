@@ -73,6 +73,9 @@ public class Constants {
 
     public static class Posts {
         public static final String CATEGORY_ALL = "all";
+        public static final String POSTS = "posts";
+        public static final String NAME = "name";
+        public static final String TAGLINE = "tagline";
 
         private Posts() {
 

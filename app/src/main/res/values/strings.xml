@@ -253,6 +253,9 @@
     <string name="share_app_title">Predator for ProductHunt!</string>
     <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
 
+    <!--activity_font_selection-->
+    <string name="activity_font_selection">Select Font</string>
+
     <!--settings-->
     <string name="settings_name">Settings</string>
 
