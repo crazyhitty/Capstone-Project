@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -129,6 +130,21 @@ public class UserProfileUsersRecyclerAdapter extends RecyclerView.Adapter<UserPr
      */
     public int getUserId(int position) {
         return mUsers.get(position).getUserId();
+    }
+
+    /**
+     * @param position Current position of the element
+     * @return Returns the unique user fallback associated with the item at available position.
+     */
+    public UserFallback getUserFallback(int position) {
+        UserFallback userFallback = new UserFallback();
+        userFallback.setName(mUsers.get(position).getName());
+        userFallback.setUsername(mUsers.get(position).getUsername());
+        userFallback.setHeadline(mUsers.get(position).getHeadline());
+        userFallback.setThumbnail(mUsers.get(position).getThumbnail());
+        userFallback.setWebsiteUrl(mUsers.get(position).getWebsiteUrl());
+        userFallback.setImage(mUsers.get(position).getImage());
+        return userFallback;
     }
 
     @Override

@@ -137,6 +137,13 @@
     <dimen name="item_library_card_corner_radius">4dp</dimen>
     <dimen name="item_library_card_elevation">2dp</dimen>
 
+    <!--dialog_comment_user_preview.xml-->
+    <dimen name="dialog_comment_user_preview_header_height">150dp</dimen>
+    <dimen name="dialog_comment_user_preview_image_height">44dp</dimen>
+    <dimen name="dialog_comment_user_preview_image_width">44dp</dimen>
+    <dimen name="dialog_comment_user_preview_image_corner_padding">2dp</dimen>
+    <dimen name="dialog_comment_user_preview_image_border_width">1dp</dimen>
+
     <!--widget_posts-->
     <dimen name="widget_posts_min_height">146dip</dimen>
     <dimen name="widget_posts_min_width">146dip</dimen>

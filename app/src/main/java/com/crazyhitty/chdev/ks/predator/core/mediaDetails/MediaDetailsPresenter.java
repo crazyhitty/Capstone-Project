@@ -24,17 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.core.mediaDetails;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
 import com.crazyhitty.chdev.ks.predator.core.postDetails.PostDetailsPresenter;
-import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.models.Media;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -70,39 +65,17 @@ public class MediaDetailsPresenter implements MediaDetailsContract.Presenter {
             @Override
             public void subscribe(ObservableEmitter<MediaData> emitter) throws Exception {
                 // Fetch media from database.
-                Cursor mediaCursor = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.MediaEntry.CONTENT_URI_MEDIA,
-                                null,
-                                PredatorContract.MediaEntry.COLUMN_POST_ID + "=" + postId + " AND " +
-                                        PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE + "='" + Constants.Media.IMAGE + "'",
-                                null,
-                                null);
+                List<Media> media = PredatorDatabase.getInstance()
+                        .getMediaForPost(postId);
 
                 int defaultPosition = 0;
 
-                if (mediaCursor != null && mediaCursor.getCount() != 0) {
-                    List<Media> media = new ArrayList<Media>();
-                    for (int i = 0; i < mediaCursor.getCount(); i++) {
-                        mediaCursor.moveToPosition(i);
-
-                        Media mediaObj = new Media();
-                        mediaObj.setId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ID));
-                        mediaObj.setMediaId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_ID));
-                        mediaObj.setPostId(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_POST_ID));
-                        mediaObj.setMediaType(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_MEDIA_TYPE));
-                        mediaObj.setPlatform(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_PLATFORM));
-                        mediaObj.setVideoId(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_VIDEO_ID));
-                        mediaObj.setOriginalWidth(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_WIDTH));
-                        mediaObj.setOriginalHeight(CursorUtils.getInt(mediaCursor, PredatorContract.MediaEntry.COLUMN_ORIGINAL_HEIGHT));
-                        mediaObj.setImageUrl(CursorUtils.getString(mediaCursor, PredatorContract.MediaEntry.COLUMN_IMAGE_URL));
-
-                        if (mediaId == mediaObj.getMediaId()) {
+                if (media != null && !media.isEmpty()) {
+                    for (int i = 0; i < media.size(); i++) {
+                        if (mediaId == media.get(i).getMediaId()) {
                             defaultPosition = i;
                         }
-
-                        media.add(mediaObj);
                     }
-                    mediaCursor.close();
                     emitter.onNext(new MediaData(media, defaultPosition));
                 } else {
                     emitter.onError(new PostDetailsPresenter.MediaUnavailableException());

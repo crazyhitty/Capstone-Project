@@ -24,7 +24,9 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.base;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +39,8 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.customtabs.CustomTabsCallback;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -56,6 +60,8 @@ import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
+
+import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -79,6 +85,24 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
     private AlertDialog mErrorDialog;
+
+    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
+            .enableUrlBarHiding()
+            .setShowTitle(true)
+            .build();
+    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
+            new CustomTabsActivityHelper.CustomTabsFallback() {
+                @Override
+                public void openUri(Activity activity, Uri uri) {
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -226,7 +250,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
         if (intent.resolveActivity(getPackageManager()) != null) {
-            showShortToast(R.string.rate_app_message);
+            showLongToast(R.string.rate_app_message);
             startActivity(intent);
         }
     }
@@ -299,5 +323,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    protected CustomTabsIntent getCustomTabsIntent() {
+        return mCustomTabsIntent;
+    }
+
+    protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
+        return mCustomTabsFallback;
     }
 }

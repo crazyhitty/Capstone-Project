@@ -55,8 +55,9 @@
         android:layout_below="@+id/text_view_user_name"
         android:layout_marginEnd="@dimen/material_component_lists_right_padding"
         android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        tools:text="Headline" />
+        android:layout_marginTop="@dimen/margin_min"
+        android:textAppearance="@style/TextAppearancePostExtraDetails"
+        tools:text="Headline"/>
 
     <TextView
         android:id="@+id/text_view_comment_body"
@@ -70,5 +71,16 @@
         android:linksClickable="true"
         android:textAppearance="@style/TextAppearanceComment"
         tools:text="@string/lorem_ipsum" />
+
+    <TextView
+        android:id="@+id/text_view_comment_extra_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_comment_body"
+        android:layout_marginEnd="@dimen/material_component_lists_right_padding"
+        android:layout_marginStart="@dimen/material_component_lists_text_left_padding"
+        android:layout_marginTop="@dimen/margin_min"
+        android:textAppearance="@style/TextAppearanceCommentExtraDetails"
+        tools:text="1337 votes &#8226; 1 hr ago" />
 
 </RelativeLayout>

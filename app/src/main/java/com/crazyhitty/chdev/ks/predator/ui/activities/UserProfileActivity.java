@@ -24,8 +24,10 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
@@ -55,6 +58,7 @@ import com.crazyhitty.chdev.ks.predator.events.UserFollowersFollowingEvent;
 import com.crazyhitty.chdev.ks.predator.events.UserPostsEvent;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.User;
+import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.UserProfilePagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
@@ -73,6 +77,7 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
 /**
@@ -85,6 +90,7 @@ import io.reactivex.schedulers.Schedulers;
 public class UserProfileActivity extends BaseAppCompatActivity implements UserProfileContract.View {
     private static final String TAG = "UserProfileActivity";
     private static final String ARG_USERS_TABLE_USER_ID = "user_id";
+    private static final String ARG_USERS_TABLE_USER_FALLBACK = "user_fallback";
     private static final int DELAY_MS = 600;
 
     @BindView(R.id.app_bar_layout)
@@ -111,10 +117,16 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
 
     private View mMenuItemRefreshActionView = null;
 
-    public static void startActivity(Context context, int userId) {
+    public static void startActivity(Context context, int userId, UserFallback userFallback) {
         Intent intent = new Intent(context, UserProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ARG_USERS_TABLE_USER_ID, userId);
+
+        Bundle args = new Bundle();
+        args.putInt(ARG_USERS_TABLE_USER_ID, userId);
+        args.putParcelable(ARG_USERS_TABLE_USER_FALLBACK, userFallback);
+
+        intent.putExtras(args);
+
         context.startActivity(intent);
     }
 
@@ -127,6 +139,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         initAppBarLayout();
         initToolbar();
         initViewPager();
+        setFallbackData();
         setPresenter(new UserProfilePresenter(this));
         mUserProfilePresenter.subscribe();
         mUserProfilePresenter.getOfflineData(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID));
@@ -212,6 +225,19 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
                         mUserProfilePresenter.getLatestData(s, userId, refresh);
                     }
                 });
+    }
+
+    private void setFallbackData() {
+        UserFallback userFallback = getIntent().getParcelableExtra(ARG_USERS_TABLE_USER_FALLBACK);
+
+        User user = new User();
+        user.setName(userFallback.getName());
+        user.setImage(userFallback.getImage());
+        user.setHeadline(userFallback.getHeadline());
+        user.setUsername(userFallback.getUsername());
+        user.setWebsiteUrl(userFallback.getWebsiteUrl());
+
+        showUserDetails(user);
     }
 
     @Override
@@ -365,6 +391,19 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         }, DELAY_MS);
     }
 
+    @Override
+    public void websiteAvailable(String url) {
+        CustomTabsHelperFragment.open(this,
+                getCustomTabsIntent(),
+                Uri.parse(url),
+                getCustomTabsFallback());
+    }
+
+    @Override
+    public void websiteUnavailable() {
+        showShortToast(R.string.activity_user_profile_website_unavailable);
+    }
+
 
     @Override
     public void setPresenter(UserProfileContract.Presenter presenter) {
@@ -415,6 +454,9 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
                     loadLatestDetails(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID), true);
                 }
                 break;
+            case R.id.menu_open_user_website:
+                mUserProfilePresenter.getWebsite(getIntent().getExtras().getInt(ARG_USERS_TABLE_USER_ID));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -425,6 +467,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         mUserProfilePresenter.unSubscribe();
     }
 
+    @SuppressLint("RestrictedApi")
     private void updatePosts(UserProfileContract.POST_TYPE postType, List<Post> posts, boolean refresh) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof UserProfilePostsFragment) {
@@ -433,6 +476,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void updateUsers(UserProfileContract.USER_TYPE userType, List<User> users, boolean refresh) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment instanceof UserProfileUsersFragment) {

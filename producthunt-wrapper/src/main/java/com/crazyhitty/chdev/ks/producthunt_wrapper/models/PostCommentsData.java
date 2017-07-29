@@ -266,6 +266,8 @@ public class PostCommentsData {
             private String headline;
             @SerializedName("image_url")
             private ImageUrl imageUrl;
+            @SerializedName("website_url")
+            private String websiteUrl;
 
             public int getId() {
                 return id;
@@ -313,6 +315,14 @@ public class PostCommentsData {
 
             public void setImageUrl(ImageUrl imageUrl) {
                 this.imageUrl = imageUrl;
+            }
+
+            public String getWebsiteUrl() {
+                return websiteUrl;
+            }
+
+            public void setWebsiteUrl(String websiteUrl) {
+                this.websiteUrl = websiteUrl;
             }
 
             public static class ImageUrl {

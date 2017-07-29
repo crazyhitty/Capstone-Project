@@ -104,6 +104,8 @@ public class UsersFragment extends BaseSupportFragment implements UsersRecyclerA
 
     @Override
     public void onUserClick(int position) {
-        UserProfileActivity.startActivity(getContext(), mUsersRecyclerAdapter.getUserId(position));
+        UserProfileActivity.startActivity(getContext(),
+                mUsersRecyclerAdapter.getUserId(position),
+                mUsersRecyclerAdapter.getUserFallback(position));
     }
 }

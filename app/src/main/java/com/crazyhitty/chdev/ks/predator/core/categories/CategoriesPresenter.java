@@ -24,16 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.core.categories;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Category;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.CursorUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.CategoriesData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
@@ -43,7 +40,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -86,28 +82,15 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
                     @Override
                     public List<Category> apply(CategoriesData categoriesData) throws Exception {
                         // Delete existing categories from category table.
-                        MainApplication.getContentResolverInstance()
-                                .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
+                        PredatorDatabase.getInstance()
+                                .deleteAllCategories();
 
                         // Insert new categories into category table.
-                        MainApplication.getContentResolverInstance()
-                                .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
-                                        getBulkContentValuesForCategories(categoriesData.getCategories()));
+                        PredatorDatabase.getInstance()
+                                .insertCategories(PredatorDbValuesHelper.getBulkContentValuesForCategories(categoriesData.getCategories()));
 
-                        Cursor cursor = MainApplication.getContentResolverInstance()
-                                .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                                        null,
-                                        null,
-                                        null,
-                                        null);
-
-                        List<Category> categories = new ArrayList<Category>();
-                        if (cursor != null && cursor.getCount() != 0) {
-                            categories = getCategoriesFromCursor(cursor);
-                            cursor.close();
-                        }
-
-                        return categories;
+                        return PredatorDatabase.getInstance()
+                                .getCategories();
                     }
                 })
                 .flatMap(new Function<List<Category>, ObservableSource<List<Category>>>() {
@@ -173,26 +156,15 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
                 CategoriesData categoriesData = new Gson().fromJson(categoriesJsonStr, CategoriesData.class);
 
                 // Delete existing categories from category table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_DELETE, null, null);
+                PredatorDatabase.getInstance()
+                        .deleteAllCategories();
 
                 // Insert new categories into category table.
-                MainApplication.getContentResolverInstance()
-                        .bulkInsert(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY_ADD,
-                                getBulkContentValuesForCategories(categoriesData.getCategories()));
+                PredatorDatabase.getInstance()
+                        .insertCategories(PredatorDbValuesHelper.getBulkContentValuesForCategories(categoriesData.getCategories()));
 
-                Cursor cursor = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                                null,
-                                null,
-                                null,
-                                null);
-
-                List<Category> categories = new ArrayList<Category>();
-                if (cursor != null && cursor.getCount() != 0) {
-                    categories = getCategoriesFromCursor(cursor);
-                    cursor.close();
-                }
+                List<Category> categories = PredatorDatabase.getInstance()
+                        .getCategories();
 
                 if (categories != null && categories.size() != 0) {
                     emitter.onNext(categories);
@@ -229,16 +201,11 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
         Observable<Boolean> categoriesAvailableObservable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
-                Cursor cursor = MainApplication.getContentResolverInstance()
-                        .query(PredatorContract.CategoryEntry.CONTENT_URI_CATEGORY,
-                                null,
-                                null,
-                                null,
-                                null);
+                List<Category> categories = PredatorDatabase.getInstance()
+                        .getCategories();
 
-                if (cursor != null && cursor.getCount() != 0) {
+                if (categories != null && !categories.isEmpty()) {
                     emitter.onNext(true);
-                    cursor.close();
                 } else {
                     emitter.onNext(false);
                 }
@@ -279,44 +246,6 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     @Override
     public void unSubscribe() {
         mCompositeDisposable.clear();
-    }
-
-    private ContentValues[] getBulkContentValuesForCategories(List<CategoriesData.Categories> categories) {
-        ContentValues[] contentValuesArr = new ContentValues[categories.size()];
-        for (int i = 0; i < categories.size(); i++) {
-            CategoriesData.Categories category = categories.get(i);
-
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID, category.getId());
-            contentValues.put(PredatorContract.CategoryEntry.COLUMN_SLUG, category.getSlug());
-            contentValues.put(PredatorContract.CategoryEntry.COLUMN_NAME, category.getName());
-            contentValues.put(PredatorContract.CategoryEntry.COLUMN_COLOR, category.getColor());
-            contentValues.put(PredatorContract.CategoryEntry.COLUMN_ITEM_NAME, category.getItemName());
-
-            contentValuesArr[i] = contentValues;
-        }
-
-        return contentValuesArr;
-    }
-
-    private List<Category> getCategoriesFromCursor(Cursor cursor) {
-        List<Category> categories = new ArrayList<>();
-        cursor.moveToFirst();
-
-        for (int i = 0; i < cursor.getCount(); i++) {
-            Category category = new Category();
-
-            category.setId(CursorUtils.getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID));
-            category.setCategoryId(CursorUtils.getInt(cursor, PredatorContract.CategoryEntry.COLUMN_CATEGORY_ID));
-            category.setSlug(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_SLUG));
-            category.setName(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME));
-            category.setColor(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_COLOR));
-            category.setItemName(CursorUtils.getString(cursor, PredatorContract.CategoryEntry.COLUMN_ITEM_NAME));
-
-            categories.add(category);
-        }
-
-        return categories;
     }
 
     private static class NoCategoriesAvailableException extends Throwable {

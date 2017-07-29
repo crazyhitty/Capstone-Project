@@ -26,11 +26,11 @@ package com.crazyhitty.chdev.ks.predator.core.settings;
 
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.MainApplication;
-import com.crazyhitty.chdev.ks.predator.data.PredatorContract;
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -61,40 +61,28 @@ public class SettingsPresenter implements SettingsContract.Presenter {
 
     @Override
     public void clearCache() {
-        io.reactivex.Observable<Boolean> clearCacheObservable = io.reactivex.Observable.create(new ObservableOnSubscribe<Boolean>() {
+        Observable<Boolean> clearCacheObservable = Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
                 // Delete all values from all tables except CATEGORY TABLE AS IT MUST STAY AS IT IS.
                 // Delete all values from posts_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.PostsEntry.CONTENT_URI_POSTS_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllPosts();
                 // Delete all values from users_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.UsersEntry.CONTENT_URI_USERS_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllUsers();
                 // Delete all values from comments_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.CommentsEntry.CONTENT_URI_COMMENTS_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllComments();
                 // Delete all values from install_links_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllInstallLinks();
                 // Delete all values from media_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.MediaEntry.CONTENT_URI_MEDIA_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllMedia();
                 // Delete all values from collections_table.
-                MainApplication.getContentResolverInstance()
-                        .delete(PredatorContract.CollectionsEntry.CONTENT_URI_COLLECTIONS_DELETE,
-                                null,
-                                null);
+                PredatorDatabase.getInstance()
+                        .deleteAllCollections();
 
                 // Clear fresco cache.
                 Fresco.getImagePipeline().clearCaches();

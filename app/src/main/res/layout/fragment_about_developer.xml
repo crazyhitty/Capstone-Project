@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/margin_min"
-                    android:text="@string/activity_about_developer_username"
+                    android:text="@string/activity_about_developer_username_formatted"
                     android:textAppearance="@style/TextAppearanceUserNameAlternate" />
 
             </RelativeLayout>

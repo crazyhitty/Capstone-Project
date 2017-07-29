@@ -25,17 +25,15 @@
 package com.crazyhitty.chdev.ks.predator;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
-
-import java.lang.ref.WeakReference;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -50,16 +48,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
 
-    private static WeakReference<ContentResolver> sContentResolverWeakReference;
-
     static {
         // Supporting vector drawable resources on pre lollipop devices.
         // Source: http://stackoverflow.com/a/38012842
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
-
-    public static ContentResolver getContentResolverInstance() {
-        return sContentResolverWeakReference.get();
     }
 
     @Override
@@ -69,8 +61,8 @@ public class MainApplication extends Application {
         // Initialize stetho.
         Stetho.initializeWithDefaults(getApplicationContext());
 
-        // Create a static reference to content resolver so that it can be accessed anywhere.
-        sContentResolverWeakReference = new WeakReference<ContentResolver>(getContentResolver());
+        // Initialize Predator Database.
+        PredatorDatabase.init(getApplicationContext());
 
         // Initialize fresco.
         Fresco.initialize(this);

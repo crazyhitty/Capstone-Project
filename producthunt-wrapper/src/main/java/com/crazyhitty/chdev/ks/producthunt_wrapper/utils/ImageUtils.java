@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.producthunt_wrapper.utils;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 import java.util.Set;
 
@@ -41,6 +42,10 @@ public class ImageUtils {
     }
 
     public static String getCustomPostThumbnailImageUrl(String imageUrl, int heightPx, int widthPx) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return null;
+        }
+
         Uri uri = Uri.parse(imageUrl);
         final Set<String> params = uri.getQueryParameterNames();
         final Uri.Builder newUri = uri.buildUpon().clearQuery();
@@ -61,6 +66,10 @@ public class ImageUtils {
     }
 
     public static String getCustomUserThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return null;
+        }
+
         Uri uri = Uri.parse(imageUrl);
         final Set<String> params = uri.getQueryParameterNames();
         final Uri.Builder newUri = uri.buildUpon().clearQuery();
@@ -81,10 +90,18 @@ public class ImageUtils {
     }
 
     public static String getCustomMediaImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return null;
+        }
+
         return imageUrl.concat("h=" + heightPx + "&w=" + widthPx);
     }
 
     public static String getCustomCommentUserImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return null;
+        }
+
         Uri uri = Uri.parse(imageUrl);
         final Set<String> params = uri.getQueryParameterNames();
         final Uri.Builder newUri = uri.buildUpon().clearQuery();
@@ -105,6 +122,10 @@ public class ImageUtils {
     }
 
     public static String getCustomCollectionImageThumbnailUrl(String imageUrl, int heightPx, int widthPx) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return null;
+        }
+
         if (heightPx == 0 || widthPx == 0) {
             return imageUrl.concat("?h=" + 150 + "&w=" + 200);
         }

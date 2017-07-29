@@ -51,6 +51,7 @@
 
     <!--menu_user_profile.xml-->
     <string name="menu_user_profile_refresh">Refresh</string>
+    <string name="menu_user_open_website">Open user\'s website</string>
 
     <!--menu_about.xml-->
     <string name="menu_about_feedback">Feedback</string>
@@ -168,7 +169,10 @@
     <string name="activity_about_version">Version %s</string>
     <string name="activity_about_developer_title">Developer</string>
     <string name="activity_about_developer_name">Kartik Sharma</string>
-    <string name="activity_about_developer_username">\@cr42yh17m4n</string>
+    <string name="activity_about_developer_name_short">Kartik</string>
+    <string name="activity_about_developer_username">cr42yh17m4n</string>
+    <string name="activity_about_developer_username_formatted">\@cr42yh17m4n</string>
+    <string name="activity_about_developer_headline">Android dev</string>
     <string name="activity_about_developer_type">Predator Dev</string>
     <string name="activity_about_developed_by_title">Made with love by</string>
     <string name="activity_about_contributions_title">Contributions</string>
@@ -192,10 +196,30 @@
     </string-array>
     <string name="activity_user_profile">User Profile</string>
     <string name="activity_user_profile_updated_details">Updated details</string>
+    <string name="activity_user_profile_website_unavailable">No website available for this user.</string>
 
     <!--fragment_comments.xml-->
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>
     <string name="fragment_comments_unavailable">Comments unavailable currently.</string>
+
+    <!--item_post_details_comment.xml-->
+    <plurals name="item_post_details_comment_votes">
+        <item quantity="zero">0 votes</item>
+        <item quantity="one">1 vote</item>
+        <item quantity="other">%d votes</item>
+    </plurals>
+    <string name="item_post_details_comment_second_ago">%d sec ago</string>
+    <string name="item_post_details_comment_second_ago_plural">%d secs ago</string>
+    <string name="item_post_details_comment_minute_ago">%d min ago</string>
+    <string name="item_post_details_comment_minute_ago_plural">%d mins ago</string>
+    <string name="item_post_details_comment_hour_ago">%d hr ago</string>
+    <string name="item_post_details_comment_hour_ago_plural">%d hrs ago</string>
+    <string name="item_post_details_comment_day_ago">%d day ago</string>
+    <string name="item_post_details_comment_day_ago_plural">%d days ago</string>
+    <string name="item_post_details_comment_month_ago">%d month ago</string>
+    <string name="item_post_details_comment_month_ago_plural">%d months ago</string>
+    <string name="item_post_details_comment_year_ago">%d yr ago</string>
+    <string name="item_post_details_comment_year_ago_plural">%d yrs ago</string>
 
     <!--fragment_user_profile_posts.xml-->
     <string name="fragment_user_profile_posts_loading_please_wait">Loading, please wait&#8230;</string>
@@ -204,6 +228,16 @@
     <!--fragment_user_profile_users.xml-->
     <string name="fragment_user_profile_users_loading_please_wait">Loading, please wait&#8230;</string>
     <string name="fragment_user_profile_users_unavailable">Users unavailable currently.</string>
+
+    <!--dialog_comment_user_preview.xml-->
+    <string name="dialog_comment_user_preview_user_image_desc">User image</string>
+    <string name="dialog_comment_user_preview_positive_button">Profile</string>
+    <string name="dialog_comment_user_preview_negative_button">Cool</string>
+    <string name="dialog_comment_user_preview_neutral_button">Share</string>
+    <!--suppress AndroidDomInspection -->
+    <string name="dialog_comment_user_preview_username_alternative">@%s</string>
+    <!--suppress AndroidDomInspection -->
+    <string name="dialog_comment_user_preview_share_content" formatted="false">@%s\'s thoughts on %s @ProductHunt %s via Predator for Product Hunt</string>
 
     <!--widget-->
     <string name="widget_posts_unavailable">Posts unavailable.</string>
