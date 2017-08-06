@@ -133,6 +133,13 @@
     <dimen name="activity_user_profile_user_image_corner_padding">2dp</dimen>
     <dimen name="activity_user_profile_tab_layout_height">46dp</dimen>
 
+    <!--activity_app_linking.xml-->
+    <dimen name="activity_app_linking_header_height">200dp</dimen>
+    <dimen name="activity_app_linking_lottie_view_height">100dp</dimen>
+    <dimen name="activity_app_linking_image_width">44dp</dimen>
+    <dimen name="activity_app_linking_image_height">44dp</dimen>
+    <dimen name="activity_app_linking_image_corner_padding">2dp</dimen>
+
     <!--item_about_library.xml-->
     <dimen name="item_library_card_corner_radius">4dp</dimen>
     <dimen name="item_library_card_elevation">2dp</dimen>

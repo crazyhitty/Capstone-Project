@@ -49,5 +49,8 @@
     <attr name="drawableImageBrokenError" format="reference" />
     <attr name="imageUserBorderColor" format="reference" />
     <attr name="dialogHeaderColor" format="reference" />
+    <attr name="appLinkingHeaderColor" format="reference" />
+    <attr name="appLinkingSuccessColor" format="reference" />
+    <attr name="appLinkingFailureColor" format="reference" />
 
 </resources>

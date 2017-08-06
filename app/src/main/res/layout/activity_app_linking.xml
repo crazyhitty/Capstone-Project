@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2016 Kartik Sharma
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+
+    <FrameLayout
+        android:id="@+id/frame_layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_app_linking_header_height"
+        android:background="?attr/appLinkingHeaderColor"
+        android:animateLayoutChanges="true">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_animation_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_app_linking_lottie_view_height"
+            android:layout_gravity="center"
+            app:lottie_fileName="wifi_wiper.json"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"/>
+
+        <View
+            android:id="@+id/view_status_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_view_status"
+            android:layout_width="@dimen/activity_app_linking_image_width"
+            android:layout_height="@dimen/activity_app_linking_image_height"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            fresco:placeholderImage="@drawable/ic_done"
+            fresco:placeholderImageScaleType="fitCenter"
+            fresco:backgroundImage="?attr/appLinkingHeaderColor"
+            fresco:roundedCornerRadius="@dimen/activity_app_linking_image_corner_padding"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_view_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/frame_layout_header"
+        android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_content_area"
+        android:layout_marginStart="@dimen/material_component_dialogs_padding_around_content_area"
+        android:layout_marginTop="@dimen/material_component_dialogs_padding_between_title_and_body_text"
+        android:text="@string/activity_app_linking_loading"
+        android:textSize="@dimen/material_typography_body1" />
+
+    <Button
+        android:id="@+id/button_cancel"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_view_content"
+        android:layout_marginTop="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_marginBottom="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_marginStart="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_alignParentEnd="true"
+        android:text="@string/activity_app_linking_cancel" />
+
+    <Button
+        android:id="@+id/button_retry"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_view_content"
+        android:layout_marginTop="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_marginBottom="@dimen/material_component_dialogs_padding_around_buttons"
+        android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_buttons"
+        android:text="@string/activity_app_linking_retry"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+</RelativeLayout>
