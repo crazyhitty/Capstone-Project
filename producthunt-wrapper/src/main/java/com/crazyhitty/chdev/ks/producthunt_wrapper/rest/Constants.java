@@ -61,6 +61,9 @@ class Constants {
     // user profile
     static final String USER_ID = "user_id";
 
+    // search
+    static final String SEARCH_SLUG = "search[slug]";
+
     // oauth
     static final String CLIENT_ID = "client_id";
     static final String CLIENT_SECRET = "client_secret";
