@@ -76,30 +76,35 @@
         android:text="@string/activity_app_linking_loading"
         android:textSize="@dimen/material_typography_body1" />
 
-    <Button
-        android:id="@+id/button_cancel"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_view_content"
         android:layout_marginTop="@dimen/material_component_dialogs_padding_around_buttons"
         android:layout_marginBottom="@dimen/material_component_dialogs_padding_around_buttons"
         android:layout_marginStart="@dimen/material_component_dialogs_padding_around_buttons"
         android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_buttons"
-        android:layout_alignParentEnd="true"
-        android:text="@string/activity_app_linking_cancel" />
+        android:gravity="end"
+        android:animateLayoutChanges="true">
 
-    <Button
-        android:id="@+id/button_retry"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_view_content"
-        android:layout_marginTop="@dimen/material_component_dialogs_padding_around_buttons"
-        android:layout_marginBottom="@dimen/material_component_dialogs_padding_around_buttons"
-        android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_buttons"
-        android:text="@string/activity_app_linking_retry"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        <Button
+            android:id="@+id/button_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_app_linking_cancel"
+            android:textColor="?attr/colorAccent"/>
+
+        <Button
+            android:id="@+id/button_retry"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_app_linking_retry"
+            android:textColor="?attr/colorAccent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

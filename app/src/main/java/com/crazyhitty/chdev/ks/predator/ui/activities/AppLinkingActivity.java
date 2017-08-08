@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,7 +37,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -47,6 +50,8 @@ import com.crazyhitty.chdev.ks.predator.core.appLinking.AppLinkingPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.concurrent.TimeUnit;
@@ -79,6 +84,10 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     View viewStatusBackgound;
     @BindView(R.id.image_view_status)
     SimpleDraweeView imgViewStatus;
+    @BindView(R.id.text_view_content)
+    TextView txtContent;
+    @BindView(R.id.button_retry)
+    Button btnRetry;
 
     private AppLinkingContract.Presenter mAppLinkingPresenter;
 
@@ -103,13 +112,21 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         setContentView(R.layout.activity_app_linking);
         ButterKnife.bind(this);
         setPresenter(new AppLinkingPresenter(this));
-        handleIntent(getIntent());
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            handleIntent(getIntent());
+        } else {
+            showFailureState(getString(R.string.activity_app_linking_network_error));
+        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        handleIntent(intent);
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            handleIntent(intent);
+        } else {
+            showFailureState(getString(R.string.activity_app_linking_network_error));
+        }
     }
 
     @Override
@@ -142,10 +159,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
 
     @Override
     public void showPostDetails(int postId) {
-        imgViewStatus.setVisibility(View.VISIBLE);
-
-        viewStatusBackgound.setBackgroundColor(getStatusBackgroundColor(true));
-        viewStatusBackgound.setVisibility(View.VISIBLE);
+        showSuccessState();
 
         Message message = new Message();
         message.what = HANDLER_MSG_OPEN_POST_DETAILS;
@@ -165,6 +179,16 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     @OnClick(R.id.button_cancel)
     public void onCancelClick() {
         finish();
+    }
+
+    @OnClick(R.id.button_retry)
+    public void onRetryClick() {
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            btnRetry.setVisibility(View.GONE);
+            handleIntent(getIntent());
+        } else {
+            showFailureState(getString(R.string.activity_app_linking_network_error));
+        }
     }
 
     private void manageThemes() {
@@ -212,6 +236,38 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
                         mAppLinkingPresenter.fetchPostDetailsFromSlug(s, slug);
                     }
                 });
+    }
+
+    private void showSuccessState() {
+        Uri uri = new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(R.drawable.ic_done))
+                .build();
+
+
+        imgViewStatus.setImageURI(uri);
+        imgViewStatus.setVisibility(View.VISIBLE);
+
+        viewStatusBackgound.setBackgroundColor(getStatusBackgroundColor(true));
+        viewStatusBackgound.setVisibility(View.VISIBLE);
+    }
+
+    private void showFailureState(String errorMessage) {
+        Uri uri = new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(R.drawable.ic_error_alternative))
+                .build();
+
+
+        imgViewStatus.setImageURI(uri);
+        imgViewStatus.setVisibility(View.VISIBLE);
+
+        viewStatusBackgound.setBackgroundColor(getStatusBackgroundColor(false));
+        viewStatusBackgound.setVisibility(View.VISIBLE);
+
+        txtContent.setText(errorMessage);
+
+        btnRetry.setVisibility(View.VISIBLE);
     }
 
     private int getStatusBackgroundColor(boolean isSuccess) {
