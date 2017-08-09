@@ -135,10 +135,12 @@
 
     <!--activity_app_linking.xml-->
     <dimen name="activity_app_linking_header_height">200dp</dimen>
-    <dimen name="activity_app_linking_lottie_view_height">100dp</dimen>
-    <dimen name="activity_app_linking_image_width">44dp</dimen>
-    <dimen name="activity_app_linking_image_height">44dp</dimen>
-    <dimen name="activity_app_linking_image_corner_padding">2dp</dimen>
+
+    <!--view_app_linking_dialog_header.xml-->
+    <dimen name="view_app_linking_dialog_header_lottie_view_height">100dp</dimen>
+    <dimen name="view_app_linking_dialog_header_image_width">44dp</dimen>
+    <dimen name="view_app_linking_dialog_header_image_height">44dp</dimen>
+    <dimen name="view_app_linking_dialog_header_image_corner_padding">2dp</dimen>
 
     <!--item_about_library.xml-->
     <dimen name="item_library_card_corner_radius">4dp</dimen>

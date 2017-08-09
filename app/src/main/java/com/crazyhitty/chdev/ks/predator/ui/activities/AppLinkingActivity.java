@@ -41,6 +41,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.crazyhitty.chdev.ks.predator.R;
@@ -49,6 +50,7 @@ import com.crazyhitty.chdev.ks.predator.core.appLinking.AppLinkingContract;
 import com.crazyhitty.chdev.ks.predator.core.appLinking.AppLinkingPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.views.AppLinkingDialogHeaderView;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.facebook.common.util.UriUtil;
@@ -78,12 +80,8 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     private static final long HANDLER_DURATION_OPEN_POST_DETAILS = TimeUnit.SECONDS.toMillis(1);
     private static final String HANDLER_EXTRA_POST_ID = "post_id";
 
-    @BindView(R.id.lottie_animation_view)
-    LottieAnimationView lottieAnimationView;
-    @BindView(R.id.view_status_background)
-    View viewStatusBackgound;
-    @BindView(R.id.image_view_status)
-    SimpleDraweeView imgViewStatus;
+    @BindView(R.id.app_linking_dialog_header_view)
+    AppLinkingDialogHeaderView appLinkingDialogHeaderView;
     @BindView(R.id.text_view_content)
     TextView txtContent;
     @BindView(R.id.button_retry)
@@ -115,7 +113,9 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
             handleIntent(getIntent());
         } else {
-            showFailureState(getString(R.string.activity_app_linking_network_error));
+            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            txtContent.setText(R.string.activity_app_linking_network_error);
+            btnRetry.setVisibility(View.VISIBLE);
         }
     }
 
@@ -125,7 +125,9 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
             handleIntent(intent);
         } else {
-            showFailureState(getString(R.string.activity_app_linking_network_error));
+            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            txtContent.setText(R.string.activity_app_linking_network_error);
+            btnRetry.setVisibility(View.VISIBLE);
         }
     }
 
@@ -149,7 +151,13 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mOpenPostDetailsHandler.removeMessages(HANDLER_MSG_OPEN_POST_DETAILS);
+        mAppLinkingPresenter.unSubscribe();
     }
 
     @Override
@@ -159,7 +167,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
 
     @Override
     public void showPostDetails(int postId) {
-        showSuccessState();
+        appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.SUCCESS);
 
         Message message = new Message();
         message.what = HANDLER_MSG_OPEN_POST_DETAILS;
@@ -173,7 +181,9 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
 
     @Override
     public void unableToFetchPostDetails() {
-        Toast.makeText(getApplicationContext(), "Error!!!!!!!", Toast.LENGTH_SHORT).show();
+        appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+        txtContent.setText(R.string.activity_app_linking_unable_fetching_details_error);
+        btnRetry.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.button_cancel)
@@ -184,10 +194,14 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     @OnClick(R.id.button_retry)
     public void onRetryClick() {
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.LOADING);
+            txtContent.setText(R.string.activity_app_linking_loading);
             btnRetry.setVisibility(View.GONE);
             handleIntent(getIntent());
         } else {
-            showFailureState(getString(R.string.activity_app_linking_network_error));
+            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            txtContent.setText(R.string.activity_app_linking_network_error);
+            btnRetry.setVisibility(View.VISIBLE);
         }
     }
 
@@ -236,53 +250,5 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
                         mAppLinkingPresenter.fetchPostDetailsFromSlug(s, slug);
                     }
                 });
-    }
-
-    private void showSuccessState() {
-        Uri uri = new Uri.Builder()
-                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                .path(String.valueOf(R.drawable.ic_done))
-                .build();
-
-
-        imgViewStatus.setImageURI(uri);
-        imgViewStatus.setVisibility(View.VISIBLE);
-
-        viewStatusBackgound.setBackgroundColor(getStatusBackgroundColor(true));
-        viewStatusBackgound.setVisibility(View.VISIBLE);
-    }
-
-    private void showFailureState(String errorMessage) {
-        Uri uri = new Uri.Builder()
-                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                .path(String.valueOf(R.drawable.ic_error_alternative))
-                .build();
-
-
-        imgViewStatus.setImageURI(uri);
-        imgViewStatus.setVisibility(View.VISIBLE);
-
-        viewStatusBackgound.setBackgroundColor(getStatusBackgroundColor(false));
-        viewStatusBackgound.setVisibility(View.VISIBLE);
-
-        txtContent.setText(errorMessage);
-
-        btnRetry.setVisibility(View.VISIBLE);
-    }
-
-    private int getStatusBackgroundColor(boolean isSuccess) {
-        int statusBackgroundColorRes;
-        if (isSuccess) {
-            int[] attrs = {R.attr.appLinkingSuccessColor};
-            TypedArray ta = obtainStyledAttributes(attrs);
-            statusBackgroundColorRes = ta.getResourceId(0, android.R.color.black);
-            ta.recycle();
-        } else {
-            int[] attrs = {R.attr.appLinkingFailureColor};
-            TypedArray ta = obtainStyledAttributes(attrs);
-            statusBackgroundColorRes = ta.getResourceId(0, android.R.color.black);
-            ta.recycle();
-        }
-        return ContextCompat.getColor(getApplicationContext(), statusBackgroundColorRes);
     }
 }

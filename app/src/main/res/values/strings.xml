@@ -198,11 +198,15 @@
     <string name="activity_user_profile_updated_details">Updated details</string>
     <string name="activity_user_profile_website_unavailable">No website available for this user.</string>
 
-    activity_app_linking.xml-->
+    <!--activity_app_linking.xml-->
     <string name="activity_app_linking_loading">Wait while we hunt this post!</string>
     <string name="activity_app_linking_network_error">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
+    <string name="activity_app_linking_unable_fetching_details_error">Unable to fetch details of this post currently :/</string>
     <string name="activity_app_linking_cancel">Cancel</string>
     <string name="activity_app_linking_retry">Retry</string>
+
+    <!--view_app_linking_dialog_header.xml-->
+    <string name="view_app_linking_dialog_header_image_content_description">Image indicating current status</string>
 
     <!--fragment_comments.xml-->
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>

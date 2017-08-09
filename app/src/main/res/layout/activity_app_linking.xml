@@ -30,51 +30,22 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <FrameLayout
-        android:id="@+id/frame_layout_header"
+    <com.crazyhitty.chdev.ks.predator.ui.views.AppLinkingDialogHeaderView
+        android:id="@+id/app_linking_dialog_header_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_app_linking_header_height"
-        android:background="?attr/appLinkingHeaderColor"
-        android:animateLayoutChanges="true">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_animation_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/activity_app_linking_lottie_view_height"
-            android:layout_gravity="center"
-            app:lottie_fileName="wifi_wiper.json"
-            app:lottie_loop="true"
-            app:lottie_autoPlay="true"/>
-
-        <View
-            android:id="@+id/view_status_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/image_view_status"
-            android:layout_width="@dimen/activity_app_linking_image_width"
-            android:layout_height="@dimen/activity_app_linking_image_height"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            fresco:placeholderImage="@drawable/ic_done"
-            fresco:placeholderImageScaleType="fitCenter"
-            fresco:backgroundImage="?attr/appLinkingHeaderColor"
-            fresco:roundedCornerRadius="@dimen/activity_app_linking_image_corner_padding"/>
-
-    </FrameLayout>
+        android:layout_height="@dimen/activity_app_linking_header_height" />
 
     <TextView
         android:id="@+id/text_view_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/frame_layout_header"
+        android:layout_below="@id/app_linking_dialog_header_view"
         android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_content_area"
         android:layout_marginStart="@dimen/material_component_dialogs_padding_around_content_area"
         android:layout_marginTop="@dimen/material_component_dialogs_padding_between_title_and_body_text"
         android:text="@string/activity_app_linking_loading"
-        android:textSize="@dimen/material_typography_body1" />
+        android:textSize="@dimen/material_typography_body1"
+        android:minLines="3"/>
 
     <LinearLayout
         android:layout_width="match_parent"
