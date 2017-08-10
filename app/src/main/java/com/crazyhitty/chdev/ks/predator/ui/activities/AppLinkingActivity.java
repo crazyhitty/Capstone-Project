@@ -39,6 +39,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -80,6 +81,8 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     private static final long HANDLER_DURATION_OPEN_POST_DETAILS = TimeUnit.SECONDS.toMillis(1);
     private static final String HANDLER_EXTRA_POST_ID = "post_id";
 
+    @BindView(R.id.relative_layout_app_linking)
+    RelativeLayout relativeLayoutAppLinking;
     @BindView(R.id.app_linking_dialog_header_view)
     AppLinkingDialogHeaderView appLinkingDialogHeaderView;
     @BindView(R.id.text_view_content)
@@ -109,6 +112,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         manageThemes();
         setContentView(R.layout.activity_app_linking);
         ButterKnife.bind(this);
+        manageBackgroundColor();
         setPresenter(new AppLinkingPresenter(this));
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
             handleIntent(getIntent());
@@ -216,6 +220,23 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
                 break;
             case AMOLED:
                 setTheme(R.style.DialogActivity_NoTitle_Amoled);
+                break;
+        }
+    }
+
+    private void manageBackgroundColor() {
+        switch (PredatorSharedPreferences.getCurrentTheme(getApplicationContext())) {
+            case LIGHT:
+                relativeLayoutAppLinking.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color));
+                break;
+            case DARK:
+                relativeLayoutAppLinking.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color_inverse));
+                break;
+            case AMOLED:
+                relativeLayoutAppLinking.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color_amoled));
                 break;
         }
     }
