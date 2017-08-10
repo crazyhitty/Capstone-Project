@@ -202,6 +202,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
             appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
             txtContent.setText(R.string.activity_app_linking_network_error);
             btnRetry.setVisibility(View.VISIBLE);
+            Toast.makeText(getApplicationContext(), R.string.not_connected_to_network_err, Toast.LENGTH_SHORT).show();
         }
     }
 
