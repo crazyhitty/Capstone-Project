@@ -122,6 +122,25 @@ public class PredatorSharedPreferences {
                 .apply();
     }
 
+    public static void setPostViewType(Context context, POST_VIEW_TYPE postViewType) {
+        SharedPreferencesManager.saveString(context,
+                Constants.SharedPreferences.POST_VIEW_TYPE,
+                postViewType.toString());
+    }
+
+    public static POST_VIEW_TYPE getPostViewType(Context context) {
+        switch (SharedPreferencesManager.getString(context,
+                Constants.SharedPreferences.POST_VIEW_TYPE,
+                "")) {
+            case Constants.SharedPreferences.POST_VIEW_TYPE_LIST:
+                return POST_VIEW_TYPE.LIST;
+            case Constants.SharedPreferences.POST_VIEW_TYPE_CARD:
+                return POST_VIEW_TYPE.CARD;
+            default:
+                return POST_VIEW_TYPE.LIST;
+        }
+    }
+
     public static THEME_TYPE getCurrentTheme(Context context) {
         switch (PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_manage_themes_key),
@@ -141,6 +160,11 @@ public class PredatorSharedPreferences {
         LIGHT,
         DARK,
         AMOLED
+    }
+
+    public enum POST_VIEW_TYPE {
+        LIST,
+        CARD
     }
 
     private static class SharedPreferencesManager {

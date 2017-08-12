@@ -111,6 +111,9 @@ public class Constants {
         public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
         public static final String AUTH_TOKEN_TYPE = "auth_token_type";
         public static final String SYNC_INTERVAL = "sync_interval";
+        public static final String POST_VIEW_TYPE = "post_view_type";
+        public static final String POST_VIEW_TYPE_LIST = "list";
+        public static final String POST_VIEW_TYPE_CARD = "card";
 
         private SharedPreferences() {
 
