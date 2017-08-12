@@ -41,6 +41,7 @@
     <string name="menu_posts_sort_oldest">Oldest</string>
     <string name="menu_posts_switch_layout">Switch Layout</string>
     <string name="menu_posts_switch_layout_list">List</string>
+    <string name="menu_posts_switch_layout_card">Card</string>
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
     <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
 
