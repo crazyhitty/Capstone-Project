@@ -276,14 +276,16 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        // TODO: Implement post listing menu functionality.
-        //inflater.inflate(R.menu.menu_posts, menu);
+        inflater.inflate(R.menu.menu_posts, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
+            case R.id.menu_switch_layout_list:
+                break;
+            case R.id.menu_switch_layout_card:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -305,7 +307,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             // Enable swipe refresh layout
             swipeRefreshLayoutPosts.setEnabled(true);
 
-            setListTypeAdapter(posts, dateHashMap);
+            setListTypeAdapter(posts,
+                    dateHashMap,
+                    PredatorSharedPreferences.getPostViewType(getActivity().getApplicationContext()));
         }
 
         // Dismiss swipe refresh layout animation if it is going on.
@@ -344,7 +348,17 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         }
     }
 
-    private void setListTypeAdapter(List<Post> posts, HashMap<Integer, String> dateHashMap) {
+    private void setListTypeAdapter(List<Post> posts,
+                                    HashMap<Integer, String> dateHashMap,
+                                    PredatorSharedPreferences.POST_VIEW_TYPE postViewType) {
+        switch (postViewType) {
+            case LIST:
+                mPostsRecyclerAdapter.setType(PostsRecyclerAdapter.TYPE.LIST);
+                break;
+            case CARD:
+                mPostsRecyclerAdapter.setType(PostsRecyclerAdapter.TYPE.CARD);
+                break;
+        }
         mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, true);
     }
 

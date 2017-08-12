@@ -59,8 +59,9 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final String TAG = "PostsRecyclerAdapter";
 
     private static final int VIEW_TYPE_LIST = 1;
-    private static final int VIEW_TYPE_SMALL_CARDS = 2;
-    private static final int VIEW_TYPE_LARGE_CARDS = 3;
+    private static final int VIEW_TYPE_CARD = 2;
+    private static final int VIEW_TYPE_SMALL_CARDS = 3;
+    private static final int VIEW_TYPE_LARGE_CARDS = 4;
     private static final int VIEW_TYPE_LOAD_MORE = 98;
 
     private List<Post> mPosts;
@@ -277,6 +278,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (mType) {
             case LIST:
                 return VIEW_TYPE_LIST;
+            case CARD:
+                return VIEW_TYPE_CARD;
             case SMALL_CARDS:
                 return VIEW_TYPE_SMALL_CARDS;
             case LARGE_CARDS:
@@ -294,6 +297,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public enum TYPE {
         LIST,
+        CARD,
         SMALL_CARDS,
         LARGE_CARDS
     }
