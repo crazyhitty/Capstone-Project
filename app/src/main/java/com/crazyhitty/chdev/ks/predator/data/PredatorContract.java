@@ -58,7 +58,7 @@ public class PredatorContract {
         public static final String COLUMN_CREATED_AT_MILLIS = "created_at_millis";
         public static final String COLUMN_DISCUSSION_URL = "discussion_url";
         public static final String COLUMN_REDIRECT_URL = "redirect_url";
-        public static final String COLUMN_VOTES_COUNT = "votes_vount";
+        public static final String COLUMN_VOTES_COUNT = "votes_count";
         public static final String COLUMN_THUMBNAIL_IMAGE_URL = "thumbnail_image_url";
         public static final String COLUMN_THUMBNAIL_IMAGE_URL_ORIGINAL = "thumbnail_image_url_original";
         public static final String COLUMN_SCREENSHOT_URL_300PX = "screenshot_url_300px";
