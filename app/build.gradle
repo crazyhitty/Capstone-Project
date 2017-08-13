@@ -116,6 +116,9 @@ dependencies {
 
     // font
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
+
+    // lottie
+    compile 'com.airbnb.android:lottie:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

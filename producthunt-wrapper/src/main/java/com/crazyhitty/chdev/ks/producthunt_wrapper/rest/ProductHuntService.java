@@ -92,6 +92,10 @@ public interface ProductHuntService {
     @GET(ApiUrls.GET_CATEGORIES)
     Observable<CategoriesData> getCategories(@Header(Constants.AUTHORIZATION) String authorization);
 
+    @GET(ApiUrls.GET_POSTS)
+    Observable<PostsData> searchPostBySlug(@Header(Constants.AUTHORIZATION) String authorization,
+                                           @Query(Constants.SEARCH_SLUG) String slug);
+
     @POST(ApiUrls.OAUTH_GET_TOKEN)
     Observable<OAuthData> oAuthClient(@Body HashMap<String, String> params);
 

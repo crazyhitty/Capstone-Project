@@ -168,6 +168,79 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="DialogActivity.NoTitle.Light" parent="DialogActivity.NoTitle">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="colorControlHighlight">@color/color_accent</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">@color/color_accent</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        <item name="android:textColorTertiary">@color/text_color_tertiary</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary_inverse</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color</item>
+        <item name="drawableDone">@drawable/ic_done</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative</item>
+        <item name="appLinkingHeaderColor">@color/app_linking_header_color</item>
+        <item name="appLinkingSuccessColor">@color/app_linking_success_color</item>
+        <item name="appLinkingFailureColor">@color/app_linking_failure_color</item>
+    </style>
+
+    <style name="DialogActivity.NoTitle.Dark" parent="DialogActivity.NoTitle">
+        <item name="colorPrimary">@color/color_primary_inverse</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark_inverse</item>
+        <item name="colorAccent">@color/color_accent_inverse</item>
+        <item name="colorControlHighlight">@color/color_accent_inverse</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">
+            @color/color_accent_inverse
+        </item>
+        <item name="android:textColorPrimary">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiary">@color/text_color_tertiary_inverse</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color_inverse</item>
+        <item name="drawableDone">@drawable/ic_done_inverse</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
+        <item name="appLinkingHeaderColor">@color/app_linking_header_color_inverse</item>
+        <item name="appLinkingSuccessColor">@color/app_linking_success_color_inverse</item>
+        <item name="appLinkingFailureColor">@color/app_linking_failure_color_inverse</item>
+    </style>
+
+    <style name="DialogActivity.NoTitle.Amoled" parent="DialogActivity.NoTitle">
+        <item name="colorPrimary">@color/color_primary_inverse</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark_inverse</item>
+        <item name="colorAccent">@color/color_accent_inverse</item>
+        <item name="colorControlHighlight">@color/color_accent_inverse</item>
+        <item name="android:colorEdgeEffect" tools:targetApi="lollipop">
+            @color/color_accent_inverse
+        </item>
+        <item name="android:textColorPrimary">@color/text_color_primary_inverse</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_inverse</item>
+        <item name="android:textColorTertiary">@color/text_color_tertiary_inverse</item>
+        <item name="android:textColorPrimaryInverse">@color/text_color_primary</item>
+        <item name="android:textColorSecondaryInverse">@color/text_color_secondary</item>
+        <item name="android:textColorTertiaryInverse">@color/text_color_tertiary</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearanceLarge</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearanceMedium</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearanceSmall</item>
+        <item name="backgroundColor">@color/background_color_amoled</item>
+        <item name="drawableDone">@drawable/ic_done_inverse</item>
+        <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
+        <item name="appLinkingHeaderColor">@color/app_linking_header_color_amoled</item>
+        <item name="appLinkingSuccessColor">@color/app_linking_success_color_amoled</item>
+        <item name="appLinkingFailureColor">@color/app_linking_failure_color_amoled</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorControlHighlight">?attr/colorAccent</item>
         <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>

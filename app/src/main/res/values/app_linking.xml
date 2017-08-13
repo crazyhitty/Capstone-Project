@@ -24,8 +24,8 @@
 
 <resources>
 
-    <string name="oauth_scheme">predator</string>
-    <string name="oauth_host">com.crazyhitty.chdev.ks.predator</string>
-    <string name="oauth_path">/oauth2redirect</string>
+    <string name="app_linking_scheme">https</string>
+    <string name="app_linking_host">www.producthunt.com</string>
+    <string name="app_linking_path_prefix">/posts</string>
 
 </resources>
