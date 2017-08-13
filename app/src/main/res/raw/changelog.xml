@@ -25,6 +25,13 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Aug 13, 2017"
+        versionName="0.32">
+        <changelogtext>[b]New![/b] Handle product hunt posts links!</changelogtext>
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="July 23, 2017"
         versionName="0.31">
         <changelogbug>Bug fixes and performance improvements.</changelogbug>
