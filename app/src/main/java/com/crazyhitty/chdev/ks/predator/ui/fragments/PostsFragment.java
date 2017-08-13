@@ -351,14 +351,15 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     private void setListTypeAdapter(List<Post> posts,
                                     HashMap<Integer, String> dateHashMap,
                                     PredatorSharedPreferences.POST_VIEW_TYPE postViewType) {
-        switch (postViewType) {
+        /*switch (postViewType) {
             case LIST:
                 mPostsRecyclerAdapter.setType(PostsRecyclerAdapter.TYPE.LIST);
                 break;
             case CARD:
                 mPostsRecyclerAdapter.setType(PostsRecyclerAdapter.TYPE.CARD);
                 break;
-        }
+        }*/
+        mPostsRecyclerAdapter.setType(PostsRecyclerAdapter.TYPE.CARD);
         mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, true);
     }
 

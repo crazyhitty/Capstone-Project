@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,6 +164,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 View viewListType = layoutInflater.inflate(R.layout.item_list_post, parent, false);
                 viewHolder = new ListItemViewHolder(viewListType);
                 break;
+            case VIEW_TYPE_CARD:
+                View viewGridType = layoutInflater.inflate(R.layout.item_grid_post, parent, false);
+                viewHolder = new GridItemViewHolder(viewGridType);
+                break;
             case VIEW_TYPE_LOAD_MORE:
                 View viewLoadMore = layoutInflater.inflate(R.layout.item_load_more_posts, parent, false);
                 viewHolder = new LoadMoreViewHolder(viewLoadMore);
@@ -176,6 +181,9 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (getItemViewType(position)) {
             case VIEW_TYPE_LIST:
                 onBindListItemViewHolder((ListItemViewHolder) holder, position);
+                break;
+            case VIEW_TYPE_CARD:
+                onBindGridItemViewHolder((GridItemViewHolder) holder, position);
                 break;
             case VIEW_TYPE_LOAD_MORE:
                 onBindLoadMoreViewHolder((LoadMoreViewHolder) holder, position);
@@ -207,6 +215,34 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClick(listItemViewHolder.getAdapterPosition());
+                }
+            }
+        });
+    }
+
+    private void onBindGridItemViewHolder(final GridItemViewHolder gridItemViewHolder, int position) {
+        String title = mPosts.get(position).getName();
+        String shortDesc = mPosts.get(position).getTagline();
+
+        String postImageUrl = mPosts.get(position).getThumbnailImageUrl();
+        postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postImageUrl,
+                ScreenUtils.dpToPxInt(gridItemViewHolder.itemView.getContext(), 500),
+                ScreenUtils.dpToPxInt(gridItemViewHolder.itemView.getContext(), 100));
+
+        String date = mDateHashMap.get(position);
+        boolean showDate = (date != null);
+
+        gridItemViewHolder.txtPostTitle.setText(title);
+        gridItemViewHolder.txtShortDesc.setText(shortDesc);
+        gridItemViewHolder.txtDate.setText(date);
+        gridItemViewHolder.txtDate.setVisibility(showDate ? View.VISIBLE : View.GONE);
+        gridItemViewHolder.imageViewPost.setImageURI(postImageUrl);
+
+        gridItemViewHolder.cardViewPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(gridItemViewHolder.getAdapterPosition());
                 }
             }
         });
@@ -325,6 +361,24 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         RelativeLayout relativeLayoutPost;
 
         public ListItemViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class GridItemViewHolder extends RootViewHolder {
+        @BindView(R.id.text_view_date)
+        TextView txtDate;
+        @BindView(R.id.image_view_post)
+        SimpleDraweeView imageViewPost;
+        @BindView(R.id.text_view_post_title)
+        TextView txtPostTitle;
+        @BindView(R.id.text_view_post_short_desc)
+        TextView txtShortDesc;
+        @BindView(R.id.card_view_post)
+        CardView cardViewPost;
+
+        public GridItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -187,7 +187,7 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
         recyclerViewPosts.addItemDecoration(listItemDecorator);
 
         mPostsRecyclerAdapter = new PostsRecyclerAdapter(null,
-                PostsRecyclerAdapter.TYPE.LIST);
+                PostsRecyclerAdapter.TYPE.CARD);
         recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
 
         mPostsRecyclerAdapter.setOnItemClickListener(new PostsRecyclerAdapter.OnItemClickListener() {

@@ -22,16 +22,34 @@
   ~ SOFTWARE.
   -->
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/text_view_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/material_component_lists_icon_left_padding"
+        android:paddingStart="@dimen/material_component_lists_icon_left_padding"
+        android:paddingTop="@dimen/padding_large"
+        android:textAppearance="@style/TextAppearanceDate"
+        tools:text="Date" />
+
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view_post"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
     android:stateListAnimator="@drawable/selector_lift_on_touch"
+    android:layout_below="@+id/text_view_date"
     app:cardCornerRadius="@dimen/item_collection_card_corner_radius"
     app:cardElevation="@dimen/item_collection_card_elevation"
     app:cardPreventCornerOverlap="false"
@@ -47,7 +65,7 @@
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/image_view_post"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:contentDescription="@string/item_list_post_image_desc"
             fresco:failureImage="?attr/drawableImageBrokenError"
             fresco:placeholderImage="?attr/defaultPlaceholderColor" />
@@ -70,3 +88,5 @@
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
+
+</RelativeLayout>
