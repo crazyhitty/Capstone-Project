@@ -279,11 +279,19 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
             date = postDetails.getDay();
         }
 
-        String extraDetails = String.format("%s \u2022 %s \u2022 %d %s",
-                date,
-                postDetails.getCategory(),
-                postDetails.getVoteCount(),
-                getString(R.string.post_details_votes));
+        String extraDetails;
+        if (TextUtils.isEmpty(postDetails.getCategory())) {
+            extraDetails = String.format("%s \u2022 %d %s",
+                    date,
+                    postDetails.getVoteCount(),
+                    getString(R.string.post_details_votes));
+        } else {
+            extraDetails = String.format("%s \u2022 %s \u2022 %d %s",
+                    date,
+                    postDetails.getCategory(),
+                    postDetails.getVoteCount(),
+                    getString(R.string.post_details_votes));
+        }
 
         txtPostExtraDetails.setText(extraDetails);
 
