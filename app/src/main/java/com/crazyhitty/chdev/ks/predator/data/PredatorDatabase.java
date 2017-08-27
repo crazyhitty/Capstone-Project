@@ -392,8 +392,11 @@ public class PredatorDatabase {
                         null,
                         null);
 
-        cursor.moveToFirst();
-        String categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+        String categoryName = "";
+        if (cursor != null && cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+        }
         closeCursor(cursor);
 
         return categoryName;
