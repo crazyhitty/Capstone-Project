@@ -27,8 +27,6 @@ package com.crazyhitty.chdev.ks.predator.ui.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,24 +36,19 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.appLinking.AppLinkingContract;
 import com.crazyhitty.chdev.ks.predator.core.appLinking.AppLinkingPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
-import com.crazyhitty.chdev.ks.predator.ui.views.AppLinkingDialogHeaderView;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingDialogHeaderView;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
-import com.facebook.common.util.UriUtil;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -72,19 +65,21 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
  * Created:     7/30/2017 01:20 AM
- * Description: Used for managing app indexing.
+ * Description: Used for managing app linking.
  */
 
 public class AppLinkingActivity extends Activity implements AppLinkingContract.View {
     private static final String TAG = "AppLinkingActivity";
+
+    private static final String HANDLER_EXTRA_POST_ID = "post_id";
+
     private static final int HANDLER_MSG_OPEN_POST_DETAILS = 1;
     private static final long HANDLER_DURATION_OPEN_POST_DETAILS = TimeUnit.SECONDS.toMillis(1);
-    private static final String HANDLER_EXTRA_POST_ID = "post_id";
 
     @BindView(R.id.relative_layout_app_linking)
     RelativeLayout relativeLayoutAppLinking;
-    @BindView(R.id.app_linking_dialog_header_view)
-    AppLinkingDialogHeaderView appLinkingDialogHeaderView;
+    @BindView(R.id.loading_dialog_header_view)
+    LoadingDialogHeaderView loadingDialogHeaderView;
     @BindView(R.id.text_view_content)
     TextView txtContent;
     @BindView(R.id.button_retry)
@@ -117,10 +112,11 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
             handleIntent(getIntent());
         } else {
-            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
             txtContent.setText(R.string.activity_app_linking_network_error);
             btnRetry.setVisibility(View.VISIBLE);
         }
+        mAppLinkingPresenter.subscribe();
     }
 
     @Override
@@ -129,7 +125,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
             handleIntent(intent);
         } else {
-            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
             txtContent.setText(R.string.activity_app_linking_network_error);
             btnRetry.setVisibility(View.VISIBLE);
         }
@@ -171,7 +167,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
 
     @Override
     public void showPostDetails(int postId) {
-        appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.SUCCESS);
+        loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.SUCCESS);
 
         Message message = new Message();
         message.what = HANDLER_MSG_OPEN_POST_DETAILS;
@@ -185,7 +181,7 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
 
     @Override
     public void unableToFetchPostDetails() {
-        appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+        loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
         txtContent.setText(R.string.activity_app_linking_unable_fetching_details_error);
         btnRetry.setVisibility(View.VISIBLE);
     }
@@ -198,12 +194,12 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
     @OnClick(R.id.button_retry)
     public void onRetryClick() {
         if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
-            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.LOADING);
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.LOADING);
             txtContent.setText(R.string.activity_app_linking_loading);
             btnRetry.setVisibility(View.GONE);
             handleIntent(getIntent());
         } else {
-            appLinkingDialogHeaderView.setType(AppLinkingDialogHeaderView.TYPE.FAILURE);
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
             txtContent.setText(R.string.activity_app_linking_network_error);
             btnRetry.setVisibility(View.VISIBLE);
             Toast.makeText(getApplicationContext(), R.string.not_connected_to_network_err, Toast.LENGTH_SHORT).show();
@@ -265,6 +261,9 @@ public class AppLinkingActivity extends Activity implements AppLinkingContract.V
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
+                        txtContent.setText(R.string.authentication_failure);
+                        btnRetry.setVisibility(View.VISIBLE);
                     }
 
                     @Override

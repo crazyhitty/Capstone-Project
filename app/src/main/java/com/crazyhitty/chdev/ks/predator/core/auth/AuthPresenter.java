@@ -49,7 +49,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class AuthPresenter implements AuthContract.Presenter {
-    private static final String MSG_TOKEN_SUCCESS = "Token retrieved successfully: %s";
+    private static final String MSG_TOKEN_SUCCESS = "Token retrieved successfully";
 
     @NonNull
     private AuthContract.View mView;
@@ -92,11 +92,8 @@ public class AuthPresenter implements AuthContract.Presenter {
                     public void onNext(OAuthData oAuthData) {
                         Bundle args = new Bundle();
                         args.putString(AccountManager.KEY_ACCOUNT_NAME, Constants.Authenticator.PRODUCT_HUNT);
-                        args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.AUTH_TYPE_CLIENT);
+                        args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.PREDATOR_ACCOUNT_TYPE);
                         args.putString(AccountManager.KEY_AUTHTOKEN, oAuthData.getAccessToken());
-
-                        mView.onAuthTokenRetrieved(args,
-                                String.format(MSG_TOKEN_SUCCESS, oAuthData.getAccessToken()));
 
                         PredatorAccount.addAccount(context,
                                 Constants.Authenticator.PRODUCT_HUNT,
@@ -107,6 +104,8 @@ public class AuthPresenter implements AuthContract.Presenter {
                         // valid token is retrieved
                         PredatorSharedPreferences.setValidToken(context, true);
                         PredatorSharedPreferences.setAuthTokenType(context, Constants.Authenticator.AUTH_TYPE_CLIENT);
+
+                        mView.onAuthTokenRetrieved(args, MSG_TOKEN_SUCCESS);
                     }
                 }));
     }
@@ -133,11 +132,8 @@ public class AuthPresenter implements AuthContract.Presenter {
                     public void onNext(OAuthData oAuthData) {
                         Bundle args = new Bundle();
                         args.putString(AccountManager.KEY_ACCOUNT_NAME, Constants.Authenticator.PRODUCT_HUNT);
-                        args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.AUTH_TYPE_USER);
+                        args.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.Authenticator.PREDATOR_ACCOUNT_TYPE);
                         args.putString(AccountManager.KEY_AUTHTOKEN, oAuthData.getAccessToken());
-
-                        mView.onAuthTokenRetrieved(args,
-                                String.format(MSG_TOKEN_SUCCESS, oAuthData.getAccessToken()));
 
                         PredatorAccount.addAccount(context,
                                 Constants.Authenticator.PRODUCT_HUNT,
@@ -148,6 +144,8 @@ public class AuthPresenter implements AuthContract.Presenter {
                         // valid token is retrieved
                         PredatorSharedPreferences.setValidToken(context, true);
                         PredatorSharedPreferences.setAuthTokenType(context, Constants.Authenticator.AUTH_TYPE_USER);
+
+                        mView.onAuthTokenRetrieved(args, MSG_TOKEN_SUCCESS);
                     }
                 }));
     }
