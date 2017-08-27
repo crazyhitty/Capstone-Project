@@ -52,5 +52,8 @@
     <attr name="appLinkingHeaderColor" format="reference" />
     <attr name="appLinkingSuccessColor" format="reference" />
     <attr name="appLinkingFailureColor" format="reference" />
+    <attr name="loadingDialogHeaderColor" format="reference" />
+    <attr name="loadingDialogSuccessColor" format="reference" />
+    <attr name="loadingDialogFailureColor" format="reference" />
 
 </resources>

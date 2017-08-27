@@ -37,7 +37,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LayoutAnimationController;
 import android.widget.FrameLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -55,8 +54,8 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class AppLinkingDialogHeaderView extends FrameLayout {
-    private static final String TAG = "AppLinkingDialogHeaderView";
+public class LoadingDialogHeaderView extends FrameLayout {
+    private static final String TAG = "LoadingDialogHeaderView";
 
     @BindView(R.id.view_animation_background)
     View viewAnimationBackground;
@@ -69,30 +68,30 @@ public class AppLinkingDialogHeaderView extends FrameLayout {
 
     private TYPE mType;
 
-    public AppLinkingDialogHeaderView(@NonNull Context context) {
+    public LoadingDialogHeaderView(@NonNull Context context) {
         super(context);
         initializeViews(context);
     }
 
-    public AppLinkingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public LoadingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initializeViews(context);
     }
 
-    public AppLinkingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public LoadingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initializeViews(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public AppLinkingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public LoadingDialogHeaderView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initializeViews(context);
     }
 
     private void initializeViews(Context context) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        layoutInflater.inflate(R.layout.view_app_linking_dialog_header, this);
+        layoutInflater.inflate(R.layout.view_loading_dialog_header, this);
 
         // bind views
         ButterKnife.bind(this);
@@ -160,12 +159,12 @@ public class AppLinkingDialogHeaderView extends FrameLayout {
     private int getStatusBackgroundColor(boolean isSuccess) {
         int statusBackgroundColorRes;
         if (isSuccess) {
-            int[] attrs = {R.attr.appLinkingSuccessColor};
+            int[] attrs = {R.attr.loadingDialogSuccessColor};
             TypedArray ta = getContext().obtainStyledAttributes(attrs);
             statusBackgroundColorRes = ta.getResourceId(0, android.R.color.black);
             ta.recycle();
         } else {
-            int[] attrs = {R.attr.appLinkingFailureColor};
+            int[] attrs = {R.attr.loadingDialogFailureColor};
             TypedArray ta = getContext().obtainStyledAttributes(attrs);
             statusBackgroundColorRes = ta.getResourceId(0, android.R.color.black);
             ta.recycle();
