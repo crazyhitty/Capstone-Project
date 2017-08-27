@@ -34,6 +34,8 @@ import android.widget.ProgressBar;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
+import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -45,6 +47,8 @@ import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.relex.photodraweeview.OnViewTapListener;
+import me.relex.photodraweeview.PhotoDraweeView;
 
 /**
  * Author:      Kartik Sharma
@@ -78,48 +82,25 @@ public class MediaPagerAdapter extends PagerAdapter {
 
         String mediaImageUrl = mMedia.get(position).getImageUrl();
 
-        // Set media image, also animate automatically if it is a gif.
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(mediaImageUrl)
-                .setAutoPlayAnimations(true)
-                .setControllerListener(new ControllerListener<ImageInfo>() {
-                    @Override
-                    public void onSubmit(String id, Object callerContext) {
-
-                    }
-
-                    @Override
-                    public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable animatable) {
-                        mediaImageViewHolder.progressBarLoading.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
-
-                    }
-
-                    @Override
-                    public void onIntermediateImageFailed(String id, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onFailure(String id, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onRelease(String id) {
-
-                    }
-                })
-                .build();
-
-        mediaImageViewHolder.imgMedia.setController(controller);
-
-        mediaImageViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        PipelineDraweeControllerBuilder controller = Fresco.newDraweeControllerBuilder();
+        controller.setUri(mediaImageUrl);
+        controller.setAutoPlayAnimations(true);
+        controller.setOldController(mediaImageViewHolder.imgMedia.getController());
+        controller.setControllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
-            public void onClick(View v) {
+            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                super.onFinalImageSet(id, imageInfo, animatable);
+                mediaImageViewHolder.progressBarLoading.setVisibility(View.GONE);
+                if (imageInfo == null || mediaImageViewHolder.imgMedia == null) {
+                    return;
+                }
+                mediaImageViewHolder.imgMedia.update(imageInfo.getWidth(), imageInfo.getHeight());
+            }
+        });
+        mediaImageViewHolder.imgMedia.setController(controller.build());
+        mediaImageViewHolder.imgMedia.setOnViewTapListener(new OnViewTapListener() {
+            @Override
+            public void onViewTap(View view, float v, float v1) {
                 mOnImageClickListener.onImageClicked();
             }
         });
@@ -145,7 +126,7 @@ public class MediaPagerAdapter extends PagerAdapter {
         View itemView;
 
         @BindView(R.id.image_view_media)
-        SimpleDraweeView imgMedia;
+        PhotoDraweeView imgMedia;
         @BindView(R.id.progress_bar_loading)
         ProgressBar progressBarLoading;
 
