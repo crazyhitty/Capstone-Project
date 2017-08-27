@@ -19,9 +19,14 @@
     <string name="not_yet_supported">Not yet supported!</string>
     <string name="share_using">Share using&#8230;</string>
     <string name="permission_denied_err_msg">Permission denied!\nPlease accept the permission inorder to make the application work properly!</string>
+    <string name="authentication_failure">Unable to authenticate with ProductHunt, please try again.</string>
 
     <!--activity_authenticator.xml-->
-    <string name="authenticator_continue">Continue</string>
+    <string name="activity_authenticator_continue">Continue</string>
+    <string name="activity_authenticator_message">Please wait while we try to authenticate with ProductHunt.</string>
+    <string name="activity_authenticator_cancel">Cancel</string>
+    <string name="activity_authenticator_retry">Retry</string>
+    <string name="activity_authenticator_network_error">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
 
     <!--menu_navigation_drawer.xml-->
     <string name="menu_nav_posts">Posts</string>

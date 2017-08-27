@@ -73,7 +73,7 @@
 
         <activity
             android:name=".ui.activities.AuthenticatorActivity"
-            android:theme="@style/DialogActivity.NoTitle" />
+            android:theme="@style/DialogActivity.NoTitle.Light" />
 
         <activity
             android:name=".ui.activities.AppLinkingActivity"

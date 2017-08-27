@@ -31,17 +31,25 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthContract;
 import com.crazyhitty.chdev.ks.predator.core.auth.AuthPresenter;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingDialogHeaderView;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -52,36 +60,50 @@ import static android.content.ContentValues.TAG;
  */
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity implements AuthContract.View {
+    private static final String TAG = "AuthenticatorActivity";
+
+    @BindView(R.id.relative_layout_authenticator)
+    RelativeLayout relativeLayoutAuthenticator;
+    @BindView(R.id.loading_dialog_header_view)
+    LoadingDialogHeaderView loadingDialogHeaderView;
+    @BindView(R.id.text_view_content)
+    TextView txtContent;
+    @BindView(R.id.button_retry)
+    Button btnRetry;
+
     private AuthContract.Presenter mAuthPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        manageThemes();
         setContentView(R.layout.activity_authenticator);
         ButterKnife.bind(this);
+        manageBackgroundColor();
         setPresenter(new AuthPresenter(this));
-        Toast.makeText(getApplicationContext(), R.string.not_yet_implemented, Toast.LENGTH_SHORT).show();
-        finish();
-    }
-
-    @OnClick(R.id.button_continue)
-    void onContinue() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) !=
-                PackageManager.PERMISSION_GRANTED) {
-            return;
+        mAuthPresenter.subscribe();
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            mAuthPresenter.retrieveClientAuthToken(this);
+        } else {
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
+            txtContent.setText(R.string.activity_authenticator_network_error);
+            btnRetry.setVisibility(View.VISIBLE);
         }
-        mAuthPresenter.retrieveClientAuthToken(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mAuthPresenter.subscribe();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mAuthPresenter.unSubscribe();
     }
 
@@ -100,5 +122,59 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     @Override
     public void unableToFetchAuthToken(String errorMessage) {
         Logger.d(TAG, "unableToFetchAuthToken: " + errorMessage);
+        loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
+        txtContent.setText(R.string.authentication_failure);
+        btnRetry.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.button_cancel)
+    public void onCancelClick() {
+        finish();
+    }
+
+    @OnClick(R.id.button_retry)
+    public void onRetryClick() {
+        if (NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.LOADING);
+            txtContent.setText(R.string.activity_authenticator_message);
+            btnRetry.setVisibility(View.GONE);
+            mAuthPresenter.retrieveClientAuthToken(this);
+        } else {
+            loadingDialogHeaderView.setType(LoadingDialogHeaderView.TYPE.FAILURE);
+            txtContent.setText(R.string.activity_authenticator_network_error);
+            btnRetry.setVisibility(View.VISIBLE);
+            Toast.makeText(getApplicationContext(), R.string.not_connected_to_network_err, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void manageThemes() {
+        switch (PredatorSharedPreferences.getCurrentTheme(getApplicationContext())) {
+            case LIGHT:
+                setTheme(R.style.DialogActivity_NoTitle_Light);
+                break;
+            case DARK:
+                setTheme(R.style.DialogActivity_NoTitle_Dark);
+                break;
+            case AMOLED:
+                setTheme(R.style.DialogActivity_NoTitle_Amoled);
+                break;
+        }
+    }
+
+    private void manageBackgroundColor() {
+        switch (PredatorSharedPreferences.getCurrentTheme(getApplicationContext())) {
+            case LIGHT:
+                relativeLayoutAuthenticator.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color));
+                break;
+            case DARK:
+                relativeLayoutAuthenticator.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color_inverse));
+                break;
+            case AMOLED:
+                relativeLayoutAuthenticator.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                        R.color.background_color_amoled));
+                break;
+        }
     }
 }

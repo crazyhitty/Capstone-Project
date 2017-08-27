@@ -189,6 +189,9 @@
         <item name="appLinkingHeaderColor">@color/app_linking_header_color</item>
         <item name="appLinkingSuccessColor">@color/app_linking_success_color</item>
         <item name="appLinkingFailureColor">@color/app_linking_failure_color</item>
+        <item name="loadingDialogHeaderColor">@color/loading_dialog_header_color</item>
+        <item name="loadingDialogSuccessColor">@color/loading_dialog_success_color</item>
+        <item name="loadingDialogFailureColor">@color/loading_dialog_failure_color</item>
     </style>
 
     <style name="DialogActivity.NoTitle.Dark" parent="DialogActivity.NoTitle">
@@ -214,6 +217,9 @@
         <item name="appLinkingHeaderColor">@color/app_linking_header_color_inverse</item>
         <item name="appLinkingSuccessColor">@color/app_linking_success_color_inverse</item>
         <item name="appLinkingFailureColor">@color/app_linking_failure_color_inverse</item>
+        <item name="loadingDialogHeaderColor">@color/loading_dialog_header_color_inverse</item>
+        <item name="loadingDialogSuccessColor">@color/loading_dialog_success_color_inverse</item>
+        <item name="loadingDialogFailureColor">@color/loading_dialog_failure_color_inverse</item>
     </style>
 
     <style name="DialogActivity.NoTitle.Amoled" parent="DialogActivity.NoTitle">
@@ -239,6 +245,9 @@
         <item name="appLinkingHeaderColor">@color/app_linking_header_color_amoled</item>
         <item name="appLinkingSuccessColor">@color/app_linking_success_color_amoled</item>
         <item name="appLinkingFailureColor">@color/app_linking_failure_color_amoled</item>
+        <item name="loadingDialogHeaderColor">@color/loading_dialog_header_color_amoled</item>
+        <item name="loadingDialogSuccessColor">@color/loading_dialog_success_color_amoled</item>
+        <item name="loadingDialogFailureColor">@color/loading_dialog_failure_color_amoled</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">

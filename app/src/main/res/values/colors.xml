@@ -58,6 +58,15 @@
     <color name="app_linking_failure_color">#9E9E9E</color>
     <color name="app_linking_failure_color_inverse">#9E9E9E</color>
     <color name="app_linking_failure_color_amoled">#9E9E9E</color>
+    <color name="loading_dialog_header_color">@color/color_accent</color>
+    <color name="loading_dialog_header_color_inverse">@color/color_primary_inverse</color>
+    <color name="loading_dialog_header_color_amoled">@color/color_primary_inverse</color>
+    <color name="loading_dialog_success_color">#9CCC65</color>
+    <color name="loading_dialog_success_color_inverse">#9CCC65</color>
+    <color name="loading_dialog_success_color_amoled">#9CCC65</color>
+    <color name="loading_dialog_failure_color">#9E9E9E</color>
+    <color name="loading_dialog_failure_color_inverse">#9E9E9E</color>
+    <color name="loading_dialog_failure_color_amoled">#9E9E9E</color>
 
     <color name="color_black_dark">#212121</color>
     <color name="color_black_alpha">#32212121</color>

@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -49,6 +50,8 @@ import io.reactivex.ObservableOnSubscribe;
  */
 
 public class PredatorAccount {
+    private static final String TAG = "PredatorAccount";
+
     private PredatorAccount() {
 
     }
@@ -103,12 +106,16 @@ public class PredatorAccount {
                         new AccountManagerCallback<Bundle>() {
                             @Override
                             public void run(AccountManagerFuture<Bundle> future) {
-                                Bundle bundle = null;
+                                Bundle bundle;
                                 try {
-                                    bundle = future.getResult();
-                                    final String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                                    emitter.onNext(authToken);
-                                    emitter.onComplete();
+                                    if (future.isCancelled()) {
+                                        emitter.onError(new RuntimeException("Auth request was cancelled"));
+                                    } else if (future.isDone()) {
+                                        bundle = future.getResult();
+                                        final String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+                                        emitter.onNext(authToken);
+                                        emitter.onComplete();
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     emitter.onError(e);

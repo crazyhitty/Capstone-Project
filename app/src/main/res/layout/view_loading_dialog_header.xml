@@ -33,12 +33,12 @@
         android:id="@+id/view_animation_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/appLinkingHeaderColor"/>
+        android:background="?attr/loadingDialogHeaderColor"/>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_animation_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/view_app_linking_dialog_header_lottie_view_height"
+        android:layout_height="@dimen/view_loading_dialog_header_lottie_view_height"
         android:layout_gravity="center"
         app:lottie_fileName="wifi_wiper.json"
         app:lottie_loop="true"
@@ -52,13 +52,13 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_view_status"
-        android:layout_width="@dimen/view_app_linking_dialog_header_image_width"
-        android:layout_height="@dimen/view_app_linking_dialog_header_image_height"
+        android:layout_width="@dimen/view_loading_dialog_header_image_width"
+        android:layout_height="@dimen/view_loading_dialog_header_image_height"
         android:layout_gravity="center"
         android:visibility="gone"
         android:contentDescription="@string/view_app_linking_dialog_header_image_content_description"
         fresco:placeholderImage="@drawable/ic_done"
         fresco:placeholderImageScaleType="fitCenter"
-        fresco:roundedCornerRadius="@dimen/view_app_linking_dialog_header_image_corner_padding"/>
+        fresco:roundedCornerRadius="@dimen/view_loading_dialog_header_image_corner_padding" />
 
 </merge>

@@ -96,6 +96,7 @@ public class SplashActivity extends AppCompatActivity implements CategoriesContr
                         @Override
                         public void onError(Throwable e) {
                             Logger.e(TAG, "onError: " + e.getMessage(), e);
+                            mCategoriesPresenter.fetchCategoriesOffline(getApplicationContext());
                         }
 
                         @Override
