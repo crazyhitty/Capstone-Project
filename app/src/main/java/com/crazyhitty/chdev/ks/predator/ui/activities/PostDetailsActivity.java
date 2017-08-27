@@ -255,6 +255,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToFetchPostDetails(getString(R.string.authentication_failure));
                     }
 
                     @Override

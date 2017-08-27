@@ -305,6 +305,9 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToFetchCollections(false,
+                                false,
+                                getString(R.string.authentication_failure));
                     }
 
                     @Override
@@ -329,6 +332,9 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToFetchCollections(true,
+                                false,
+                                getString(R.string.authentication_failure));
                     }
 
                     @Override

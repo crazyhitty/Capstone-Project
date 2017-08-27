@@ -324,6 +324,7 @@ public class OnboardActivity extends BaseAppCompatActivity implements AuthContra
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToFetchAuthToken(getString(R.string.authentication_failure));
                     }
 
                     @Override

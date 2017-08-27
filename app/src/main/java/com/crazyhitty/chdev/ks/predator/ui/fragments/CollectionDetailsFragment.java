@@ -287,6 +287,7 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToGetPosts(false, getString(R.string.authentication_failure));
                     }
 
                     @Override
