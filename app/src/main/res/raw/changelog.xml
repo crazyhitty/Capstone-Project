@@ -26,6 +26,12 @@
 
     <changelogversion
         changeDate="Aug 27, 2017"
+        versionName="0.34">
+        <changelogtext>[b]New![/b] Added pinch to zoom support in fullscreen media images!</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Aug 27, 2017"
         versionName="0.33">
         <changelogbug>Fix authentication related issues with AccountManager API.</changelogbug>
     </changelogversion>
