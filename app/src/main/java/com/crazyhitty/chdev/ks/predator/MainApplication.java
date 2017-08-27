@@ -32,6 +32,7 @@ import android.util.Log;
 
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
 
@@ -79,7 +80,7 @@ public class MainApplication extends Application {
 
     public static void reInitializeCalligraphy(Context context, String fontName) {
         if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
-            Log.w(TAG, "re initializing calligraphy");
+            Logger.d(TAG, "re initializing calligraphy");
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                     .setDefaultFontPath(String.format("fonts/%s", fontName))
                     .setFontAttrId(R.attr.fontPath)
