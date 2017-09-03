@@ -36,8 +36,11 @@ import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.ui.activities.AuthenticatorActivity;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import java.lang.ref.WeakReference;
+
+import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
 
 /**
  * Author:      Kartik Sharma
@@ -71,7 +74,7 @@ public class PredatorAuthenticator extends AbstractAccountAuthenticator {
         Intent intent = new Intent(mContextWeakReference.get(), AuthenticatorActivity.class);
         intent.putExtra(Constants.Authenticator.ACCOUNT_TYPE, accountType);
         intent.putExtra(Constants.Authenticator.AUTH_TOKEN_TYPE, authTokenType);
-        intent.putExtra(Constants.Authenticator.ACCOUNT_AUTHENTICATION_RESPONSE, response);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
@@ -97,18 +100,18 @@ public class PredatorAuthenticator extends AbstractAccountAuthenticator {
 
         // If the authToken is available, return it.
         if (!TextUtils.isEmpty(authToken)) {
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.Authenticator.ACCOUNT_NAME, account.name);
-            bundle.putString(Constants.Authenticator.ACCOUNT_TYPE, account.type);
-            bundle.putString(Constants.Authenticator.AUTH_TOKEN, authToken);
-            return bundle;
+            Bundle result = new Bundle();
+            result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+            result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+            result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+            return result;
         }
 
         // If the authToken is unavailable, retry for a new one.
         Intent intent = new Intent(mContextWeakReference.get(), AuthenticatorActivity.class);
         intent.putExtra(Constants.Authenticator.ACCOUNT_TYPE, account.type);
         intent.putExtra(Constants.Authenticator.AUTH_TOKEN_TYPE, authTokenType);
-        intent.putExtra(Constants.Authenticator.ACCOUNT_AUTHENTICATION_RESPONSE, response);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
@@ -128,6 +131,8 @@ public class PredatorAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
-        return null;
+        final Bundle result = new Bundle();
+        result.putBoolean(KEY_BOOLEAN_RESULT, false);
+        return result;
     }
 }

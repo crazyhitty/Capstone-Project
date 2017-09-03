@@ -19,9 +19,14 @@
     <string name="not_yet_supported">Not yet supported!</string>
     <string name="share_using">Share using&#8230;</string>
     <string name="permission_denied_err_msg">Permission denied!\nPlease accept the permission inorder to make the application work properly!</string>
+    <string name="authentication_failure">Unable to authenticate with ProductHunt, please try again.</string>
 
     <!--activity_authenticator.xml-->
-    <string name="authenticator_continue">Continue</string>
+    <string name="activity_authenticator_continue">Continue</string>
+    <string name="activity_authenticator_message">Please wait while we try to authenticate with ProductHunt.</string>
+    <string name="activity_authenticator_cancel">Cancel</string>
+    <string name="activity_authenticator_retry">Retry</string>
+    <string name="activity_authenticator_network_error">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
 
     <!--menu_navigation_drawer.xml-->
     <string name="menu_nav_posts">Posts</string>
@@ -180,7 +185,7 @@
     <string name="activity_about_kajal_mittal_type">For her regular and relevant feedback.</string>
     <string name="activity_about_kajal_mittal_username"></string>
     <string name="activity_about_special_thanks_title">Special Thanks</string>
-    <string name="activity_about_extra_desc"><![CDATA[Application icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>. Other icons provided by <a href="https://material.io/icons/">Google</a> and <a href="https://materialdesignicons.com/">Material Design Icons</a>. Application fonts provided by <a href="https://fonts.google.com/">Google Fonts</a>]]></string>
+    <string name="activity_about_extra_desc"><![CDATA[Application icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>. Other icons provided by <a href="https://material.io/icons/">Google</a> and <a href="https://materialdesignicons.com/">Material Design Icons</a>. Application fonts provided by <a href="https://fonts.google.com/">Google Fonts</a>. Animations provided by <a href="https://www.dribbble.com/chrisgannon">Chris Gannon</a> via <a href="https://www.lottiefiles.com/">lottiefiles.com</a>.]]></string>
     <string name="activity_about_library_title">Libraries</string>
     <string name="activity_about_mail_subject">Regarding Predator</string>
     <string name="activity_about_mail_share_intent_title">Mail using&#8230;</string>
@@ -197,6 +202,16 @@
     <string name="activity_user_profile">User Profile</string>
     <string name="activity_user_profile_updated_details">Updated details</string>
     <string name="activity_user_profile_website_unavailable">No website available for this user.</string>
+
+    <!--activity_app_linking.xml-->
+    <string name="activity_app_linking_loading">Wait while we hunt this post!</string>
+    <string name="activity_app_linking_network_error">Looks like your internet connection is turned off, please switch it on and press retry button.</string>
+    <string name="activity_app_linking_unable_fetching_details_error">Unable to fetch details of this post currently :/</string>
+    <string name="activity_app_linking_cancel">Cancel</string>
+    <string name="activity_app_linking_retry">Retry</string>
+
+    <!--view_app_linking_dialog_header.xml-->
+    <string name="view_app_linking_dialog_header_image_content_description">Image indicating current status</string>
 
     <!--fragment_comments.xml-->
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>
@@ -283,7 +298,7 @@
 
     <string name="settings_change_font_key">change_font</string>
     <string name="settings_change_font_title">Change font</string>
-    <string name="settings_change_font_summary">Change the font used by this application.</string>
+    <string name="settings_change_font_summary">Change the font used by this application. My favorite is \"Work Sans\".</string>
     <string name="settings_change_font_dialog_title">Change font</string>
     <string name="settings_change_font_default_value">default</string>
     <string-array name="settings_change_font_entries">

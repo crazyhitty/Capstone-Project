@@ -23,8 +23,10 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_layout_authenticator"
+    android:id="@+id/relative_layout_app_linking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
@@ -32,7 +34,7 @@
     <com.crazyhitty.chdev.ks.predator.ui.views.LoadingDialogHeaderView
         android:id="@+id/loading_dialog_header_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_authenticator_header_height" />
+        android:layout_height="@dimen/activity_app_linking_header_height" />
 
     <TextView
         android:id="@+id/text_view_content"
@@ -42,7 +44,7 @@
         android:layout_marginEnd="@dimen/material_component_dialogs_padding_around_content_area"
         android:layout_marginStart="@dimen/material_component_dialogs_padding_around_content_area"
         android:layout_marginTop="@dimen/material_component_dialogs_padding_between_title_and_body_text"
-        android:text="@string/activity_authenticator_message"
+        android:text="@string/activity_app_linking_loading"
         android:textSize="@dimen/material_typography_body1"
         android:minLines="3"/>
 
@@ -62,7 +64,7 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/activity_authenticator_cancel"
+            android:text="@string/activity_app_linking_cancel"
             android:textColor="?attr/colorAccent"/>
 
         <Button
@@ -70,7 +72,7 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/activity_authenticator_retry"
+            android:text="@string/activity_app_linking_retry"
             android:textColor="?attr/colorAccent"
             android:visibility="gone"
             tools:visibility="visible"/>

@@ -180,6 +180,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToGetPosts(false,
+                                false,
+                                getString(R.string.authentication_failure));
                     }
 
                     @Override
@@ -204,6 +207,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToGetPosts(true,
+                                false,
+                                getString(R.string.authentication_failure));
                     }
 
                     @Override

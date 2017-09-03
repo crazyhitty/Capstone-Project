@@ -25,6 +25,25 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Aug 27, 2017"
+        versionName="0.34">
+        <changelogtext>[b]New![/b] Added pinch to zoom support in fullscreen media images!</changelogtext>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Aug 27, 2017"
+        versionName="0.33">
+        <changelogbug>Fix authentication related issues with AccountManager API.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Aug 13, 2017"
+        versionName="0.32">
+        <changelogtext>[b]New![/b] Handle product hunt posts links!</changelogtext>
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="July 23, 2017"
         versionName="0.31">
         <changelogbug>Bug fixes and performance improvements.</changelogbug>

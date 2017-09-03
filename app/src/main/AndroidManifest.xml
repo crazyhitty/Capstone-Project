@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.crazyhitty.chdev.ks.predator">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -61,7 +64,7 @@
             android:name=".ui.activities.SettingsActivity"
             android:parentActivityName=".ui.activities.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/settings_name"/>
+            android:label="@string/settings_name" />
 
         <activity
             android:name=".ui.activities.AboutActivity"
@@ -70,7 +73,22 @@
 
         <activity
             android:name=".ui.activities.AuthenticatorActivity"
-            android:theme="@style/DialogActivity.NoTitle" />
+            android:theme="@style/DialogActivity.NoTitle.Light" />
+
+        <activity
+            android:name=".ui.activities.AppLinkingActivity"
+            android:theme="@style/DialogActivity.NoTitle.Light"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="@string/app_linking_scheme"
+                    android:host="@string/app_linking_host"
+                    android:pathPrefix="@string/app_linking_path_prefix" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.activities.OAuthTokenHandlerActivity"
@@ -83,9 +101,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="@string/host"
-                    android:path="@string/path"
-                    android:scheme="@string/scheme" />
+                    android:scheme="@string/oauth_scheme"
+                    android:host="@string/oauth_host"
+                    android:path="@string/oauth_path" />
             </intent-filter>
         </activity>
 

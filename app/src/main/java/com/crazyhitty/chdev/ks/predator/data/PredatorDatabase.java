@@ -119,14 +119,35 @@ public class PredatorDatabase {
                         bulkContentValues);
     }
 
+    public Post getPost(int postId) {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null,
+                null);
+
+        Post post = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            post = PredatorDbValuesHelper.getPostFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return post;
+    }
+
     public List<Post> getPosts() {
         Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
                         PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                         null,
                         PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC");
-        List<Post> posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+
+        List<Post> posts = new ArrayList<>();
+        if (cursor != null && cursor.getCount() != 0) {
+            posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+        }
         closeCursor(cursor);
+
         return posts;
     }
 
@@ -371,8 +392,11 @@ public class PredatorDatabase {
                         null,
                         null);
 
-        cursor.moveToFirst();
-        String categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+        String categoryName = "";
+        if (cursor != null && cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            categoryName = getString(cursor, PredatorContract.CategoryEntry.COLUMN_NAME);
+        }
         closeCursor(cursor);
 
         return categoryName;

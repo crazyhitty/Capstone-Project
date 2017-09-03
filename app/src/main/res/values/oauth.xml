@@ -24,8 +24,8 @@
 
 <resources>
 
-    <string name="scheme">predator</string>
-    <string name="host">com.crazyhitty.chdev.ks.predator</string>
-    <string name="path">/oauth2redirect</string>
+    <string name="oauth_scheme">predator</string>
+    <string name="oauth_host">com.crazyhitty.chdev.ks.predator</string>
+    <string name="oauth_path">/oauth2redirect</string>
 
 </resources>

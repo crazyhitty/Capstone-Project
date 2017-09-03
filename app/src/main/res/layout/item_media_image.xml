@@ -28,7 +28,7 @@
     android:layout_height="match_parent"
     android:clickable="true">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <me.relex.photodraweeview.PhotoDraweeView
         android:id="@+id/image_view_media"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -61,6 +61,12 @@
       "library_redirect_url": "https://github.com/facebook/fresco"
     },
     {
+      "library_title": "PhotoDraweeView",
+      "library_creator": "Relex",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/ongakuer/PhotoDraweeView"
+    },
+    {
       "library_title": "ChangeLog Library",
       "library_creator": "Gabriele Mariotti",
       "library_license_type": "Apache License, Version 2.0",
@@ -71,6 +77,12 @@
       "library_creator": "Christopher Jenkins",
       "library_license_type": "Apache License, Version 2.0",
       "library_redirect_url": "https://github.com/chrisjenx/Calligraphy"
+    },
+    {
+      "library_title": "Lottie",
+      "library_creator": "Airbnb",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/airbnb/lottie-android"
     }
   ]
 }

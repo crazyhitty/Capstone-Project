@@ -217,6 +217,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
                     @Override
                     public void onError(Throwable e) {
                         Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        unableToFetchDataOnline(getString(R.string.authentication_failure));
                     }
 
                     @Override

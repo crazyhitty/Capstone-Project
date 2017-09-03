@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>  <!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2016 Kartik Sharma
@@ -22,9 +22,10 @@
   ~ SOFTWARE.
   -->
 
-<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountPreferences="@xml/account_preferences"
-    android:accountType="com.crazyhitty.chdev.ks.predator"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:smallIcon="@mipmap/ic_launcher" />
+<resources>
+
+    <string name="app_linking_scheme">https</string>
+    <string name="app_linking_host">www.producthunt.com</string>
+    <string name="app_linking_path_prefix">/posts</string>
+
+</resources>
