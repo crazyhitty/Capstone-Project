@@ -69,6 +69,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
             Logger.d(TAG, "showPosts: postsSize: " + posts.size());
             // Update widgets.
             mPostsPresenter.updateWidgets(getContext());
+            // Show notifications, if enabled.
         }
 
         @Override

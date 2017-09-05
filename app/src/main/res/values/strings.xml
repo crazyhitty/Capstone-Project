@@ -343,17 +343,7 @@
         <item>WorkSans-Regular.ttf</item>
     </string-array>
 
-    <string name="settings_system">System</string>
-
-    <string name="settings_clear_cache_key">clear_cache</string>
-    <string name="settings_clear_cache_title">Clear cache</string>
-    <string name="settings_clear_cache_summary">Clear entire cache powering offline state of this application.</string>
-    <string name="settings_clear_cache_dialog_title">Clear cache</string>
-    <string name="settings_clear_cache_dialog_summary">Clear entire cache powering offline state of this application including existing database. Don\'t worry, this will not reset your login credentials.</string>
-    <string name="settings_clear_cache_dialog_yes">Clear</string>
-    <string name="settings_clear_cache_dialog_no">Cancel</string>
-    <string name="settings_clear_cache_success_message">Successfully cleared cache.</string>
-    <string name="settings_clear_cache_failure_message">Unable to wipe cache, please try again :(</string>
+    <string name="settings_sync">Sync</string>
 
     <string name="settings_background_sync_key">background_sync</string>
     <string name="settings_background_sync_title">Background sync</string>
@@ -366,13 +356,32 @@
     <string name="settings_sync_interval_dialog_title">Sync interval</string>
     <string name="settings_sync_interval_default_value">6</string>
     <string-array name="settings_sync_interval_entries">
+        <item>3 hours</item>
         <item>6 hours</item>
         <item>12 hours</item>
         <item>24 hours</item>
     </string-array>
     <string-array name="settings_sync_interval_entry_values">
+        <item>3</item>
         <item>6</item>
         <item>12</item>
         <item>24</item>
     </string-array>
+
+    <string name="settings_notifications_key">notifications_key</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary_on">Notifications are currently enabled, application will show notification whenever data is synced.</string>
+    <string name="settings_notifications_summary_off">Notifications are currently disabled.</string>
+
+    <string name="settings_system">System</string>
+
+    <string name="settings_clear_cache_key">clear_cache</string>
+    <string name="settings_clear_cache_title">Clear cache</string>
+    <string name="settings_clear_cache_summary">Clear entire cache powering offline state of this application.</string>
+    <string name="settings_clear_cache_dialog_title">Clear cache</string>
+    <string name="settings_clear_cache_dialog_summary">Clear entire cache powering offline state of this application including existing database. Don\'t worry, this will not reset your login credentials.</string>
+    <string name="settings_clear_cache_dialog_yes">Clear</string>
+    <string name="settings_clear_cache_dialog_no">Cancel</string>
+    <string name="settings_clear_cache_success_message">Successfully cleared cache.</string>
+    <string name="settings_clear_cache_failure_message">Unable to wipe cache, please try again :(</string>
 </resources>

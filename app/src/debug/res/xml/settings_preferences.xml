@@ -59,16 +59,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_system">
-
-        <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference
-            android:dialogMessage="@string/settings_clear_cache_dialog_summary"
-            android:dialogTitle="@string/settings_clear_cache_dialog_title"
-            android:key="@string/settings_clear_cache_key"
-            android:summary="@string/settings_clear_cache_summary"
-            android:title="@string/settings_clear_cache_title"
-            predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
-            predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
+    <PreferenceCategory android:title="@string/settings_sync">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -85,6 +76,26 @@
             android:key="@string/settings_sync_interval_key"
             android:summary="@string/settings_sync_interval_summary"
             android:title="@string/settings_sync_interval_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_notifications_key"
+            android:summaryOff="@string/settings_notifications_summary_off"
+            android:summaryOn="@string/settings_notifications_summary_on"
+            android:title="@string/settings_notifications_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_system">
+
+        <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference
+            android:dialogMessage="@string/settings_clear_cache_dialog_summary"
+            android:dialogTitle="@string/settings_clear_cache_dialog_title"
+            android:key="@string/settings_clear_cache_key"
+            android:summary="@string/settings_clear_cache_summary"
+            android:title="@string/settings_clear_cache_title"
+            predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
+            predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
 
     </PreferenceCategory>
 

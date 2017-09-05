@@ -55,7 +55,9 @@ import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
     private ListPreference mListPreferenceManageThemes, mListPreferenceChangeFont;
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
-    private SwitchPreference mSwitchPreferenceEnableExperimentalFeatures, mSwitchPreferenceBackgroundSync;
+    private SwitchPreference mSwitchPreferenceEnableExperimentalFeatures,
+            mSwitchPreferenceBackgroundSync,
+            mSwitchPreferenceNotifications;
     private ListPreference mListPreferenceSyncInterval;
 
     private SettingsContract.Presenter mSettingsPresenter;
@@ -88,6 +90,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         manageBackgroundSyncPreferences();
 
         manageSyncIntervalPreferences();
+
+        manageNotificationsPreferences();
     }
 
     @Override
@@ -103,6 +107,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         mListPreferenceChangeFont = (ListPreference) findPreference(getString(R.string.settings_change_font_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
+        mSwitchPreferenceNotifications = (SwitchPreference) findPreference(getString(R.string.settings_notifications_key));
     }
 
     private void manageThemesPreferences() {
@@ -161,6 +166,12 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean status = (Boolean) newValue;
                 mListPreferenceSyncInterval.setEnabled(status);
+                mSwitchPreferenceNotifications.setEnabled(status);
+
+                if (!status) {
+                    mSwitchPreferenceNotifications.setChecked(false);
+                }
+
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
                     if (status) {
                         PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
@@ -187,6 +198,10 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
                 return true;
             }
         });
+    }
+
+    private void manageNotificationsPreferences() {
+        mSwitchPreferenceNotifications.setEnabled(PredatorSharedPreferences.isSyncEnabled(getActivity().getApplicationContext()));
     }
 
     @Override
