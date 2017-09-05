@@ -45,15 +45,21 @@ public interface PostsContract {
         void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
 
         void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage);
+
+        void postsCleared();
+
+        void unableToClearPosts(String message);
     }
 
     interface Presenter extends BasePresenter {
         void getOfflinePosts();
 
-        void getPosts(String token, boolean clearPrevious);
+        void getPosts(String token, boolean today);
 
         void loadMorePosts(String token);
 
         void updateWidgets(Context context);
+
+        void clear();
     }
 }

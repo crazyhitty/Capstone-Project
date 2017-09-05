@@ -73,7 +73,17 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
         @Override
         public void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-            Logger.d(TAG, "unableToGetPosts: error: " + errorMessage);
+            Logger.e(TAG, "unableToGetPosts: error: " + errorMessage);
+        }
+
+        @Override
+        public void postsCleared() {
+            Logger.d(TAG, "postsCleared: called");
+        }
+
+        @Override
+        public void unableToClearPosts(String message) {
+            Logger.e(TAG, "unableToClearPosts: " + message);
         }
 
         @Override
@@ -90,7 +100,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
         @Override
         public void unableToFetchCollections(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-            Logger.d(TAG, "unableToFetchCollections: error: " + errorMessage);
+            Logger.e(TAG, "unableToFetchCollections: error: " + errorMessage);
         }
 
         @Override

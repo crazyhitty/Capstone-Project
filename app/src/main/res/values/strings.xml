@@ -48,6 +48,7 @@
     <string name="menu_posts_switch_layout_list">List</string>
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
     <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
+    <string name="menu_posts_clear">Clear Posts</string>
 
     <!--menu_post_details.xml-->
     <string name="menu_post_details_refresh">Refresh</string>
@@ -102,6 +103,8 @@
     <string name="posts_date_today">Today</string>
     <string name="posts_date_yesterday">Yesterday</string>
     <string name="posts_successfully_loaded_posts">Success, here ya go!</string>
+    <string name="posts_cleared">No posts available.</string>
+    <string name="posts_cannot_clear_while_loading">Cannot clear posts while they are being loaded!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>

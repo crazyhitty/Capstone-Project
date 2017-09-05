@@ -36,11 +36,13 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
@@ -53,10 +55,15 @@ import org.chromium.customtabsclient.CustomTabsActivityHelper;
  */
 
 public abstract class BaseSupportFragment extends Fragment {
+    private static final String TAG = "BaseSupportFragment";
+
+    private Menu mMenu;
+
     private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
             .enableUrlBarHiding()
             .setShowTitle(true)
             .build();
+
     private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
             new CustomTabsActivityHelper.CustomTabsFallback() {
                 @Override
@@ -126,5 +133,29 @@ public abstract class BaseSupportFragment extends Fragment {
 
     protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
         return mCustomTabsFallback;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        mMenu = menu;
+    }
+
+    protected void disableMenuItem(@IdRes int itemId) {
+        if (mMenu != null) {
+            mMenu.findItem(itemId)
+                .setEnabled(false);
+        } else {
+            Logger.e(TAG, "disableMenuItem: Unable to disable menu item as menu itself is null");
+        }
+    }
+
+    protected void enableMenuItem(@IdRes int itemId) {
+        if (mMenu != null) {
+            mMenu.findItem(itemId)
+                    .setEnabled(true);
+        } else {
+            Logger.e(TAG, "enableMenuItem: Unable to enable menu item as menu itself is null");
+        }
     }
 }

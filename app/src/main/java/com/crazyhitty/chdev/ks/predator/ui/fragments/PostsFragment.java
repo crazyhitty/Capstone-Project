@@ -88,6 +88,8 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     private boolean mIsLoading = false;
 
+    private boolean mCanClearPosts = true;
+
     public static PostsFragment newInstance() {
         return new PostsFragment();
     }
@@ -188,6 +190,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         mPostsPresenter.getPosts(s, true);
+                        mCanClearPosts = false;
                     }
                 });
     }
@@ -216,6 +219,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
                         mPostsPresenter.loadMorePosts(s);
+                        mCanClearPosts = false;
                     }
                 });
     }
@@ -237,6 +241,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                 // Check if the last item is on screen, if yes then start loading more posts.
                 if (!mIsLoading &&
+                        mPostsRecyclerAdapter.getItemCount() != 0 &&
                         layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1 &&
                         isNetworkAvailable(false)) {
                     mIsLoading = true;
@@ -264,7 +269,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     public void onNetworkConnectivityChanged(NetworkEvent networkEvent) {
         if (mPostsRecyclerAdapter != null && mPostsRecyclerAdapter.getItemCount() != 0) {
             mPostsRecyclerAdapter.setNetworkStatus(networkEvent.isConnected(), getString(R.string.item_load_more_posts_error_desc));
-        } else if (networkEvent.isConnected() && loadingView.getCurrentState() == LoadingView.STATE_SHOWN.ERROR) {
+        } else if (networkEvent.isConnected() &&
+                loadingView.getVisibility() == View.VISIBLE &&
+                loadingView.getCurrentState() == LoadingView.STATE_SHOWN.ERROR) {
             // Get latest posts if internet is available and no offline posts are available currently.
             loadingView.startLoading(LoadingView.TYPE.LATEST_POSTS);
             getLatestPosts();
@@ -282,14 +289,20 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        // TODO: Implement post listing menu functionality.
-        //inflater.inflate(R.menu.menu_posts, menu);
+        inflater.inflate(R.menu.menu_posts, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
+            case R.id.menu_posts_clear:
+                if (mCanClearPosts) {
+                    mPostsPresenter.clear();
+                    mCanClearPosts = false;
+                } else {
+                    showLongToast(R.string.posts_cannot_clear_while_loading);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -305,8 +318,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             mIsLoading = false;
             mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, false);
         } else {
-            // Hide loading view
-            loadingView.setComplete(getString(R.string.posts_successfully_loaded_posts));
+            // Hide loading view, only if it was visible.
+            if (loadingView.getVisibility() == View.VISIBLE) {
+                loadingView.setComplete(getString(R.string.posts_successfully_loaded_posts));
+            }
 
             // Enable swipe refresh layout
             swipeRefreshLayoutPosts.setEnabled(true);
@@ -323,6 +338,8 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
         // Update widgets.
         mPostsPresenter.updateWidgets(getContext());
+
+        mCanClearPosts = true;
     }
 
     @Override
@@ -348,6 +365,22 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             loadingView.setVisibility(View.VISIBLE);
             loadingView.setError(errorMessage);
         }
+        mCanClearPosts = true;
+    }
+
+    @Override
+    public void postsCleared() {
+        swipeRefreshLayoutPosts.setEnabled(false);
+        mPostsRecyclerAdapter.clear();
+        loadingView.setVisibility(View.VISIBLE);
+        loadingView.setErrorWithoutDisappearingAnim(getString(R.string.posts_cleared));
+        mCanClearPosts = true;
+    }
+
+    @Override
+    public void unableToClearPosts(String message) {
+        showLongToast(message);
+        mCanClearPosts = true;
     }
 
     private void setListTypeAdapter(List<Post> posts, HashMap<Integer, String> dateHashMap) {
