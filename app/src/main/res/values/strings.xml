@@ -105,6 +105,10 @@
     <string name="posts_successfully_loaded_posts">Success, here ya go!</string>
     <string name="posts_cleared">No posts available.</string>
     <string name="posts_cannot_clear_while_loading">Cannot clear posts while they are being loaded!</string>
+    <string name="posts_clear_dialog_title">Clear Posts</string>
+    <string name="posts_clear_dialog_message">This would clear all of the posts shown in the dashboard.</string>
+    <string name="posts_clear_dialog_positive_button">Clear</string>
+    <string name="posts_clear_dialog_negative_button">Cancel</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>

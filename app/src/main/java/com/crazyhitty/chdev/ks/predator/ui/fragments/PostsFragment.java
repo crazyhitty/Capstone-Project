@@ -24,9 +24,11 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -297,8 +299,19 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         switch (item.getItemId()) {
             case R.id.menu_posts_clear:
                 if (mCanClearPosts) {
-                    mPostsPresenter.clear();
-                    mCanClearPosts = false;
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.posts_clear_dialog_title)
+                            .setMessage(R.string.posts_clear_dialog_message)
+                            .setPositiveButton(R.string.posts_clear_dialog_positive_button,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mPostsPresenter.clear();
+                                            mCanClearPosts = false;
+                                        }
+                                    })
+                            .setNegativeButton(R.string.posts_clear_dialog_negative_button, null)
+                            .show();
                 } else {
                     showLongToast(R.string.posts_cannot_clear_while_loading);
                 }
