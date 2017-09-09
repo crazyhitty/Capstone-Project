@@ -74,4 +74,5 @@
     <color name="color_collection_overlay">#7d212121</color>
     <color name="light_blue_grey">#cfd8dc</color>
     <color name="widget_posts_background">#263238</color>
+    <color name="notification_color">@color/color_primary_inverse</color>
 </resources>

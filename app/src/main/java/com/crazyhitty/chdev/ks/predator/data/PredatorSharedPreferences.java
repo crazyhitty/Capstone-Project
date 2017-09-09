@@ -122,6 +122,11 @@ public class PredatorSharedPreferences {
                 .apply();
     }
 
+    public static boolean areNotificationsEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.settings_notifications_key), false);
+    }
+
     public static THEME_TYPE getCurrentTheme(Context context) {
         switch (PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_manage_themes_key),

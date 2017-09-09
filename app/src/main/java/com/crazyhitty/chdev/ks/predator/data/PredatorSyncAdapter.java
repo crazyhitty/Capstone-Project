@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.data;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -34,7 +35,9 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.app.NotificationCompat;
 
+import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsContract;
 import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsPresenter;
@@ -42,11 +45,13 @@ import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.ui.notifications.PostNotification;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Author:      Kartik Sharma
@@ -61,7 +66,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
     private final AccountManager mAccountManager;
 
     private PostsContract.Presenter mPostsPresenter;
-    private CollectionsContract.Presenter mCollectionsPresenter;
 
     private PostsContract.View mPostsView = new PostsContract.View() {
         @Override
@@ -70,6 +74,11 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
             // Update widgets.
             mPostsPresenter.updateWidgets(getContext());
             // Show notifications, if enabled.
+            if (PredatorSharedPreferences.areNotificationsEnabled(getContext()) &&
+                    posts != null &&
+                    posts.size() > 0) {
+                new PostNotification(getContext()).show(posts.get(0));
+            }
         }
 
         @Override
@@ -93,37 +102,16 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     };
 
-    private CollectionsContract.View mCollectionView = new CollectionsContract.View() {
-        @Override
-        public void showCollections(List<Collection> collections) {
-            Logger.d(TAG, "showCollections: collectionsSize: " + collections.size());
-        }
-
-        @Override
-        public void unableToFetchCollections(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-            Logger.e(TAG, "unableToFetchCollections: error: " + errorMessage);
-        }
-
-        @Override
-        public void setPresenter(CollectionsContract.Presenter presenter) {
-            // Do nothing here.
-        }
-    };
-
     public PredatorSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mAccountManager = AccountManager.get(context);
 
         // Initialize the presenters.
         mPostsPresenter = new PostsPresenter(mPostsView);
-        mCollectionsPresenter = new CollectionsPresenter(mCollectionView);
 
         mPostsPresenter.subscribe();
-        mCollectionsPresenter.subscribe();
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void initializePeriodicSync(Context context) {
         // Enable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
@@ -139,8 +127,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                 PredatorSharedPreferences.getSyncIntervalInMillis(context));
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void initializePeriodicSync(Context context, long syncIntervalInMillis) {
         // Enable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
@@ -156,8 +142,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                 syncIntervalInMillis);
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void removePeriodicSync(Context context) {
         // Disable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
@@ -187,9 +171,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // Fetch latest posts.
             mPostsPresenter.getPosts(authToken, true);
-
-            // Fetch featured collections.
-            mCollectionsPresenter.getLatestCollections(authToken, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -201,10 +182,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
         if (mPostsPresenter != null) {
             mPostsPresenter.unSubscribe();
-        }
-
-        if (mCollectionsPresenter != null) {
-            mCollectionsPresenter.unSubscribe();
         }
     }
 }

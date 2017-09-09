@@ -347,8 +347,8 @@
 
     <string name="settings_background_sync_key">background_sync</string>
     <string name="settings_background_sync_title">Background sync</string>
-    <string name="settings_background_sync_summary_on">Background sync is currently turned on, application will automatically re-fetch new data from the server even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
-    <string name="settings_background_sync_summary_off">Background sync is currently turned off, enable this feature if you want the application to automatically re-fetch new data from the server periodically even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
+    <string name="settings_background_sync_summary_on">Background sync is currently turned on, application will automatically re-fetch new data from the server even if the application is in background.\n\n<b>Note:</b> Only posts are synced currently in the background.</string>
+    <string name="settings_background_sync_summary_off">Background sync is currently turned off, enable this feature if you want the application to automatically re-fetch new data from the server periodically even if the application is in background.\n\n<b>Note:</b> Only posts are synced currently in the background.</string>
 
     <string name="settings_sync_interval_key">sync_interval</string>
     <string name="settings_sync_interval_title">Sync interval</string>
@@ -356,12 +356,14 @@
     <string name="settings_sync_interval_dialog_title">Sync interval</string>
     <string name="settings_sync_interval_default_value">6</string>
     <string-array name="settings_sync_interval_entries">
+        <item>1 hour</item>
         <item>3 hours</item>
         <item>6 hours</item>
         <item>12 hours</item>
         <item>24 hours</item>
     </string-array>
     <string-array name="settings_sync_interval_entry_values">
+        <item>1</item>
         <item>3</item>
         <item>6</item>
         <item>12</item>

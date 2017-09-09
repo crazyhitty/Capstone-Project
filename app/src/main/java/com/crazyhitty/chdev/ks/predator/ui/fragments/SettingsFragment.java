@@ -172,12 +172,10 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
                     mSwitchPreferenceNotifications.setChecked(false);
                 }
 
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-                    if (status) {
-                        PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
-                    } else {
-                        PredatorSyncAdapter.removePeriodicSync(getActivity().getApplicationContext());
-                    }
+                if (status) {
+                    PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
+                } else {
+                    PredatorSyncAdapter.removePeriodicSync(getActivity().getApplicationContext());
                 }
                 return true;
             }
@@ -191,10 +189,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String hours = (String) newValue;
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-                    PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
-                            DateUtils.hoursToMillis(hours));
-                }
+                PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
+                        DateUtils.hoursToMillis(hours));
                 return true;
             }
         });
