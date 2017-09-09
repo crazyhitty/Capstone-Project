@@ -77,7 +77,13 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
             if (PredatorSharedPreferences.areNotificationsEnabled(getContext()) &&
                     posts != null &&
                     posts.size() > 0) {
-                new PostNotification(getContext()).show(posts.get(0));
+                for (Post post : posts) {
+                    if (!post.isNotificationShown()) {
+                        mPostsPresenter.notificationShownForPost(post.getPostId());
+                        new PostNotification(getContext()).show(post);
+                        break;
+                    }
+                }
             }
         }
 

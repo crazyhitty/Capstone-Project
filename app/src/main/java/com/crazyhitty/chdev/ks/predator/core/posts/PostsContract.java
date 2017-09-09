@@ -61,5 +61,7 @@ public interface PostsContract {
         void updateWidgets(Context context);
 
         void clear();
+
+        void notificationShownForPost(int postId);
     }
 }

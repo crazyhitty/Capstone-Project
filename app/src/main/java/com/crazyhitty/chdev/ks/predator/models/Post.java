@@ -55,6 +55,7 @@ public class Post {
     private String userImageUrl100px;
     private String userImageUrlOriginal;
     private boolean isInCollection;
+    private boolean notificationShown;
 
     public int getId() {
         return id;
@@ -242,5 +243,17 @@ public class Post {
 
     public void setInCollection(boolean inCollection) {
         isInCollection = inCollection;
+    }
+
+    public boolean isNotificationShown() {
+        return notificationShown;
+    }
+
+    public void setNotificationShown(int notificationShown) {
+        this.notificationShown = notificationShown == 1;
+    }
+
+    public void setNotificationShown(boolean notificationShown) {
+        this.notificationShown = notificationShown;
     }
 }

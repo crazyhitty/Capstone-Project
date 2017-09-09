@@ -264,6 +264,36 @@ public class PostsPresenter implements PostsContract.Presenter {
         }));
     }
 
+    @Override
+    public void notificationShownForPost(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setNotificationShownForPost(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
     /**
      * Matches all the post publish dates and create a hashmap for positions and dates wherever the
      * dates are changed in the cursor.

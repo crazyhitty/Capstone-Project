@@ -19,6 +19,7 @@ public class PredatorContract {
     public static class PostsEntry implements BaseColumns {
         // A list of possible paths that will be appended to the base URI for PostsEntry table.
         public static final String PATH_POSTS = "posts";
+        public static final String PATH_POSTS_UPDATE = "posts_update";
         public static final String PATH_POSTS_ADD = "posts_add";
         public static final String PATH_POSTS_DELETE_ALL = "posts_delete";
 
@@ -26,6 +27,11 @@ public class PredatorContract {
         public static final Uri CONTENT_URI_POSTS = PredatorDbHelper.BASE_CONTENT_URI
                 .buildUpon()
                 .appendPath(PATH_POSTS)
+                .build();
+
+        public static final Uri CONTENT_URI_POSTS_UPDATE = PredatorDbHelper.BASE_CONTENT_URI
+                .buildUpon()
+                .appendPath(PATH_POSTS_UPDATE)
                 .build();
 
         public static final Uri CONTENT_URI_POSTS_ADD = PredatorDbHelper.BASE_CONTENT_URI
@@ -70,6 +76,7 @@ public class PredatorContract {
         public static final String COLUMN_USER_IMAGE_URL_ORIGINAL = "user_image_url_original";
         public static final String COLUMN_IS_IN_COLLECTION = "is_in_collection";
         public static final String COLUMN_FOR_DASHBOARD = "for_dashboard";
+        public static final String COLUMN_NOTIFICATION_SHOWN = "notification_shown";
 
         // Define a function to build a URI to find a specific post by it's identifier
         public static Uri buildPostsUri(long id) {
