@@ -24,26 +24,18 @@
 
 package com.crazyhitty.chdev.ks.predator.data;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.NotificationManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.NotificationCompat;
 
-import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
-import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsContract;
-import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsPresenter;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
-import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.notifications.PostNotification;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -51,7 +43,6 @@ import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Author:      Kartik Sharma
@@ -125,27 +116,27 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                 Constants.Sync.ON);
 
         // Set periodic sync interval
-        Logger.d(TAG, "initializePeriodicSync: interval(millis): " + PredatorSharedPreferences.getSyncIntervalInMillis(context));
+        Logger.d(TAG, "initializePeriodicSync: interval(seconds): " + PredatorSharedPreferences.getSyncIntervalInSeconds(context));
         ContentResolver.addPeriodicSync(
                 PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Bundle.EMPTY,
-                PredatorSharedPreferences.getSyncIntervalInMillis(context));
+                PredatorSharedPreferences.getSyncIntervalInSeconds(context));
     }
 
-    public static void initializePeriodicSync(Context context, long syncIntervalInMillis) {
+    public static void initializePeriodicSync(Context context, long syncIntervalInSeconds) {
         // Enable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Constants.Sync.ON);
 
         // Set periodic sync interval
-        Logger.d(TAG, "initializePeriodicSync: interval(millis): " + syncIntervalInMillis);
+        Logger.d(TAG, "initializePeriodicSync: interval(seconds): " + syncIntervalInSeconds);
         ContentResolver.addPeriodicSync(
                 PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Bundle.EMPTY,
-                syncIntervalInMillis);
+                syncIntervalInSeconds);
     }
 
     public static void removePeriodicSync(Context context) {

@@ -90,12 +90,12 @@ public class PredatorSharedPreferences {
                 .getBoolean(context.getString(R.string.settings_background_sync_key), false);
     }
 
-    public static long getSyncIntervalInMillis(Context context) {
+    public static long getSyncIntervalInSeconds(Context context) {
         String hours = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_sync_interval_key),
                         context.getString(R.string.settings_sync_interval_default_value));
 
-        return DateUtils.hoursToMillis(hours);
+        return DateUtils.hoursToSeconds(hours);
     }
 
     public static boolean isExperimentalFeaturesEnabled(Context context) {

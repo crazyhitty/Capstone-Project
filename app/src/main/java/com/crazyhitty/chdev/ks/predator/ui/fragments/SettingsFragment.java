@@ -24,15 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.Manifest;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
@@ -190,7 +187,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String hours = (String) newValue;
                 PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
-                        DateUtils.hoursToMillis(hours));
+                        DateUtils.hoursToSeconds(hours));
                 return true;
             }
         });
