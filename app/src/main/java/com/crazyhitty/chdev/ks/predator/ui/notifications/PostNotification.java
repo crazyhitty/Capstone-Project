@@ -36,6 +36,8 @@ import android.support.v4.content.ContextCompat;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 
+import java.util.UUID;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -47,25 +49,54 @@ public class PostNotification {
     private static final String TAG = "PostNotification";
 
     private static final int NOTIFICATION_ID = 1;
+    private static final String NOTIFICATION_GROUP_KEY = "post_notification_group";
 
     private Context mContext;
     private NotificationManager mNotificationManager;
 
     public PostNotification(@NonNull Context context) {
         mContext = context;
+        prepareNotification();
+    }
+
+    private void prepareNotification() {
         mNotificationManager = (NotificationManager) mContext
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // TODO: Create notification channel for devices with Android O and above.
+        } else {
+            // TODO: Set notification priority and other things for devices with Android N and lower.
+        }*/
     }
 
     public void show(Post post) {
+        showHeaderNotification();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
-                .setColor(ContextCompat.getColor(mContext, R.color.notification_color))
+                .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))
                 .setSmallIcon(R.drawable.ic_notification_predator)
                 .setLargeIcon(getBitmap(R.mipmap.ic_launcher))
                 .setContentTitle(post.getName())
-                .setContentText(post.getTagline());
+                .setContentText(post.getTagline())
+                .setGroup(NOTIFICATION_GROUP_KEY)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+        mNotificationManager.notify(UUID.randomUUID().toString(),
+                NOTIFICATION_ID,
+                builder.build());
+    }
+
+    private void showHeaderNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                .setColor(ContextCompat.getColor(mContext, R.color.notification_color_header))
+                .setContentTitle(mContext.getString(R.string.app_name))
+                .setSmallIcon(R.drawable.ic_notification_predator)
+                .setGroupSummary(true)
+                .setGroup(NOTIFICATION_GROUP_KEY);
+
+        mNotificationManager.notify(NOTIFICATION_ID,
+                builder.build());
     }
 
     private Bitmap getBitmap(@DrawableRes int drawableRes) {
