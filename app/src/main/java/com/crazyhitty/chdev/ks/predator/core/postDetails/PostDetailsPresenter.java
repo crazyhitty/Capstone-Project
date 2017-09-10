@@ -305,6 +305,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
                 if (e instanceof MediaUnavailableException) {
                     mView.unableToFetchMedia(e.getMessage());
                 } else if (e instanceof CommentsUnavailableException) {
@@ -313,6 +314,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     mView.unableToFetchInstallLinks(e.getMessage());
                 } else if (e instanceof VotedUsersUnavailableException) {
                     mView.unableToFetchAllUsers(e.getMessage());
+                } else {
+                    mView.unableToFetchPostDetails(e.getMessage());
                 }
                 mView.dismissLoading();
             }
