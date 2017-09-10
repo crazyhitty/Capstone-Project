@@ -51,9 +51,8 @@ import java.util.UUID;
 public class PostNotification {
     private static final String TAG = "PostNotification";
 
-    private static final int NOTIFICATION_ID = 1;
+    private static final int SUMMARY_ID = 1337;
     private static final String NOTIFICATION_GROUP_KEY = "post_notification_group";
-    private static final int RC_PENDING_INTENT = 100;
 
     private Context mContext;
     private NotificationManager mNotificationManager;
@@ -76,9 +75,10 @@ public class PostNotification {
         showHeaderNotification();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
-                RC_PENDING_INTENT,
-                PostDetailsActivity.getLaunchIntent(mContext, post.getPostId()),
-                PendingIntent.FLAG_ONE_SHOT);
+                post.getPostId(),
+                PostDetailsActivity.getLaunchIntent(mContext,
+                        post.getPostId()),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))
@@ -95,9 +95,7 @@ public class PostNotification {
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent);
 
-        mNotificationManager.notify(UUID.randomUUID().toString(),
-                NOTIFICATION_ID,
-                builder.build());
+        mNotificationManager.notify(post.getPostId(), builder.build());
     }
 
     private void showHeaderNotification() {
@@ -106,10 +104,10 @@ public class PostNotification {
                 .setContentTitle(mContext.getString(R.string.app_name))
                 .setSmallIcon(R.drawable.ic_notification_predator)
                 .setGroupSummary(true)
+                .setAutoCancel(true)
                 .setGroup(NOTIFICATION_GROUP_KEY);
 
-        mNotificationManager.notify(NOTIFICATION_ID,
-                builder.build());
+        mNotificationManager.notify(SUMMARY_ID, builder.build());
     }
 
     private Bitmap getBitmap(@DrawableRes int drawableRes) {
