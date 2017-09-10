@@ -25,9 +25,11 @@
 package com.crazyhitty.chdev.ks.predator.ui.notifications;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -35,6 +37,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 
 import java.util.UUID;
 
@@ -50,12 +53,13 @@ public class PostNotification {
 
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_GROUP_KEY = "post_notification_group";
+    private static final int RC_PENDING_INTENT = 100;
 
     private Context mContext;
     private NotificationManager mNotificationManager;
 
     public PostNotification(@NonNull Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         prepareNotification();
     }
 
@@ -63,15 +67,18 @@ public class PostNotification {
         mNotificationManager = (NotificationManager) mContext
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // TODO: Create notification channel for devices with Android O and above.
-        } else {
-            // TODO: Set notification priority and other things for devices with Android N and lower.
-        }*/
+        }
     }
 
     public void show(Post post) {
         showHeaderNotification();
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
+                RC_PENDING_INTENT,
+                PostDetailsActivity.getLaunchIntent(mContext, post.getPostId()),
+                PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))
@@ -80,7 +87,13 @@ public class PostNotification {
                 .setContentTitle(post.getName())
                 .setContentText(post.getTagline())
                 .setGroup(NOTIFICATION_GROUP_KEY)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent);
 
         mNotificationManager.notify(UUID.randomUUID().toString(),
                 NOTIFICATION_ID,
