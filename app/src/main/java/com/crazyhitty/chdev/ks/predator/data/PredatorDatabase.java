@@ -589,6 +589,24 @@ public class PredatorDatabase {
                         null);
     }
 
+    public Post getPostForNotification() {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1 AND " +
+                        PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN + "=0 AND " +
+                        PredatorContract.PostsEntry.COLUMN_READ_STATUS + "=0",
+                null,
+                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC LIMIT 1");
+
+        Post post = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            post = PredatorDbValuesHelper.getPostFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return post;
+    }
+
     public void setNotificationShownForPost(int postId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);

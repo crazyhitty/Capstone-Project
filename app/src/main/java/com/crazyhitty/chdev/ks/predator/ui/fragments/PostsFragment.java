@@ -396,6 +396,16 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         mCanClearPosts = true;
     }
 
+    @Override
+    public void showNotification(Post post) {
+        // No use.
+    }
+
+    @Override
+    public void unableToShowNotification() {
+        // No use.
+    }
+
     private void setListTypeAdapter(List<Post> posts, HashMap<Integer, String> dateHashMap) {
         mPostsRecyclerAdapter.updateDataset(posts, dateHashMap, true);
     }

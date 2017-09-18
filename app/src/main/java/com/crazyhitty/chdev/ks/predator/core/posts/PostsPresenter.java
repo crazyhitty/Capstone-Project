@@ -265,6 +265,43 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
+    public void getNotification() {
+        Observable<Post> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Post>() {
+            @Override
+            public void subscribe(ObservableEmitter<Post> emitter) throws Exception {
+                Post post = PredatorDatabase.getInstance()
+                        .getPostForNotification();
+                if (post == null) {
+                    emitter.onError(new NullPointerException("No post available to be shown for " +
+                            "notification"));
+                } else {
+                    emitter.onNext(post);
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Post>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToShowNotification();
+            }
+
+            @Override
+            public void onNext(Post post) {
+                mView.showNotification(post);
+            }
+        }));
+    }
+
+    @Override
     public void notificationShownForPost(final int postId) {
         Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
             @Override

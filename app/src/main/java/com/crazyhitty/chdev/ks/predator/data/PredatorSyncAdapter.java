@@ -65,16 +65,8 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
             // Update widgets.
             mPostsPresenter.updateWidgets(getContext());
             // Show notifications, if enabled.
-            if (PredatorSharedPreferences.areNotificationsEnabled(getContext()) &&
-                    posts != null &&
-                    posts.size() > 0) {
-                for (Post post : posts) {
-                    if (!post.isNotificationShown() && !post.isRead()) {
-                        mPostsPresenter.notificationShownForPost(post.getPostId());
-                        new PostNotification(getContext()).show(post);
-                        break;
-                    }
-                }
+            if (PredatorSharedPreferences.areNotificationsEnabled(getContext())) {
+                mPostsPresenter.getNotification();
             }
         }
 
@@ -91,6 +83,18 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         @Override
         public void unableToClearPosts(String message) {
             Logger.e(TAG, "unableToClearPosts: " + message);
+        }
+
+        @Override
+        public void showNotification(Post post) {
+            Logger.d(TAG, "showNotification: called");
+            mPostsPresenter.notificationShownForPost(post.getPostId());
+            new PostNotification(getContext()).show(post);
+        }
+
+        @Override
+        public void unableToShowNotification() {
+            Logger.e(TAG, "unableToShowNotification: called");
         }
 
         @Override

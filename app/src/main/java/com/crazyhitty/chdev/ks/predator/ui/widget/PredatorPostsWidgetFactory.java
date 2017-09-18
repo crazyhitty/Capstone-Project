@@ -161,6 +161,16 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
     }
 
     @Override
+    public void showNotification(Post post) {
+        // No use.
+    }
+
+    @Override
+    public void unableToShowNotification() {
+        // No use.
+    }
+
+    @Override
     public void setPresenter(PostsContract.Presenter presenter) {
         mPostsPresenter = presenter;
     }

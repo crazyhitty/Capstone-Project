@@ -49,6 +49,10 @@ public interface PostsContract {
         void postsCleared();
 
         void unableToClearPosts(String message);
+
+        void showNotification(Post post);
+
+        void unableToShowNotification();
     }
 
     interface Presenter extends BasePresenter {
@@ -61,6 +65,8 @@ public interface PostsContract {
         void updateWidgets(Context context);
 
         void clear();
+
+        void getNotification();
 
         void notificationShownForPost(int postId);
     }
