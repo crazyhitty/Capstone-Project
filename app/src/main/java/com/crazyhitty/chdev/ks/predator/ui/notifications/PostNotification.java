@@ -76,9 +76,8 @@ public class PostNotification {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
                 post.getPostId(),
-                PostDetailsActivity.getLaunchIntent(mContext,
-                        post.getPostId()),
-                        PendingIntent.FLAG_CANCEL_CURRENT);
+                PostDetailsActivity.getLaunchIntent(mContext, post.getPostId()),
+                PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))

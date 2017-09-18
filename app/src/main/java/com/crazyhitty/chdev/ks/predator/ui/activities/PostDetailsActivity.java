@@ -144,7 +144,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
 
     public static Intent getLaunchIntent(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ARG_POST_TABLE_POST_ID, postId);
         return intent;
     }
