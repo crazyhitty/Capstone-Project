@@ -88,6 +88,7 @@ public class PredatorDbValuesHelper {
         post.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX));
         post.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
         post.setNotificationShown(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN));
+        post.setRead(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_READ_STATUS));
 
         return post;
     }
@@ -119,6 +120,7 @@ public class PredatorDbValuesHelper {
             post.setUserImageUrl100px(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX));
             post.setUserImageUrlOriginal(CursorUtils.getString(cursor, PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL));
             post.setNotificationShown(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN));
+            post.setRead(CursorUtils.getInt(cursor, PredatorContract.PostsEntry.COLUMN_READ_STATUS));
             posts.add(post);
         }
 

@@ -61,7 +61,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
     private PostsContract.View mPostsView = new PostsContract.View() {
         @Override
         public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
-            Logger.d(TAG, "showPosts: postsSize: " + posts.size());
+            Logger.d(TAG, "showPosts: posts synced with size: " + (posts != null ? posts.size() : 0));
             // Update widgets.
             mPostsPresenter.updateWidgets(getContext());
             // Show notifications, if enabled.
@@ -69,7 +69,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                     posts != null &&
                     posts.size() > 0) {
                 for (Post post : posts) {
-                    if (!post.isNotificationShown()) {
+                    if (!post.isNotificationShown() && !post.isRead()) {
                         mPostsPresenter.notificationShownForPost(post.getPostId());
                         new PostNotification(getContext()).show(post);
                         break;

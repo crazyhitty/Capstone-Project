@@ -111,7 +111,8 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + " INTEGER DEFAULT 0, " +
                 PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + " INTEGER DEFAULT 0, " +
-                PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN + " INTEGER DEFAULT 0);";
+                PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN + " INTEGER DEFAULT 0, " +
+                PredatorContract.PostsEntry.COLUMN_READ_STATUS + " INTEGER DEFAULT 0);";
     }
 
     private String getCreateUsersTableSqlQuery() {

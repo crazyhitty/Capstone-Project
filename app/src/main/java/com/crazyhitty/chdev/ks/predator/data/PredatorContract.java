@@ -77,6 +77,7 @@ public class PredatorContract {
         public static final String COLUMN_IS_IN_COLLECTION = "is_in_collection";
         public static final String COLUMN_FOR_DASHBOARD = "for_dashboard";
         public static final String COLUMN_NOTIFICATION_SHOWN = "notification_shown";
+        public static final String COLUMN_READ_STATUS = "read_status";
 
         // Define a function to build a URI to find a specific post by it's identifier
         public static Uri buildPostsUri(long id) {

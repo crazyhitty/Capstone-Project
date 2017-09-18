@@ -600,6 +600,28 @@ public class PredatorDatabase {
                 null);
     }
 
+    public void setPostAsRead(int postId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_READ_STATUS, 1);
+
+        mContentResolver.update(PredatorContract.PostsEntry.CONTENT_URI_POSTS_UPDATE,
+                contentValues,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null);
+    }
+
+    public void setPostAsUnread(int postId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_READ_STATUS, 0);
+
+        mContentResolver.update(PredatorContract.PostsEntry.CONTENT_URI_POSTS_UPDATE,
+                contentValues,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null);
+    }
+
     /**
      * This method closes the cursor.
      *

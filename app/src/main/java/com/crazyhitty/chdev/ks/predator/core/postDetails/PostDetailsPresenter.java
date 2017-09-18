@@ -473,6 +473,66 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
+    public void setAsRead(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setPostAsRead(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void setAsUnread(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setPostAsUnread(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
     public PostDetails getPostDetails() {
         return mPostDetails;
     }

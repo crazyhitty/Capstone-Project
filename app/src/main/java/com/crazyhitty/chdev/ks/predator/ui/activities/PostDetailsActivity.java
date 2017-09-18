@@ -163,6 +163,9 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         setPresenter(new PostDetailsPresenter(this));
         mPostDetailsPresenter.subscribe();
 
+        // Set this post as read.
+        mPostDetailsPresenter.setAsRead(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
+
         // Get post details.
         mPostDetailsPresenter.getDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 

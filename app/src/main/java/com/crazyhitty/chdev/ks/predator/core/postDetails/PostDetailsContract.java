@@ -85,6 +85,10 @@ public interface PostDetailsContract {
 
         void openRedirectUrl(Activity activity);
 
+        void setAsRead(int postId);
+
+        void setAsUnread(int postId);
+
         PostDetails getPostDetails();
     }
 }

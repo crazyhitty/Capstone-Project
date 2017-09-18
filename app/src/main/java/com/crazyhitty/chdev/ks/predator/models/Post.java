@@ -56,6 +56,7 @@ public class Post {
     private String userImageUrlOriginal;
     private boolean isInCollection;
     private boolean notificationShown;
+    private boolean read;
 
     public int getId() {
         return id;
@@ -255,5 +256,17 @@ public class Post {
 
     public void setNotificationShown(boolean notificationShown) {
         this.notificationShown = notificationShown;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(int readStatus) {
+        this.read = readStatus == 1;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }
