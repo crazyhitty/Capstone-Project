@@ -38,8 +38,17 @@ import android.support.v4.content.ContextCompat;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.utils.ImageFetcher;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 
 import java.util.UUID;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -71,7 +80,35 @@ public class PostNotification {
         }
     }
 
-    public void show(Post post) {
+    public void show(final Post post) {
+        String url = ImageUtils.getCustomPostThumbnailImageUrl(post.getThumbnailImageUrl(),
+                ScreenUtils.dpToPxInt(mContext, 64.0f),
+                ScreenUtils.dpToPxInt(mContext, 64.0f));
+
+        ImageFetcher.getBitmap(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<Bitmap>(){
+                    @Override
+                    public void onNext(Bitmap bitmap) {
+                        Logger.d(TAG, "Thumbnail for post fetched from url");
+                        showPostNotification(post, bitmap);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.e(TAG, "onError: " + e.getMessage(), e);
+                        showPostNotification(post, null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        // Done.
+                    }
+                });
+    }
+
+    private void showPostNotification(Post post, Bitmap bitmap) {
         showHeaderNotification();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
@@ -82,7 +119,7 @@ public class PostNotification {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))
                 .setSmallIcon(R.drawable.ic_notification_predator)
-                .setLargeIcon(getBitmap(R.mipmap.ic_launcher))
+                .setLargeIcon(bitmap != null ? bitmap : getBitmap(R.mipmap.ic_launcher))
                 .setContentTitle(post.getName())
                 .setContentText(post.getTagline())
                 .setGroup(NOTIFICATION_GROUP_KEY)
