@@ -79,7 +79,7 @@ public class MainApplication extends Application {
     }
 
     public static void reInitializeCalligraphy(Context context, String fontName) {
-        if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
+        if (!TextUtils.equals(fontName, context.getString(R.string.settings_change_font_system))) {
             Logger.d(TAG, "re initializing calligraphy");
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                     .setDefaultFontPath(String.format("fonts/%s", fontName))

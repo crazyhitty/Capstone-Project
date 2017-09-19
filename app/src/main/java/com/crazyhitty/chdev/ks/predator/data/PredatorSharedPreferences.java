@@ -111,7 +111,7 @@ public class PredatorSharedPreferences {
         String fontName = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_change_font_key),
                         context.getString(R.string.settings_change_font_default_value));
-        if (TextUtils.equals(fontName, context.getString(R.string.settings_change_font_default_value))) {
+        if (TextUtils.equals(fontName, context.getString(R.string.settings_change_font_system))) {
             return null;
         } else {
             return fontName;
