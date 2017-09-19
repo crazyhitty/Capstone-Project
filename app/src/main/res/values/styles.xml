@@ -54,6 +54,7 @@
         <item name="libraryLicenseColor">@color/library_license_color</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color</item>
+        <item name="defaultPlaceholderAlternativeColor">@color/default_placeholder_alternative_color</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color</item>
         <item name="drawableDone">@drawable/ic_done</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative</item>
@@ -93,6 +94,7 @@
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
+        <item name="defaultPlaceholderAlternativeColor">@color/default_placeholder_alternative_color_inverse</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
         <item name="drawableDone">@drawable/ic_done_inverse</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>
@@ -132,6 +134,7 @@
         <item name="libraryLicenseColor">@color/library_license_color_inverse</item>
         <item name="userNameAlternativeColor">@color/username_alternative_color_inverse</item>
         <item name="defaultPlaceholderColor">@color/default_placeholder_color_inverse</item>
+        <item name="defaultPlaceholderAlternativeColor">@color/default_placeholder_alternative_color_inverse</item>
         <item name="titlePlaceholderColor">@color/title_placeholder_color_inverse</item>
         <item name="drawableDone">@drawable/ic_done_inverse</item>
         <item name="drawableErrorAlternative">@drawable/ic_error_alternative_inverse</item>

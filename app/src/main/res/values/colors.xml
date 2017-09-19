@@ -35,8 +35,10 @@
     <color name="library_license_color_inverse">@color/material_grey_600</color>
     <color name="username_alternative_color">@color/material_grey_400</color>
     <color name="username_alternative_color_inverse">@color/material_grey_600</color>
-    <color name="default_placeholder_color">@color/color_primary</color>
-    <color name="default_placeholder_color_inverse">@color/color_black_dark</color>
+    <color name="default_placeholder_color">@color/material_grey_300</color>
+    <color name="default_placeholder_alternative_color">@color/material_grey_200</color>
+    <color name="default_placeholder_color_inverse">@color/material_grey_800</color>
+    <color name="default_placeholder_alternative_color_inverse">@color/material_grey_900</color>
     <color name="title_placeholder_color">@color/color_primary</color>
     <color name="title_placeholder_color_inverse">@color/color_primary_inverse</color>
     <color name="background_color">@color/color_primary</color>

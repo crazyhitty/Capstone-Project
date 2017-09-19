@@ -42,7 +42,7 @@
             android:layout_height="@dimen/dialog_comment_user_preview_image_height"
             android:contentDescription="@string/dialog_comment_user_preview_user_image_desc"
             fresco:failureImage="?attr/drawableImageBrokenError"
-            fresco:placeholderImage="?attr/defaultPlaceholderColor"
+            fresco:placeholderImage="?attr/defaultPlaceholderAlternativeColor"
             fresco:roundedCornerRadius="@dimen/dialog_comment_user_preview_image_corner_padding"
             fresco:roundingBorderColor="?attr/imageUserBorderColor"
             fresco:roundingBorderWidth="@dimen/dialog_comment_user_preview_image_border_width" />
