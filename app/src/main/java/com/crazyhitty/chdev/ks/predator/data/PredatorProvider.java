@@ -47,6 +47,7 @@ public class PredatorProvider extends ContentProvider {
     private static final int POSTS_DELETE = 101;
     private static final int POSTS_GET = 102;
     private static final int POSTS_GET_BY_ID = 103;
+    private static final int POSTS_UPDATE = 104;
     private static final int USERS_ADD = 200;
     private static final int USERS_DELETE = 201;
     private static final int USERS_GET = 202;
@@ -81,6 +82,7 @@ public class PredatorProvider extends ContentProvider {
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS_DELETE_ALL, POSTS_DELETE);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS, POSTS_GET);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS + "/#", POSTS_GET_BY_ID);
+        uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.PostsEntry.PATH_POSTS_UPDATE, POSTS_UPDATE);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS_ADD, USERS_ADD);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS_DELETE_ALL, USERS_DELETE);
         uriMatcher.addURI(PredatorDbHelper.CONTENT_AUTHORITY, PredatorContract.UsersEntry.PATH_USERS, USERS_GET);
@@ -268,6 +270,11 @@ public class PredatorProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        switch (sUriMatcher.match(uri)) {
+            case POSTS_UPDATE:
+                return mPredatorDbHelper.updatePost(values);
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 }

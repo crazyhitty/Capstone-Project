@@ -22,7 +22,14 @@
   ~ SOFTWARE.
   -->
 
-<menu>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_posts_clear"
+        android:orderInCategory="99"
+        android:title="@string/menu_posts_clear"
+        app:showAsAction="never"/>
 
     <!--<item
         android:icon="@drawable/ic_sort_24dp"

@@ -131,30 +131,20 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(final String token,
-                         final boolean clearPrevious) {
+    public void getPosts(final String token, boolean today) {
         Logger.d(TAG, "getPosts: called");
-        if (clearPrevious) {
+
+        if (today) {
             mLoadMore = false;
             mLastDate = DateUtils.getPredatorCurrentDate();
             mDateHashMap = new HashMap<>();
         }
+
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPostsCategoryWise(CoreUtils.getAuthToken(token), Constants.Posts.CATEGORY_ALL, mLastDate)
                 .map(new Function<PostsData, List<Post>>() {
                     @Override
                     public List<Post> apply(PostsData postsData) throws Exception {
-                        if (clearPrevious) {
-                            PredatorDatabase.getInstance()
-                                    .deleteAllPosts();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllUsers();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllComments();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllMedia();
-                        }
-
                         if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
                             return new ArrayList<Post>();
                         }
@@ -233,6 +223,112 @@ public class PostsPresenter implements PostsContract.Presenter {
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, PredatorPostsWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_posts);
+    }
+
+    @Override
+    public void clear() {
+        Logger.d(TAG, "clear: called");
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .deleteAllPosts();
+                PredatorDatabase.getInstance()
+                        .deleteAllUsers();
+                PredatorDatabase.getInstance()
+                        .deleteAllComments();
+                PredatorDatabase.getInstance()
+                        .deleteAllMedia();
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+                mView.postsCleared();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToClearPosts(e.getMessage());
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void getNotification() {
+        Observable<Post> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Post>() {
+            @Override
+            public void subscribe(ObservableEmitter<Post> emitter) throws Exception {
+                Post post = PredatorDatabase.getInstance()
+                        .getPostForNotification();
+                if (post == null) {
+                    emitter.onError(new NullPointerException("No post available to be shown for " +
+                            "notification"));
+                } else {
+                    emitter.onNext(post);
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Post>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToShowNotification();
+            }
+
+            @Override
+            public void onNext(Post post) {
+                mView.showNotification(post);
+            }
+        }));
+    }
+
+    @Override
+    public void notificationShownForPost(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setNotificationShownForPost(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
     }
 
     /**

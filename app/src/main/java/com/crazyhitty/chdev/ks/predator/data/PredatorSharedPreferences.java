@@ -31,6 +31,10 @@ import android.text.TextUtils;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -90,12 +94,12 @@ public class PredatorSharedPreferences {
                 .getBoolean(context.getString(R.string.settings_background_sync_key), false);
     }
 
-    public static long getSyncIntervalInMillis(Context context) {
+    public static long getSyncIntervalInSeconds(Context context) {
         String hours = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_sync_interval_key),
                         context.getString(R.string.settings_sync_interval_default_value));
 
-        return DateUtils.hoursToMillis(hours);
+        return DateUtils.hoursToSeconds(hours);
     }
 
     public static boolean isExperimentalFeaturesEnabled(Context context) {
@@ -120,6 +124,47 @@ public class PredatorSharedPreferences {
                 .putString(context.getString(R.string.settings_change_font_key),
                         context.getString(R.string.settings_change_font_default_value))
                 .apply();
+    }
+
+    public static boolean areNotificationsEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.settings_notifications_key), false);
+    }
+
+    public static boolean isNotificationSoundEnabled(Context context) {
+        Set<String> defaultSet = new HashSet<>();
+        defaultSet.addAll(Arrays.asList(context.getResources()
+                .getStringArray(R.array.settings_notification_settings_default_value)));
+
+        Set<String> availableSet = PreferenceManager.getDefaultSharedPreferences(context)
+                .getStringSet(context.getString(R.string.settings_notification_settings_key),
+                        defaultSet);
+
+        return availableSet.contains(context.getString(R.string.settings_notification_settings_sound));
+    }
+
+    public static boolean isNotificationLightEnabled(Context context) {
+        Set<String> defaultSet = new HashSet<>();
+        defaultSet.addAll(Arrays.asList(context.getResources()
+                .getStringArray(R.array.settings_notification_settings_default_value)));
+
+        Set<String> availableSet = PreferenceManager.getDefaultSharedPreferences(context)
+                .getStringSet(context.getString(R.string.settings_notification_settings_key),
+                        defaultSet);
+
+        return availableSet.contains(context.getString(R.string.settings_notification_settings_light));
+    }
+
+    public static boolean isNotificationVibrationEnabled(Context context) {
+        Set<String> defaultSet = new HashSet<>();
+        defaultSet.addAll(Arrays.asList(context.getResources()
+                .getStringArray(R.array.settings_notification_settings_default_value)));
+
+        Set<String> availableSet = PreferenceManager.getDefaultSharedPreferences(context)
+                .getStringSet(context.getString(R.string.settings_notification_settings_key),
+                        defaultSet);
+
+        return availableSet.contains(context.getString(R.string.settings_notification_settings_vibrate));
     }
 
     public static THEME_TYPE getCurrentTheme(Context context) {

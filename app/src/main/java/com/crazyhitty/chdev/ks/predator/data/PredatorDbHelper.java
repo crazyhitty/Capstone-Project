@@ -59,7 +59,7 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String DATABASE_NAME = "predator.db";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     private static PredatorDbHelper sPredatorDbHelper;
 
@@ -110,7 +110,9 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_100PX + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_USER_IMAGE_URL_ORIGINAL + " TEXT, " +
                 PredatorContract.PostsEntry.COLUMN_IS_IN_COLLECTION + " INTEGER DEFAULT 0, " +
-                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + " INTEGER DEFAULT 0);";
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + " INTEGER DEFAULT 0, " +
+                PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN + " INTEGER DEFAULT 0, " +
+                PredatorContract.PostsEntry.COLUMN_READ_STATUS + " INTEGER DEFAULT 0);";
     }
 
     private String getCreateUsersTableSqlQuery() {
@@ -268,6 +270,27 @@ public class PredatorDbHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Logger.e(TAG, "Error while trying to add post to database", e);
+        } finally {
+            db.endTransaction();
+        }
+        return contentValues.getAsInteger(PredatorContract.PostsEntry.COLUMN_POST_ID);
+    }
+
+    public int updatePost(ContentValues contentValues) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+            db.update(PredatorContract.PostsEntry.TABLE_NAME,
+                    contentValues,
+                    PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + contentValues.getAsInteger(PredatorContract.PostsEntry.COLUMN_POST_ID),
+                    null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.e(TAG, "Error while trying to update post in database", e);
         } finally {
             db.endTransaction();
         }

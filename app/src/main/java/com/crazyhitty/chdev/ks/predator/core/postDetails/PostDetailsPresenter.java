@@ -305,6 +305,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
                 if (e instanceof MediaUnavailableException) {
                     mView.unableToFetchMedia(e.getMessage());
                 } else if (e instanceof CommentsUnavailableException) {
@@ -313,6 +314,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     mView.unableToFetchInstallLinks(e.getMessage());
                 } else if (e instanceof VotedUsersUnavailableException) {
                     mView.unableToFetchAllUsers(e.getMessage());
+                } else {
+                    mView.unableToFetchPostDetails(e.getMessage());
                 }
                 mView.dismissLoading();
             }
@@ -467,6 +470,66 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 mCustomTabsIntent,
                 Uri.parse(redirectUrl),
                 mCustomTabsFallback);
+    }
+
+    @Override
+    public void setAsRead(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setPostAsRead(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void setAsUnread(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setPostAsUnread(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
     }
 
     @Override

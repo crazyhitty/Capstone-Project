@@ -147,7 +147,27 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
 
     @Override
     public void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-        Logger.d(TAG, "unableToGetPosts: error: " + errorMessage);
+        Logger.e(TAG, "unableToGetPosts: error: " + errorMessage);
+    }
+
+    @Override
+    public void postsCleared() {
+        Logger.d(TAG, "postsCleared: called");
+    }
+
+    @Override
+    public void unableToClearPosts(String message) {
+        Logger.e(TAG, "unableToClearPosts: " + message);
+    }
+
+    @Override
+    public void showNotification(Post post) {
+        // No use.
+    }
+
+    @Override
+    public void unableToShowNotification() {
+        // No use.
     }
 
     @Override
