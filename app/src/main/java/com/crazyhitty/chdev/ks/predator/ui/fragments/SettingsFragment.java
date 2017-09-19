@@ -80,7 +80,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
         manageThemesPreferences();
 
-        manageEnableExperimentalFeaturesPreferences();
+        //manageEnableExperimentalFeaturesPreferences();
 
         manageFontsPreferences();
 
@@ -104,7 +104,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
     private void bindPreferences() {
         mListPreferenceManageThemes = (ListPreference) findPreference(getString(R.string.settings_manage_themes_key));
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
-        mSwitchPreferenceEnableExperimentalFeatures = (SwitchPreference) findPreference(getString(R.string.settings_enable_experimental_features_key));
+        //mSwitchPreferenceEnableExperimentalFeatures = (SwitchPreference) findPreference(getString(R.string.settings_enable_experimental_features_key));
         mListPreferenceChangeFont = (ListPreference) findPreference(getString(R.string.settings_change_font_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
@@ -127,20 +127,13 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean status = (Boolean) newValue;
-                mListPreferenceChangeFont.setEnabled(status);
-                if (!status) {
-                    PredatorSharedPreferences.restoreDefaultFont(getActivity().getApplicationContext());
-                    MainApplication.reInitializeCalligraphy(getActivity().getApplicationContext(),
-                            getString(R.string.settings_change_font_default_value));
-                    SettingsActivity.startActivity(getActivity(), false);
-                }
                 return true;
             }
         });
     }
 
     private void manageFontsPreferences() {
-        mListPreferenceChangeFont.setEnabled(PredatorSharedPreferences.isExperimentalFeaturesEnabled(getActivity().getApplicationContext()));
+        //mListPreferenceChangeFont.setEnabled(PredatorSharedPreferences.isExperimentalFeaturesEnabled(getActivity().getApplicationContext()));
 
         mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
