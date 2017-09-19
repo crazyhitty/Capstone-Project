@@ -165,6 +165,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
                 if (!status) {
                     mSwitchPreferenceNotifications.setChecked(false);
+                    mMultiSelectListPreferenceNotificationSettings.setEnabled(false);
                 }
 
                 if (status) {
