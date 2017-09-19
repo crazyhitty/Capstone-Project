@@ -27,6 +27,7 @@ package com.crazyhitty.chdev.ks.predator.ui.fragments;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
@@ -56,6 +57,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             mSwitchPreferenceBackgroundSync,
             mSwitchPreferenceNotifications;
     private ListPreference mListPreferenceSyncInterval;
+    private MultiSelectListPreference mMultiSelectListPreferenceNotificationSettings;
 
     private SettingsContract.Presenter mSettingsPresenter;
 
@@ -89,6 +91,8 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         manageSyncIntervalPreferences();
 
         manageNotificationsPreferences();
+
+        manageNotificationSettingsPreferences();
     }
 
     @Override
@@ -105,6 +109,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
         mSwitchPreferenceNotifications = (SwitchPreference) findPreference(getString(R.string.settings_notifications_key));
+        mMultiSelectListPreferenceNotificationSettings = (MultiSelectListPreference) findPreference(getString(R.string.settings_notification_settings_key));
     }
 
     private void manageThemesPreferences() {
@@ -195,6 +200,19 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
     private void manageNotificationsPreferences() {
         mSwitchPreferenceNotifications.setEnabled(PredatorSharedPreferences.isSyncEnabled(getActivity().getApplicationContext()));
+
+        mSwitchPreferenceNotifications.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean status = (Boolean) newValue;
+                mMultiSelectListPreferenceNotificationSettings.setEnabled(status);
+                return true;
+            }
+        });
+    }
+
+    private void manageNotificationSettingsPreferences() {
+        mMultiSelectListPreferenceNotificationSettings.setEnabled(PredatorSharedPreferences.areNotificationsEnabled(getActivity().getApplicationContext()));
     }
 
     @Override

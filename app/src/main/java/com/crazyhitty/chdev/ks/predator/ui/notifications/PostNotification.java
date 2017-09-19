@@ -36,6 +36,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.utils.ImageFetcher;
@@ -116,6 +117,21 @@ public class PostNotification {
                 PostDetailsActivity.getLaunchIntent(mContext, post.getPostId()),
                 PendingIntent.FLAG_ONE_SHOT);
 
+        boolean sound = PredatorSharedPreferences.isNotificationSoundEnabled(mContext);
+        boolean light = PredatorSharedPreferences.isNotificationLightEnabled(mContext);
+        boolean vibrate = PredatorSharedPreferences.isNotificationVibrationEnabled(mContext);
+
+        int defaultFlags = 0;
+        if (sound) {
+            defaultFlags |= NotificationCompat.DEFAULT_SOUND;
+        }
+        if (light) {
+            defaultFlags |= NotificationCompat.DEFAULT_LIGHTS;
+        }
+        if (vibrate) {
+            defaultFlags |= NotificationCompat.DEFAULT_VIBRATE;
+        }
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_child))
                 .setSmallIcon(R.drawable.ic_notification_predator)
@@ -125,8 +141,7 @@ public class PostNotification {
                 .setGroup(NOTIFICATION_GROUP_KEY)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
-                        NotificationCompat.DEFAULT_SOUND)
+                .setDefaults(defaultFlags)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent);
