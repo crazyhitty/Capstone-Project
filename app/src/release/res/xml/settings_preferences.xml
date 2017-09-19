@@ -27,7 +27,8 @@
 
     <PreferenceCategory android:title="@string/settings_user_interface">
 
-        <ListPreference android:defaultValue="@string/settings_manage_themes_default_value"
+        <ListPreference
+            android:defaultValue="@string/settings_manage_themes_default_value"
             android:dialogTitle="@string/settings_manage_themes_dialog_title"
             android:entries="@array/settings_manage_themes_entries"
             android:entryValues="@array/settings_manage_themes_entry_values"
@@ -58,6 +59,42 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/settings_sync">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_background_sync_key"
+            android:summaryOff="@string/settings_background_sync_summary_off"
+            android:summaryOn="@string/settings_background_sync_summary_on"
+            android:title="@string/settings_background_sync_title" />
+
+        <ListPreference
+            android:defaultValue="@string/settings_sync_interval_default_value"
+            android:dialogTitle="@string/settings_sync_interval_dialog_title"
+            android:entries="@array/settings_sync_interval_entries"
+            android:entryValues="@array/settings_sync_interval_entry_values"
+            android:key="@string/settings_sync_interval_key"
+            android:summary="@string/settings_sync_interval_summary"
+            android:title="@string/settings_sync_interval_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_notifications_key"
+            android:summaryOff="@string/settings_notifications_summary_off"
+            android:summaryOn="@string/settings_notifications_summary_on"
+            android:title="@string/settings_notifications_title" />
+
+        <MultiSelectListPreference
+            android:defaultValue="@array/settings_notification_settings_default_value"
+            android:dialogTitle="@string/settings_notification_settings_dialog_title"
+            android:entries="@array/settings_notification_settings_entries"
+            android:entryValues="@array/settings_notification_settings_entry_values"
+            android:key="@string/settings_notification_settings_key"
+            android:summary="@string/settings_notification_settings_summary"
+            android:title="@string/settings_notification_settings_title" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/settings_system">
 
         <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference
@@ -68,20 +105,6 @@
             android:title="@string/settings_clear_cache_title"
             predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
             predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
-
-        <SwitchPreference android:defaultValue="false"
-            android:key="@string/settings_background_sync_key"
-            android:summaryOff="@string/settings_background_sync_summary_off"
-            android:summaryOn="@string/settings_background_sync_summary_on"
-            android:title="@string/settings_background_sync_title" />
-
-        <ListPreference android:defaultValue="@string/settings_sync_interval_default_value"
-            android:dialogTitle="@string/settings_sync_interval_dialog_title"
-            android:entries="@array/settings_sync_interval_entries"
-            android:entryValues="@array/settings_sync_interval_entry_values"
-            android:key="@string/settings_sync_interval_key"
-            android:summary="@string/settings_sync_interval_summary"
-            android:title="@string/settings_sync_interval_title" />
 
     </PreferenceCategory>
 
