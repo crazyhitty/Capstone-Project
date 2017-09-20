@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -50,6 +51,7 @@ import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
+import com.crazyhitty.chdev.ks.predator.utils.LinearFadeInItemAnimator;
 import com.crazyhitty.chdev.ks.predator.utils.ListItemDecorator;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
@@ -234,6 +236,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         // Add appropriate decorations to the recycler view items.
         ListItemDecorator listItemDecorator = new ListItemDecorator(getContext().getApplicationContext(), 72);
         recyclerViewPosts.addItemDecoration(listItemDecorator);
+
+        RecyclerView.ItemAnimator itemAnimator = new LinearFadeInItemAnimator();
+        recyclerViewPosts.setItemAnimator(itemAnimator);
 
         // Add scroll listener that will manage scroll down to load more functionality.
         recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {

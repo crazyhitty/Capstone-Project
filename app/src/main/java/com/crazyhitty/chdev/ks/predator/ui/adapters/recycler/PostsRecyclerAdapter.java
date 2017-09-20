@@ -126,7 +126,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mPosts = posts;
         if (forceReplace) {
             mLastPosition = -1;
-            notifyDataSetChanged();
+            notifyItemRangeInserted(0, mPosts.size() - 1);
+            //notifyDataSetChanged();
         } else {
             int oldCount = mPosts.size();
             notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
@@ -185,7 +186,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 onBindLoadMoreViewHolder((LoadMoreViewHolder) holder, position);
                 break;
         }
-        manageAnimation(holder.itemView, position);
+        //manageAnimation(holder.itemView, position);
     }
 
     private void onBindListItemViewHolder(final ListItemViewHolder listItemViewHolder, int position) {
@@ -294,7 +295,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        ((RootViewHolder) holder).clearAnimation();
+        //((RootViewHolder) holder).clearAnimation();
     }
 
     public enum TYPE {
