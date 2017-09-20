@@ -30,6 +30,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Bundle;
 
@@ -118,6 +119,10 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Constants.Sync.ON);
+
+        ContentResolver.setSyncAutomatically(PredatorAccount.getAccount(context),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                true);
 
         // Set periodic sync interval
         Logger.d(TAG, "initializePeriodicSync: interval(seconds): " + PredatorSharedPreferences.getSyncIntervalInSeconds(context));
