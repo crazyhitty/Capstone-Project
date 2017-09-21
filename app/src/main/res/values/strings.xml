@@ -112,6 +112,7 @@
     <string name="posts_clear_dialog_negative_button">Cancel</string>
     <string name="posts_sorting_by_latest">Latest posts will be shown first from now on!</string>
     <string name="posts_sorting_by_vote_count">Posts with highest votes will be shown first from now on!</string>
+    <string name="posts_cannot_sort_while_loading">Cannot sort posts while they are being loaded!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>
