@@ -157,7 +157,7 @@ public class PredatorDatabase {
                 PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
                 null,
                 PredatorContract.PostsEntry.COLUMN_DAY + " DESC, " +
-                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + "DESC");
+                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
 
         List<Post> posts = new ArrayList<>();
         if (cursor != null && cursor.getCount() != 0) {
