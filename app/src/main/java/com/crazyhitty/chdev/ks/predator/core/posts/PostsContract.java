@@ -28,6 +28,7 @@ import android.content.Context;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 
 import java.util.HashMap;
@@ -56,11 +57,11 @@ public interface PostsContract {
     }
 
     interface Presenter extends BasePresenter {
-        void getOfflinePosts();
+        void getOfflinePosts(PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType);
 
-        void getPosts(String token, boolean today);
+        void getPosts(String token, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType, boolean today);
 
-        void loadMorePosts(String token);
+        void loadMorePosts(String token, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType);
 
         void updateWidgets(Context context);
 
@@ -69,5 +70,9 @@ public interface PostsContract {
         void getNotification();
 
         void notificationShownForPost(int postId);
+
+        void setSortType(Context context, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType);
+
+        PredatorSharedPreferences.POSTS_SORTING_TYPE getSortType(Context context);
     }
 }

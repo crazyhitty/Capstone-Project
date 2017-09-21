@@ -163,7 +163,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     private void getOfflinePosts() {
-        mPostsPresenter.getOfflinePosts();
+        mPostsPresenter.getOfflinePosts(mPostsPresenter.getSortType(getActivity().getApplicationContext()));
     }
 
     /**
@@ -191,7 +191,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, true);
+                        mPostsPresenter.getPosts(s,
+                                mPostsPresenter.getSortType(getActivity().getApplicationContext()),
+                                true);
                         mCanClearPosts = false;
                     }
                 });
@@ -220,7 +222,8 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
-                        mPostsPresenter.loadMorePosts(s);
+                        mPostsPresenter.loadMorePosts(s,
+                                mPostsPresenter.getSortType(getActivity().getApplicationContext()));
                         mCanClearPosts = false;
                     }
                 });
@@ -315,6 +318,11 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                 } else {
                     showLongToast(R.string.posts_cannot_clear_while_loading);
                 }
+                break;
+            case R.id.menu_sort_latest:
+
+                break;
+            case R.id.menu_sort_vote_count:
                 break;
         }
         return super.onOptionsItemSelected(item);

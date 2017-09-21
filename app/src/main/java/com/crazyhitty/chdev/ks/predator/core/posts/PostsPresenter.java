@@ -33,6 +33,7 @@ import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -93,12 +94,23 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getOfflinePosts() {
+    public void getOfflinePosts(final PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
         Observable<List<Post>> postsDataObservable = Observable.create(new ObservableOnSubscribe<List<Post>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
-                List<Post> posts = PredatorDatabase.getInstance()
-                        .getPosts();
+                List<Post> posts = new ArrayList<>();
+
+                switch (postsSortingType) {
+                    case LATEST:
+                        posts = PredatorDatabase.getInstance()
+                                .getPosts();
+                        break;
+                    case VOTE_COUNT:
+                        posts = PredatorDatabase.getInstance()
+                                .getPostsSortedByVoteCount();
+                        break;
+                }
+
                 if (posts != null && !posts.isEmpty()) {
                     dateMatcher(posts);
                     emitter.onNext(posts);
@@ -131,7 +143,7 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(final String token, boolean today) {
+    public void getPosts(final String token, final PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType, boolean today) {
         Logger.d(TAG, "getPosts: called");
 
         if (today) {
@@ -163,8 +175,19 @@ public class PostsPresenter implements PostsContract.Presenter {
                             }
                         }
 
-                        List<Post> posts = PredatorDatabase.getInstance()
-                                .getPosts();
+                        List<Post> posts = new ArrayList<>();
+
+                        switch (postsSortingType) {
+                            case LATEST:
+                                posts = PredatorDatabase.getInstance()
+                                        .getPosts();
+                                break;
+                            case VOTE_COUNT:
+                                posts = PredatorDatabase.getInstance()
+                                        .getPostsSortedByVoteCount();
+                                break;
+                        }
+
                         if (posts != null && !posts.isEmpty()) {
                             dateMatcher(posts);
                         }
@@ -181,7 +204,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 if (posts != null && posts.size() != 0) {
                                     emitter.onNext(posts);
                                 } else {
-                                    loadMorePosts(token);
+                                    loadMorePosts(token, postsSortingType);
                                 }
                                 emitter.onComplete();
                             }
@@ -211,10 +234,10 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void loadMorePosts(String token) {
+    public void loadMorePosts(String token, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
         mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
         mLoadMore = true;
-        getPosts(token, false);
+        getPosts(token, postsSortingType, false);
     }
 
     @Override
@@ -329,6 +352,16 @@ public class PostsPresenter implements PostsContract.Presenter {
 
             }
         }));
+    }
+
+    @Override
+    public void setSortType(Context context, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
+        PredatorSharedPreferences.setPostsSortingType(context, postsSortingType);
+    }
+
+    @Override
+    public PredatorSharedPreferences.POSTS_SORTING_TYPE getSortType(Context context) {
+        return PredatorSharedPreferences.getPostsSortingType(context);
     }
 
     /**

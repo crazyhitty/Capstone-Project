@@ -176,7 +176,9 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                     true);
 
             // Fetch latest posts.
-            mPostsPresenter.getPosts(authToken, true);
+            mPostsPresenter.getPosts(authToken,
+                    mPostsPresenter.getSortType(getContext()),
+                    true);
         } catch (Exception e) {
             e.printStackTrace();
         }
