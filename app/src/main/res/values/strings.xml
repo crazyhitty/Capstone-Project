@@ -110,6 +110,8 @@
     <string name="posts_clear_dialog_message">This would clear all of the posts shown in the dashboard.</string>
     <string name="posts_clear_dialog_positive_button">Clear</string>
     <string name="posts_clear_dialog_negative_button">Cancel</string>
+    <string name="posts_sorting_by_latest">Latest posts will be shown first from now on!</string>
+    <string name="posts_sorting_by_vote_count">Posts with highest votes will be shown first from now on!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>

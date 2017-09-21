@@ -298,6 +298,23 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem menuItemSortLatest = menu.findItem(R.id.menu_sort_latest);
+        MenuItem menuItemSortVoteCount = menu.findItem(R.id.menu_sort_vote_count);
+
+        switch (mPostsPresenter.getSortType(getContext())) {
+            case LATEST:
+                menuItemSortLatest.setChecked(true);
+                break;
+            case VOTE_COUNT:
+                menuItemSortVoteCount.setChecked(true);
+                break;
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_posts_clear:
@@ -320,9 +337,20 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                 }
                 break;
             case R.id.menu_sort_latest:
+                item.setChecked(true);
 
+                mPostsPresenter.setSortType(getContext(),
+                        PredatorSharedPreferences.POSTS_SORTING_TYPE.LATEST);
+                getOfflinePosts();
+                showLongToast(R.string.posts_sorting_by_latest);
                 break;
             case R.id.menu_sort_vote_count:
+                item.setChecked(true);
+
+                mPostsPresenter.setSortType(getContext(),
+                        PredatorSharedPreferences.POSTS_SORTING_TYPE.VOTE_COUNT);
+                getOfflinePosts();
+                showLongToast(R.string.posts_sorting_by_vote_count);
                 break;
         }
         return super.onOptionsItemSelected(item);
