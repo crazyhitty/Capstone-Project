@@ -182,10 +182,43 @@ public class PredatorSharedPreferences {
         }
     }
 
+    public static void setPostsSortingType(Context context, POSTS_SORTING_TYPE postsSortingType) {
+        switch (postsSortingType) {
+            case LATEST:
+                SharedPreferencesManager.saveString(context,
+                        Constants.SharedPreferences.POSTS_SORTING_TYPE,
+                        Constants.SharedPreferences.POSTS_SORTING_TYPE_LATEST);
+                break;
+            case VOTE_COUNT:
+                SharedPreferencesManager.saveString(context,
+                        Constants.SharedPreferences.POSTS_SORTING_TYPE,
+                        Constants.SharedPreferences.POSTS_SORTING_TYPE_VOTE_COUNT);
+                break;
+        }
+    }
+
+    public static POSTS_SORTING_TYPE getPostsSortingType(Context context) {
+        switch (SharedPreferencesManager.getString(context,
+                Constants.SharedPreferences.POSTS_SORTING_TYPE,
+                Constants.SharedPreferences.POSTS_SORTING_TYPE_LATEST)) {
+            case Constants.SharedPreferences.POSTS_SORTING_TYPE_LATEST:
+                return POSTS_SORTING_TYPE.LATEST;
+            case Constants.SharedPreferences.POSTS_SORTING_TYPE_VOTE_COUNT:
+                return POSTS_SORTING_TYPE.VOTE_COUNT;
+            default:
+                return POSTS_SORTING_TYPE.LATEST;
+        }
+    }
+
     public enum THEME_TYPE {
         LIGHT,
         DARK,
         AMOLED
+    }
+
+    public enum POSTS_SORTING_TYPE {
+        LATEST,
+        VOTE_COUNT
     }
 
     private static class SharedPreferencesManager {
