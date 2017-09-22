@@ -43,6 +43,7 @@
     <!--menu_posts.xml-->
     <string name="menu_posts_sort">Sort</string>
     <string name="menu_posts_sort_latest">Latest</string>
+    <string name="menu_posts_sort_vote_count">Vote count</string>
     <string name="menu_posts_sort_oldest">Oldest</string>
     <string name="menu_posts_switch_layout">Switch Layout</string>
     <string name="menu_posts_switch_layout_list">List</string>
@@ -109,6 +110,9 @@
     <string name="posts_clear_dialog_message">This would clear all of the posts shown in the dashboard.</string>
     <string name="posts_clear_dialog_positive_button">Clear</string>
     <string name="posts_clear_dialog_negative_button">Cancel</string>
+    <string name="posts_sorting_by_latest">Latest posts will be shown first from now on!</string>
+    <string name="posts_sorting_by_vote_count">Posts with highest votes will be shown first from now on!</string>
+    <string name="posts_cannot_sort_while_loading">Cannot sort posts while they are being loaded!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>

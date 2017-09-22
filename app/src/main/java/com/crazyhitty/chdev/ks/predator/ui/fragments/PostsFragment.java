@@ -90,7 +90,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     private boolean mIsLoading = false;
 
-    private boolean mCanClearPosts = true;
+    private boolean mCanManagePosts = true;
 
     public static PostsFragment newInstance() {
         return new PostsFragment();
@@ -163,7 +163,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     private void getOfflinePosts() {
-        mPostsPresenter.getOfflinePosts();
+        mPostsPresenter.getOfflinePosts(mPostsPresenter.getSortType(getActivity().getApplicationContext()));
     }
 
     /**
@@ -191,8 +191,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
                     @Override
                     public void onNext(String s) {
-                        mPostsPresenter.getPosts(s, true);
-                        mCanClearPosts = false;
+                        mPostsPresenter.getPosts(s,
+                                mPostsPresenter.getSortType(getActivity().getApplicationContext()),
+                                true);
+                        mCanManagePosts = false;
                     }
                 });
     }
@@ -220,8 +222,9 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                     @Override
                     public void onNext(String s) {
                         Logger.d(TAG, "onNext: load more posts");
-                        mPostsPresenter.loadMorePosts(s);
-                        mCanClearPosts = false;
+                        mPostsPresenter.loadMorePosts(s,
+                                mPostsPresenter.getSortType(getActivity().getApplicationContext()));
+                        mCanManagePosts = false;
                     }
                 });
     }
@@ -295,10 +298,27 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem menuItemSortLatest = menu.findItem(R.id.menu_sort_latest);
+        MenuItem menuItemSortVoteCount = menu.findItem(R.id.menu_sort_vote_count);
+
+        switch (mPostsPresenter.getSortType(getContext())) {
+            case LATEST:
+                menuItemSortLatest.setChecked(true);
+                break;
+            case VOTE_COUNT:
+                menuItemSortVoteCount.setChecked(true);
+                break;
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_posts_clear:
-                if (mCanClearPosts) {
+                if (mCanManagePosts) {
                     new AlertDialog.Builder(getContext())
                             .setTitle(R.string.posts_clear_dialog_title)
                             .setMessage(R.string.posts_clear_dialog_message)
@@ -307,13 +327,35 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             mPostsPresenter.clear();
-                                            mCanClearPosts = false;
+                                            mCanManagePosts = false;
                                         }
                                     })
                             .setNegativeButton(R.string.posts_clear_dialog_negative_button, null)
                             .show();
                 } else {
                     showLongToast(R.string.posts_cannot_clear_while_loading);
+                }
+                break;
+            case R.id.menu_sort_latest:
+                if (mCanManagePosts) {
+                    item.setChecked(true);
+                    mPostsPresenter.setSortType(getContext(),
+                            PredatorSharedPreferences.POSTS_SORTING_TYPE.LATEST);
+                    getOfflinePosts();
+                    showLongToast(R.string.posts_sorting_by_latest);
+                } else {
+                    showLongToast(R.string.posts_cannot_sort_while_loading);
+                }
+                break;
+            case R.id.menu_sort_vote_count:
+                if (mCanManagePosts) {
+                    item.setChecked(true);
+                    mPostsPresenter.setSortType(getContext(),
+                            PredatorSharedPreferences.POSTS_SORTING_TYPE.VOTE_COUNT);
+                    getOfflinePosts();
+                    showLongToast(R.string.posts_sorting_by_vote_count);
+                } else {
+                    showLongToast(R.string.posts_cannot_sort_while_loading);
                 }
                 break;
         }
@@ -352,7 +394,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         // Update widgets.
         mPostsPresenter.updateWidgets(getContext());
 
-        mCanClearPosts = true;
+        mCanManagePosts = true;
     }
 
     @Override
@@ -378,7 +420,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
             loadingView.setVisibility(View.VISIBLE);
             loadingView.setError(errorMessage);
         }
-        mCanClearPosts = true;
+        mCanManagePosts = true;
     }
 
     @Override
@@ -387,13 +429,13 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         mPostsRecyclerAdapter.clear();
         loadingView.setVisibility(View.VISIBLE);
         loadingView.setErrorWithoutDisappearingAnim(getString(R.string.posts_cleared));
-        mCanClearPosts = true;
+        mCanManagePosts = true;
     }
 
     @Override
     public void unableToClearPosts(String message) {
         showLongToast(message);
-        mCanClearPosts = true;
+        mCanManagePosts = true;
     }
 
     @Override

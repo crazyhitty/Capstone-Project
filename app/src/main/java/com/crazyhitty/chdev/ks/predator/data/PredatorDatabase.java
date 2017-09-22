@@ -151,6 +151,23 @@ public class PredatorDatabase {
         return posts;
     }
 
+    public List<Post> getPostsSortedByVoteCount() {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
+                null,
+                PredatorContract.PostsEntry.COLUMN_DAY + " DESC, " +
+                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
+
+        List<Post> posts = new ArrayList<>();
+        if (cursor != null && cursor.getCount() != 0) {
+            posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return posts;
+    }
+
     public List<Post> getVotedPosts(String votedPostIdsQuery) {
         Cursor cursorVotedPosts = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,

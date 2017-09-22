@@ -26,16 +26,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_posts_clear"
-        android:orderInCategory="99"
-        android:title="@string/menu_posts_clear"
-        app:showAsAction="never"/>
-
-    <!--<item
-        android:icon="@drawable/ic_sort_24dp"
         android:orderInCategory="99"
         android:title="@string/menu_posts_sort"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -43,12 +36,18 @@
                     android:orderInCategory="1"
                     android:title="@string/menu_posts_sort_latest" />
                 <item
-                    android:id="@+id/menu_sort_oldest"
+                    android:id="@+id/menu_sort_vote_count"
                     android:orderInCategory="2"
-                    android:title="@string/menu_posts_sort_oldest" />
+                    android:title="@string/menu_posts_sort_vote_count" />
             </group>
         </menu>
-    </item>-->
+    </item>
+
+    <item
+        android:id="@+id/menu_posts_clear"
+        android:orderInCategory="100"
+        android:title="@string/menu_posts_clear"
+        app:showAsAction="never"/>
 
     <!--<item
         android:icon="@drawable/ic_switch_layout_24dp"

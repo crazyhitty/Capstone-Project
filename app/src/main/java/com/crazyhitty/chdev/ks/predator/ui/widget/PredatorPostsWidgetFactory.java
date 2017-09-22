@@ -74,7 +74,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
         Logger.d(TAG, "onCreate: true");
         setPresenter(new PostsPresenter(this));
         mPostsPresenter.subscribe();
-        mPostsPresenter.getOfflinePosts();
+        mPostsPresenter.getOfflinePosts(mPostsPresenter.getSortType(mContextWeakReference.get()));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                mPostsPresenter.getOfflinePosts();
+                mPostsPresenter.getOfflinePosts(mPostsPresenter.getSortType(mContextWeakReference.get()));
             }
         });
     }
