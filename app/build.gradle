@@ -31,8 +31,8 @@ android {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 25
-        versionName "0.34"
+        versionCode 26
+        versionName "0.35"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
