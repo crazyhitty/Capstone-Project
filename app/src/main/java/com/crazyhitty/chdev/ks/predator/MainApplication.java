@@ -69,9 +69,16 @@ public class MainApplication extends Application {
         Fresco.initialize(this);
 
         // Initialize calligraphy.
-        if (!TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext()))) {
+        if (!TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext())) &&
+                !TextUtils.equals(PredatorSharedPreferences.getCurrentFont(getApplicationContext()), getString(R.string.settings_change_font_system))) {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                     .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(getApplicationContext())))
+                    .setFontAttrId(R.attr.fontPath)
+                    .build()
+            );
+        } else {
+            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                    .setDefaultFontPath(String.format("fonts/%s", getString(R.string.settings_change_font_default_value)))
                     .setFontAttrId(R.attr.fontPath)
                     .build()
             );
