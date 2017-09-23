@@ -36,6 +36,8 @@ import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
 
+import java.util.Arrays;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 
@@ -69,13 +71,31 @@ public class MainApplication extends Application {
         Fresco.initialize(this);
 
         // Initialize calligraphy.
-        if (!TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext())) &&
-                !TextUtils.equals(PredatorSharedPreferences.getCurrentFont(getApplicationContext()), getString(R.string.settings_change_font_system))) {
-            CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                    .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.getCurrentFont(getApplicationContext())))
-                    .setFontAttrId(R.attr.fontPath)
-                    .build()
-            );
+        String currentFont = PredatorSharedPreferences.getCurrentFont(getApplicationContext());
+        if (!TextUtils.isEmpty(currentFont) &&
+                !TextUtils.equals(currentFont, getString(R.string.settings_change_font_system))) {
+
+            // Check if current font belongs in the available list.
+            boolean fontAvailable = false;
+            for (String fontValue : getResources().getStringArray(R.array.settings_change_font_entry_values)) {
+                if (TextUtils.equals(fontValue, currentFont)) {
+                    fontAvailable = true;
+                    break;
+                }
+            }
+            if (fontAvailable) {
+                CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                        .setDefaultFontPath(String.format("fonts/%s", currentFont))
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+                );
+            } else {
+                CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                        .setDefaultFontPath(String.format("fonts/%s", PredatorSharedPreferences.restoreDefaultFont(getApplicationContext())))
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+                );
+            }
         } else {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                     .setDefaultFontPath(String.format("fonts/%s", getString(R.string.settings_change_font_default_value)))

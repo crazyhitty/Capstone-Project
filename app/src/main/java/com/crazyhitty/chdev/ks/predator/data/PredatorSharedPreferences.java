@@ -118,12 +118,13 @@ public class PredatorSharedPreferences {
         }
     }
 
-    public static void restoreDefaultFont(Context context) {
+    public static String restoreDefaultFont(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putString(context.getString(R.string.settings_change_font_key),
                         context.getString(R.string.settings_change_font_default_value))
                 .apply();
+        return context.getString(R.string.settings_change_font_default_value);
     }
 
     public static boolean areNotificationsEnabled(Context context) {
