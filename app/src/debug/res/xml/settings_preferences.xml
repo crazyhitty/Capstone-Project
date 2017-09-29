@@ -36,9 +36,18 @@
             android:summary="@string/settings_manage_themes_summary"
             android:title="@string/settings_manage_themes_title" />
 
+        <ListPreference
+            android:defaultValue="@string/settings_change_font_default_value"
+            android:dialogTitle="@string/settings_change_font_dialog_title"
+            android:entries="@array/settings_change_font_entries"
+            android:entryValues="@array/settings_change_font_entry_values"
+            android:key="@string/settings_change_font_key"
+            android:summary="@string/settings_change_font_summary"
+            android:title="@string/settings_change_font_title" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_experimental">
+    <!--<PreferenceCategory android:title="@string/settings_experimental">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -47,28 +56,9 @@
             android:summaryOn="@string/settings_enable_experimental_features_summary_on"
             android:title="@string/settings_enable_experimental_features_title" />
 
-        <ListPreference
-            android:defaultValue="@string/settings_change_font_default_value"
-            android:dialogTitle="@string/settings_change_font_dialog_title"
-            android:entries="@array/settings_change_font_entries"
-            android:entryValues="@array/settings_change_font_entry_values"
-            android:key="@string/settings_change_font_key"
-            android:summary="@string/settings_change_font_summary"
-            android:title="@string/settings_change_font_title"
-            android:shouldDisableView="true"/>
+    </PreferenceCategory>-->
 
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/settings_system">
-
-        <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference
-            android:dialogMessage="@string/settings_clear_cache_dialog_summary"
-            android:dialogTitle="@string/settings_clear_cache_dialog_title"
-            android:key="@string/settings_clear_cache_key"
-            android:summary="@string/settings_clear_cache_summary"
-            android:title="@string/settings_clear_cache_title"
-            predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
-            predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
+    <PreferenceCategory android:title="@string/settings_sync">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -85,6 +75,35 @@
             android:key="@string/settings_sync_interval_key"
             android:summary="@string/settings_sync_interval_summary"
             android:title="@string/settings_sync_interval_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/settings_notifications_key"
+            android:summaryOff="@string/settings_notifications_summary_off"
+            android:summaryOn="@string/settings_notifications_summary_on"
+            android:title="@string/settings_notifications_title" />
+
+        <MultiSelectListPreference
+            android:defaultValue="@array/settings_notification_settings_default_value"
+            android:dialogTitle="@string/settings_notification_settings_dialog_title"
+            android:entries="@array/settings_notification_settings_entries"
+            android:entryValues="@array/settings_notification_settings_entry_values"
+            android:key="@string/settings_notification_settings_key"
+            android:summary="@string/settings_notification_settings_summary"
+            android:title="@string/settings_notification_settings_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_system">
+
+        <com.crazyhitty.chdev.ks.predator.ui.preferences.PredatorDialogPreference
+            android:dialogMessage="@string/settings_clear_cache_dialog_summary"
+            android:dialogTitle="@string/settings_clear_cache_dialog_title"
+            android:key="@string/settings_clear_cache_key"
+            android:summary="@string/settings_clear_cache_summary"
+            android:title="@string/settings_clear_cache_title"
+            predator:negativeButtonText="@string/settings_clear_cache_dialog_no"
+            predator:positiveButtonText="@string/settings_clear_cache_dialog_yes" />
 
     </PreferenceCategory>
 

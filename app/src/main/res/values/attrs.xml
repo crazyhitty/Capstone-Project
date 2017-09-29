@@ -42,6 +42,7 @@
     <attr name="userNameAlternativeColor" format="reference" />
     <attr name="libraryLicenseColor" format="reference" />
     <attr name="defaultPlaceholderColor" format="reference" />
+    <attr name="defaultPlaceholderAlternativeColor" format="reference" />
     <attr name="titlePlaceholderColor" format="reference" />
     <attr name="backgroundColor" format="reference" />
     <attr name="drawableDone" format="reference" />

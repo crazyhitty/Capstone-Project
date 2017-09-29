@@ -126,9 +126,6 @@ public class LoadingView extends RelativeLayout {
                 setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_black_dark));
                 break;
         }
-
-        // Set animation.
-        manageAnimation(true);
     }
 
     public void setOnRetryClickListener(OnRetryClickListener onRetryClickListener) {
@@ -188,6 +185,11 @@ public class LoadingView extends RelativeLayout {
                 progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
                 btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
 
+                GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
+                boolean isLightTheme = PredatorSharedPreferences.getCurrentTheme(getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT;
+                hierarchy.setPlaceholderImage(isLightTheme ? R.drawable.ic_error_alternative : R.drawable.ic_error_alternative_inverse);
+                imgViewLoading.setHierarchy(hierarchy);
+
                 txtMessage.setAlpha(0.0f);
 
                 progressBarLoading.setVisibility(View.GONE);
@@ -207,6 +209,34 @@ public class LoadingView extends RelativeLayout {
         mStateShown = STATE_SHOWN.ERROR;
     }
 
+    public void setErrorWithoutDisappearingAnim(final String errorMessage) {
+        // Set new properties of views and animate them until the previous animation is finished.
+        txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+        progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+        btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
+
+        GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
+        boolean isLightTheme = PredatorSharedPreferences.getCurrentTheme(getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT;
+        hierarchy.setPlaceholderImage(isLightTheme ? R.drawable.ic_error_alternative : R.drawable.ic_error_alternative_inverse);
+        imgViewLoading.setHierarchy(hierarchy);
+
+        txtMessage.setAlpha(0.0f);
+
+        progressBarLoading.setVisibility(View.GONE);
+        progressBarLoading.setAlpha(0.0f);
+
+        imgViewLoading.setVisibility(View.VISIBLE);
+        imgViewLoading.setAlpha(0.0f);
+
+        btnRetry.setVisibility(View.VISIBLE);
+        btnRetry.setAlpha(0.0f);
+
+        txtMessage.setText(errorMessage);
+        manageAnimation(true);
+
+        mStateShown = STATE_SHOWN.ERROR;
+    }
+
     public void setComplete(final String message) {
         manageAnimation(false);
 
@@ -217,11 +247,10 @@ public class LoadingView extends RelativeLayout {
                 txtMessage.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
                 progressBarLoading.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
                 btnRetry.setTranslationY(ScreenUtils.dpToPx(getContext().getApplicationContext(), 32.0f));
-                GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
 
+                GenericDraweeHierarchy hierarchy = imgViewLoading.getHierarchy();
                 boolean isLightTheme = PredatorSharedPreferences.getCurrentTheme(getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT;
                 hierarchy.setPlaceholderImage(isLightTheme ? R.drawable.ic_done : R.drawable.ic_done_inverse);
-
                 imgViewLoading.setHierarchy(hierarchy);
 
                 txtMessage.setAlpha(0.0f);

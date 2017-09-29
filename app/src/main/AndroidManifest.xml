@@ -22,15 +22,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity
+        <activity-alias
             android:name=".ui.activities.SplashActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Splash">
+            android:targetActivity=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+
+        <activity
+            android:name=".ui.activities.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Splash"/>
 
         <activity
             android:name=".ui.activities.OnboardActivity"

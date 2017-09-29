@@ -297,7 +297,8 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     }
 
     protected void changeTabTypeface(TabLayout tabLayout) {
-        if (TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext()))) {
+        if (TextUtils.isEmpty(PredatorSharedPreferences.getCurrentFont(getApplicationContext())) ||
+                TextUtils.equals(PredatorSharedPreferences.getCurrentFont(getApplicationContext()), getString(R.string.settings_change_font_system))) {
             return;
         }
 

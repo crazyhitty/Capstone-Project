@@ -25,6 +25,21 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Sep 23, 2017"
+        versionName="0.36">
+        <changelogbug>Fix app crash due to invalid font name.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Sep 23, 2017"
+        versionName="0.35">
+        <changelogtext>[b]New![/b] Add notification support!</changelogtext>
+        <changelogtext>[b]New![/b] Allow post sorting in dashboard!</changelogtext>
+        <changelogtext>[b]New![/b] Set Montserrat as default font!</changelogtext>
+        <changelogbug>Fix sync related bugs.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Aug 27, 2017"
         versionName="0.34">
         <changelogtext>[b]New![/b] Added pinch to zoom support in fullscreen media images!</changelogtext>

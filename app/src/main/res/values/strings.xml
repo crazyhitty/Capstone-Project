@@ -43,11 +43,13 @@
     <!--menu_posts.xml-->
     <string name="menu_posts_sort">Sort</string>
     <string name="menu_posts_sort_latest">Latest</string>
+    <string name="menu_posts_sort_vote_count">Vote count</string>
     <string name="menu_posts_sort_oldest">Oldest</string>
     <string name="menu_posts_switch_layout">Switch Layout</string>
     <string name="menu_posts_switch_layout_list">List</string>
     <string name="menu_posts_switch_layout_small_cards">Small Cards</string>
     <string name="menu_posts_switch_layout_large_cards">Large Cards</string>
+    <string name="menu_posts_clear">Clear Posts</string>
 
     <!--menu_post_details.xml-->
     <string name="menu_post_details_refresh">Refresh</string>
@@ -102,6 +104,15 @@
     <string name="posts_date_today">Today</string>
     <string name="posts_date_yesterday">Yesterday</string>
     <string name="posts_successfully_loaded_posts">Success, here ya go!</string>
+    <string name="posts_cleared">No posts available.</string>
+    <string name="posts_cannot_clear_while_loading">Cannot clear posts while they are being loaded!</string>
+    <string name="posts_clear_dialog_title">Clear Posts</string>
+    <string name="posts_clear_dialog_message">This would clear all of the posts shown in the dashboard.</string>
+    <string name="posts_clear_dialog_positive_button">Clear</string>
+    <string name="posts_clear_dialog_negative_button">Cancel</string>
+    <string name="posts_sorting_by_latest">Latest posts will be shown first from now on!</string>
+    <string name="posts_sorting_by_vote_count">Posts with highest votes will be shown first from now on!</string>
+    <string name="posts_cannot_sort_while_loading">Cannot sort posts while they are being loaded!</string>
 
     <!--loading view-->
     <string name="loading_view_message">Wait while we hunt %s!</string>
@@ -298,11 +309,12 @@
 
     <string name="settings_change_font_key">change_font</string>
     <string name="settings_change_font_title">Change font</string>
-    <string name="settings_change_font_summary">Change the font used by this application. My favorite is \"Work Sans\".</string>
+    <string name="settings_change_font_summary">Change the font used by this application.</string>
     <string name="settings_change_font_dialog_title">Change font</string>
-    <string name="settings_change_font_default_value">default</string>
+    <string name="settings_change_font_default_value">Montserrat-Regular.ttf</string>
+    <string name="settings_change_font_system">system</string>
     <string-array name="settings_change_font_entries">
-        <item>Default</item>
+        <item>System</item>
         <item>Droid Serif</item>
         <item>Lato</item>
         <item>Montserrat</item>
@@ -319,7 +331,7 @@
         <item>Work Sans</item>
     </string-array>
     <string-array name="settings_change_font_entry_values">
-        <item>default</item>
+        <item>system</item>
         <item>DroidSerif.ttf</item>
         <item>Lato-Regular.ttf</item>
         <item>Montserrat-Regular.ttf</item>
@@ -336,6 +348,60 @@
         <item>WorkSans-Regular.ttf</item>
     </string-array>
 
+    <string name="settings_sync">Sync</string>
+
+    <string name="settings_background_sync_key">background_sync</string>
+    <string name="settings_background_sync_title">Background sync</string>
+    <string name="settings_background_sync_summary_on">Background sync is currently turned on, application will automatically re-fetch new data from the server even if the application is in background.\n\n<b>Note:</b> Only posts are synced currently in the background.</string>
+    <string name="settings_background_sync_summary_off">Background sync is currently turned off, enable this feature if you want the application to automatically re-fetch new data from the server periodically even if the application is in background.\n\n<b>Note:</b> Only posts are synced currently in the background.</string>
+
+    <string name="settings_sync_interval_key">sync_interval</string>
+    <string name="settings_sync_interval_title">Sync interval</string>
+    <string name="settings_sync_interval_summary">Change the frequency at which background syncing should be operated.</string>
+    <string name="settings_sync_interval_dialog_title">Sync interval</string>
+    <string name="settings_sync_interval_default_value">6</string>
+    <string-array name="settings_sync_interval_entries">
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>24 hours</item>
+    </string-array>
+    <string-array name="settings_sync_interval_entry_values">
+        <item>1</item>
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
+        <item>24</item>
+    </string-array>
+
+    <string name="settings_notifications_key">notifications_key</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary_on">Notifications are currently enabled, application will show notification whenever data is synced.</string>
+    <string name="settings_notifications_summary_off">Notifications are currently disabled.</string>
+
+    <string name="settings_notification_settings_key">notification_settings</string>
+    <string name="settings_notification_settings_title">Notification settings</string>
+    <string name="settings_notification_settings_summary">Modify notification properties like sound, vibration, etc.</string>
+    <string name="settings_notification_settings_dialog_title">Notification settings</string>
+    <string name="settings_notification_settings_sound">sound</string>
+    <string name="settings_notification_settings_light">light</string>
+    <string name="settings_notification_settings_vibrate">vibrate</string>
+    <string-array name="settings_notification_settings_default_value">
+        <item>sound</item>
+        <item>light</item>
+    </string-array>
+    <string-array name="settings_notification_settings_entries">
+        <item>Play sound</item>
+        <item>Blink LED light</item>
+        <item>Vibrate</item>
+    </string-array>
+    <string-array name="settings_notification_settings_entry_values">
+        <item>sound</item>
+        <item>light</item>
+        <item>vibrate</item>
+    </string-array>
+
     <string name="settings_system">System</string>
 
     <string name="settings_clear_cache_key">clear_cache</string>
@@ -347,25 +413,4 @@
     <string name="settings_clear_cache_dialog_no">Cancel</string>
     <string name="settings_clear_cache_success_message">Successfully cleared cache.</string>
     <string name="settings_clear_cache_failure_message">Unable to wipe cache, please try again :(</string>
-
-    <string name="settings_background_sync_key">background_sync</string>
-    <string name="settings_background_sync_title">Background sync</string>
-    <string name="settings_background_sync_summary_on">Background sync is currently turned on, application will automatically re-fetch new data from the server even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
-    <string name="settings_background_sync_summary_off">Background sync is currently turned off, enable this feature if you want the application to automatically re-fetch new data from the server periodically even if the application is in background. Avoid using this feature if you are on a capped data plan.</string>
-
-    <string name="settings_sync_interval_key">sync_interval</string>
-    <string name="settings_sync_interval_title">Sync interval</string>
-    <string name="settings_sync_interval_summary">Change the frequency at which background syncing should be operated.</string>
-    <string name="settings_sync_interval_dialog_title">Sync interval</string>
-    <string name="settings_sync_interval_default_value">6</string>
-    <string-array name="settings_sync_interval_entries">
-        <item>6 hours</item>
-        <item>12 hours</item>
-        <item>24 hours</item>
-    </string-array>
-    <string-array name="settings_sync_interval_entry_values">
-        <item>6</item>
-        <item>12</item>
-        <item>24</item>
-    </string-array>
 </resources>

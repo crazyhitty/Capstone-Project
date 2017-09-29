@@ -38,6 +38,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -254,10 +255,15 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
     }
 
     @Override
-    public void showUserDetails(User currentUser) {
+    public void showUserDetails(final User currentUser) {
         Logger.d(TAG, "showUserDetails: " + currentUser.toString());
 
-        toolbar.setTitle(currentUser.getName());
+        toolbar.post(new Runnable() {
+            @Override
+            public void run() {
+                setTitle(currentUser.getName());
+            }
+        });
 
         String userImageUrl = ImageUtils.getCustomUserThumbnailUrl(currentUser.getImage(),
                 ScreenUtils.dpToPxInt(getApplicationContext(), 44),

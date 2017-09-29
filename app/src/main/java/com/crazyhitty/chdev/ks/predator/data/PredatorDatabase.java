@@ -151,6 +151,23 @@ public class PredatorDatabase {
         return posts;
     }
 
+    public List<Post> getPostsSortedByVoteCount() {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1",
+                null,
+                PredatorContract.PostsEntry.COLUMN_DAY + " DESC, " +
+                        PredatorContract.PostsEntry.COLUMN_VOTES_COUNT + " DESC");
+
+        List<Post> posts = new ArrayList<>();
+        if (cursor != null && cursor.getCount() != 0) {
+            posts = PredatorDbValuesHelper.getPostsFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return posts;
+    }
+
     public List<Post> getVotedPosts(String votedPostIdsQuery) {
         Cursor cursorVotedPosts = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
                         null,
@@ -587,6 +604,57 @@ public class PredatorDatabase {
         mContentResolver.delete(PredatorContract.InstallLinksEntry.CONTENT_URI_INSTALL_LINKS_DELETE,
                         null,
                         null);
+    }
+
+    public Post getPostForNotification() {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_FOR_DASHBOARD + "=1 AND " +
+                        PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN + "=0 AND " +
+                        PredatorContract.PostsEntry.COLUMN_READ_STATUS + "=0",
+                null,
+                PredatorContract.PostsEntry.COLUMN_CREATED_AT_MILLIS + " DESC LIMIT 1");
+
+        Post post = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            post = PredatorDbValuesHelper.getPostFromCursor(cursor);
+        }
+        closeCursor(cursor);
+
+        return post;
+    }
+
+    public void setNotificationShownForPost(int postId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_NOTIFICATION_SHOWN, 1);
+
+        mContentResolver.update(PredatorContract.PostsEntry.CONTENT_URI_POSTS_UPDATE,
+                contentValues,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null);
+    }
+
+    public void setPostAsRead(int postId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_READ_STATUS, 1);
+
+        mContentResolver.update(PredatorContract.PostsEntry.CONTENT_URI_POSTS_UPDATE,
+                contentValues,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null);
+    }
+
+    public void setPostAsUnread(int postId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_POST_ID, postId);
+        contentValues.put(PredatorContract.PostsEntry.COLUMN_READ_STATUS, 0);
+
+        mContentResolver.update(PredatorContract.PostsEntry.CONTENT_URI_POSTS_UPDATE,
+                contentValues,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null);
     }
 
     /**

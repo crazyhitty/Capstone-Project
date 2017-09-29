@@ -25,14 +25,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
-        targetSdkVersion 25
-        versionCode 25
-        versionName "0.34"
+        targetSdkVersion 26
+        versionCode 27
+        versionName "0.36"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

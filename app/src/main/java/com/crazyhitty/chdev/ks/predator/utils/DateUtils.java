@@ -159,23 +159,23 @@ public class DateUtils {
     }
 
     /**
-     * Converts the number of hours into milliseconds.
+     * Converts the number of hours into seconds.
      *
      * @param hours Number of hours in string, for eg: "6"
-     * @return Number of hours in milliseconds.
+     * @return Number of hours in seconds.
      */
-    public static long hoursToMillis(String hours) {
-        return hoursToMillis(Integer.parseInt(hours));
+    public static long hoursToSeconds(String hours) {
+        return hoursToSeconds(Integer.parseInt(hours));
     }
 
     /**
-     * Converts the number of hours into milliseconds.
+     * Converts the number of hours into seconds.
      *
      * @param hours Number of hours in integer, for eg: 6
-     * @return Number of hours in milliseconds.
+     * @return Number of hours in seconds.
      */
-    public static long hoursToMillis(int hours) {
-        return hours * 60 * 60 * 1000L;
+    public static long hoursToSeconds(int hours) {
+        return hours * 60 * 60;
     }
 
     /**

@@ -142,6 +142,13 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         context.startActivity(intent);
     }
 
+    public static Intent getLaunchIntent(Context context, int postId) {
+        Intent intent = new Intent(context, PostDetailsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(ARG_POST_TABLE_POST_ID, postId);
+        return intent;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,6 +162,9 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
 
         setPresenter(new PostDetailsPresenter(this));
         mPostDetailsPresenter.subscribe();
+
+        // Set this post as read.
+        mPostDetailsPresenter.setAsRead(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 
         // Get post details.
         mPostDetailsPresenter.getDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));

@@ -48,6 +48,7 @@ import com.crazyhitty.chdev.ks.predator.core.mediaDetails.MediaDetailsPresenter;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.MediaPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.predator.ui.views.PhotoViewSupportViewPager;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 
@@ -128,7 +129,7 @@ public class MediaFullScreenActivity extends BaseAppCompatActivity implements Me
         }
     };
     @BindView(R.id.view_pager_media)
-    ViewPager viewPagerMedia;
+    PhotoViewSupportViewPager viewPagerMedia;
     @BindView(R.id.image_button_close)
     ImageButton imgBtnClose;
     @BindView(R.id.image_button_previous)

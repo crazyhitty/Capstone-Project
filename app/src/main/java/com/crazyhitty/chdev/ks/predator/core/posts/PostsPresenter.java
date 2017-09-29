@@ -33,6 +33,7 @@ import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.widget.PredatorPostsWidgetProvider;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
@@ -93,12 +94,23 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getOfflinePosts() {
+    public void getOfflinePosts(final PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
         Observable<List<Post>> postsDataObservable = Observable.create(new ObservableOnSubscribe<List<Post>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
-                List<Post> posts = PredatorDatabase.getInstance()
-                        .getPosts();
+                List<Post> posts = new ArrayList<>();
+
+                switch (postsSortingType) {
+                    case LATEST:
+                        posts = PredatorDatabase.getInstance()
+                                .getPosts();
+                        break;
+                    case VOTE_COUNT:
+                        posts = PredatorDatabase.getInstance()
+                                .getPostsSortedByVoteCount();
+                        break;
+                }
+
                 if (posts != null && !posts.isEmpty()) {
                     dateMatcher(posts);
                     emitter.onNext(posts);
@@ -131,30 +143,20 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void getPosts(final String token,
-                         final boolean clearPrevious) {
+    public void getPosts(final String token, final PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType, boolean today) {
         Logger.d(TAG, "getPosts: called");
-        if (clearPrevious) {
+
+        if (today) {
             mLoadMore = false;
             mLastDate = DateUtils.getPredatorCurrentDate();
             mDateHashMap = new HashMap<>();
         }
+
         Observable<List<Post>> postsDataObservable = ProductHuntRestApi.getApi()
                 .getPostsCategoryWise(CoreUtils.getAuthToken(token), Constants.Posts.CATEGORY_ALL, mLastDate)
                 .map(new Function<PostsData, List<Post>>() {
                     @Override
                     public List<Post> apply(PostsData postsData) throws Exception {
-                        if (clearPrevious) {
-                            PredatorDatabase.getInstance()
-                                    .deleteAllPosts();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllUsers();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllComments();
-                            PredatorDatabase.getInstance()
-                                    .deleteAllMedia();
-                        }
-
                         if (postsData.getPosts() == null || postsData.getPosts().isEmpty()) {
                             return new ArrayList<Post>();
                         }
@@ -173,8 +175,19 @@ public class PostsPresenter implements PostsContract.Presenter {
                             }
                         }
 
-                        List<Post> posts = PredatorDatabase.getInstance()
-                                .getPosts();
+                        List<Post> posts = new ArrayList<>();
+
+                        switch (postsSortingType) {
+                            case LATEST:
+                                posts = PredatorDatabase.getInstance()
+                                        .getPosts();
+                                break;
+                            case VOTE_COUNT:
+                                posts = PredatorDatabase.getInstance()
+                                        .getPostsSortedByVoteCount();
+                                break;
+                        }
+
                         if (posts != null && !posts.isEmpty()) {
                             dateMatcher(posts);
                         }
@@ -191,7 +204,7 @@ public class PostsPresenter implements PostsContract.Presenter {
                                 if (posts != null && posts.size() != 0) {
                                     emitter.onNext(posts);
                                 } else {
-                                    loadMorePosts(token);
+                                    loadMorePosts(token, postsSortingType);
                                 }
                                 emitter.onComplete();
                             }
@@ -221,10 +234,10 @@ public class PostsPresenter implements PostsContract.Presenter {
     }
 
     @Override
-    public void loadMorePosts(String token) {
+    public void loadMorePosts(String token, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
         mLastDate = DateUtils.getPredatorPostPreviousDate(mLastDate);
         mLoadMore = true;
-        getPosts(token, false);
+        getPosts(token, postsSortingType, false);
     }
 
     @Override
@@ -233,6 +246,122 @@ public class PostsPresenter implements PostsContract.Presenter {
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, PredatorPostsWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_posts);
+    }
+
+    @Override
+    public void clear() {
+        Logger.d(TAG, "clear: called");
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .deleteAllPosts();
+                PredatorDatabase.getInstance()
+                        .deleteAllUsers();
+                PredatorDatabase.getInstance()
+                        .deleteAllComments();
+                PredatorDatabase.getInstance()
+                        .deleteAllMedia();
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+                mView.postsCleared();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToClearPosts(e.getMessage());
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void getNotification() {
+        Observable<Post> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Post>() {
+            @Override
+            public void subscribe(ObservableEmitter<Post> emitter) throws Exception {
+                Post post = PredatorDatabase.getInstance()
+                        .getPostForNotification();
+                if (post == null) {
+                    emitter.onError(new NullPointerException("No post available to be shown for " +
+                            "notification"));
+                } else {
+                    emitter.onNext(post);
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Post>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.unableToShowNotification();
+            }
+
+            @Override
+            public void onNext(Post post) {
+                mView.showNotification(post);
+            }
+        }));
+    }
+
+    @Override
+    public void notificationShownForPost(final int postId) {
+        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
+                PredatorDatabase.getInstance()
+                        .setNotificationShownForPost(postId);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        }));
+    }
+
+    @Override
+    public void setSortType(Context context, PredatorSharedPreferences.POSTS_SORTING_TYPE postsSortingType) {
+        PredatorSharedPreferences.setPostsSortingType(context, postsSortingType);
+    }
+
+    @Override
+    public PredatorSharedPreferences.POSTS_SORTING_TYPE getSortType(Context context) {
+        return PredatorSharedPreferences.getPostsSortingType(context);
     }
 
     /**

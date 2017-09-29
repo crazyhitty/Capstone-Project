@@ -24,24 +24,21 @@
 
 package com.crazyhitty.chdev.ks.predator.data;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.support.annotation.RequiresPermission;
 
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
-import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsContract;
-import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsPresenter;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
-import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.ui.notifications.PostNotification;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
@@ -61,40 +58,48 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
     private final AccountManager mAccountManager;
 
     private PostsContract.Presenter mPostsPresenter;
-    private CollectionsContract.Presenter mCollectionsPresenter;
 
     private PostsContract.View mPostsView = new PostsContract.View() {
         @Override
         public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
-            Logger.d(TAG, "showPosts: postsSize: " + posts.size());
+            Logger.d(TAG, "showPosts: posts synced with size: " + (posts != null ? posts.size() : 0));
             // Update widgets.
             mPostsPresenter.updateWidgets(getContext());
+            // Show notifications, if enabled.
+            if (PredatorSharedPreferences.areNotificationsEnabled(getContext())) {
+                mPostsPresenter.getNotification();
+            }
         }
 
         @Override
         public void unableToGetPosts(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-            Logger.d(TAG, "unableToGetPosts: error: " + errorMessage);
+            Logger.e(TAG, "unableToGetPosts: error: " + errorMessage);
+        }
+
+        @Override
+        public void postsCleared() {
+            Logger.d(TAG, "postsCleared: called");
+        }
+
+        @Override
+        public void unableToClearPosts(String message) {
+            Logger.e(TAG, "unableToClearPosts: " + message);
+        }
+
+        @Override
+        public void showNotification(Post post) {
+            Logger.d(TAG, "showNotification: called");
+            mPostsPresenter.notificationShownForPost(post.getPostId());
+            new PostNotification(getContext()).show(post);
+        }
+
+        @Override
+        public void unableToShowNotification() {
+            Logger.e(TAG, "unableToShowNotification: called");
         }
 
         @Override
         public void setPresenter(PostsContract.Presenter presenter) {
-            // Do nothing here.
-        }
-    };
-
-    private CollectionsContract.View mCollectionView = new CollectionsContract.View() {
-        @Override
-        public void showCollections(List<Collection> collections) {
-            Logger.d(TAG, "showCollections: collectionsSize: " + collections.size());
-        }
-
-        @Override
-        public void unableToFetchCollections(boolean onLoadMore, boolean wasLoadingOfflinePosts, String errorMessage) {
-            Logger.d(TAG, "unableToFetchCollections: error: " + errorMessage);
-        }
-
-        @Override
-        public void setPresenter(CollectionsContract.Presenter presenter) {
             // Do nothing here.
         }
     };
@@ -105,48 +110,44 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Initialize the presenters.
         mPostsPresenter = new PostsPresenter(mPostsView);
-        mCollectionsPresenter = new CollectionsPresenter(mCollectionView);
 
         mPostsPresenter.subscribe();
-        mCollectionsPresenter.subscribe();
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void initializePeriodicSync(Context context) {
         // Enable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Constants.Sync.ON);
 
+        ContentResolver.setSyncAutomatically(PredatorAccount.getAccount(context),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                true);
+
         // Set periodic sync interval
-        Logger.d(TAG, "initializePeriodicSync: interval(millis): " + PredatorSharedPreferences.getSyncIntervalInMillis(context));
+        Logger.d(TAG, "initializePeriodicSync: interval(seconds): " + PredatorSharedPreferences.getSyncIntervalInSeconds(context));
         ContentResolver.addPeriodicSync(
                 PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Bundle.EMPTY,
-                PredatorSharedPreferences.getSyncIntervalInMillis(context));
+                PredatorSharedPreferences.getSyncIntervalInSeconds(context));
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
-    public static void initializePeriodicSync(Context context, long syncIntervalInMillis) {
+    public static void initializePeriodicSync(Context context, long syncIntervalInSeconds) {
         // Enable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Constants.Sync.ON);
 
         // Set periodic sync interval
-        Logger.d(TAG, "initializePeriodicSync: interval(millis): " + syncIntervalInMillis);
+        Logger.d(TAG, "initializePeriodicSync: interval(seconds): " + syncIntervalInSeconds);
         ContentResolver.addPeriodicSync(
                 PredatorAccount.getAccount(context),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 Bundle.EMPTY,
-                syncIntervalInMillis);
+                syncIntervalInSeconds);
     }
 
-    @SuppressWarnings("MissingPermission")
-    @RequiresPermission(Manifest.permission.GET_ACCOUNTS)
     public static void removePeriodicSync(Context context) {
         // Disable Sync
         ContentResolver.setIsSyncable(PredatorAccount.getAccount(context),
@@ -175,10 +176,9 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
                     true);
 
             // Fetch latest posts.
-            mPostsPresenter.getPosts(authToken, true);
-
-            // Fetch featured collections.
-            mCollectionsPresenter.getLatestCollections(authToken, true);
+            mPostsPresenter.getPosts(authToken,
+                    mPostsPresenter.getSortType(getContext()),
+                    true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,10 +190,6 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
         if (mPostsPresenter != null) {
             mPostsPresenter.unSubscribe();
-        }
-
-        if (mCollectionsPresenter != null) {
-            mCollectionsPresenter.unSubscribe();
         }
     }
 }

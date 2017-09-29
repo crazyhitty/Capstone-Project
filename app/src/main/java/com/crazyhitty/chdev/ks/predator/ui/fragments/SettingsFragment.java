@@ -24,15 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.Manifest;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.MainApplication;
@@ -55,8 +53,11 @@ import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
     private ListPreference mListPreferenceManageThemes, mListPreferenceChangeFont;
     private PredatorDialogPreference mPredatorDialogPreferenceClearCache;
-    private SwitchPreference mSwitchPreferenceEnableExperimentalFeatures, mSwitchPreferenceBackgroundSync;
+    private SwitchPreference mSwitchPreferenceEnableExperimentalFeatures,
+            mSwitchPreferenceBackgroundSync,
+            mSwitchPreferenceNotifications;
     private ListPreference mListPreferenceSyncInterval;
+    private MultiSelectListPreference mMultiSelectListPreferenceNotificationSettings;
 
     private SettingsContract.Presenter mSettingsPresenter;
 
@@ -79,7 +80,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
 
         manageThemesPreferences();
 
-        manageEnableExperimentalFeaturesPreferences();
+        //manageEnableExperimentalFeaturesPreferences();
 
         manageFontsPreferences();
 
@@ -88,6 +89,10 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         manageBackgroundSyncPreferences();
 
         manageSyncIntervalPreferences();
+
+        manageNotificationsPreferences();
+
+        manageNotificationSettingsPreferences();
     }
 
     @Override
@@ -99,10 +104,12 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
     private void bindPreferences() {
         mListPreferenceManageThemes = (ListPreference) findPreference(getString(R.string.settings_manage_themes_key));
         mPredatorDialogPreferenceClearCache = (PredatorDialogPreference) findPreference(getString(R.string.settings_clear_cache_key));
-        mSwitchPreferenceEnableExperimentalFeatures = (SwitchPreference) findPreference(getString(R.string.settings_enable_experimental_features_key));
+        //mSwitchPreferenceEnableExperimentalFeatures = (SwitchPreference) findPreference(getString(R.string.settings_enable_experimental_features_key));
         mListPreferenceChangeFont = (ListPreference) findPreference(getString(R.string.settings_change_font_key));
         mSwitchPreferenceBackgroundSync = (SwitchPreference) findPreference(getString(R.string.settings_background_sync_key));
         mListPreferenceSyncInterval = (ListPreference) findPreference(getString(R.string.settings_sync_interval_key));
+        mSwitchPreferenceNotifications = (SwitchPreference) findPreference(getString(R.string.settings_notifications_key));
+        mMultiSelectListPreferenceNotificationSettings = (MultiSelectListPreference) findPreference(getString(R.string.settings_notification_settings_key));
     }
 
     private void manageThemesPreferences() {
@@ -120,20 +127,13 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean status = (Boolean) newValue;
-                mListPreferenceChangeFont.setEnabled(status);
-                if (!status) {
-                    PredatorSharedPreferences.restoreDefaultFont(getActivity().getApplicationContext());
-                    MainApplication.reInitializeCalligraphy(getActivity().getApplicationContext(),
-                            getString(R.string.settings_change_font_default_value));
-                    SettingsActivity.startActivity(getActivity(), false);
-                }
                 return true;
             }
         });
     }
 
     private void manageFontsPreferences() {
-        mListPreferenceChangeFont.setEnabled(PredatorSharedPreferences.isExperimentalFeaturesEnabled(getActivity().getApplicationContext()));
+        //mListPreferenceChangeFont.setEnabled(PredatorSharedPreferences.isExperimentalFeaturesEnabled(getActivity().getApplicationContext()));
 
         mListPreferenceChangeFont.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -161,12 +161,17 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Boolean status = (Boolean) newValue;
                 mListPreferenceSyncInterval.setEnabled(status);
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-                    if (status) {
-                        PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
-                    } else {
-                        PredatorSyncAdapter.removePeriodicSync(getActivity().getApplicationContext());
-                    }
+                mSwitchPreferenceNotifications.setEnabled(status);
+
+                if (!status) {
+                    mSwitchPreferenceNotifications.setChecked(false);
+                    mMultiSelectListPreferenceNotificationSettings.setEnabled(false);
+                }
+
+                if (status) {
+                    PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext());
+                } else {
+                    PredatorSyncAdapter.removePeriodicSync(getActivity().getApplicationContext());
                 }
                 return true;
             }
@@ -180,13 +185,28 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String hours = (String) newValue;
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-                    PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
-                            DateUtils.hoursToMillis(hours));
-                }
+                PredatorSyncAdapter.initializePeriodicSync(getActivity().getApplicationContext(),
+                        DateUtils.hoursToSeconds(hours));
                 return true;
             }
         });
+    }
+
+    private void manageNotificationsPreferences() {
+        mSwitchPreferenceNotifications.setEnabled(PredatorSharedPreferences.isSyncEnabled(getActivity().getApplicationContext()));
+
+        mSwitchPreferenceNotifications.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean status = (Boolean) newValue;
+                mMultiSelectListPreferenceNotificationSettings.setEnabled(status);
+                return true;
+            }
+        });
+    }
+
+    private void manageNotificationSettingsPreferences() {
+        mMultiSelectListPreferenceNotificationSettings.setEnabled(PredatorSharedPreferences.areNotificationsEnabled(getActivity().getApplicationContext()));
     }
 
     @Override

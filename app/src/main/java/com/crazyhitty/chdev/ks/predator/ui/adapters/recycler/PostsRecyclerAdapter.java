@@ -153,6 +153,11 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyItemChanged(getItemCount() - 1);
     }
 
+    public void clear() {
+        mPosts = null;
+        notifyDataSetChanged();
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());

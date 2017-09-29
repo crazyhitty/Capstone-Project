@@ -30,7 +30,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <android.support.v4.view.ViewPager
+    <com.crazyhitty.chdev.ks.predator.ui.views.PhotoViewSupportViewPager
         android:id="@+id/view_pager_media"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
