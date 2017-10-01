@@ -63,6 +63,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
     private List<Comment> mComments;
     private String mPostTitle;
+    private OnItemClickListener mOnItemClickListener;
     private int mLastPosition = -1;
 
     public CommentsRecyclerAdapter(@Nullable List<Comment> comments, @Nullable String postTitle) {
@@ -75,6 +76,14 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         mComments = comments;
         mPostTitle = postTitle;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public String getPostTitle() {
+        return mPostTitle;
     }
 
     @Override
@@ -113,9 +122,9 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         holder.imgViewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentUserPreviewDialog.show(holder.itemView.getContext(),
-                        mComments.get(holder.getAdapterPosition()),
-                        mPostTitle);
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onUserImageClick(mComments.get(holder.getAdapterPosition()));
+                }
             }
         });
 
@@ -217,5 +226,9 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
             return itemView.getContext()
                     .getString(resId, args);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onUserImageClick(Comment comment);
     }
 }

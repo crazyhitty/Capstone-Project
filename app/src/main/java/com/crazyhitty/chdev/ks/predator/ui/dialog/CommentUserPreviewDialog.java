@@ -25,18 +25,19 @@
 package com.crazyhitty.chdev.ks.predator.ui.dialog;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -50,12 +51,17 @@ import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.UserFallback;
 import com.crazyhitty.chdev.ks.predator.ui.activities.UserProfileActivity;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import org.chromium.customtabsclient.CustomTabsActivityHelper;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.saket.bettermovementmethod.BetterLinkMovementMethod;
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -66,6 +72,21 @@ import butterknife.ButterKnife;
 
 public class CommentUserPreviewDialog extends AlertDialog {
     private static final String TAG = "CommentUserPreviewDialog";
+
+    private CustomTabsIntent mCustomTabsIntent;
+    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
+            new CustomTabsActivityHelper.CustomTabsFallback() {
+                @Override
+                public void openUri(Activity activity, Uri uri) {
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            };
 
     @BindView(R.id.image_view_user)
     SimpleDraweeView imgViewUser;
@@ -86,10 +107,11 @@ public class CommentUserPreviewDialog extends AlertDialog {
     @BindView(R.id.view_divider)
     View viewDivider;
 
-    public static void show(Context context, Comment comment, String postTitle) {
-        CommentUserPreviewDialog commentUserPreviewDialog = new CommentUserPreviewDialog(context,
+    public static void show(Activity activity, Comment comment, String postTitle) {
+        CommentUserPreviewDialog commentUserPreviewDialog = new CommentUserPreviewDialog(activity,
                 comment,
                 postTitle);
+        commentUserPreviewDialog.setOwnerActivity(activity);
         commentUserPreviewDialog.show();
     }
 
@@ -118,6 +140,12 @@ public class CommentUserPreviewDialog extends AlertDialog {
     private void initializeViews(Context context,
                                  final Comment comment,
                                  final String postTitle) {
+        mCustomTabsIntent = new CustomTabsIntent.Builder()
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .setToolbarColor(ResourceUtils.getColorFromAttribute(getContext(), R.attr.colorPrimary))
+                .build();
+
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_comment_user_preview, null);
         setView(view);
@@ -161,7 +189,30 @@ public class CommentUserPreviewDialog extends AlertDialog {
         txtUsername.setText(comment.getUsername());
         txtUserHeadline.setText(comment.getUserHeadline());
         txtCommentBody.setText(Html.fromHtml(comment.getBody()));
-        txtCommentBody.setMovementMethod(LinkMovementMethod.getInstance());
+
+        // Modify link clicks on textview
+        BetterLinkMovementMethod method = BetterLinkMovementMethod.linkify(Linkify.ALL,
+                txtCommentBody);
+        method.setOnLinkClickListener(new BetterLinkMovementMethod.OnLinkClickListener() {
+            @Override
+            public boolean onClick(TextView textView, String s) {
+                CustomTabsHelperFragment.open(getOwnerActivity(),
+                        mCustomTabsIntent,
+                        Uri.parse(s),
+                        mCustomTabsFallback);
+                return true;
+            }
+        });
+        method.setOnLinkLongClickListener(new BetterLinkMovementMethod.OnLinkLongClickListener() {
+            @Override
+            public boolean onLongClick(TextView textView, String s) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(s));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+                return true;
+            }
+        });
 
         // Set uer image.
         String userImageUrl = comment.getUserImageThumbnailUrl();
@@ -183,7 +234,7 @@ public class CommentUserPreviewDialog extends AlertDialog {
                         comment.getTimeAgo()));
         txtCommentExtraDetails.setText(extraDetails);
 
-        ViewTreeObserver observer = scrollViewCommentContent.getViewTreeObserver();
+        final ViewTreeObserver observer = scrollViewCommentContent.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @SuppressLint("LongLogTag")
             @Override

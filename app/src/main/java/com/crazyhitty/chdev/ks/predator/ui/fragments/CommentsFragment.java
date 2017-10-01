@@ -37,8 +37,10 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.events.CommentsEvent;
+import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CommentsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.ui.dialog.CommentUserPreviewDialog;
 import com.crazyhitty.chdev.ks.predator.utils.CommentItemDecorator;
 
 import butterknife.BindView;
@@ -52,7 +54,7 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class CommentsFragment extends BaseSupportFragment {
+public class CommentsFragment extends BaseSupportFragment implements CommentsRecyclerAdapter.OnItemClickListener {
     @BindView(R.id.recycler_view_comments)
     RecyclerView recyclerViewComments;
     @BindView(R.id.linear_layout_loading)
@@ -92,6 +94,7 @@ public class CommentsFragment extends BaseSupportFragment {
         recyclerViewComments.addItemDecoration(commentItemDecorator);
 
         mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null, null);
+        mCommentsRecyclerAdapter.setOnItemClickListener(this);
         recyclerViewComments.setAdapter(mCommentsRecyclerAdapter);
     }
 
@@ -103,5 +106,12 @@ public class CommentsFragment extends BaseSupportFragment {
             txtMessage.setText(R.string.fragment_comments_unavailable);
             progressBarLoading.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onUserImageClick(Comment comment) {
+        CommentUserPreviewDialog.show(getActivity(),
+                comment,
+                mCommentsRecyclerAdapter.getPostTitle());
     }
 }

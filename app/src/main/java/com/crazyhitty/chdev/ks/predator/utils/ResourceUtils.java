@@ -27,7 +27,9 @@ package com.crazyhitty.chdev.ks.predator.utils;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.AttrRes;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import com.crazyhitty.chdev.ks.predator.R;
 
@@ -38,17 +40,17 @@ import com.crazyhitty.chdev.ks.predator.R;
  * Description: Unavailable
  */
 
-public class ResUtils {
-    private ResUtils() {
+public class ResourceUtils {
+    private ResourceUtils() {
 
     }
 
+    // Source: https://stackoverflow.com/a/39377287
     public static int getColorFromAttribute(@NonNull Context context, @AttrRes int attrRes) {
         int[] attrs = {attrRes};
-        TypedArray ta = context.obtainStyledAttributes(attrs);
-        int color = ta.getResourceId(0, android.R.color.black);
-        ta.recycle();
-
-        return color;
+        TypedArray typedArray = context.obtainStyledAttributes(attrs);
+        @ColorRes int colorRes = typedArray.getResourceId(0, android.R.color.black);
+        typedArray.recycle();
+        return ContextCompat.getColor(context, colorRes);
     }
 }
