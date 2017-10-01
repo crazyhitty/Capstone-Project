@@ -657,6 +657,23 @@ public class PredatorDatabase {
                 null);
     }
 
+    public String getPostRedirectUrl(int postId) {
+        Cursor cursor = mContentResolver.query(PredatorContract.PostsEntry.CONTENT_URI_POSTS,
+                null,
+                PredatorContract.PostsEntry.COLUMN_POST_ID + "=" + postId,
+                null,
+                null);
+
+        String redirectUrl = null;
+        if (cursor != null && cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            redirectUrl = getString(cursor, PredatorContract.PostsEntry.COLUMN_REDIRECT_URL);
+        }
+        closeCursor(cursor);
+
+        return redirectUrl;
+    }
+
     /**
      * This method closes the cursor.
      *

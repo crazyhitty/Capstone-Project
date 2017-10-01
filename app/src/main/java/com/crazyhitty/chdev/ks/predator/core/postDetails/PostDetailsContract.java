@@ -25,6 +25,7 @@
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -57,6 +58,14 @@ public interface PostDetailsContract {
 
         void showComments(List<Comment> comments);
 
+        void openRedirectUrl(String url);
+
+        void noRedirectUrlAvailable();
+
+        void fireShareIntent(Intent shareIntent);
+
+        void noShareIntentAvailable();
+
         void unableToFetchPostDetails(String errorMessage);
 
         void unableToFetchUsers(String errorMessage);
@@ -83,12 +92,12 @@ public interface PostDetailsContract {
 
         void getExtraDetailsOffline(int postId);
 
-        void openRedirectUrl(Activity activity);
-
         void setAsRead(int postId);
 
         void setAsUnread(int postId);
 
-        PostDetails getPostDetails();
+        void getRedirectUrl(int postId);
+
+        void getShareIntent(int postId);
     }
 }
