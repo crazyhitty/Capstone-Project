@@ -40,12 +40,15 @@ import android.view.MenuInflater;
 import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
+
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -133,6 +136,20 @@ public abstract class BaseSupportFragment extends Fragment {
 
     protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
         return mCustomTabsFallback;
+    }
+
+    protected void openUrlViaChromeCustomTabs(String url) {
+        CustomTabsHelperFragment.open(getActivity(),
+                mCustomTabsIntent,
+                Uri.parse(url),
+                mCustomTabsFallback);
+    }
+
+    protected void openUrlNormally(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override

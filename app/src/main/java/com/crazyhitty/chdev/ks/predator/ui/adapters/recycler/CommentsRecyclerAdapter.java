@@ -24,6 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.annotation.PluralsRes;
 import android.support.annotation.StringRes;
@@ -31,6 +33,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +52,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.saket.bettermovementmethod.BetterLinkMovementMethod;
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -99,7 +104,29 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         holder.txtUserHeadline.setText(mComments.get(position).getUserHeadline());
         holder.txtCommentBody.setText(Html.fromHtml(mComments.get(position).getBody()));
 
-        // Set uer image.
+        // Modify link clicks on textview
+        BetterLinkMovementMethod method = BetterLinkMovementMethod.linkify(Linkify.ALL,
+                holder.txtCommentBody);
+        method.setOnLinkClickListener(new BetterLinkMovementMethod.OnLinkClickListener() {
+            @Override
+            public boolean onClick(TextView textView, String s) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onLinkClick(s, false);
+                }
+                return true;
+            }
+        });
+        method.setOnLinkLongClickListener(new BetterLinkMovementMethod.OnLinkLongClickListener() {
+            @Override
+            public boolean onLongClick(TextView textView, String s) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onLinkClick(s, true);
+                }
+                return true;
+            }
+        });
+
+        // Set user image.
         String userImageUrl = mComments.get(position).getUserImageThumbnailUrl();
         userImageUrl = ImageUtils.getCustomCommentUserImageThumbnailUrl(userImageUrl,
                 ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44),
@@ -208,7 +235,6 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         public CommentViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            txtCommentBody.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         protected void clearAnimation() {
@@ -230,5 +256,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
     public interface OnItemClickListener {
         void onUserImageClick(Comment comment);
+
+        void onLinkClick(String link, boolean isLongPress);
     }
 }
