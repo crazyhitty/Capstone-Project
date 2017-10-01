@@ -93,9 +93,6 @@ public class AboutDeveloperFragment extends BaseSupportFragment {
 
     @OnClick(R.id.card_view_kajal)
     public void onCardViewKajalClick() {
-        CustomTabsHelperFragment.open(getActivity(),
-                getCustomTabsIntent(),
-                Uri.parse(Constants.About.URL_GITHUB_KAJAL),
-                getCustomTabsFallback());
+        openUrlViaChromeCustomTabs(Constants.About.URL_GITHUB_KAJAL);
     }
 }
