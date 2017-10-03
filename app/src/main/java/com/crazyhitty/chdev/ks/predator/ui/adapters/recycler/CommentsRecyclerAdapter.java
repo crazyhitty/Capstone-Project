@@ -116,15 +116,6 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
                 return true;
             }
         });
-        method.setOnLinkLongClickListener(new BetterLinkMovementMethod.OnLinkLongClickListener() {
-            @Override
-            public boolean onLongClick(TextView textView, String s) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onLinkClick(s, true);
-                }
-                return true;
-            }
-        });
 
         // Set user image.
         String userImageUrl = mComments.get(position).getUserImageThumbnailUrl();

@@ -203,16 +203,6 @@ public class CommentUserPreviewDialog extends AlertDialog {
                 return true;
             }
         });
-        method.setOnLinkLongClickListener(new BetterLinkMovementMethod.OnLinkLongClickListener() {
-            @Override
-            public boolean onLongClick(TextView textView, String s) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(s));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(intent);
-                return true;
-            }
-        });
 
         // Set uer image.
         String userImageUrl = comment.getUserImageThumbnailUrl();
