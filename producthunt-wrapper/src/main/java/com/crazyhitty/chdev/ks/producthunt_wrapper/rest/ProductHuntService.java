@@ -32,6 +32,7 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.OAuthData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 
 import java.util.HashMap;
@@ -101,4 +102,7 @@ public interface ProductHuntService {
 
     @POST(ApiUrls.OAUTH_GET_TOKEN)
     Observable<OAuthData> oAuthUser(@Body HashMap<String, String> params);
+
+    @POST(ApiUrls.SEARCH)
+    Observable<SearchData> search(@Body String request);
 }

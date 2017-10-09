@@ -79,7 +79,7 @@ public class ProductHuntRestApi {
     public static ProductHuntService getApi() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Authorization.BASE_URL)
-                .client(getOkHttpClient())
+                .client(getOkHttpClient(true))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -89,13 +89,26 @@ public class ProductHuntRestApi {
         return productHuntService;
     }
 
-    private static OkHttpClient getOkHttpClient() {
+    public static ProductHuntService getSearchApi() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Authorization.BASE_URL)
+                .client(getOkHttpClient(false))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ProductHuntService productHuntService = retrofit.create(ProductHuntService.class);
+
+        return productHuntService;
+    }
+
+    private static OkHttpClient getOkHttpClient(boolean withInterceptor) {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         okHttpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
         okHttpClientBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
-        okHttpClientBuilder.addInterceptor(sInterceptor);
+        okHttpClientBuilder.addInterceptor(withInterceptor ? sInterceptor : null);
         return okHttpClientBuilder.build();
     }
 }
