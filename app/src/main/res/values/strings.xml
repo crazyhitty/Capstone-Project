@@ -282,12 +282,20 @@
     <string name="share_app_title">Predator for ProductHunt!</string>
     <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
 
-    <!--activity_search.xml-->
+    <!--activity_search-->
     <string name="activity_search_hint">Search ProductHunt&#8230;</string>
     <string name="activity_search_info_dialog_title">Search(BETA)</string>
     <string name="activity_search_info_dialog_message">Searches might not be accurate all the time. Currently, there is no proper API available for searching through ProductHunt.</string>
     <string name="activity_search_posts">Posts</string>
     <string name="activity_search_collections">Collections</string>
+
+    <!--fragment_search_posts-->
+    <string name="fragment_search_posts_search_something">Type something and we will find some posts for you&#8230;</string>
+    <string name="fragment_search_posts_error_icon_desc">Error icon</string>
+
+    <!--fragment_search_collections-->
+    <string name="fragment_search_collections_search_something">Type something and we will find some collections for you&#8230;</string>
+    <string name="fragment_search_collections_error_icon_desc">Error icon</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>

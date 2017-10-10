@@ -163,4 +163,17 @@
 
     <!--activity_search.xml-->
     <dimen name="activity_search_tab_layout_height">46dp</dimen>
+
+    <!--fragment_search_posts.xml-->
+    <dimen name="fragment_search_posts_image_height">44dp</dimen>
+    <dimen name="fragment_search_posts_image_width">44dp</dimen>
+    <dimen name="fragment_search_posts_image_padding">2dp</dimen>
+    <dimen name="fragment_search_posts_image_corner_padding">2dp</dimen>
+
+    <!--fragment_search_collections.xml-->
+    <dimen name="fragment_search_collections_image_height">44dp</dimen>
+    <dimen name="fragment_search_collections_image_width">44dp</dimen>
+    <dimen name="fragment_search_collections_image_padding">2dp</dimen>
+    <dimen name="fragment_search_collections_image_corner_padding">2dp</dimen>
+
 </resources>

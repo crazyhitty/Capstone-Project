@@ -32,7 +32,9 @@ import android.view.ViewGroup;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**

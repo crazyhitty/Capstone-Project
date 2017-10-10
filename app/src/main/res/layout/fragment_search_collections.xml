@@ -25,6 +25,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
@@ -32,9 +33,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.crazyhitty.chdev.ks.predator.ui.views.LoadingView
-        android:id="@+id/loading_view"
+    <LinearLayout
+        android:id="@+id/linear_layout_error"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_view_error_icon"
+            android:layout_width="@dimen/fragment_search_collections_image_width"
+            android:layout_height="@dimen/fragment_search_collections_image_height"
+            android:contentDescription="@string/fragment_search_collections_error_icon_desc"
+            android:padding="@dimen/fragment_search_collections_image_padding"
+            fresco:placeholderImage="?attr/drawableErrorAlternative"
+            fresco:roundedCornerRadius="@dimen/fragment_search_collections_image_corner_padding" />
+
+        <TextView
+            android:id="@+id/text_view_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_avg"
+            android:gravity="center"
+            android:text="@string/fragment_search_collections_search_something"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    </LinearLayout>
 
 </FrameLayout>
