@@ -66,7 +66,6 @@ class Constants {
     static final String SEARCH_X_ANGOLIA_AGENT = "x-algolia-agent";
     static final String SEARCH_X_ANGOLIA_APPLICATION_ID = "x-algolia-application-id";
     static final String SEARCH_X_ANGOLIA_API_KEY = "x-algolia-api-key";
-    static final String SEARCH_BODY_JSON = "{\"requests\":[{\"indexName\":\"Post_production\",\"params\":\"query=%s&facetFilters=%5B%5B%22is_featured%3Atrue%22%5D%5D&numericFilters=%5B%5D&page=0&hitsPerPage=10\"},{\"indexName\":\"Topic_production\",\"params\":\"query=%s&facetFilters=%5B%5D&numericFilters=%5B%5D&page=0&hitsPerPage=10\"}]}";
 
     // oauth
     static final String CLIENT_ID = "client_id";
