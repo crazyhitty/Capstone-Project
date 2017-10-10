@@ -102,6 +102,8 @@ public class SearchActivity extends BaseAppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        changeMenuItemColorBasedOnTheme(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -110,6 +112,11 @@ public class SearchActivity extends BaseAppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.menu_search_info:
+                showErrorDialog(getString(R.string.activity_search_info_dialog_title),
+                        getString(R.string.activity_search_info_dialog_message),
+                        true);
                 break;
         }
         return super.onOptionsItemSelected(item);

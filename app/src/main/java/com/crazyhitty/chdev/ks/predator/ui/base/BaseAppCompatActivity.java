@@ -208,6 +208,21 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
                 .show();
     }
 
+    protected void showErrorDialog(String title, String message, boolean isCancellable) {
+        mErrorDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_outline_24dp)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
     protected void dismissErrorDialog() {
         if (mErrorDialog != null && mErrorDialog.isShowing()) {
             mErrorDialog.dismiss();

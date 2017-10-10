@@ -65,6 +65,9 @@
     <string name="menu_about_changelog">Changelog</string>
     <string name="menu_about_privacy_policy">Privacy Policy</string>
 
+    <!--menu_search.xml-->
+    <string name="menu_search_info">Info</string>
+
     <!--onboard-->
     <string name="onboard_skip">Skip</string>
     <string name="onboard_next">Next</string>
@@ -280,7 +283,9 @@
     <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
 
     <!--activity_search.xml-->
-    <string name="activity_search_hint">Search ProductHunt</string>
+    <string name="activity_search_hint">Search ProductHunt&#8230;</string>
+    <string name="activity_search_info_dialog_title">Search(BETA)</string>
+    <string name="activity_search_info_dialog_message">Searches might not be accurate all the time. Currently, there is no proper API available for searching through ProductHunt.</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>
