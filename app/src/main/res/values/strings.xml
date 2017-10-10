@@ -279,6 +279,9 @@
     <string name="share_app_title">Predator for ProductHunt!</string>
     <string name="share_app_body">Interested in finding out latest tech products? Use Predator for ProductHunt, download from here: https://play.google.com/store/apps/details?id=%s</string>
 
+    <!--activity_search.xml-->
+    <string name="activity_search_hint">Search ProductHunt</string>
+
     <!--settings-->
     <string name="settings_name">Settings</string>
 
