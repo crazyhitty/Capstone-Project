@@ -31,6 +31,7 @@ import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchRequestData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntService;
 
@@ -81,7 +82,7 @@ public class SearchPresenter implements SearchContract.Presenter {
     @Override
     public void search(String keyword) {
         Observable<SearchDataType> searchDataTypeObservable = ProductHuntRestApi.getSearchApi()
-                .search(keyword)
+                .search(SearchRequestData.getDefaultRequest(keyword))
                 //.debounce(2, TimeUnit.SECONDS)
                 .flatMap(new Function<SearchData, ObservableSource<SearchDataType>>() {
                     @Override
@@ -129,7 +130,15 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 Collection collection = new Collection();
                                                 collection.setCollectionId(hit.getId());
                                                 collection.setName(hit.getName());
-                                                collection.setTitle(hit.getDescription());
+                                                collection.setTitle(hit.getTitle());
+                                                collection.setBackgroundImageUrl(hit.getBackgroundImageBannerUrl());
+                                                collection.setCollectionUrl(hit.getUrl());
+                                                collection.setCategoryId(hit.getCategoryId());
+                                                collection.setPostCounts(hit.getPostsCount());
+                                                collection.setUserId(hit.getUserId());
+                                                collection.setUsername(hit.getUser().getName());
+                                                collection.setUsernameAlternative(hit.getUser().getUsername());
+                                                collection.setUserImageUrl100px(hit.getUser().getAvatarUrl());
                                                 collections.add(collection);
                                             }
 
@@ -146,8 +155,8 @@ public class SearchPresenter implements SearchContract.Presenter {
                         });
                     }
                 })
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
         mCompositeDisposable.add(searchDataTypeObservable.subscribeWith(new DisposableObserver<SearchDataType>() {
             @Override
