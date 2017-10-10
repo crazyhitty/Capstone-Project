@@ -28,6 +28,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +37,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.SearchPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchCollectionsFragment;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchPostsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 
 import butterknife.BindView;
@@ -55,6 +61,10 @@ public class SearchActivity extends BaseAppCompatActivity {
     AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.view_pager_search)
+    ViewPager viewPagerSearch;
+    @BindView(R.id.tab_layout_search)
+    TabLayout tabLayoutSearch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +74,7 @@ public class SearchActivity extends BaseAppCompatActivity {
         ButterKnife.bind(this);
         initAppBarLayout();
         initToolbar();
+        initViewPager();
     }
 
     private void applyTheme() {
@@ -98,6 +109,16 @@ public class SearchActivity extends BaseAppCompatActivity {
 
         // Add back button to go back to the previous screen.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initViewPager() {
+        SearchPagerAdapter searchPagerAdapter = new SearchPagerAdapter(getSupportFragmentManager(),
+                new BaseSupportFragment[]{SearchPostsFragment.newInstance(), SearchCollectionsFragment.newInstance()},
+                new String[]{getString(R.string.activity_search_posts), getString(R.string.activity_search_collections)});
+        viewPagerSearch.setAdapter(searchPagerAdapter);
+
+        tabLayoutSearch.setupWithViewPager(viewPagerSearch);
+        changeTabTypeface(tabLayoutSearch);
     }
 
     @Override
