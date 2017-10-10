@@ -37,12 +37,18 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.core.search.SearchContract;
+import com.crazyhitty.chdev.ks.predator.core.search.SearchPresenter;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.SearchPagerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchCollectionsFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchPostsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +60,7 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class SearchActivity extends BaseAppCompatActivity {
+public class SearchActivity extends BaseAppCompatActivity implements SearchContract.View {
     private static final String TAG = "SearchActivity";
 
     @BindView(R.id.app_bar_layout)
@@ -66,6 +72,8 @@ public class SearchActivity extends BaseAppCompatActivity {
     @BindView(R.id.tab_layout_search)
     TabLayout tabLayoutSearch;
 
+    private SearchContract.Presenter mSearchPresenter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +83,10 @@ public class SearchActivity extends BaseAppCompatActivity {
         initAppBarLayout();
         initToolbar();
         initViewPager();
+        setPresenter(new SearchPresenter(this));
+        mSearchPresenter.subscribe();
+
+        mSearchPresenter.search("tes");
     }
 
     private void applyTheme() {
@@ -141,5 +153,36 @@ public class SearchActivity extends BaseAppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setPresenter(SearchContract.Presenter presenter) {
+        mSearchPresenter = presenter;
+    }
+
+    @Override
+    public void showPostResults(List<Post> posts) {
+
+    }
+
+    @Override
+    public void noPostsAvailable() {
+
+    }
+
+    @Override
+    public void showCollectionResults(List<Collection> collections) {
+
+    }
+
+    @Override
+    public void noCollectionsAvailable() {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSearchPresenter.unSubscribe();
     }
 }
