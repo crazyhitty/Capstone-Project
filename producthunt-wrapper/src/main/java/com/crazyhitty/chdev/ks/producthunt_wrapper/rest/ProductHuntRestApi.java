@@ -91,7 +91,7 @@ public class ProductHuntRestApi {
 
     public static ProductHuntService getSearchApi() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Authorization.BASE_URL)
+                .baseUrl(Authorization.SEARCH_URL)
                 .client(getOkHttpClient(false))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -108,7 +108,11 @@ public class ProductHuntRestApi {
         okHttpClientBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
-        okHttpClientBuilder.addInterceptor(withInterceptor ? sInterceptor : null);
+
+        if (withInterceptor) {
+            okHttpClientBuilder.addInterceptor(sInterceptor);
+        }
+
         return okHttpClientBuilder.build();
     }
 }
