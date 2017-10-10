@@ -201,6 +201,26 @@ public class SearchData {
             @SerializedName("followers_count")
             private int followersCount;
 
+            /**
+             * background_image_banner_url : https://ph-files.imgix.net/6998f53c-f251-4056-871b-ce9adcc61de6?auto=format
+             * category_id : 1
+             * title : User testing and user behavior monitoring tools for your websites and apps
+             * has_curator : true
+             * posts_count : 21
+             * color : blue
+             */
+
+            @SerializedName("background_image_banner_url")
+            private String backgroundImageBannerUrl;
+            @SerializedName("category_id")
+            private int categoryId;
+            private String title;
+            @SerializedName("has_curator")
+            private boolean hasCurator;
+            @SerializedName("posts_count")
+            private int postsCount;
+            private String color;
+
             public int getCommentsCount() {
                 return commentsCount;
             }
@@ -335,6 +355,54 @@ public class SearchData {
 
             public void setFollowersCount(int followersCount) {
                 this.followersCount = followersCount;
+            }
+
+            public String getBackgroundImageBannerUrl() {
+                return backgroundImageBannerUrl;
+            }
+
+            public void setBackgroundImageBannerUrl(String backgroundImageBannerUrl) {
+                this.backgroundImageBannerUrl = backgroundImageBannerUrl;
+            }
+
+            public int getCategoryId() {
+                return categoryId;
+            }
+
+            public void setCategoryId(int categoryId) {
+                this.categoryId = categoryId;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public boolean isHasCurator() {
+                return hasCurator;
+            }
+
+            public void setHasCurator(boolean hasCurator) {
+                this.hasCurator = hasCurator;
+            }
+
+            public int getPostsCount() {
+                return postsCount;
+            }
+
+            public void setPostsCount(int postsCount) {
+                this.postsCount = postsCount;
+            }
+
+            public String getColor() {
+                return color;
+            }
+
+            public void setColor(String color) {
+                this.color = color;
             }
 
             public static class Thumbnail {
@@ -642,6 +710,8 @@ public class SearchData {
                     }
                 }
             }
+
+
         }
     }
 }
