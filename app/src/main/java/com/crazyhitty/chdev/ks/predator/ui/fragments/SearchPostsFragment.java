@@ -26,13 +26,22 @@ package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
-import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
+import com.crazyhitty.chdev.ks.predator.utils.CollectionPostItemDecorator;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +55,15 @@ import butterknife.ButterKnife;
 
 public class SearchPostsFragment extends BaseSupportFragment {
     private static final String TAG = "SearchPostsFragment";
+
+    @BindView(R.id.recycler_view_posts)
+    RecyclerView recyclerViewPosts;
+    @BindView(R.id.linear_layout_error)
+    LinearLayout linearLayoutError;
+    @BindView(R.id.text_view_message)
+    TextView txtMessage;
+
+    private PostsRecyclerAdapter mPostsRecyclerAdapter;
 
     public static SearchPostsFragment newInstance() {
         Bundle args = new Bundle();
@@ -65,5 +83,38 @@ public class SearchPostsFragment extends BaseSupportFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setRecyclerViewProperties();
+    }
+
+    private void setRecyclerViewProperties() {
+        // Create a list type layout manager.
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerViewPosts.setLayoutManager(layoutManager);
+
+        // Add appropriate decorations to the recycler view items.
+        CollectionPostItemDecorator listItemDecorator = new CollectionPostItemDecorator(getContext().getApplicationContext(), 72);
+        recyclerViewPosts.addItemDecoration(listItemDecorator);
+
+        mPostsRecyclerAdapter = new PostsRecyclerAdapter(null,
+                PostsRecyclerAdapter.TYPE.LIST);
+        recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
+
+        mPostsRecyclerAdapter.setOnItemClickListener(new PostsRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                PostDetailsActivity.startActivity(getContext(),
+                        mPostsRecyclerAdapter.getPostId(position));
+            }
+        });
+    }
+
+    public void updatePosts(List<Post> posts) {
+        linearLayoutError.setVisibility(View.GONE);
+        mPostsRecyclerAdapter.updateDataset(posts, true);
+    }
+
+    public void noPostsAvailable() {
+        linearLayoutError.setVisibility(View.VISIBLE);
+        mPostsRecyclerAdapter.clear();
     }
 }

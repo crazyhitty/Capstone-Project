@@ -31,7 +31,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 
@@ -63,5 +66,13 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    public void updateCollections(List<Collection> collections) {
+
+    }
+
+    public void noCollectionsAvailable() {
+
     }
 }

@@ -24,11 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -160,24 +162,44 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         mSearchPresenter = presenter;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void showPostResults(List<Post> posts) {
-
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).updatePosts(posts);
+            }
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void noPostsAvailable() {
-
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).noPostsAvailable();
+            }
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void showCollectionResults(List<Collection> collections) {
-
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).updateCollections(collections);
+            }
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void noCollectionsAvailable() {
-
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).noCollectionsAvailable();
+            }
+        }
     }
 
     @Override
