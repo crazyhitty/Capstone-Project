@@ -67,11 +67,18 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private boolean mNetworkAvailable;
     private String mErrorMessage;
     private int mLastPosition = -1;
+    private boolean mLoadMoreNotRequired = false;
     private HashMap<Integer, Integer> mColorHashMap = new HashMap<>();
 
-    public CollectionsRecyclerAdapter(List<Collection> collections, OnCollectionsLoadMoreRetryListener onCollectionsLoadMoreRetryListener) {
+    public CollectionsRecyclerAdapter() {
+        mLoadMoreNotRequired = true;
+    }
+
+    public CollectionsRecyclerAdapter(List<Collection> collections,
+                                      OnCollectionsLoadMoreRetryListener onCollectionsLoadMoreRetryListener) {
         mCollections = collections;
         mOnCollectionsLoadMoreRetryListener = onCollectionsLoadMoreRetryListener;
+        mLoadMoreNotRequired = false;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -93,6 +100,11 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             int oldCount = mCollections.size();
             notifyItemRangeInserted(oldCount, mCollections.size() - oldCount);
         }
+    }
+
+    public void clear() {
+        mCollections = null;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -173,7 +185,9 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         loadMoreViewHolder.btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnCollectionsLoadMoreRetryListener.onLoadMore();
+                if (mOnCollectionsLoadMoreRetryListener != null) {
+                    mOnCollectionsLoadMoreRetryListener.onLoadMore();
+                }
             }
         });
     }
@@ -189,7 +203,18 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return mCollections != null ? mCollections.size() + 1 : 0;
+        if (mLoadMoreNotRequired) {
+            return mCollections != null ?
+                    mCollections.size() : 0;
+        } else {
+            // Add extra item, that will be shown in case of load more scenario.
+            return mCollections != null ?
+                    mCollections.size() + 1 : 0;
+        }
+    }
+
+    public boolean isEmpty() {
+        return mCollections == null || mCollections.isEmpty();
     }
 
     /**
@@ -211,7 +236,7 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.
-        if (position == getItemCount() - 1) {
+        if (position == getItemCount() - 1 && !mLoadMoreNotRequired) {
             return VIEW_TYPE_LOAD_MORE;
         } else {
             return VIEW_TYPE_COLLECTION;

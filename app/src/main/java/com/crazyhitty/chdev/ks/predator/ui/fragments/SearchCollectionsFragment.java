@@ -26,16 +26,24 @@ package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
+import com.crazyhitty.chdev.ks.predator.ui.activities.CollectionDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CollectionsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.utils.CollectionItemDecorator;
 
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -47,6 +55,15 @@ import butterknife.ButterKnife;
 
 public class SearchCollectionsFragment extends BaseSupportFragment {
     private static final String TAG = "SearchCollectionsFragment";
+
+    @BindView(R.id.recycler_view_collections)
+    RecyclerView recyclerViewCollections;
+    @BindView(R.id.linear_layout_error)
+    LinearLayout linearLayoutError;
+    @BindView(R.id.text_view_message)
+    TextView txtMessage;
+
+    private CollectionsRecyclerAdapter mCollectionsRecyclerAdapter;
 
     public static SearchCollectionsFragment newInstance() {
         Bundle args = new Bundle();
@@ -66,22 +83,81 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setCollectionsRecyclerViewProperties();
+    }
+
+    private void setCollectionsRecyclerViewProperties() {
+        // Create a layout manager for recycler view.
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        recyclerViewCollections.setLayoutManager(layoutManager);
+
+        // Set item decorations.
+        recyclerViewCollections.addItemDecoration(new CollectionItemDecorator(getContext(), 8));
+
+        // Add scroll listener that will manage scroll down to load more functionality.
+        /*recyclerViewCollections.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Check if the last item is on screen, if yes then start loading more posts.
+                // Source: https://github.com/kajal-mittal/Flix/blob/master/app/src/main/java/com/kmdev/flix/ui/fragments/ItemListFragment.java#L172
+                mVisibleItemCount = layoutManager.getChildCount();
+                mTotalItemCount = layoutManager.getItemCount();
+                int[] firstVisibleItems = null;
+                firstVisibleItems = layoutManager.findFirstVisibleItemPositions(firstVisibleItems);
+                if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                    mPastVisibleItems = firstVisibleItems[0];
+                }
+
+                if (((mVisibleItemCount + mPastVisibleItems) >= mTotalItemCount) &&
+                        !mIsLoading &&
+                        isNetworkAvailable(false)) {
+                    mIsLoading = true;
+                    loadMoreCollections();
+                }
+            }
+        });*/
+
+        // Create adapter that will power this recycler view.
+        mCollectionsRecyclerAdapter = new CollectionsRecyclerAdapter();
+
+        recyclerViewCollections.setAdapter(mCollectionsRecyclerAdapter);
+
+        mCollectionsRecyclerAdapter.setOnItemClickListener(new CollectionsRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                CollectionDetailsActivity.startActivity(getContext(),
+                        mCollectionsRecyclerAdapter.getId(position),
+                        mCollectionsRecyclerAdapter.getCollectionId(position));
+            }
+        });
     }
 
     public void updateCollections(List<Collection> collections) {
-
+        linearLayoutError.setVisibility(View.GONE);
+        mCollectionsRecyclerAdapter.updateDataset(collections, true);
     }
 
     public void noCollectionsAvailable() {
-
+        linearLayoutError.setVisibility(View.VISIBLE);
+        mCollectionsRecyclerAdapter.clear();
     }
 
     public void networkUnavailable() {
-
+        if (mCollectionsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_posts_network_error);
+        } else {
+            showShortToast(R.string.not_connected_to_network_err);
+        }
     }
 
     public void searchingStarted() {
-
+        if (mCollectionsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.GONE);
+        }
     }
 
     public void searchingStopped() {
