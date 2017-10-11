@@ -179,9 +179,14 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                         if (!NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
                             networkUnavailable();
                         } else if (TextUtils.isEmpty(charSequence)) {
-                            noPostsAvailable();
-                            noCollectionsAvailable();
-                            mSearchPresenter.cancelOngoingRequest();
+                            editTextSearch.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    noPostsAvailable();
+                                    noCollectionsAvailable();
+                                    mSearchPresenter.cancelOngoingRequest();
+                                }
+                            });
                         } else {
                             mSearchPresenter.search(charSequence.toString());
                             searchingStarted();
