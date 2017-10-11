@@ -284,7 +284,7 @@
 
     <!--activity_search-->
     <string name="activity_search_hint">Search ProductHunt&#8230;</string>
-    <string name="activity_search_info_dialog_title">Search(BETA)</string>
+    <string name="activity_search_info_dialog_title">Search (BETA)</string>
     <string name="activity_search_info_dialog_message">Searches might not be accurate all the time. Currently, there is no proper API available for searching through ProductHunt.</string>
     <string name="activity_search_posts">Posts</string>
     <string name="activity_search_collections">Collections</string>

@@ -191,7 +191,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                 onBackPressed();
                 break;
             case R.id.menu_search_info:
-                showErrorDialog(getString(R.string.activity_search_info_dialog_title),
+                showDialog(getString(R.string.activity_search_info_dialog_title),
                         getString(R.string.activity_search_info_dialog_message),
                         true);
                 break;

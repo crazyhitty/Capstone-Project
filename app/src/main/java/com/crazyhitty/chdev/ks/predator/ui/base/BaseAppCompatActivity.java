@@ -84,7 +84,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
-    private AlertDialog mErrorDialog;
+    private AlertDialog mErrorDialog, mDialog;
 
     private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
             .enableUrlBarHiding()
@@ -190,6 +190,26 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void dismissLoadingDialog() {
         if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
+        }
+    }
+
+    protected void showDialog(String title, String message, boolean isCancellable) {
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    protected void dismissDialog() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
         }
     }
 
