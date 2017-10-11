@@ -13,6 +13,12 @@
       "library_redirect_url": "https://github.com/ReactiveX/RxAndroid"
     },
     {
+      "library_title": "RxBinding",
+      "library_creator": "Jake Wharton",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/JakeWharton/RxBinding"
+    },
+    {
       "library_title": "Retrofit",
       "library_creator": "Square",
       "library_license_type": "Apache License, Version 2.0",
