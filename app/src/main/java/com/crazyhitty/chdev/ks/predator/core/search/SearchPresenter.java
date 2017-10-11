@@ -81,9 +81,10 @@ public class SearchPresenter implements SearchContract.Presenter {
 
     @Override
     public void search(String keyword) {
+        mCompositeDisposable.clear();
+
         Observable<SearchDataType> searchDataTypeObservable = ProductHuntRestApi.getSearchApi()
                 .search(SearchRequestData.getDefaultRequest(keyword))
-                //.debounce(2, TimeUnit.SECONDS)
                 .flatMap(new Function<SearchData, ObservableSource<SearchDataType>>() {
                     @Override
                     public ObservableSource<SearchDataType> apply(final SearchData searchData) throws Exception {
@@ -191,6 +192,11 @@ public class SearchPresenter implements SearchContract.Presenter {
                 // Done.
             }
         }));
+    }
+
+    @Override
+    public void cancelOngoingRequest() {
+        mCompositeDisposable.clear();
     }
 
     private static class SearchDataType {

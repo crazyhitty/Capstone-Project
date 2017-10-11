@@ -51,5 +51,7 @@ public interface SearchContract {
 
     interface Presenter extends BasePresenter {
         void search(String keyword);
+
+        void cancelOngoingRequest();
     }
 }
