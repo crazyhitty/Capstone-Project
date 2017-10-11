@@ -178,7 +178,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                     public void onNext(CharSequence charSequence) {
                         if (!NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
                             networkUnavailable();
-                        } else if (TextUtils.isEmpty(charSequence)) {
+                        } else if (TextUtils.isEmpty(charSequence) ||
+                                TextUtils.isEmpty(charSequence.toString().trim())) {
                             editTextSearch.post(new Runnable() {
                                 @Override
                                 public void run() {
