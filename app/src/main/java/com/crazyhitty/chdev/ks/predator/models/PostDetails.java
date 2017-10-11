@@ -24,6 +24,9 @@
 
 package com.crazyhitty.chdev.ks.predator.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -31,7 +34,7 @@ package com.crazyhitty.chdev.ks.predator.models;
  * Description: Useful for sending post details.
  */
 
-public class PostDetails {
+public class PostDetails implements Parcelable {
     private String title;
     private String description;
     private String day;
@@ -46,6 +49,32 @@ public class PostDetails {
 
     public PostDetails() {
     }
+
+    protected PostDetails(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        day = in.readString();
+        date = in.readString();
+        backdropUrl = in.readString();
+        redirectUrl = in.readString();
+        tagline = in.readString();
+        discussionUrl = in.readString();
+        categoryId = in.readInt();
+        category = in.readString();
+        voteCount = in.readInt();
+    }
+
+    public static final Creator<PostDetails> CREATOR = new Creator<PostDetails>() {
+        @Override
+        public PostDetails createFromParcel(Parcel in) {
+            return new PostDetails(in);
+        }
+
+        @Override
+        public PostDetails[] newArray(int size) {
+            return new PostDetails[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -135,6 +164,21 @@ public class PostDetails {
         this.voteCount = voteCount;
     }
 
+    public static PostDetails fromPost(Post post) {
+        PostDetails postDetails = new PostDetails();
+        postDetails.setTitle(post.getName());
+        postDetails.setDescription(post.getTagline());
+        postDetails.setDay(post.getDay());
+        postDetails.setDate(post.getCreatedAt());
+        postDetails.setBackdropUrl(post.getThumbnailImageUrl());
+        postDetails.setRedirectUrl(post.getRedirectUrl());
+        postDetails.setTagline(post.getTagline());
+        postDetails.setDiscussionUrl(post.getDiscussionUrl());
+        postDetails.setCategoryId(post.getCategoryId());
+        postDetails.setVoteCount(post.getVotesCount());
+        return postDetails;
+    }
+
     @Override
     public String toString() {
         return "title: " + title +
@@ -148,5 +192,25 @@ public class PostDetails {
                 ", categoryId: " + categoryId +
                 ", category: " + category +
                 ", voteCount: " + voteCount;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(day);
+        dest.writeString(date);
+        dest.writeString(backdropUrl);
+        dest.writeString(redirectUrl);
+        dest.writeString(tagline);
+        dest.writeString(discussionUrl);
+        dest.writeInt(categoryId);
+        dest.writeString(category);
+        dest.writeInt(voteCount);
     }
 }

@@ -277,6 +277,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         return mPosts.get(position).getPostId();
     }
 
+    public Post getPost(int position) {
+        return mPosts.get(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.

@@ -63,6 +63,7 @@ import com.crazyhitty.chdev.ks.predator.events.UsersEvent;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.PostDetailsPagerAdapter;
@@ -100,8 +101,11 @@ import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH
 
 public class PostDetailsActivity extends BaseAppCompatActivity implements MediaRecyclerAdapter.OnMediaItemClickListener,
         PostDetailsContract.View {
-    public static final String ARG_POST_TABLE_POST_ID = "post_id";
     private static final String TAG = "PostDetailsActivity";
+
+    public static final String ARG_POST_TABLE_POST_ID = "post_id";
+    public static final String ARG_POST_FALLBACK_DETAILS = "post_fallback_details";
+
     private static final int DELAY_MS = 600;
 
     @BindView(R.id.app_bar_layout)
@@ -142,6 +146,14 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         context.startActivity(intent);
     }
 
+    public static void startActivity(Context context, int postId, PostDetails fallbackPostDetails) {
+        Intent intent = new Intent(context, PostDetailsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ARG_POST_TABLE_POST_ID, postId);
+        intent.putExtra(ARG_POST_FALLBACK_DETAILS, fallbackPostDetails);
+        context.startActivity(intent);
+    }
+
     public static Intent getLaunchIntent(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -174,6 +186,12 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
 
         // Always load offline posts details first.
         getPostDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID), true);
+
+        // If fallback details are available then use it.
+        if (getIntent().getParcelableExtra(ARG_POST_FALLBACK_DETAILS) != null) {
+            PostDetails postDetails = getIntent().getParcelableExtra(ARG_POST_FALLBACK_DETAILS);
+            showDetails(postDetails);
+        }
     }
 
     private void applyTheme() {

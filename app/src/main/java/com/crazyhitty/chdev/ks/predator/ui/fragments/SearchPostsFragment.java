@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
@@ -106,7 +107,8 @@ public class SearchPostsFragment extends BaseSupportFragment {
             @Override
             public void onItemClick(int position) {
                 PostDetailsActivity.startActivity(getContext(),
-                        mPostsRecyclerAdapter.getPostId(position));
+                        mPostsRecyclerAdapter.getPostId(position),
+                        PostDetails.fromPost(mPostsRecyclerAdapter.getPost(position)));
             }
         });
     }
