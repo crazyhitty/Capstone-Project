@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
@@ -62,6 +63,8 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     LinearLayout linearLayoutError;
     @BindView(R.id.text_view_message)
     TextView txtMessage;
+    @BindView(R.id.progress_bar_loading)
+    ProgressBar progressBarLoading;
 
     private CollectionsRecyclerAdapter mCollectionsRecyclerAdapter;
 
@@ -157,10 +160,11 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     public void searchingStarted() {
         if (mCollectionsRecyclerAdapter.isEmpty()) {
             linearLayoutError.setVisibility(View.GONE);
+            progressBarLoading.setVisibility(View.VISIBLE);
         }
     }
 
     public void searchingStopped() {
-
+        progressBarLoading.setVisibility(View.GONE);
     }
 }
