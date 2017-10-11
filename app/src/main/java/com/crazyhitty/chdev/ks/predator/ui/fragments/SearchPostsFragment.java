@@ -117,4 +117,23 @@ public class SearchPostsFragment extends BaseSupportFragment {
         linearLayoutError.setVisibility(View.VISIBLE);
         mPostsRecyclerAdapter.clear();
     }
+
+    public void networkUnavailable() {
+        if (mPostsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_posts_network_error);
+        } else {
+            showShortToast(R.string.not_connected_to_network_err);
+        }
+    }
+
+    public void searchingStarted() {
+        if (mPostsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.GONE);
+        }
+    }
+
+    public void searchingStopped() {
+
+    }
 }

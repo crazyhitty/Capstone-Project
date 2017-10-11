@@ -33,10 +33,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.search.SearchContract;
@@ -49,11 +51,19 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchCollectionsFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchPostsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -73,6 +83,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     ViewPager viewPagerSearch;
     @BindView(R.id.tab_layout_search)
     TabLayout tabLayoutSearch;
+    @BindView(R.id.edit_text_search)
+    EditText editTextSearch;
 
     private SearchContract.Presenter mSearchPresenter;
 
@@ -87,8 +99,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         initViewPager();
         setPresenter(new SearchPresenter(this));
         mSearchPresenter.subscribe();
-
-        mSearchPresenter.search("tes");
+        initSearching();
     }
 
     private void applyTheme() {
@@ -135,6 +146,37 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         changeTabTypeface(tabLayoutSearch);
     }
 
+    private void initSearching() {
+        RxTextView.textChanges(editTextSearch)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<CharSequence>() {
+                    @Override
+                    public void onNext(CharSequence charSequence) {
+                        if (!NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+                            networkUnavailable();
+                        } else if (TextUtils.isEmpty(charSequence)) {
+                            noPostsAvailable();
+                            noCollectionsAvailable();
+                            mSearchPresenter.cancelOngoingRequest();
+                        } else {
+                            mSearchPresenter.search(charSequence.toString());
+                            searchingStarted();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.e(TAG, e.getMessage(), e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        // Done.
+                    }
+                });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -168,6 +210,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchPostsFragment) {
                 ((SearchPostsFragment) fragment).updatePosts(posts);
+                ((SearchPostsFragment) fragment).searchingStopped();
             }
         }
     }
@@ -178,6 +221,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchPostsFragment) {
                 ((SearchPostsFragment) fragment).noPostsAvailable();
+                ((SearchPostsFragment) fragment).searchingStopped();
             }
         }
     }
@@ -188,6 +232,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchCollectionsFragment) {
                 ((SearchCollectionsFragment) fragment).updateCollections(collections);
+                ((SearchCollectionsFragment) fragment).searchingStopped();
             }
         }
     }
@@ -198,6 +243,29 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchCollectionsFragment) {
                 ((SearchCollectionsFragment) fragment).noCollectionsAvailable();
+                ((SearchCollectionsFragment) fragment).searchingStopped();
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void networkUnavailable() {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).networkUnavailable();
+            } else if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).networkUnavailable();
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void searchingStarted() {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).searchingStarted();
+            } else if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).searchingStarted();
             }
         }
     }

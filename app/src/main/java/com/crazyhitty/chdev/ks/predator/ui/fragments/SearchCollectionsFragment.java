@@ -75,4 +75,16 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     public void noCollectionsAvailable() {
 
     }
+
+    public void networkUnavailable() {
+
+    }
+
+    public void searchingStarted() {
+
+    }
+
+    public void searchingStopped() {
+
+    }
 }
