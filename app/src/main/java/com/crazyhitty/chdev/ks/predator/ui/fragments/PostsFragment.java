@@ -296,6 +296,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_posts, menu);
+        changeMenuItemColorBasedOnTheme(menu);
     }
 
     @Override

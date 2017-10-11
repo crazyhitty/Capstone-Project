@@ -220,6 +220,7 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_collections, menu);
+        changeMenuItemColorBasedOnTheme(menu);
     }
 
     @Override
