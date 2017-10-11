@@ -106,6 +106,7 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 Post post = new Post();
                                                 post.setName(hit.getName());
                                                 post.setTagline(hit.getTagline());
+                                                post.setVotesCount(hit.getVoteCount());
                                                 post.setCommentCount(hit.getCommentsCount());
                                                 post.setCreatedAt(hit.getCreatedAt());
                                                 post.setCreatedAtMillis(hit.getPostedDate());
