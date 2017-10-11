@@ -80,6 +80,11 @@
             android:theme="@style/DialogActivity.NoTitle.Light" />
 
         <activity
+            android:name=".ui.activities.SearchActivity"
+            android:parentActivityName=".ui.activities.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
             android:name=".ui.activities.AppLinkingActivity"
             android:theme="@style/DialogActivity.NoTitle.Light"
             android:excludeFromRecents="true">

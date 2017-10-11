@@ -41,6 +41,7 @@
     <string name="menu_nav_spread_love">Spread love</string>
 
     <!--menu_posts.xml-->
+    <string name="menu_posts_search">Search Posts</string>
     <string name="menu_posts_sort">Sort</string>
     <string name="menu_posts_sort_latest">Latest</string>
     <string name="menu_posts_sort_vote_count">Vote count</string>

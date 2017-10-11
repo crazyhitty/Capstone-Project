@@ -47,6 +47,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.ui.activities.SearchActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
@@ -317,6 +318,10 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_posts_search:
+                SearchActivity.startActivity(getActivity().getApplicationContext(),
+                        SearchActivity.SEARCH_TYPE.POSTS);
+                break;
             case R.id.menu_posts_clear:
                 if (mCanManagePosts) {
                     new AlertDialog.Builder(getContext())

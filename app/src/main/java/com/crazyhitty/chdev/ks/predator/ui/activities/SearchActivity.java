@@ -25,8 +25,11 @@
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -55,12 +58,12 @@ import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -75,6 +78,8 @@ import io.reactivex.schedulers.Schedulers;
 public class SearchActivity extends BaseAppCompatActivity implements SearchContract.View {
     private static final String TAG = "SearchActivity";
 
+    private static final String ARG_SEARCH_TYPE = "search_type";
+
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)
@@ -87,6 +92,13 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     EditText editTextSearch;
 
     private SearchContract.Presenter mSearchPresenter;
+
+    public static void startActivity(Context context, @SEARCH_TYPE int searchType) {
+        Intent intent = new Intent(context, SearchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ARG_SEARCH_TYPE, searchType);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,6 +156,19 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
 
         tabLayoutSearch.setupWithViewPager(viewPagerSearch);
         changeTabTypeface(tabLayoutSearch);
+
+        // Change tab selection based on user selection from the previous screen.
+        if (!TextUtils.isEmpty(getIntent().getStringExtra(ARG_SEARCH_TYPE))) {
+            switch (getIntent().getIntExtra(ARG_SEARCH_TYPE, SEARCH_TYPE.POSTS)) {
+                case SEARCH_TYPE.POSTS:
+                    viewPagerSearch.setCurrentItem(0, false);
+                    break;
+                case SEARCH_TYPE.COLLECTIONS:
+                    viewPagerSearch.setCurrentItem(1, false);
+                    break;
+                default: viewPagerSearch.setCurrentItem(0, false);
+            }
+        }
     }
 
     private void initSearching() {
@@ -189,7 +214,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
             case R.id.menu_search_info:
                 showDialog(getString(R.string.activity_search_info_dialog_title),
                         getString(R.string.activity_search_info_dialog_message),
@@ -274,5 +299,12 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     protected void onDestroy() {
         super.onDestroy();
         mSearchPresenter.unSubscribe();
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({SEARCH_TYPE.POSTS, SEARCH_TYPE.COLLECTIONS})
+    public @interface SEARCH_TYPE {
+        int POSTS = 0;
+        int COLLECTIONS = 1;
     }
 }
