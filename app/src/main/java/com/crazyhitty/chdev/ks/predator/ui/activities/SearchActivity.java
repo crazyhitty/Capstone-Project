@@ -158,16 +158,14 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         changeTabTypeface(tabLayoutSearch);
 
         // Change tab selection based on user selection from the previous screen.
-        if (!TextUtils.isEmpty(getIntent().getStringExtra(ARG_SEARCH_TYPE))) {
-            switch (getIntent().getIntExtra(ARG_SEARCH_TYPE, SEARCH_TYPE.POSTS)) {
-                case SEARCH_TYPE.POSTS:
-                    viewPagerSearch.setCurrentItem(0, false);
-                    break;
-                case SEARCH_TYPE.COLLECTIONS:
-                    viewPagerSearch.setCurrentItem(1, false);
-                    break;
-                default: viewPagerSearch.setCurrentItem(0, false);
-            }
+        switch (getIntent().getIntExtra(ARG_SEARCH_TYPE, SEARCH_TYPE.POSTS)) {
+            case SEARCH_TYPE.POSTS:
+                viewPagerSearch.setCurrentItem(0, false);
+                break;
+            case SEARCH_TYPE.COLLECTIONS:
+                viewPagerSearch.setCurrentItem(1, false);
+                break;
+            default: viewPagerSearch.setCurrentItem(0, false);
         }
     }
 

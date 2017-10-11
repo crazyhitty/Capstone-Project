@@ -45,6 +45,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.activities.CollectionDetailsActivity;
+import com.crazyhitty.chdev.ks.predator.ui.activities.SearchActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CollectionsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
@@ -218,10 +219,17 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+        inflater.inflate(R.menu.menu_collections, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_collections_search:
+                SearchActivity.startActivity(getActivity().getApplicationContext(),
+                        SearchActivity.SEARCH_TYPE.COLLECTIONS);
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
