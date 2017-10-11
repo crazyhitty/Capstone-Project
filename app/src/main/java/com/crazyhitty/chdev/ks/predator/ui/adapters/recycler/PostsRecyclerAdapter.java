@@ -257,6 +257,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public boolean isEmpty() {
+        return mPosts == null || mPosts.isEmpty();
+    }
+
     /**
      * @param position Current position of the element.
      * @return Returns the unique id associated with the item at available position.
