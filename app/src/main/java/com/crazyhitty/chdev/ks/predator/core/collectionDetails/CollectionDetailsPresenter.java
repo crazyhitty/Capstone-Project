@@ -65,8 +65,6 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
 
     private CompositeDisposable mCompositeDisposable;
 
-    private Collection mCollection;
-
     public CollectionDetailsPresenter(@NonNull CollectionDetailsContract.View view) {
         this.mView = view;
         mCompositeDisposable = new CompositeDisposable();
@@ -101,19 +99,14 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.collectionDetailsUnavailable();
             }
 
             @Override
             public void onNext(Collection collection) {
-                mCollection = collection;
-                mView.showCollectionDetails(mCollection);
+                mView.showCollectionDetails(collection);
             }
         }));
-    }
-
-    @Override
-    public Collection getCurrentCollection() {
-        return mCollection;
     }
 
     @Override

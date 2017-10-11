@@ -202,7 +202,6 @@ public class CollectionFragment extends BaseSupportFragment implements Collectio
             @Override
             public void onItemClick(int position) {
                 CollectionDetailsActivity.startActivity(getContext(),
-                        mCollectionsRecyclerAdapter.getId(position),
                         mCollectionsRecyclerAdapter.getCollectionId(position));
             }
         });

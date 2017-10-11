@@ -24,6 +24,9 @@
 
 package com.crazyhitty.chdev.ks.predator.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -31,7 +34,7 @@ package com.crazyhitty.chdev.ks.predator.models;
  * Description: Unavailable
  */
 
-public class Collection {
+public class Collection implements Parcelable {
     private int id;
     private int collectionId;
     private String name;
@@ -49,6 +52,42 @@ public class Collection {
     private int userId;
     private String userImageUrl100px;
     private String userImageUrlOriginal;
+
+    public Collection() {
+
+    }
+
+    protected Collection(Parcel in) {
+        id = in.readInt();
+        collectionId = in.readInt();
+        name = in.readString();
+        title = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        featuredAt = in.readString();
+        subscriberCount = in.readString();
+        categoryId = in.readInt();
+        collectionUrl = in.readString();
+        postCounts = in.readInt();
+        backgroundImageUrl = in.readString();
+        username = in.readString();
+        usernameAlternative = in.readString();
+        userId = in.readInt();
+        userImageUrl100px = in.readString();
+        userImageUrlOriginal = in.readString();
+    }
+
+    public static final Creator<Collection> CREATOR = new Creator<Collection>() {
+        @Override
+        public Collection createFromParcel(Parcel in) {
+            return new Collection(in);
+        }
+
+        @Override
+        public Collection[] newArray(int size) {
+            return new Collection[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -184,5 +223,31 @@ public class Collection {
 
     public void setUserImageUrlOriginal(String userImageUrlOriginal) {
         this.userImageUrlOriginal = userImageUrlOriginal;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(collectionId);
+        dest.writeString(name);
+        dest.writeString(title);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeString(featuredAt);
+        dest.writeString(subscriberCount);
+        dest.writeInt(categoryId);
+        dest.writeString(collectionUrl);
+        dest.writeInt(postCounts);
+        dest.writeString(backgroundImageUrl);
+        dest.writeString(username);
+        dest.writeString(usernameAlternative);
+        dest.writeInt(userId);
+        dest.writeString(userImageUrl100px);
+        dest.writeString(userImageUrlOriginal);
     }
 }

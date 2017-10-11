@@ -132,8 +132,8 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
             @Override
             public void onItemClick(int position) {
                 CollectionDetailsActivity.startActivity(getContext(),
-                        mCollectionsRecyclerAdapter.getId(position),
-                        mCollectionsRecyclerAdapter.getCollectionId(position));
+                        mCollectionsRecyclerAdapter.getCollectionId(position),
+                        mCollectionsRecyclerAdapter.getCollection(position));
             }
         });
     }

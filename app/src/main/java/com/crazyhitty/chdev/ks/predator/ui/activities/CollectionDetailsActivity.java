@@ -57,8 +57,9 @@ import butterknife.ButterKnife;
 
 public class CollectionDetailsActivity extends BaseAppCompatActivity implements CollectionDetailsFragment.OnFragmentInteractionListener {
     private static final String TAG = "CollectionDetailsActivity";
-    private static final String ARG_COLLECTION_TABLE_ID = "id";
+
     private static final String ARG_COLLECTION_TABLE_COLLECTION_ID = "collection_id";
+    private static final String ARG_COLLECTION_FALLBACK_DATA = "collection_fallback_data";
 
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
@@ -71,11 +72,20 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
     @BindView(R.id.text_view_collection_desc)
     TextView txtCollectionDesc;
 
-    public static void startActivity(Context context, int id, int collectionId) {
+    public static void startActivity(Context context, int collectionId) {
         Intent intent = new Intent(context, CollectionDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ARG_COLLECTION_TABLE_ID, id);
         intent.putExtra(ARG_COLLECTION_TABLE_COLLECTION_ID, collectionId);
+        context.startActivity(intent);
+    }
+
+    public static void startActivity(Context context,
+                                     int collectionId,
+                                     Collection collectionFallback) {
+        Intent intent = new Intent(context, CollectionDetailsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ARG_COLLECTION_TABLE_COLLECTION_ID, collectionId);
+        intent.putExtra(ARG_COLLECTION_FALLBACK_DATA, collectionFallback);
         context.startActivity(intent);
     }
 
@@ -92,6 +102,12 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
         // This is done inorder to stop reloading fragment on orientation changes.
         if (savedInstanceState == null) {
             initCollectionDetailsFragment();
+        }
+
+        // Check if fallback data is available or not.
+        if (getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA) != null) {
+            Collection collectionFallback = getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA);
+            setToolbarTitle(collectionFallback.getTitle());
         }
     }
 
@@ -132,12 +148,11 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
     }
 
     private void initCollectionDetailsFragment() {
-        // Get id and collectionId from intent.
-        int id = getIntent().getExtras().getInt(ARG_COLLECTION_TABLE_ID);
-        int collectionId = getIntent().getExtras().getInt(ARG_COLLECTION_TABLE_COLLECTION_ID);
+        // Get collectionId from intent.
+        int collectionId = getIntent().getExtras().getInt(ARG_COLLECTION_TABLE_COLLECTION_ID, -1);
         // Send this id to the fragment which will be hosted under this activity.
         setFragment(R.id.frame_layout_collection_details_container,
-                CollectionDetailsFragment.newInstance(id, collectionId),
+                CollectionDetailsFragment.newInstance(collectionId),
                 false);
     }
 
@@ -161,6 +176,14 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
             imgViewCollection.setVisibility(View.GONE);
         } else {
             imgViewCollection.setImageURI(collection.getBackgroundImageUrl());
+        }
+    }
+
+    @Override
+    public void resortToFallbackData() {
+        if (getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA) != null) {
+            Collection collectionFallback = getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA);
+            setAppBarContents(collectionFallback);
         }
     }
 

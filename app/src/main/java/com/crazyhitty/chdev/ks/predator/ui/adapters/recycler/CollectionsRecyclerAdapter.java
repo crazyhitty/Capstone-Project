@@ -233,6 +233,10 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mCollections.get(position).getCollectionId();
     }
 
+    public Collection getCollection(int position) {
+        return mCollections.get(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.
