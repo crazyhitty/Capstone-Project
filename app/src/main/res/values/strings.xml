@@ -292,10 +292,12 @@
     <!--fragment_search_posts-->
     <string name="fragment_search_posts_search_something">Type something and we will find some posts for you&#8230;</string>
     <string name="fragment_search_posts_error_icon_desc">Error icon</string>
+    <string name="fragment_search_posts_network_error">Looks like your internet connection is turned off, please switch it on and retry.</string>
 
     <!--fragment_search_collections-->
     <string name="fragment_search_collections_search_something">Type something and we will find some collections for you&#8230;</string>
     <string name="fragment_search_collections_error_icon_desc">Error icon</string>
+    <string name="fragment_search_collections_network_error">Looks like your internet connection is turned off, please switch it on and retry.</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>
