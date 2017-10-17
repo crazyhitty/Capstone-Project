@@ -601,6 +601,7 @@ public class SearchData {
 
                 private Name name;
                 private Tagline tagline;
+                private Title title;
 
                 public Name getName() {
                     return name;
@@ -616,6 +617,14 @@ public class SearchData {
 
                 public void setTagline(Tagline tagline) {
                     this.tagline = tagline;
+                }
+
+                public Title getTitle() {
+                    return title;
+                }
+
+                public void setTitle(Title title) {
+                    this.title = title;
                 }
 
                 public static class Name {
@@ -665,6 +674,52 @@ public class SearchData {
                 }
 
                 public static class Tagline {
+                    /**
+                     * value : Connect everyone in your company and turn ideas into action
+                     * matchLevel : none
+                     * fullyHighlighted : false
+                     * matchedWords : ["work"]
+                     */
+
+                    private String value;
+                    private String matchLevel;
+                    private boolean fullyHighlighted;
+                    private List<String> matchedWords;
+
+                    public String getValue() {
+                        return value;
+                    }
+
+                    public void setValue(String value) {
+                        this.value = value;
+                    }
+
+                    public String getMatchLevel() {
+                        return matchLevel;
+                    }
+
+                    public void setMatchLevel(String matchLevel) {
+                        this.matchLevel = matchLevel;
+                    }
+
+                    public boolean isFullyHighlighted() {
+                        return fullyHighlighted;
+                    }
+
+                    public void setFullyHighlighted(boolean fullyHighlighted) {
+                        this.fullyHighlighted = fullyHighlighted;
+                    }
+
+                    public List<String> getMatchedWords() {
+                        return matchedWords;
+                    }
+
+                    public void setMatchedWords(List<String> matchedWords) {
+                        this.matchedWords = matchedWords;
+                    }
+                }
+
+                public static class Title {
                     /**
                      * value : Connect everyone in your company and turn ideas into action
                      * matchLevel : none

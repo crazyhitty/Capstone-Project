@@ -29,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,12 +155,15 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         String title = mCollections.get(position).getName();
         String description = mCollections.get(position).getTitle();
 
-        collectionViewHolder.txtTitle.setText(title);
+        Spannable titleSpannable = mCollections.get(position).getNameSpannable();
+        Spannable descriptionSpannable = mCollections.get(position).getTitleSpannable();
+
+        collectionViewHolder.txtTitle.setText(titleSpannable != null ? titleSpannable : title);
 
         if (TextUtils.isEmpty(description)) {
             description = collectionViewHolder.itemView.getResources().getString(R.string.item_collection_no_desc_available);
         }
-        collectionViewHolder.txtDescription.setText(description);
+        collectionViewHolder.txtDescription.setText(descriptionSpannable != null ? descriptionSpannable : description);
 
         if (!mColorHashMap.containsKey(position)) {
             if (PredatorSharedPreferences.getCurrentTheme(collectionViewHolder.itemView.getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT) {

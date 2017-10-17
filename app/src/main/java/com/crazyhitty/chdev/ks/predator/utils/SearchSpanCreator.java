@@ -66,6 +66,10 @@ public class SearchSpanCreator {
             return null;
         }
 
+        if (TextUtils.isEmpty(text)) {
+            return null;
+        }
+
         String patternString = getPattern(selections);
         Logger.d(TAG, "create: pattern: " + patternString);
         if (TextUtils.isEmpty(patternString)) {

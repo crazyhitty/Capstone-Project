@@ -165,6 +165,11 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 collection.setUsername(hit.getUser().getName());
                                                 collection.setUsernameAlternative(hit.getUser().getUsername());
                                                 collection.setUserImageUrl100px(hit.getUser().getAvatarUrl());
+                                                collection.setNameSpannable(getSpannableText(hit.getName(),
+                                                        hit.getHighlightResult().getName().getMatchedWords()));
+                                                /*collection.setTitleSpannable(getSpannableText(hit.getTitle(),
+                                                        hit.getHighlightResult().getTitle().getMatchedWords()));*/
+
                                                 collections.add(collection);
                                             }
 
@@ -345,6 +350,10 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 collection.setUsername(hit.getUser().getName());
                                                 collection.setUsernameAlternative(hit.getUser().getUsername());
                                                 collection.setUserImageUrl100px(hit.getUser().getAvatarUrl());
+                                                collection.setNameSpannable(getSpannableText(hit.getName(),
+                                                        hit.getHighlightResult().getName().getMatchedWords()));
+                                                /*collection.setTitleSpannable(getSpannableText(hit.getTitle(),
+                                                        hit.getHighlightResult().getTitle().getMatchedWords()));*/
                                                 collections.add(collection);
                                             }
 

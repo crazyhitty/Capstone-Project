@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.Spannable;
 
 /**
  * Author:      Kartik Sharma
@@ -52,6 +53,8 @@ public class Collection implements Parcelable {
     private int userId;
     private String userImageUrl100px;
     private String userImageUrlOriginal;
+    private Spannable nameSpannable;
+    private Spannable titleSpannable;
 
     public Collection() {
 
@@ -223,6 +226,22 @@ public class Collection implements Parcelable {
 
     public void setUserImageUrlOriginal(String userImageUrlOriginal) {
         this.userImageUrlOriginal = userImageUrlOriginal;
+    }
+
+    public Spannable getNameSpannable() {
+        return nameSpannable;
+    }
+
+    public void setNameSpannable(Spannable nameSpannable) {
+        this.nameSpannable = nameSpannable;
+    }
+
+    public Spannable getTitleSpannable() {
+        return titleSpannable;
+    }
+
+    public void setTitleSpannable(Spannable titleSpannable) {
+        this.titleSpannable = titleSpannable;
     }
 
     @Override
