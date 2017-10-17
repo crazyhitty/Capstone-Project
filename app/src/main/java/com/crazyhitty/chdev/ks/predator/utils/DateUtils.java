@@ -53,7 +53,7 @@ public class DateUtils {
      * @return Get current date in default date format.
      */
     public static String getPredatorCurrentDate() {
-        return new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+        return new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.getDefault())
                 .format(Calendar.getInstance().getTime());
     }
 
@@ -66,7 +66,7 @@ public class DateUtils {
     public static long predatorDateToMillis(String date) {
         Date providedDate = null;
         try {
-            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.getDefault())
                     .parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class DateUtils {
     public static String getPredatorPostPreviousDate(String date) {
         Date providedDate = null;
         try {
-            providedDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+            providedDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.getDefault())
                     .parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -111,7 +111,7 @@ public class DateUtils {
 
         Date providedDate = null;
         try {
-            providedDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+            providedDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT, Locale.getDefault())
                     .parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -131,7 +131,7 @@ public class DateUtils {
                 Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
                 return newDate;
             default:
-                newDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_FINAL_FORMAT, Locale.US)
+                newDate = new SimpleDateFormat(PREDATOR_DATE_PATTERN_FINAL_FORMAT, Locale.getDefault())
                         .format(providedDate);
                 Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
                 return newDate;
@@ -147,14 +147,14 @@ public class DateUtils {
     public static String getPredatorPostCompleteDate(String date) {
         Date providedDate = null;
         try {
-            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.US)
+            providedDate = new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_ORIGINAL_FORMAT, Locale.getDefault())
                     .parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
             return date;
         }
 
-        return new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_FINAL_FORMAT, Locale.US)
+        return new SimpleDateFormat(PREDATOR_COMPLETE_DATE_PATTERN_FINAL_FORMAT, Locale.getDefault())
                 .format(providedDate);
     }
 
