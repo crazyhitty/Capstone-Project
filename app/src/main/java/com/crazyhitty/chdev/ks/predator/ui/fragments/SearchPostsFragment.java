@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +43,9 @@ import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CollectionPostItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -69,11 +72,24 @@ public class SearchPostsFragment extends BaseSupportFragment {
 
     private PostsRecyclerAdapter mPostsRecyclerAdapter;
 
+    private OnFragmentInteractionListener mOnFragmentInteractionListener;
+
     public static SearchPostsFragment newInstance() {
         Bundle args = new Bundle();
         SearchPostsFragment fragment = new SearchPostsFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mOnFragmentInteractionListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Nullable
@@ -101,6 +117,12 @@ public class SearchPostsFragment extends BaseSupportFragment {
 
         mPostsRecyclerAdapter = new PostsRecyclerAdapter(null,
                 PostsRecyclerAdapter.TYPE.LIST);
+        mPostsRecyclerAdapter.setOnPostsLoadMoreRetryListener(new PostsRecyclerAdapter.OnPostsLoadMoreRetryListener() {
+            @Override
+            public void onLoadMore() {
+                mOnFragmentInteractionListener.loadMorePosts();
+            }
+        });
         recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
 
         mPostsRecyclerAdapter.setOnItemClickListener(new PostsRecyclerAdapter.OnItemClickListener() {
@@ -111,35 +133,67 @@ public class SearchPostsFragment extends BaseSupportFragment {
                         PostDetails.fromPost(mPostsRecyclerAdapter.getPost(position)));
             }
         });
+
+        // Add scroll listener that will manage scroll down to load more functionality.
+        recyclerViewPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Check if the last item is on screen, if yes then start loading more posts.
+                if (layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1 &&
+                        linearLayoutError.getVisibility() == View.GONE &&
+                        progressBarLoading.getVisibility() == View.GONE) {
+                    mOnFragmentInteractionListener.loadMorePosts();
+                }
+            }
+        });
+
+        mPostsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false),
+                getString(R.string.item_load_more_posts_error_desc));
     }
 
-    public void updatePosts(List<Post> posts) {
+    public void updatePosts(List<Post> posts, boolean loadMore) {
         linearLayoutError.setVisibility(View.GONE);
-        mPostsRecyclerAdapter.updateDataset(posts, true);
+        if (loadMore) {
+            mPostsRecyclerAdapter.addDataset(posts);
+        } else {
+            mPostsRecyclerAdapter.updateDataset(posts, true);
+        }
     }
 
-    public void noPostsAvailable() {
+    public void noPostsAvailable(boolean loadMore) {
         linearLayoutError.setVisibility(View.VISIBLE);
         mPostsRecyclerAdapter.clear();
+        if (loadMore) {
+            mPostsRecyclerAdapter.removeLoadingView();
+        }
     }
 
-    public void networkUnavailable() {
-        if (mPostsRecyclerAdapter.isEmpty()) {
-            linearLayoutError.setVisibility(View.VISIBLE);
-            txtMessage.setText(R.string.fragment_search_posts_network_error);
-        } else {
-            showShortToast(R.string.not_connected_to_network_err);
+    public void onNetworkConnectivityChanged(boolean status) {
+        mPostsRecyclerAdapter.setNetworkStatus(status, getString(R.string.item_load_more_posts_error_desc));
+        if (!status) {
+            if (mPostsRecyclerAdapter.isEmpty()) {
+                linearLayoutError.setVisibility(View.VISIBLE);
+                txtMessage.setText(R.string.fragment_search_posts_network_error);
+            } else {
+                showShortToast(R.string.not_connected_to_network_err);
+                mPostsRecyclerAdapter.setNetworkStatus(false, getString(R.string.item_load_more_posts_error_desc));
+            }
         }
     }
 
     public void searchingStarted() {
-        if (mPostsRecyclerAdapter.isEmpty()) {
-            linearLayoutError.setVisibility(View.GONE);
-            progressBarLoading.setVisibility(View.VISIBLE);
-        }
+        mPostsRecyclerAdapter.clear();
+        linearLayoutError.setVisibility(View.GONE);
+        progressBarLoading.setVisibility(View.VISIBLE);
     }
 
     public void searchingStopped() {
         progressBarLoading.setVisibility(View.GONE);
+    }
+
+    public interface OnFragmentInteractionListener {
+        void loadMorePosts();
     }
 }

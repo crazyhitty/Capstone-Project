@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,6 +111,11 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setOnPostsLoadMoreRetryListener(OnPostsLoadMoreRetryListener onPostsLoadMoreRetryListener) {
+        mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
+        mLoadMoreNotRequired = false;
+    }
+
     public void setType(TYPE type) {
         mType = type;
     }
@@ -147,10 +153,22 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
+    public void addDataset(@NonNull List<Post> posts) {
+        if (mPosts != null) {
+            int oldCount = mPosts.size();
+            mPosts.addAll(posts);
+            notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
+        }
+    }
+
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
         notifyItemChanged(getItemCount() - 1);
+    }
+
+    public void removeLoadingView() {
+        notifyItemRemoved(getItemCount() - 1);
     }
 
     public void clear() {

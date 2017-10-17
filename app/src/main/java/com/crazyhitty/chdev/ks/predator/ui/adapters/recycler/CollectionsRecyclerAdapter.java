@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -91,6 +92,10 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         notifyItemChanged(getItemCount() - 1);
     }
 
+    public void removeLoadingView() {
+        notifyItemRemoved(getItemCount() - 1);
+    }
+
     public void updateDataset(List<Collection> collections, boolean forceReplace) {
         mCollections = collections;
         if (forceReplace) {
@@ -98,6 +103,14 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             notifyDataSetChanged();
         } else {
             int oldCount = mCollections.size();
+            notifyItemRangeInserted(oldCount, mCollections.size() - oldCount);
+        }
+    }
+
+    public void addDataset(@NonNull List<Collection> collections) {
+        if (mCollections != null) {
+            int oldCount = mCollections.size();
+            mCollections.addAll(collections);
             notifyItemRangeInserted(oldCount, mCollections.size() - oldCount);
         }
     }

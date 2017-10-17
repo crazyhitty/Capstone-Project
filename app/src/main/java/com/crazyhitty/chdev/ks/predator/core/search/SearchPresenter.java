@@ -64,6 +64,12 @@ public class SearchPresenter implements SearchContract.Presenter {
     private SearchContract.View mView;
     private CompositeDisposable mCompositeDisposable;
 
+    private int mPostSearchPage = 0;
+    private int mCollectionSearchPage = 0;
+
+    private boolean mLoadingMorePosts = false;
+    private boolean mLoadingMoreCollections = false;
+
     public SearchPresenter(SearchContract.View view) {
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
@@ -82,6 +88,12 @@ public class SearchPresenter implements SearchContract.Presenter {
     @Override
     public void search(String keyword) {
         mCompositeDisposable.clear();
+
+        mPostSearchPage = 0;
+        mCollectionSearchPage = 0;
+
+        mLoadingMorePosts = false;
+        mLoadingMoreCollections = false;
 
         Observable<SearchDataType> searchDataTypeObservable = ProductHuntRestApi.getSearchApi()
                 .search(SearchRequestData.getDefaultRequest(keyword))
@@ -166,16 +178,16 @@ public class SearchPresenter implements SearchContract.Presenter {
                 switch (searchDataType.getType()) {
                     case POST:
                         if (searchDataType.getPosts() != null && !searchDataType.getPosts().isEmpty()) {
-                            mView.showPostResults(searchDataType.getPosts());
+                            mView.showPostResults(searchDataType.getPosts(), false);
                         } else {
-                            mView.noPostsAvailable();
+                            mView.noPostsAvailable(false);
                         }
                         break;
                     case COLLECTION:
                         if (searchDataType.getCollections() != null && !searchDataType.getCollections().isEmpty()) {
-                            mView.showCollectionResults(searchDataType.getCollections());
+                            mView.showCollectionResults(searchDataType.getCollections(), false);
                         } else {
-                            mView.noCollectionsAvailable();
+                            mView.noCollectionsAvailable(false);
                         }
                         break;
                 }
@@ -184,8 +196,8 @@ public class SearchPresenter implements SearchContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, e.getMessage(), e);
-                mView.noPostsAvailable();
-                mView.noCollectionsAvailable();
+                mView.noPostsAvailable(false);
+                mView.noCollectionsAvailable(false);
             }
 
             @Override
@@ -196,8 +208,188 @@ public class SearchPresenter implements SearchContract.Presenter {
     }
 
     @Override
+    public void loadMorePosts(String keyword) {
+        mLoadingMorePosts = true;
+
+        Observable<SearchDataType> searchDataTypeObservable = ProductHuntRestApi.getSearchApi()
+                .search(SearchRequestData.getPostRequest(keyword, mPostSearchPage + 1))
+                .flatMap(new Function<SearchData, ObservableSource<SearchDataType>>() {
+                    @Override
+                    public ObservableSource<SearchDataType> apply(final SearchData searchData) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<SearchDataType>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<SearchDataType> emitter) throws Exception {
+                                if (searchData == null) {
+                                    emitter.onError(new NullPointerException("SearchData is empty"));
+                                    emitter.onComplete();
+                                    return;
+                                }
+
+                                for (SearchData.Results results : searchData.getResults()) {
+                                    switch (results.getIndex()) {
+                                        case Constants.Search.POST_PRODUCTION:
+                                            List<Post> posts = new ArrayList<>();
+
+                                            for (SearchData.Results.Hits hit : results.getHits()) {
+                                                Post post = new Post();
+                                                post.setName(hit.getName());
+                                                post.setTagline(hit.getTagline());
+                                                post.setVotesCount(hit.getVoteCount());
+                                                post.setCommentCount(hit.getCommentsCount());
+                                                post.setCreatedAt(hit.getCreatedAt());
+                                                post.setCreatedAtMillis(hit.getPostedDate());
+                                                post.setPostId(hit.getId());
+                                                post.setRedirectUrl(hit.getUrl());
+                                                post.setThumbnailImageUrl(hit.getThumbnail().getImageUrl());
+                                                post.setUserId(hit.getUserId());
+                                                post.setUserImageUrlOriginal(hit.getUser().getAvatarUrl());
+                                                post.setUsername(hit.getUser().getName());
+                                                post.setUsernameAlternative(hit.getUser().getUsername());
+                                                posts.add(post);
+                                            }
+
+                                            SearchDataType searchDataPosts = new SearchDataType();
+                                            searchDataPosts.setPosts(posts);
+                                            searchDataPosts.setType(SearchDataType.TYPE.POST);
+                                            emitter.onNext(searchDataPosts);
+                                            break;
+                                    }
+                                }
+
+                                emitter.onComplete();
+                            }
+                        });
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(searchDataTypeObservable.subscribeWith(new DisposableObserver<SearchDataType>() {
+            @Override
+            public void onNext(SearchDataType searchDataType) {
+                switch (searchDataType.getType()) {
+                    case POST:
+                        mPostSearchPage++;
+                        if (searchDataType.getPosts() != null && !searchDataType.getPosts().isEmpty()) {
+                            mView.showPostResults(searchDataType.getPosts(), true);
+                        } else {
+                            mView.noPostsAvailable(true);
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, e.getMessage(), e);
+                mView.noPostsAvailable(true);
+            }
+
+            @Override
+            public void onComplete() {
+                // Done.
+                mLoadingMorePosts = false;
+            }
+        }));
+    }
+
+    @Override
+    public void loadMoreCollections(String keyword) {
+        mLoadingMoreCollections = true;
+
+        Observable<SearchDataType> searchDataTypeObservable = ProductHuntRestApi.getSearchApi()
+                .search(SearchRequestData.getCollectionRequest(keyword, mCollectionSearchPage + 1))
+                .flatMap(new Function<SearchData, ObservableSource<SearchDataType>>() {
+                    @Override
+                    public ObservableSource<SearchDataType> apply(final SearchData searchData) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<SearchDataType>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<SearchDataType> emitter) throws Exception {
+                                if (searchData == null) {
+                                    emitter.onError(new NullPointerException("SearchData is empty"));
+                                    emitter.onComplete();
+                                    return;
+                                }
+
+                                for (SearchData.Results results : searchData.getResults()) {
+                                    switch (results.getIndex()) {
+                                        case Constants.Search.COLLECTION_PRODUCTION:
+                                            List<Collection> collections = new ArrayList<>();
+
+                                            for (SearchData.Results.Hits hit : results.getHits()) {
+                                                Collection collection = new Collection();
+                                                collection.setCollectionId(hit.getId());
+                                                collection.setName(hit.getName());
+                                                collection.setTitle(hit.getTitle());
+                                                collection.setBackgroundImageUrl(hit.getBackgroundImageBannerUrl());
+                                                collection.setCollectionUrl(hit.getUrl());
+                                                collection.setCategoryId(hit.getCategoryId());
+                                                collection.setPostCounts(hit.getPostsCount());
+                                                collection.setUserId(hit.getUserId());
+                                                collection.setUsername(hit.getUser().getName());
+                                                collection.setUsernameAlternative(hit.getUser().getUsername());
+                                                collection.setUserImageUrl100px(hit.getUser().getAvatarUrl());
+                                                collections.add(collection);
+                                            }
+
+                                            SearchDataType searchDataCollections = new SearchDataType();
+                                            searchDataCollections.setCollections(collections);
+                                            searchDataCollections.setType(SearchDataType.TYPE.COLLECTION);
+                                            emitter.onNext(searchDataCollections);
+                                            break;
+                                    }
+                                }
+
+                                emitter.onComplete();
+                            }
+                        });
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(searchDataTypeObservable.subscribeWith(new DisposableObserver<SearchDataType>() {
+            @Override
+            public void onNext(SearchDataType searchDataType) {
+                switch (searchDataType.getType()) {
+                    case COLLECTION:
+                        mCollectionSearchPage++;
+                        if (searchDataType.getCollections() != null && !searchDataType.getCollections().isEmpty()) {
+                            mView.showCollectionResults(searchDataType.getCollections(), true);
+                        } else {
+                            mView.noCollectionsAvailable(true);
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, e.getMessage(), e);
+                mView.noCollectionsAvailable(true);
+            }
+
+            @Override
+            public void onComplete() {
+                // Done.
+                mLoadingMoreCollections = false;
+            }
+        }));
+    }
+
+    @Override
     public void cancelOngoingRequest() {
         mCompositeDisposable.clear();
+    }
+
+    @Override
+    public boolean isLoadingMorePosts() {
+        return mLoadingMorePosts;
+    }
+
+    @Override
+    public boolean isLoadingMoreCollections() {
+        return mLoadingMoreCollections;
     }
 
     private static class SearchDataType {

@@ -24,6 +24,10 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.models;
 
+import android.net.Uri;
+
+import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.QueryBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,14 +81,66 @@ public class SearchRequestData {
 
         List<Request> requests = new ArrayList<>();
 
+        QueryBuilder builder = new QueryBuilder()
+                .appendQueryParameter("query", query)
+                .appendQueryParameter("facetFilters", "[]")
+                .appendQueryParameter("numericFilters", "[]")
+                .appendQueryParameter("page", "0")
+                .appendQueryParameter("hitsPerPage", "10");
+
         Request requestPost = new Request();
         requestPost.setIndexName("Post_production");
-        requestPost.setParams("query=" + query + "&facetFilters=[]&numericFilters=[]&page=0&hitsPerPage=10");
+        requestPost.setParams(builder.build());
+
         requests.add(requestPost);
 
         Request requestCollection = new Request();
         requestCollection.setIndexName("Collection_production");
-        requestCollection.setParams("query=" + query + "&facetFilters=[]&numericFilters=[]&page=0&hitsPerPage=10");
+        requestCollection.setParams(builder.build());
+        requests.add(requestCollection);
+
+        searchRequestData.setRequests(requests);
+
+        return searchRequestData;
+    }
+
+    public static SearchRequestData getPostRequest(String query, int page) {
+        SearchRequestData searchRequestData = new SearchRequestData();
+
+        QueryBuilder builder = new QueryBuilder()
+                .appendQueryParameter("query", query)
+                .appendQueryParameter("facetFilters", "[]")
+                .appendQueryParameter("numericFilters", "[]")
+                .appendQueryParameter("page", String.valueOf(page))
+                .appendQueryParameter("hitsPerPage", "10");
+
+        List<Request> requests = new ArrayList<>();
+
+        Request requestPost = new Request();
+        requestPost.setIndexName("Post_production");
+        requestPost.setParams(builder.build());
+        requests.add(requestPost);
+
+        searchRequestData.setRequests(requests);
+
+        return searchRequestData;
+    }
+
+    public static SearchRequestData getCollectionRequest(String query, int page) {
+        SearchRequestData searchRequestData = new SearchRequestData();
+
+        List<Request> requests = new ArrayList<>();
+
+        QueryBuilder builder = new QueryBuilder()
+                .appendQueryParameter("query", query)
+                .appendQueryParameter("facetFilters", "[]")
+                .appendQueryParameter("numericFilters", "[]")
+                .appendQueryParameter("page", String.valueOf(page))
+                .appendQueryParameter("hitsPerPage", "10");
+
+        Request requestCollection = new Request();
+        requestCollection.setIndexName("Collection_production");
+        requestCollection.setParams(builder.build());
         requests.add(requestCollection);
 
         searchRequestData.setRequests(requests);

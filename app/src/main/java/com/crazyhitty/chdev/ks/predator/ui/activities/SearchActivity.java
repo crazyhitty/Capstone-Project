@@ -39,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -46,6 +47,7 @@ import android.widget.EditText;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.search.SearchContract;
 import com.crazyhitty.chdev.ks.predator.core.search.SearchPresenter;
+import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.SearchPagerAdapter;
@@ -53,10 +55,14 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchCollectionsFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchPostsFragment;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -75,7 +81,9 @@ import io.reactivex.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class SearchActivity extends BaseAppCompatActivity implements SearchContract.View {
+public class SearchActivity extends BaseAppCompatActivity implements SearchContract.View,
+        SearchPostsFragment.OnFragmentInteractionListener,
+        SearchCollectionsFragment.OnFragmentInteractionListener {
     private static final String TAG = "SearchActivity";
 
     private static final String ARG_SEARCH_TYPE = "search_type";
@@ -183,8 +191,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                             editTextSearch.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    noPostsAvailable();
-                                    noCollectionsAvailable();
+                                    noPostsAvailable(false);
+                                    noCollectionsAvailable(false);
                                     mSearchPresenter.cancelOngoingRequest();
                                 }
                             });
@@ -235,10 +243,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void showPostResults(List<Post> posts) {
+    public void showPostResults(List<Post> posts, boolean loadMore) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchPostsFragment) {
-                ((SearchPostsFragment) fragment).updatePosts(posts);
+                ((SearchPostsFragment) fragment).updatePosts(posts, loadMore);
                 ((SearchPostsFragment) fragment).searchingStopped();
             }
         }
@@ -246,10 +254,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void noPostsAvailable() {
+    public void noPostsAvailable(boolean loadMore) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchPostsFragment) {
-                ((SearchPostsFragment) fragment).noPostsAvailable();
+                ((SearchPostsFragment) fragment).noPostsAvailable(loadMore);
                 ((SearchPostsFragment) fragment).searchingStopped();
             }
         }
@@ -257,10 +265,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void showCollectionResults(List<Collection> collections) {
+    public void showCollectionResults(List<Collection> collections, boolean loadMore) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchCollectionsFragment) {
-                ((SearchCollectionsFragment) fragment).updateCollections(collections);
+                ((SearchCollectionsFragment) fragment).updateCollections(collections, loadMore);
                 ((SearchCollectionsFragment) fragment).searchingStopped();
             }
         }
@@ -268,10 +276,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void noCollectionsAvailable() {
+    public void noCollectionsAvailable(boolean loadMore) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchCollectionsFragment) {
-                ((SearchCollectionsFragment) fragment).noCollectionsAvailable();
+                ((SearchCollectionsFragment) fragment).noCollectionsAvailable(loadMore);
                 ((SearchCollectionsFragment) fragment).searchingStopped();
             }
         }
@@ -281,9 +289,9 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     private void networkUnavailable() {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof SearchPostsFragment) {
-                ((SearchPostsFragment) fragment).networkUnavailable();
+                ((SearchPostsFragment) fragment).onNetworkConnectivityChanged(false);
             } else if (fragment instanceof SearchCollectionsFragment) {
-                ((SearchCollectionsFragment) fragment).networkUnavailable();
+                ((SearchCollectionsFragment) fragment).onNetworkConnectivityChanged(false);
             }
         }
     }
@@ -303,6 +311,34 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     protected void onDestroy() {
         super.onDestroy();
         mSearchPresenter.unSubscribe();
+    }
+
+    @Override
+    public void loadMorePosts() {
+        if (!TextUtils.isEmpty(editTextSearch.getText().toString()) &&
+                !mSearchPresenter.isLoadingMorePosts()) {
+            mSearchPresenter.loadMorePosts(editTextSearch.getText().toString());
+        }
+    }
+
+    @Override
+    public void loadMoreCollections() {
+        if (!TextUtils.isEmpty(editTextSearch.getText().toString()) &&
+                !mSearchPresenter.isLoadingMorePosts()) {
+            mSearchPresenter.loadMoreCollections(editTextSearch.getText().toString());
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkConnectivityChanged(NetworkEvent networkEvent) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).onNetworkConnectivityChanged(networkEvent.isConnected());
+            } else if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).onNetworkConnectivityChanged(networkEvent.isConnected());
+            }
+        }
     }
 
     @Retention(RetentionPolicy.SOURCE)

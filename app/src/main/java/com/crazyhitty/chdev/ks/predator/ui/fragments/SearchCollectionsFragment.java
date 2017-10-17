@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -68,11 +69,26 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
 
     private CollectionsRecyclerAdapter mCollectionsRecyclerAdapter;
 
+    private OnFragmentInteractionListener mOnFragmentInteractionListener;
+
+    private int mPastVisibleItems, mVisibleItemCount, mTotalItemCount;
+
     public static SearchCollectionsFragment newInstance() {
         Bundle args = new Bundle();
         SearchCollectionsFragment fragment = new SearchCollectionsFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mOnFragmentInteractionListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Nullable
@@ -99,7 +115,7 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
         recyclerViewCollections.addItemDecoration(new CollectionItemDecorator(getContext(), 8));
 
         // Add scroll listener that will manage scroll down to load more functionality.
-        /*recyclerViewCollections.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerViewCollections.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -115,16 +131,20 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
                 }
 
                 if (((mVisibleItemCount + mPastVisibleItems) >= mTotalItemCount) &&
-                        !mIsLoading &&
-                        isNetworkAvailable(false)) {
-                    mIsLoading = true;
-                    loadMoreCollections();
+                        linearLayoutError.getVisibility() == View.GONE &&
+                        progressBarLoading.getVisibility() == View.GONE) {
+                    mOnFragmentInteractionListener.loadMoreCollections();
                 }
             }
-        });*/
+        });
 
         // Create adapter that will power this recycler view.
-        mCollectionsRecyclerAdapter = new CollectionsRecyclerAdapter();
+        mCollectionsRecyclerAdapter = new CollectionsRecyclerAdapter(null, new CollectionsRecyclerAdapter.OnCollectionsLoadMoreRetryListener() {
+            @Override
+            public void onLoadMore() {
+                mOnFragmentInteractionListener.loadMoreCollections();
+            }
+        });
 
         recyclerViewCollections.setAdapter(mCollectionsRecyclerAdapter);
 
@@ -136,35 +156,50 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
                         mCollectionsRecyclerAdapter.getCollection(position));
             }
         });
+
+        mCollectionsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
     }
 
-    public void updateCollections(List<Collection> collections) {
+    public void updateCollections(List<Collection> collections, boolean loadMore) {
         linearLayoutError.setVisibility(View.GONE);
-        mCollectionsRecyclerAdapter.updateDataset(collections, true);
+        if (loadMore) {
+            mCollectionsRecyclerAdapter.addDataset(collections);
+        } else {
+            mCollectionsRecyclerAdapter.updateDataset(collections, true);
+        }
     }
 
-    public void noCollectionsAvailable() {
+    public void noCollectionsAvailable(boolean loadMore) {
         linearLayoutError.setVisibility(View.VISIBLE);
         mCollectionsRecyclerAdapter.clear();
+        if (loadMore) {
+            mCollectionsRecyclerAdapter.removeLoadingView();
+        }
     }
 
-    public void networkUnavailable() {
-        if (mCollectionsRecyclerAdapter.isEmpty()) {
-            linearLayoutError.setVisibility(View.VISIBLE);
-            txtMessage.setText(R.string.fragment_search_posts_network_error);
-        } else {
-            showShortToast(R.string.not_connected_to_network_err);
+    public void onNetworkConnectivityChanged(boolean status) {
+        if (!status) {
+            if (mCollectionsRecyclerAdapter.isEmpty()) {
+                linearLayoutError.setVisibility(View.VISIBLE);
+                txtMessage.setText(R.string.fragment_search_posts_network_error);
+            } else {
+                showShortToast(R.string.not_connected_to_network_err);
+            }
         }
+        mCollectionsRecyclerAdapter.setNetworkStatus(status, getString(R.string.item_load_more_collection_error_desc));
     }
 
     public void searchingStarted() {
-        if (mCollectionsRecyclerAdapter.isEmpty()) {
-            linearLayoutError.setVisibility(View.GONE);
-            progressBarLoading.setVisibility(View.VISIBLE);
-        }
+        mCollectionsRecyclerAdapter.clear();
+        linearLayoutError.setVisibility(View.GONE);
+        progressBarLoading.setVisibility(View.VISIBLE);
     }
 
     public void searchingStopped() {
         progressBarLoading.setVisibility(View.GONE);
+    }
+
+    public interface OnFragmentInteractionListener {
+        void loadMoreCollections();
     }
 }
