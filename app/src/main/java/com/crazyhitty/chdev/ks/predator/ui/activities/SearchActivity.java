@@ -34,6 +34,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -117,7 +118,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
         initAppBarLayout();
         initToolbar();
         initViewPager();
-        setPresenter(new SearchPresenter(this));
+        setPresenter(new SearchPresenter(this,
+                ContextCompat.getColor(getApplicationContext(), R.color.color_accent)));
         mSearchPresenter.subscribe();
         initSearching();
     }

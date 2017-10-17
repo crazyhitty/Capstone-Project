@@ -26,6 +26,7 @@ package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -210,6 +212,12 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         String title = mPosts.get(position).getName();
         String shortDesc = mPosts.get(position).getTagline();
 
+        Spannable titleSpannable = mPosts.get(position).getNameSpannable();
+        Spannable shortDescSpannable = mPosts.get(position).getTaglineSpannable();
+
+        Logger.d(TAG, "titleSpannable: " + titleSpannable);
+        Logger.d(TAG, "shortDescSpannable: " + shortDescSpannable);
+
         String postImageUrl = mPosts.get(position).getThumbnailImageUrl();
         postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postImageUrl,
                 ScreenUtils.dpToPxInt(listItemViewHolder.itemView.getContext(), 44),
@@ -218,8 +226,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         String date = mDateHashMap.get(position);
         boolean showDate = (date != null);
 
-        listItemViewHolder.txtPostTitle.setText(title);
-        listItemViewHolder.txtShortDesc.setText(shortDesc);
+        listItemViewHolder.txtPostTitle.setText(titleSpannable != null ? titleSpannable : title);
+        listItemViewHolder.txtShortDesc.setText(shortDescSpannable != null ? shortDescSpannable : shortDesc);
         listItemViewHolder.txtDate.setText(date);
         listItemViewHolder.txtDate.setVisibility(showDate ? View.VISIBLE : View.GONE);
         listItemViewHolder.imageViewPost.setImageURI(postImageUrl);

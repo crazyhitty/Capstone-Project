@@ -24,12 +24,17 @@
 
 package com.crazyhitty.chdev.ks.predator.core.search;
 
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.SearchSpanCreator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchRequestData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
@@ -70,9 +75,12 @@ public class SearchPresenter implements SearchContract.Presenter {
     private boolean mLoadingMorePosts = false;
     private boolean mLoadingMoreCollections = false;
 
-    public SearchPresenter(SearchContract.View view) {
+    private int mSearchSpanColor = SearchSpanCreator.COLOR_NONE;
+
+    public SearchPresenter(SearchContract.View view, int searchSpanColor) {
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
+        mSearchSpanColor = searchSpanColor;
     }
 
     @Override
@@ -129,6 +137,10 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 post.setUserImageUrlOriginal(hit.getUser().getAvatarUrl());
                                                 post.setUsername(hit.getUser().getName());
                                                 post.setUsernameAlternative(hit.getUser().getUsername());
+                                                post.setNameSpannable(getSpannableText(hit.getName(),
+                                                        hit.getHighlightResult().getName().getMatchedWords()));
+                                                post.setTaglineSpannable(getSpannableText(hit.getTagline(),
+                                                        hit.getHighlightResult().getTagline().getMatchedWords()));
                                                 posts.add(post);
                                             }
 
@@ -245,6 +257,10 @@ public class SearchPresenter implements SearchContract.Presenter {
                                                 post.setUserImageUrlOriginal(hit.getUser().getAvatarUrl());
                                                 post.setUsername(hit.getUser().getName());
                                                 post.setUsernameAlternative(hit.getUser().getUsername());
+                                                post.setNameSpannable(getSpannableText(hit.getName(),
+                                                        hit.getHighlightResult().getName().getMatchedWords()));
+                                                post.setTaglineSpannable(getSpannableText(hit.getTagline(),
+                                                        hit.getHighlightResult().getTagline().getMatchedWords()));
                                                 posts.add(post);
                                             }
 
@@ -390,6 +406,11 @@ public class SearchPresenter implements SearchContract.Presenter {
     @Override
     public boolean isLoadingMoreCollections() {
         return mLoadingMoreCollections;
+    }
+
+    private Spannable getSpannableText(String text, List<String> selections) {
+        return SearchSpanCreator.getInstance()
+                .create(mSearchSpanColor, text, selections);
     }
 
     private static class SearchDataType {
