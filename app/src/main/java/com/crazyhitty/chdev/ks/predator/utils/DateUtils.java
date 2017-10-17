@@ -121,6 +121,12 @@ public class DateUtils {
         providedCalendar.setTime(providedDate);
         String newDate = null;
 
+        if (providedCalendar.after(currentCalendar)) {
+            newDate = "Future";
+            Logger.d(TAG, "getPredatorPostDate: provided: " + date + " ; new: " + newDate);
+            return newDate;
+        }
+
         switch (daysBetween(currentCalendar, providedCalendar)) {
             case 0:
                 newDate = "Today";
