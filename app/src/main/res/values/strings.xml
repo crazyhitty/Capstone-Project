@@ -297,11 +297,15 @@
     <string name="fragment_search_posts_search_something">Type something and we will find some posts for you&#8230;</string>
     <string name="fragment_search_posts_error_icon_desc">Error icon</string>
     <string name="fragment_search_posts_network_error">Looks like your internet connection is turned off, please switch it on and retry.</string>
+    <string name="fragment_search_posts_unavailable">No posts available, please search something else</string>
+    <string name="fragment_search_posts_max_limit_error">No more posts available, looks like you reached end of the list!</string>
 
     <!--fragment_search_collections-->
     <string name="fragment_search_collections_search_something">Type something and we will find some collections for you&#8230;</string>
     <string name="fragment_search_collections_error_icon_desc">Error icon</string>
     <string name="fragment_search_collections_network_error">Looks like your internet connection is turned off, please switch it on and retry.</string>
+    <string name="fragment_search_collections_unavailable">No collections available, please search something else</string>
+    <string name="fragment_search_collections_max_limit_error">No more collections available, looks like you reached end of the list!</string>
 
     <!--settings-->
     <string name="settings_name">Settings</string>

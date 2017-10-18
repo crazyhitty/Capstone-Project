@@ -118,6 +118,14 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mLoadMoreNotRequired = false;
     }
 
+    public void setLoadMore(boolean canLoadMore) {
+        mLoadMoreNotRequired = !canLoadMore;
+    }
+
+    public boolean canLoadMore() {
+        return !mLoadMoreNotRequired;
+    }
+
     public void setType(TYPE type) {
         mType = type;
     }
@@ -166,7 +174,7 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        if (!isEmpty()) {
+        if (!isEmpty() && canLoadMore()) {
             notifyItemChanged(getItemCount() - 1);
         }
     }

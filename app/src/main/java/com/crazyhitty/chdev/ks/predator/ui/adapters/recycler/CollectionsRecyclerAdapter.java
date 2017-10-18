@@ -87,10 +87,18 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setLoadMore(boolean canLoadMore) {
+        mLoadMoreNotRequired = !canLoadMore;
+    }
+
+    public boolean canLoadMore() {
+        return !mLoadMoreNotRequired;
+    }
+
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        if (!isEmpty()) {
+        if (!isEmpty() && canLoadMore()) {
             notifyItemChanged(getItemCount() - 1);
         }
     }

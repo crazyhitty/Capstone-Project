@@ -195,8 +195,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                             editTextSearch.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    noPostsAvailable(false);
-                                    noCollectionsAvailable(false);
+                                    searchInit();
                                     mSearchPresenter.cancelOngoingRequest();
                                 }
                             });
@@ -285,6 +284,17 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
             if (fragment instanceof SearchCollectionsFragment) {
                 ((SearchCollectionsFragment) fragment).noCollectionsAvailable(loadMore);
                 ((SearchCollectionsFragment) fragment).searchingStopped();
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void searchInit() {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof SearchPostsFragment) {
+                ((SearchPostsFragment) fragment).searchInit();
+            } else if (fragment instanceof SearchCollectionsFragment) {
+                ((SearchCollectionsFragment) fragment).searchInit();
             }
         }
     }

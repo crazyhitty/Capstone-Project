@@ -133,7 +133,8 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
                 if (((mVisibleItemCount + mPastVisibleItems) >= mTotalItemCount) &&
                         linearLayoutError.getVisibility() == View.GONE &&
                         progressBarLoading.getVisibility() == View.GONE &&
-                        isNetworkAvailable(false)) {
+                        isNetworkAvailable(false) &&
+                        mCollectionsRecyclerAdapter.canLoadMore()) {
                     mOnFragmentInteractionListener.loadMoreCollections();
                 }
             }
@@ -163,8 +164,15 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
         mCollectionsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false), getString(R.string.item_load_more_posts_error_desc));
     }
 
+    public void searchInit() {
+        linearLayoutError.setVisibility(View.VISIBLE);
+        txtMessage.setText(R.string.fragment_search_collections_search_something);
+        mCollectionsRecyclerAdapter.clear();
+    }
+
     public void updateCollections(List<Collection> collections, boolean loadMore) {
         linearLayoutError.setVisibility(View.GONE);
+        mCollectionsRecyclerAdapter.setLoadMore(true);
         if (loadMore) {
             mCollectionsRecyclerAdapter.addDataset(collections);
         } else {
@@ -173,10 +181,14 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     }
 
     public void noCollectionsAvailable(boolean loadMore) {
-        linearLayoutError.setVisibility(View.VISIBLE);
-        mCollectionsRecyclerAdapter.clear();
         if (loadMore) {
+            mCollectionsRecyclerAdapter.setLoadMore(false);
             mCollectionsRecyclerAdapter.removeLoadingView();
+            showLongToast(R.string.fragment_search_collections_max_limit_error);
+        } else {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_collections_unavailable);
+            mCollectionsRecyclerAdapter.clear();
         }
     }
 

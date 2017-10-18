@@ -43,11 +43,7 @@ import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.PostsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CollectionPostItemDecorator;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -148,7 +144,8 @@ public class SearchPostsFragment extends BaseSupportFragment {
                 if (layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1 &&
                         linearLayoutError.getVisibility() == View.GONE &&
                         progressBarLoading.getVisibility() == View.GONE &&
-                        isNetworkAvailable(false)) {
+                        isNetworkAvailable(false) &&
+                        mPostsRecyclerAdapter.canLoadMore()) {
                     mOnFragmentInteractionListener.loadMorePosts();
                 }
             }
@@ -158,8 +155,15 @@ public class SearchPostsFragment extends BaseSupportFragment {
                 getString(R.string.item_load_more_posts_error_desc));
     }
 
+    public void searchInit() {
+        linearLayoutError.setVisibility(View.VISIBLE);
+        txtMessage.setText(R.string.fragment_search_posts_search_something);
+        mPostsRecyclerAdapter.clear();
+    }
+
     public void updatePosts(List<Post> posts, boolean loadMore) {
         linearLayoutError.setVisibility(View.GONE);
+        mPostsRecyclerAdapter.setLoadMore(true);
         if (loadMore) {
             mPostsRecyclerAdapter.addDataset(posts);
         } else {
@@ -168,10 +172,14 @@ public class SearchPostsFragment extends BaseSupportFragment {
     }
 
     public void noPostsAvailable(boolean loadMore) {
-        linearLayoutError.setVisibility(View.VISIBLE);
-        mPostsRecyclerAdapter.clear();
         if (loadMore) {
+            mPostsRecyclerAdapter.setLoadMore(false);
             mPostsRecyclerAdapter.removeLoadingView();
+            showLongToast(R.string.fragment_search_posts_max_limit_error);
+        } else {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_posts_unavailable);
+            mPostsRecyclerAdapter.clear();
         }
     }
 
