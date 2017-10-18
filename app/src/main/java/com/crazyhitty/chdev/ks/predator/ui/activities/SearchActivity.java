@@ -344,11 +344,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                 ((SearchCollectionsFragment) fragment).onNetworkConnectivityChanged(networkEvent.isConnected());
             }
         }
-        /*if (networkEvent.isConnected()) {
-            if (!TextUtils.isEmpty(editTextSearch.getText().toString())) {
+        if (networkEvent.isConnected() &&
+                !TextUtils.isEmpty(editTextSearch.getText().toString())) {
                 mSearchPresenter.search(editTextSearch.getText().toString());
-            }
-        }*/
+        }
     }
 
     @Retention(RetentionPolicy.SOURCE)
