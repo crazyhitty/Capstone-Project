@@ -45,6 +45,8 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CollectionPostItemDecorator;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -120,7 +122,9 @@ public class SearchPostsFragment extends BaseSupportFragment {
         mPostsRecyclerAdapter.setOnPostsLoadMoreRetryListener(new PostsRecyclerAdapter.OnPostsLoadMoreRetryListener() {
             @Override
             public void onLoadMore() {
-                mOnFragmentInteractionListener.loadMorePosts();
+                if (isNetworkAvailable(true)) {
+                    mOnFragmentInteractionListener.loadMorePosts();
+                }
             }
         });
         recyclerViewPosts.setAdapter(mPostsRecyclerAdapter);
@@ -143,7 +147,8 @@ public class SearchPostsFragment extends BaseSupportFragment {
                 // Check if the last item is on screen, if yes then start loading more posts.
                 if (layoutManager.findLastVisibleItemPosition() == mPostsRecyclerAdapter.getItemCount() - 1 &&
                         linearLayoutError.getVisibility() == View.GONE &&
-                        progressBarLoading.getVisibility() == View.GONE) {
+                        progressBarLoading.getVisibility() == View.GONE &&
+                        isNetworkAvailable(false)) {
                     mOnFragmentInteractionListener.loadMorePosts();
                 }
             }
@@ -172,14 +177,12 @@ public class SearchPostsFragment extends BaseSupportFragment {
 
     public void onNetworkConnectivityChanged(boolean status) {
         mPostsRecyclerAdapter.setNetworkStatus(status, getString(R.string.item_load_more_posts_error_desc));
-        if (!status) {
-            if (mPostsRecyclerAdapter.isEmpty()) {
-                linearLayoutError.setVisibility(View.VISIBLE);
-                txtMessage.setText(R.string.fragment_search_posts_network_error);
-            } else {
-                showShortToast(R.string.not_connected_to_network_err);
-                mPostsRecyclerAdapter.setNetworkStatus(false, getString(R.string.item_load_more_posts_error_desc));
-            }
+        if (!status && mPostsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_posts_network_error);
+        } else if (mPostsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_posts_search_something);
         }
     }
 

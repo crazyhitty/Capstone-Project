@@ -132,7 +132,8 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
 
                 if (((mVisibleItemCount + mPastVisibleItems) >= mTotalItemCount) &&
                         linearLayoutError.getVisibility() == View.GONE &&
-                        progressBarLoading.getVisibility() == View.GONE) {
+                        progressBarLoading.getVisibility() == View.GONE &&
+                        isNetworkAvailable(false)) {
                     mOnFragmentInteractionListener.loadMoreCollections();
                 }
             }
@@ -142,7 +143,9 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
         mCollectionsRecyclerAdapter = new CollectionsRecyclerAdapter(null, new CollectionsRecyclerAdapter.OnCollectionsLoadMoreRetryListener() {
             @Override
             public void onLoadMore() {
-                mOnFragmentInteractionListener.loadMoreCollections();
+                if (isNetworkAvailable(true)) {
+                    mOnFragmentInteractionListener.loadMoreCollections();
+                }
             }
         });
 
@@ -178,15 +181,14 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     }
 
     public void onNetworkConnectivityChanged(boolean status) {
-        if (!status) {
-            if (mCollectionsRecyclerAdapter.isEmpty()) {
-                linearLayoutError.setVisibility(View.VISIBLE);
-                txtMessage.setText(R.string.fragment_search_posts_network_error);
-            } else {
-                showShortToast(R.string.not_connected_to_network_err);
-            }
-        }
         mCollectionsRecyclerAdapter.setNetworkStatus(status, getString(R.string.item_load_more_collection_error_desc));
+        if (!status && mCollectionsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_collections_network_error);
+        } else if (mCollectionsRecyclerAdapter.isEmpty()) {
+            linearLayoutError.setVisibility(View.VISIBLE);
+            txtMessage.setText(R.string.fragment_search_collections_search_something);
+        }
     }
 
     public void searchingStarted() {

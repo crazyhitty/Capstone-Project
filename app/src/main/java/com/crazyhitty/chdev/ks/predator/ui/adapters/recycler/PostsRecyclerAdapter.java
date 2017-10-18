@@ -166,7 +166,9 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        notifyItemChanged(getItemCount() - 1);
+        if (!isEmpty()) {
+            notifyItemChanged(getItemCount() - 1);
+        }
     }
 
     public void removeLoadingView() {

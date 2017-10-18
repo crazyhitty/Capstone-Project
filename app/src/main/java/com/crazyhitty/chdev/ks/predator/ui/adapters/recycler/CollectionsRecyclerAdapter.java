@@ -90,7 +90,9 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        notifyItemChanged(getItemCount() - 1);
+        if (!isEmpty()) {
+            notifyItemChanged(getItemCount() - 1);
+        }
     }
 
     public void removeLoadingView() {

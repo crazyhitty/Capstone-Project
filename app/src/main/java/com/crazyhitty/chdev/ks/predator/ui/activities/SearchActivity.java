@@ -62,6 +62,7 @@ import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -122,6 +123,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                 ContextCompat.getColor(getApplicationContext(), R.color.color_accent)));
         mSearchPresenter.subscribe();
         initSearching();
+        EventBus.getDefault().register(this);
     }
 
     private void applyTheme() {
@@ -186,7 +188,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                 .subscribe(new DisposableObserver<CharSequence>() {
                     @Override
                     public void onNext(CharSequence charSequence) {
-                        if (!NetworkConnectionUtil.isNetworkAvailable(getApplicationContext())) {
+                        if (!isNetworkAvailable(true)) {
                             networkUnavailable();
                         } else if (TextUtils.isEmpty(charSequence) ||
                                 TextUtils.isEmpty(charSequence.toString().trim())) {
@@ -313,6 +315,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
     protected void onDestroy() {
         super.onDestroy();
         mSearchPresenter.unSubscribe();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -341,6 +344,11 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchContr
                 ((SearchCollectionsFragment) fragment).onNetworkConnectivityChanged(networkEvent.isConnected());
             }
         }
+        /*if (networkEvent.isConnected()) {
+            if (!TextUtils.isEmpty(editTextSearch.getText().toString())) {
+                mSearchPresenter.search(editTextSearch.getText().toString());
+            }
+        }*/
     }
 
     @Retention(RetentionPolicy.SOURCE)
