@@ -165,6 +165,7 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
     }
 
     public void searchInit() {
+        progressBarLoading.setVisibility(View.GONE);
         linearLayoutError.setVisibility(View.VISIBLE);
         txtMessage.setText(R.string.fragment_search_collections_search_something);
         mCollectionsRecyclerAdapter.clear();

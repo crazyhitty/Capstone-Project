@@ -156,6 +156,7 @@ public class SearchPostsFragment extends BaseSupportFragment {
     }
 
     public void searchInit() {
+        progressBarLoading.setVisibility(View.GONE);
         linearLayoutError.setVisibility(View.VISIBLE);
         txtMessage.setText(R.string.fragment_search_posts_search_something);
         mPostsRecyclerAdapter.clear();
