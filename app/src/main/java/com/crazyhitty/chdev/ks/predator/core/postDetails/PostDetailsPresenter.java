@@ -48,6 +48,7 @@ import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
@@ -206,6 +207,16 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                         .getPostDetails(postId));
                                 postDetails.setType(PostDetailsDataType.TYPE.POST_DETAILS);
                                 emitter.onNext(postDetails);
+
+                                // Add/update the hunter/makers for this post.
+                                PredatorDatabase.getInstance()
+                                        .insertUser(PredatorDbValuesHelper.getContentValuesForHunterUser(postId,
+                                                postDetailsData.getPost().getUser()));
+                                for (PostsData.Posts.Makers maker : postDetailsData.getPost().getMakers()) {
+                                    PredatorDatabase.getInstance()
+                                            .insertUser(PredatorDbValuesHelper.getContentValuesForMakerUser(postId,
+                                                    maker));
+                                }
 
                                 // Add users who upvoted this post to database.
                                 PredatorDatabase.getInstance()
