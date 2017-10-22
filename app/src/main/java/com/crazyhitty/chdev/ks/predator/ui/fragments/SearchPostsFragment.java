@@ -176,7 +176,6 @@ public class SearchPostsFragment extends BaseSupportFragment {
         if (loadMore) {
             mPostsRecyclerAdapter.setLoadMore(false);
             mPostsRecyclerAdapter.removeLoadingView();
-            showLongToast(R.string.fragment_search_posts_max_limit_error);
         } else {
             linearLayoutError.setVisibility(View.VISIBLE);
             txtMessage.setText(R.string.fragment_search_posts_unavailable);

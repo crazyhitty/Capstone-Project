@@ -185,7 +185,6 @@ public class SearchCollectionsFragment extends BaseSupportFragment {
         if (loadMore) {
             mCollectionsRecyclerAdapter.setLoadMore(false);
             mCollectionsRecyclerAdapter.removeLoadingView();
-            showLongToast(R.string.fragment_search_collections_max_limit_error);
         } else {
             linearLayoutError.setVisibility(View.VISIBLE);
             txtMessage.setText(R.string.fragment_search_collections_unavailable);
