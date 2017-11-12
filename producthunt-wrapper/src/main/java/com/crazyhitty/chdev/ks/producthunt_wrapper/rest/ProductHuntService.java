@@ -39,6 +39,7 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.UserProfileData;
 import java.util.HashMap;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -69,10 +70,10 @@ public interface ProductHuntService {
                                                @Path(Constants.POST_ID) int postId);
 
     @GET(ApiUrls.GET_POST_COMMENTS)
-    Observable<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,
-                                                 @Path(Constants.POST_ID) int postId,
-                                                 @Query(Constants.PAGE) int page,
-                                                 @Query(Constants.PER_PAGE) int perPage);
+    Single<PostCommentsData> getPostComments(@Header(Constants.AUTHORIZATION) String authorization,
+                                             @Path(Constants.POST_ID) int postId,
+                                             @Query(Constants.PAGE) int page,
+                                             @Query(Constants.PER_PAGE) int perPage);
 
     @GET(ApiUrls.GET_COLLECTIONS)
     Observable<CollectionsData> getCollections(@Header(Constants.AUTHORIZATION) String authorization,

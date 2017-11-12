@@ -231,6 +231,34 @@ public class Comment {
         this.timeUnit = timeUnit;
     }
 
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", commentId=" + commentId +
+                ", parentCommentId=" + parentCommentId +
+                ", body='" + body + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", createdAtMillis=" + createdAtMillis +
+                ", postId=" + postId +
+                ", userId=" + userId +
+                ", username='" + username + '\'' +
+                ", usernameAlternative='" + usernameAlternative + '\'' +
+                ", userHeadline='" + userHeadline + '\'' +
+                ", userImageThumbnailUrl='" + userImageThumbnailUrl + '\'' +
+                ", userWebsiteUrl='" + userWebsiteUrl + '\'' +
+                ", url='" + url + '\'' +
+                ", votes=" + votes +
+                ", isSticky=" + isSticky +
+                ", isMaker=" + isMaker +
+                ", isHunter=" + isHunter +
+                ", isLiveGuest=" + isLiveGuest +
+                ", childSpaces=" + childSpaces +
+                ", timeAgo=" + timeAgo +
+                ", timeUnit=" + timeUnit +
+                '}';
+    }
+
     public enum TIME_UNIT {
         SECOND_AGO,
         SECOND_AGO_PLURAL,
