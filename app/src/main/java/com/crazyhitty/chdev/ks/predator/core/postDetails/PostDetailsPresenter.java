@@ -39,7 +39,6 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
-import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CommentTimeCalculator;
@@ -55,10 +54,7 @@ import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -119,7 +115,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 if (postDetails != null) {
                     emitter.onNext(postDetails);
                 } else {
-                    emitter.onError(new PostDetailsUnavailableException());
+                    emitter.onError(new NullPointerException("No offline post details available"));
                 }
                 emitter.onComplete();
             }
@@ -148,7 +144,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }));
     }
 
-    @Override
+    /*@Override
     public void getUsers(final int postId) {
         Observable<List<User>> postUsersObservable = Observable.create(new ObservableOnSubscribe<List<User>>() {
             @Override
@@ -183,7 +179,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 mView.showUsers(users);
             }
         }));
-    }
+    }*/
 
     @Override
     public void getExtraDetails(String token, final int postId) {
@@ -226,13 +222,18 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 List<User> users = PredatorDatabase.getInstance()
                                         .getAllUsersForPost(postId);
                                 if (users != null && !users.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
-                                    postDetailsDataType.setUsers(users);
+                                    // Sort the users list on basis of user type.
+                                    Collections.sort(users, new UsersComparator());
 
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                                    postDetailsDataType.setUsers(users);
                                     emitter.onNext(postDetailsDataType);
                                 } else {
-                                    emitter.onError(new VotedUsersUnavailableException());
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                                    postDetailsDataType.setUsers(null);
+                                    emitter.onNext(postDetailsDataType);
                                 }
 
                                 // Clear media for that particular post.
@@ -246,15 +247,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 // Query the media available.
                                 List<Media> media = PredatorDatabase.getInstance()
                                         .getMediaForPost(postId);
-                                if (media != null && !media.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setMedia(media);
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
-
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new MediaUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsMedia = new PostDetailsDataType();
+                                postDetailsMedia.setMedia(media);
+                                postDetailsMedia.setType(PostDetailsDataType.TYPE.MEDIA);
+                                emitter.onNext(postDetailsMedia);
 
                                 // Clear comments for that particular post.
                                 PredatorDatabase.getInstance()
@@ -270,14 +266,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 new ArrayList<Comment>(),
                                                 0,
                                                 CommentTimeCalculator.getInstance());
-                                if (comments != null && comments.size() != 0) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
-                                    postDetailsDataType.setComments(comments);
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new CommentsUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsComments = new PostDetailsDataType();
+                                postDetailsComments.setType(PostDetailsDataType.TYPE.COMMENTS);
+                                postDetailsComments.setComments(comments);
+                                emitter.onNext(postDetailsComments);
 
                                 // Clear install links for that particular post.
                                 PredatorDatabase.getInstance()
@@ -290,16 +282,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 // Query the install links available.
                                 List<InstallLink> installLinks = PredatorDatabase.getInstance()
                                         .getInstallLinksForPost(postId);
-
-                                if (installLinks != null && !installLinks.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setInstallLinks(installLinks);
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
-
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new InstallLinksUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsInstallLinks = new PostDetailsDataType();
+                                postDetailsInstallLinks.setInstallLinks(installLinks);
+                                postDetailsInstallLinks.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                                emitter.onNext(postDetailsInstallLinks);
 
                                 emitter.onComplete();
                             }
@@ -317,17 +303,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
-                if (e instanceof MediaUnavailableException) {
-                    mView.unableToFetchMedia(e.getMessage());
-                } else if (e instanceof CommentsUnavailableException) {
-                    mView.unableToFetchComments(e.getMessage());
-                } else if (e instanceof InstallLinksUnavailableException) {
-                    mView.unableToFetchInstallLinks(e.getMessage());
-                } else if (e instanceof VotedUsersUnavailableException) {
-                    mView.unableToFetchAllUsers(e.getMessage());
-                } else {
-                    mView.unableToFetchPostDetails(e.getMessage());
-                }
                 mView.dismissLoading();
             }
 
@@ -335,19 +310,39 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             public void onNext(PostDetailsDataType postDetailsDataType) {
                 switch (postDetailsDataType.getType()) {
                     case POST_DETAILS:
-                        mView.showDetails(postDetailsDataType.getPostDetails());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchPostDetails("No post details available for provided post");
+                        } else {
+                            mView.showDetails(postDetailsDataType.getPostDetails());
+                        }
                         break;
                     case MEDIA:
-                        mView.showMedia(postDetailsDataType.getMedia());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchMedia("No media available for provided post");
+                        } else {
+                            mView.showMedia(postDetailsDataType.getMedia());
+                        }
                         break;
                     case COMMENTS:
-                        mView.showComments(postDetailsDataType.getComments());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchComments("No comments available for provided post");
+                        } else {
+                            mView.showComments(postDetailsDataType.getComments());
+                        }
                         break;
                     case INSTALL_LINKS:
-                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchInstallLinks("No install links available for provided post");
+                        } else {
+                            mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        }
                         break;
-                    case USERS_VOTED:
-                        mView.showAllUsers(postDetailsDataType.getUsers());
+                    case USERS:
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
+                        } else {
+                            mView.showAllUsers(postDetailsDataType.getUsers());
+                        }
                         break;
                 }
                 mView.dismissLoading();
@@ -367,28 +362,23 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     Collections.sort(users, new UsersComparator());
 
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
                     postDetailsDataType.setUsers(users);
-
                     emitter.onNext(postDetailsDataType);
                 } else {
-                    emitter.onError(new VotedUsersUnavailableException());
-                    return;
+                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                    postDetailsDataType.setUsers(null);
+                    emitter.onNext(postDetailsDataType);
                 }
 
                 // Query the media available.
                 List<Media> media = PredatorDatabase.getInstance()
                         .getMediaForPost(postId);
-                if (media != null && !media.isEmpty()) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setMedia(media);
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
-
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new MediaUnavailableException());
-                    return;
-                }
+                PostDetailsDataType postDetailsMedia = new PostDetailsDataType();
+                postDetailsMedia.setMedia(media);
+                postDetailsMedia.setType(PostDetailsDataType.TYPE.MEDIA);
+                emitter.onNext(postDetailsMedia);
 
                 // Query the comments available.
                 List<Comment> comments = PredatorDatabase.getInstance()
@@ -397,27 +387,24 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 new ArrayList<Comment>(),
                                 0,
                                 CommentTimeCalculator.getInstance());
-                if (comments != null && comments.size() != 0) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
-                    postDetailsDataType.setComments(comments);
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new CommentsUnavailableException());
-                    return;
-                }
+                PostDetailsDataType postDetailsComments = new PostDetailsDataType();
+                postDetailsComments.setType(PostDetailsDataType.TYPE.COMMENTS);
+                postDetailsComments.setComments(comments);
+                emitter.onNext(postDetailsComments);
 
                 // Query the install links available.
                 List<InstallLink> installLinks = PredatorDatabase.getInstance()
                         .getInstallLinksForPost(postId);
-                if (installLinks != null && !installLinks.isEmpty()) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setInstallLinks(installLinks);
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                PostDetailsDataType postDetailsInstallLinks = new PostDetailsDataType();
+                postDetailsInstallLinks.setInstallLinks(installLinks);
+                postDetailsInstallLinks.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                emitter.onNext(postDetailsInstallLinks);
 
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new InstallLinksUnavailableException());
+                if (users == null || users.isEmpty() ||
+                        media == null || media.isEmpty() ||
+                        comments == null || comments.isEmpty() ||
+                        installLinks == null || installLinks.isEmpty()) {
+                    emitter.onError(new NullPointerException("Complete offline data for this post is unavailable"));
                 }
 
                 emitter.onComplete();
@@ -434,15 +421,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                if (e instanceof MediaUnavailableException) {
-                    mView.unableToFetchMedia(e.getMessage());
-                } else if (e instanceof CommentsUnavailableException) {
-                    mView.unableToFetchComments(e.getMessage());
-                } else if (e instanceof InstallLinksUnavailableException) {
-                    mView.unableToFetchInstallLinks(e.getMessage());
-                } else if (e instanceof VotedUsersUnavailableException) {
-                    mView.unableToFetchAllUsers(e.getMessage());
-                }
                 mView.noOfflineDataAvailable();
                 mView.dismissLoading();
             }
@@ -450,17 +428,40 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onNext(PostDetailsDataType postDetailsDataType) {
                 switch (postDetailsDataType.getType()) {
+                    case POST_DETAILS:
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchPostDetails("No post details available for provided post");
+                        } else {
+                            mView.showDetails(postDetailsDataType.getPostDetails());
+                        }
+                        break;
                     case MEDIA:
-                        mView.showMedia(postDetailsDataType.getMedia());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchMedia("No media available for provided post");
+                        } else {
+                            mView.showMedia(postDetailsDataType.getMedia());
+                        }
                         break;
                     case COMMENTS:
-                        mView.showComments(postDetailsDataType.getComments());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchComments("No comments available for provided post");
+                        } else {
+                            mView.showComments(postDetailsDataType.getComments());
+                        }
                         break;
                     case INSTALL_LINKS:
-                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchInstallLinks("No install links available for provided post");
+                        } else {
+                            mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        }
                         break;
-                    case USERS_VOTED:
-                        mView.showAllUsers(postDetailsDataType.getUsers());
+                    case USERS:
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
+                        } else {
+                            mView.showAllUsers(postDetailsDataType.getUsers());
+                        }
                         break;
                 }
                 mView.dismissLoading();
@@ -566,7 +567,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }
     }
 
-    public static class PostDetailsUnavailableException extends Throwable {
+    /*public static class PostDetailsUnavailableException extends Throwable {
         @Override
         public String getMessage() {
             return "Post details unavailable for the provided id.";
@@ -606,7 +607,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         public String getMessage() {
             return "Voted users unavailable for the provided post.";
         }
-    }
+    }*/
 
     public static class PostDetailsDataType {
         private TYPE type;
@@ -664,12 +665,29 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             this.installLinks = installLinks;
         }
 
+        public boolean isEmpty() {
+            switch (type) {
+                case POST_DETAILS:
+                    return postDetails == null;
+                case MEDIA:
+                    return media == null || media.isEmpty();
+                case COMMENTS:
+                    return comments == null || comments.isEmpty();
+                case INSTALL_LINKS:
+                    return installLinks == null || installLinks.isEmpty();
+                case USERS:
+                    return users == null || users.isEmpty();
+                default:
+                    return false;
+            }
+        }
+
         enum TYPE {
             POST_DETAILS,
             MEDIA,
             COMMENTS,
             INSTALL_LINKS,
-            USERS_VOTED
+            USERS
         }
     }
 }

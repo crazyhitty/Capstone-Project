@@ -182,7 +182,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         mPostDetailsPresenter.getDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 
         // Get users.
-        mPostDetailsPresenter.getUsers(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
+        //mPostDetailsPresenter.getUsers(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 
         // Always load offline posts details first.
         getPostDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID), true);
@@ -401,7 +401,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         Logger.e(TAG, "unableToFetchPostDetails: " + errorMessage);
     }
 
-    @Override
+    /*@Override
     public void unableToFetchUsers(String errorMessage) {
         Logger.e(TAG, "unableToFetchUsers: " + errorMessage);
 
@@ -411,7 +411,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 updateUsers(null);
             }
         }, DELAY_MS);
-    }
+    }*/
 
     @Override
     public void unableToFetchMedia(String errorMessage) {

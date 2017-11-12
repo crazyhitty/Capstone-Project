@@ -235,6 +235,10 @@
     <string name="fragment_comments_loading_please_wait">Loading, please wait&#8230;</string>
     <string name="fragment_comments_unavailable">Comments unavailable currently.</string>
 
+    <!--fragment_users.xml-->
+    <string name="fragment_users_loading_please_wait">Loading, please wait&#8230;</string>
+    <string name="fragment_users_unavailable">Users unavailable currently.</string>
+
     <!--item_post_details_comment.xml-->
     <plurals name="item_post_details_comment_votes">
         <item quantity="zero">0 votes</item>

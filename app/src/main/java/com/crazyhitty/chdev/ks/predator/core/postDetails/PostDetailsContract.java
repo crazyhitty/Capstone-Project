@@ -59,7 +59,7 @@ public interface PostDetailsContract {
 
         void unableToFetchPostDetails(String errorMessage);
 
-        void unableToFetchUsers(String errorMessage);
+        //void unableToFetchUsers(String errorMessage);
 
         void unableToFetchMedia(String errorMessage);
 
@@ -77,7 +77,7 @@ public interface PostDetailsContract {
     interface Presenter extends BasePresenter {
         void getDetails(int postId);
 
-        void getUsers(int postId);
+        //void getUsers(int postId);
 
         void getExtraDetails(String token, int postId);
 
