@@ -36,13 +36,27 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
+import com.crazyhitty.chdev.ks.predator.core.comments.CommentsContract;
+import com.crazyhitty.chdev.ks.predator.core.comments.CommentsPresenter;
+import com.crazyhitty.chdev.ks.predator.data.Constants;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.CommentsEvent;
+import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CommentsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CommentItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -52,7 +66,9 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class CommentsFragment extends BaseSupportFragment {
+public class CommentsFragment extends BaseSupportFragment implements CommentsContract.View {
+    private static final String TAG = "CommentsFragment";
+
     @BindView(R.id.recycler_view_comments)
     RecyclerView recyclerViewComments;
     @BindView(R.id.linear_layout_loading)
@@ -62,10 +78,18 @@ public class CommentsFragment extends BaseSupportFragment {
     @BindView(R.id.progress_bar_loading)
     ProgressBar progressBarLoading;
 
+    private CommentsContract.Presenter mCommentsPresenter;
+
     private CommentsRecyclerAdapter mCommentsRecyclerAdapter;
 
     public static CommentsFragment newInstance() {
         return new CommentsFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setPresenter(new CommentsPresenter(this));
     }
 
     @Nullable
@@ -80,6 +104,27 @@ public class CommentsFragment extends BaseSupportFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setRecyclerViewProperties();
+        PredatorAccount.getAuthToken(getActivity(),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<String>() {
+                    @Override
+                    public void onComplete() {
+                        // Done
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        mCommentsPresenter.fetchOnlineComments(s, 113283);
+                    }
+                });
     }
 
     private void setRecyclerViewProperties() {
@@ -103,5 +148,30 @@ public class CommentsFragment extends BaseSupportFragment {
             txtMessage.setText(R.string.fragment_comments_unavailable);
             progressBarLoading.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void showLoading() {
+        Logger.d(TAG, "show loading");
+    }
+
+    @Override
+    public void hideLoading() {
+        Logger.e(TAG, "hide loading");
+    }
+
+    @Override
+    public void showComments(@NotNull List<? extends Comment> comments) {
+        Logger.d(TAG, "Comments size: " + comments);
+    }
+
+    @Override
+    public void commentsUnavailable() {
+
+    }
+
+    @Override
+    public void setPresenter(CommentsContract.Presenter presenter) {
+        mCommentsPresenter = presenter;
     }
 }
