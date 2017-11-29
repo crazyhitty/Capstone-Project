@@ -36,7 +36,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
@@ -57,17 +60,26 @@ import butterknife.ButterKnife;
  * Description: Unavailable
  */
 
-public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecyclerAdapter.CommentViewHolder> {
-    public static final int VIEW_TYPE_PARENT_COMMENT = 1;
-    public static final int VIEW_TYPE_CHILD_COMMENT = 2;
+public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_PARENT_COMMENT = 1;
+    private static final int VIEW_TYPE_CHILD_COMMENT = 2;
+    private static final int VIEW_TYPE_LOAD_MORE = 98;
 
     private List<Comment> mComments;
     private String mPostTitle;
     private int mLastPosition = -1;
+    private boolean mNetworkAvailable;
+    private String mErrorMessage;
+    private boolean mLoadMoreRequired = false;
 
-    public CommentsRecyclerAdapter(@Nullable List<Comment> comments, @Nullable String postTitle) {
+    private OnCommentsLoadMoreRetryListener mOnCommentsLoadMoreRetryListener;
+
+    public CommentsRecyclerAdapter(@Nullable List<Comment> comments,
+                                   @Nullable String postTitle,
+                                   @Nullable OnCommentsLoadMoreRetryListener onCommentsLoadMoreRetryListener) {
         mComments = comments;
         mPostTitle = postTitle;
+        mOnCommentsLoadMoreRetryListener = onCommentsLoadMoreRetryListener;
     }
 
     public void updateComments(@Nullable List<Comment> comments, @Nullable String postTitle) {
@@ -77,57 +89,117 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         notifyDataSetChanged();
     }
 
-    @Override
-    public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_post_details_comment, parent, false);
-        return new CommentViewHolder(view);
+    public void updateComments(@Nullable List<Comment> comments,
+                               @Nullable String postTitle,
+                               boolean loadMoreRequired) {
+        mLastPosition = -1;
+        mComments = comments;
+        mPostTitle = postTitle;
+        mLoadMoreRequired = loadMoreRequired;
+        notifyDataSetChanged();
+    }
+
+    public void setNetworkStatus(boolean status, String message) {
+        mNetworkAvailable = status;
+        mErrorMessage = message;
+        if (!isEmpty() && mLoadMoreRequired) {
+            notifyItemChanged(getItemCount() - 1);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final CommentViewHolder holder, int position) {
-        holder.txtUsername.setText(mComments.get(position).getUsername());
-        holder.txtUserHeadline.setText(mComments.get(position).getUserHeadline());
-        holder.txtCommentBody.setText(Html.fromHtml(mComments.get(position).getBody()));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        RecyclerView.ViewHolder viewHolder = null;
+        switch (viewType) {
+            case VIEW_TYPE_PARENT_COMMENT:
+            case VIEW_TYPE_CHILD_COMMENT:
+                View commentView = layoutInflater.inflate(R.layout.item_post_details_comment, parent, false);
+                viewHolder = new CommentViewHolder(commentView);
+                break;
+            case VIEW_TYPE_LOAD_MORE:
+                View viewLoadMore = layoutInflater.inflate(R.layout.item_load_more_posts, parent, false);
+                viewHolder = new LoadMoreViewHolder(viewLoadMore);
+                break;
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        switch (getItemViewType(position)) {
+            case VIEW_TYPE_PARENT_COMMENT:
+            case VIEW_TYPE_CHILD_COMMENT:
+                onBindCommentsViewHolder((CommentViewHolder) holder, position);
+                break;
+            case VIEW_TYPE_LOAD_MORE:
+                onBindLoadMoreViewHolder((LoadMoreViewHolder) holder, position);
+                break;
+        }
+        manageAnimation(holder.itemView, position);
+    }
+
+    private void onBindCommentsViewHolder(final CommentViewHolder commentViewHolder, int position) {
+        commentViewHolder.txtUsername.setText(mComments.get(position).getUsername());
+        commentViewHolder.txtUserHeadline.setText(mComments.get(position).getUserHeadline());
+        commentViewHolder.txtCommentBody.setText(Html.fromHtml(mComments.get(position).getBody()));
 
         // Set uer image.
         String userImageUrl = mComments.get(position).getUserImageThumbnailUrl();
         userImageUrl = ImageUtils.getCustomCommentUserImageThumbnailUrl(userImageUrl,
-                ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44),
-                ScreenUtils.dpToPxInt(holder.itemView.getContext(), 44));
-        holder.imgViewUser.setImageURI(userImageUrl);
+                ScreenUtils.dpToPxInt(commentViewHolder.itemView.getContext(), 44),
+                ScreenUtils.dpToPxInt(commentViewHolder.itemView.getContext(), 44));
+        commentViewHolder.imgViewUser.setImageURI(userImageUrl);
 
         // Hide headline text if headline is empty.
-        holder.txtUserHeadline.setVisibility(TextUtils.isEmpty(mComments.get(position).getUserHeadline()) ?
+        commentViewHolder.txtUserHeadline.setVisibility(TextUtils.isEmpty(mComments.get(position).getUserHeadline()) ?
                 View.GONE : View.VISIBLE);
 
         // Set extra details.
         String extraDetails = String.format("%s \u2022 %s",
-                holder.getQuantityString(R.plurals.item_post_details_comment_votes,
+                commentViewHolder.getQuantityString(R.plurals.item_post_details_comment_votes,
                         mComments.get(position).getVotes(),
                         mComments.get(position).getVotes()),
-                holder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
+                commentViewHolder.getString(getStringResourceIdForTimeUnit(mComments.get(position).getTimeUnit()),
                         mComments.get(position).getTimeAgo()));
-        holder.txtCommentExtraDetails.setText(extraDetails);
+        commentViewHolder.txtCommentExtraDetails.setText(extraDetails);
 
-        holder.imgViewUser.setOnClickListener(new View.OnClickListener() {
+        commentViewHolder.imgViewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentUserPreviewDialog.show(holder.itemView.getContext(),
-                        mComments.get(holder.getAdapterPosition()),
+                CommentUserPreviewDialog.show(commentViewHolder.itemView.getContext(),
+                        mComments.get(commentViewHolder.getAdapterPosition()),
                         mPostTitle);
             }
         });
 
         // Set extra internal padding if this was a child comment.
-        int paddingLeftPx = ScreenUtils.dpToPxInt(holder.itemView.getContext(),
+        int paddingLeftPx = ScreenUtils.dpToPxInt(commentViewHolder.itemView.getContext(),
                 54.0f * mComments.get(position).getChildSpaces());
-        holder.itemView.setPadding(paddingLeftPx,
+        commentViewHolder.itemView.setPadding(paddingLeftPx,
                 0,
                 0,
                 0);
+    }
 
-        manageAnimation(holder.itemView, position);
+    private void onBindLoadMoreViewHolder(LoadMoreViewHolder loadMoreViewHolder, int position) {
+        // All elements except progress bar will be visible if network is available, and vice versa.
+
+        loadMoreViewHolder.imgViewError.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.txtErrorTitle.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.txtErrorDesc.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+        loadMoreViewHolder.btnRetry.setVisibility(mNetworkAvailable ? View.GONE : View.VISIBLE);
+
+        loadMoreViewHolder.progressBarLoading.setVisibility(mNetworkAvailable ? View.VISIBLE : View.GONE);
+
+        loadMoreViewHolder.txtErrorDesc.setText(mErrorMessage);
+
+        loadMoreViewHolder.btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnCommentsLoadMoreRetryListener.onLoadMore();
+            }
+        });
     }
 
     private void manageAnimation(View view, int position) {
@@ -146,6 +218,9 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
 
     @Override
     public int getItemViewType(int position) {
+        if (position == getItemCount() - 1 && mLoadMoreRequired) {
+            return VIEW_TYPE_LOAD_MORE;
+        }
         switch (mComments.get(position).getChildSpaces()) {
             case 0:
                 return VIEW_TYPE_PARENT_COMMENT;
@@ -156,9 +231,17 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
     }
 
     @Override
-    public void onViewDetachedFromWindow(CommentViewHolder holder) {
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        holder.clearAnimation();
+        ((RootViewHolder) holder).clearAnimation();
+    }
+
+    public boolean isEmpty() {
+        return mComments == null || mComments.isEmpty();
+    }
+
+    public boolean canLoadMore() {
+        return mLoadMoreRequired;
     }
 
     private int getStringResourceIdForTimeUnit(Comment.TIME_UNIT timeUnit) {
@@ -184,7 +267,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
         }
     }
 
-    public static class CommentViewHolder extends RecyclerView.ViewHolder {
+    public static class CommentViewHolder extends RootViewHolder {
         @BindView(R.id.image_view_user)
         SimpleDraweeView imgViewUser;
         @BindView(R.id.text_view_user_name)
@@ -217,5 +300,37 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentsRecycl
             return itemView.getContext()
                     .getString(resId, args);
         }
+    }
+
+    public static class LoadMoreViewHolder extends RootViewHolder {
+        @BindView(R.id.image_view_error_icon)
+        SimpleDraweeView imgViewError;
+        @BindView(R.id.text_view_error_title)
+        TextView txtErrorTitle;
+        @BindView(R.id.text_view_error_desc)
+        TextView txtErrorDesc;
+        @BindView(R.id.button_retry)
+        Button btnRetry;
+        @BindView(R.id.progress_bar_loading)
+        ProgressBar progressBarLoading;
+
+        public LoadMoreViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    private static class RootViewHolder extends RecyclerView.ViewHolder {
+        public RootViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        protected void clearAnimation() {
+            itemView.clearAnimation();
+        }
+    }
+
+    public interface OnCommentsLoadMoreRetryListener {
+        void onLoadMore();
     }
 }

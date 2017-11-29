@@ -75,20 +75,14 @@ class CommentsPresenter(private var view: CommentsContract.View) : CommentsContr
 
         compositeDisposable.add(commentsSingle.subscribe(
                 {
-                    comments ->
-                    run {
-                        if (comments.isEmpty())
-                            view.commentsUnavailable()
-                        else
-                            view.showComments(comments)
-                    }
+                    if (it.isEmpty())
+                        view.commentsUnavailable()
+                    else
+                        view.showComments(it)
                 },
                 {
-                    throwable ->
-                    run {
-                        Logger.e(TAG, throwable)
-                        view.commentsUnavailable()
-                    }
+                    Logger.e(TAG, it)
+                    view.commentsUnavailable()
                 }
         ))
     }
@@ -106,20 +100,14 @@ class CommentsPresenter(private var view: CommentsContract.View) : CommentsContr
 
         compositeDisposable.add(commentsSingle.subscribe(
                 {
-                    comments ->
-                    run {
-                        if (comments.isEmpty())
-                            view.commentsUnavailable()
-                        else
-                            view.showComments(comments)
-                    }
+                    if (it.isEmpty())
+                        view.commentsUnavailable()
+                    else
+                        view.showComments(it)
                 },
                 {
-                    throwable ->
-                    run {
-                        Logger.e(TAG, throwable)
-                        view.commentsUnavailable()
-                    }
+                    Logger.e(TAG, it)
+                    view.commentsUnavailable()
                 }
         ))
     }
@@ -137,21 +125,15 @@ class CommentsPresenter(private var view: CommentsContract.View) : CommentsContr
 
         compositeDisposable.add(commentsSingle.subscribe(
                 {
-                    comments ->
-                    run {
-                        if (comments.isEmpty())
-                            view.commentsUnavailable()
-                        else
-                            view.showComments(comments)
-                    }
+                    if (it.isEmpty())
+                        view.commentsUnavailable()
+                    else
+                        view.showComments(it)
                 },
                 {
-                    throwable ->
-                    run {
-                        Logger.e(TAG, throwable)
-                        page --
-                        view.commentsUnavailable()
-                    }
+                    Logger.e(TAG, it)
+                    page --
+                    view.commentsUnavailable()
                 }
         ))
     }
@@ -168,22 +150,22 @@ class CommentsPresenter(private var view: CommentsContract.View) : CommentsContr
     }
 
     private fun addCommentsToDatabase(comments: List<PostCommentsData.Comments>) {
-        comments.forEach { comment ->
+        comments.forEach {
             PredatorDatabase.getInstance()
-                    .insertComment(PredatorDbValuesHelper.getContentValuesForComments(comment))
-            addCommentsToDatabase(comment.childComments)
+                    .insertComment(PredatorDbValuesHelper.getContentValuesForComments(it))
+            addCommentsToDatabase(it.childComments)
         }
     }
 
     private fun fetchCommentsFromDatabase(postId: Int): Single<List<Comment>> {
-        return Single.create{ emitter ->
+        return Single.create{
             val comments = PredatorDatabase.getInstance()
                     .getCommentsForPost(postId,
                             0,
                             ArrayList<Comment>(),
                             0,
                             CommentTimeCalculator.getInstance())
-            emitter.onSuccess(comments)
+            it.onSuccess(comments)
         }
     }
 }

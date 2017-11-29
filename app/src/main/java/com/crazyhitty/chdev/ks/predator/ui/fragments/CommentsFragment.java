@@ -42,12 +42,17 @@ import com.crazyhitty.chdev.ks.predator.core.comments.CommentsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.CommentsEvent;
+import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CommentsRecyclerAdapter;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
+import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.CommentItemDecorator;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,6 +74,8 @@ import io.reactivex.schedulers.Schedulers;
 public class CommentsFragment extends BaseSupportFragment implements CommentsContract.View {
     private static final String TAG = "CommentsFragment";
 
+    private static final String ARG_POST_ID = "post_id";
+
     @BindView(R.id.recycler_view_comments)
     RecyclerView recyclerViewComments;
     @BindView(R.id.linear_layout_loading)
@@ -82,8 +89,12 @@ public class CommentsFragment extends BaseSupportFragment implements CommentsCon
 
     private CommentsRecyclerAdapter mCommentsRecyclerAdapter;
 
-    public static CommentsFragment newInstance() {
-        return new CommentsFragment();
+    public static CommentsFragment newInstance(int postId) {
+        Bundle args = new Bundle();
+        args.putInt(ARG_POST_ID, postId);
+        CommentsFragment commentsFragment = new CommentsFragment();
+        commentsFragment.setArguments(args);
+        return commentsFragment;
     }
 
     @Override
@@ -104,6 +115,100 @@ public class CommentsFragment extends BaseSupportFragment implements CommentsCon
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setRecyclerViewProperties();
+        init();
+    }
+
+    private void setRecyclerViewProperties() {
+        // Create a list type layout manager.
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerViewComments.setLayoutManager(layoutManager);
+
+        // Add appropriate decorations to the recycler view items.
+        final CommentItemDecorator commentItemDecorator = new CommentItemDecorator(getContext());
+        recyclerViewComments.addItemDecoration(commentItemDecorator);
+
+        mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null,
+                null,
+                new CommentsRecyclerAdapter.OnCommentsLoadMoreRetryListener() {
+            @Override
+            public void onLoadMore() {
+                if (isNetworkAvailable(true)) {
+                    loadMoreComments();
+                } else {
+                    mCommentsRecyclerAdapter.setNetworkStatus(isNetworkAvailable(false),
+                            getString(R.string.item_load_more_posts_error_desc));
+                }
+            }
+        });
+
+        // Add scroll listener that will manage scroll down to load more functionality.
+        recyclerViewComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Check if the last item is on screen, if yes then start loading more comments.
+                if (mCommentsRecyclerAdapter.getItemCount() != 0 &&
+                        layoutManager.findLastVisibleItemPosition() ==
+                                mCommentsRecyclerAdapter.getItemCount() - 1 &&
+                        isNetworkAvailable(false)) {
+                    loadMoreComments();
+                }
+            }
+        });
+
+        recyclerViewComments.setAdapter(mCommentsRecyclerAdapter);
+    }
+
+    private void init() {
+
+    }
+
+    public void updateComments(CommentsEvent commentsEvent, String postTitle) {
+        /*if (commentsEvent.getComments() != null && commentsEvent.getComments().size() != 0) {
+            linearLayoutLoading.setVisibility(View.GONE);
+            mCommentsRecyclerAdapter.updateComments(commentsEvent.getComments(), postTitle);
+        } else if (mCommentsRecyclerAdapter.getItemCount() == 0) {
+            txtMessage.setText(R.string.fragment_comments_unavailable);
+            progressBarLoading.setVisibility(View.GONE);
+        }*/
+    }
+
+    @Override
+    public void showLoading() {
+        Logger.d(TAG, "show loading");
+        linearLayoutLoading.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        Logger.e(TAG, "hide loading");
+        linearLayoutLoading.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showComments(@NotNull List<? extends Comment> comments) {
+        Logger.d(TAG, "Comments size: " + comments);
+    }
+
+    @Override
+    public void commentsUnavailable() {
+
+    }
+
+    @Override
+    public void setPresenter(CommentsContract.Presenter presenter) {
+        mCommentsPresenter = presenter;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkConnectivityChanged(NetworkEvent networkEvent) {
+        if (mCommentsRecyclerAdapter != null && mCommentsRecyclerAdapter.getItemCount() != 0) {
+            mCommentsRecyclerAdapter.setNetworkStatus(networkEvent.isConnected(), getString(R.string.item_load_more_posts_error_desc));
+        }
+    }
+
+    private void loadOnlineComments() {
         PredatorAccount.getAuthToken(getActivity(),
                 Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
                 PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
@@ -122,56 +227,34 @@ public class CommentsFragment extends BaseSupportFragment implements CommentsCon
 
                     @Override
                     public void onNext(String s) {
-                        mCommentsPresenter.fetchOnlineComments(s, 113283);
+                        mCommentsPresenter.fetchOnlineComments(s,
+                                getArguments().getInt(ARG_POST_ID));
                     }
                 });
     }
 
-    private void setRecyclerViewProperties() {
-        // Create a list type layout manager.
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerViewComments.setLayoutManager(layoutManager);
+    private void loadMoreComments() {
+        PredatorAccount.getAuthToken(getActivity(),
+                Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,
+                PredatorSharedPreferences.getAuthTokenType(getContext().getApplicationContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<String>() {
+                    @Override
+                    public void onComplete() {
+                        // Done
+                    }
 
-        // Add appropriate decorations to the recycler view items.
-        final CommentItemDecorator commentItemDecorator = new CommentItemDecorator(getContext());
-        recyclerViewComments.addItemDecoration(commentItemDecorator);
+                    @Override
+                    public void onError(Throwable e) {
 
-        mCommentsRecyclerAdapter = new CommentsRecyclerAdapter(null, null);
-        recyclerViewComments.setAdapter(mCommentsRecyclerAdapter);
-    }
+                    }
 
-    public void updateComments(CommentsEvent commentsEvent, String postTitle) {
-        if (commentsEvent.getComments() != null && commentsEvent.getComments().size() != 0) {
-            linearLayoutLoading.setVisibility(View.GONE);
-            mCommentsRecyclerAdapter.updateComments(commentsEvent.getComments(), postTitle);
-        } else if (mCommentsRecyclerAdapter.getItemCount() == 0) {
-            txtMessage.setText(R.string.fragment_comments_unavailable);
-            progressBarLoading.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void showLoading() {
-        Logger.d(TAG, "show loading");
-    }
-
-    @Override
-    public void hideLoading() {
-        Logger.e(TAG, "hide loading");
-    }
-
-    @Override
-    public void showComments(@NotNull List<? extends Comment> comments) {
-        Logger.d(TAG, "Comments size: " + comments);
-    }
-
-    @Override
-    public void commentsUnavailable() {
-
-    }
-
-    @Override
-    public void setPresenter(CommentsContract.Presenter presenter) {
-        mCommentsPresenter = presenter;
+                    @Override
+                    public void onNext(String s) {
+                        mCommentsPresenter.loadMoreOnlineComments(s,
+                                getArguments().getInt(ARG_POST_ID));
+                    }
+                });
     }
 }
