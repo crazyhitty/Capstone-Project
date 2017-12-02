@@ -76,6 +76,7 @@ import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.MediaItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.predator.utils.StartSnapHelper;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
@@ -498,6 +499,11 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         }
         mRefreshing = false;
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean isInternetAvailable() {
+        return isNetworkAvailable(false);
     }
 
     @Override

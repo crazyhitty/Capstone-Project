@@ -39,6 +39,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.utils.CommentTimeCalculator;
@@ -423,10 +424,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         }
                         break;
                     case COMMENTS:
-                        if (postDetailsDataType.isEmpty()) {
-                            mView.unableToFetchComments("No comments available for provided post");
-                        } else {
+                        if (!postDetailsDataType.isEmpty()) {
                             mView.showComments(postDetailsDataType.getComments());
+                        } else if (postDetailsDataType.isEmpty() && !mView.isInternetAvailable()) {
+                            mView.unableToFetchComments("No comments available for provided post");
                         }
                         break;
                     case INSTALL_LINKS:

@@ -81,6 +81,8 @@ public interface PostDetailsContract {
         void noOfflineDataAvailable();
 
         void dismissLoading();
+
+        boolean isInternetAvailable();
     }
 
     interface Presenter extends BasePresenter {
