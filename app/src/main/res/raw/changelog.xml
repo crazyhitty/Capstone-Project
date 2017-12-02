@@ -25,6 +25,12 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Dec 2, 2017"
+        versionName="0.37">
+        <changelogtext>Update link handling and chrome custom tabs.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Sep 23, 2017"
         versionName="0.36">
         <changelogbug>Fix app crash due to invalid font name.</changelogbug>

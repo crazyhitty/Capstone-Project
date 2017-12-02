@@ -297,6 +297,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 });
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void showDetails(PostDetails postDetails) {
         txtPostTitle.setText(postDetails.getTitle());
@@ -394,6 +395,26 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 updateComments(comments, txtPostTitle.getText().toString());
             }
         }, DELAY_MS);
+    }
+
+    @Override
+    public void openRedirectUrl(String url) {
+        openUrlViaChromeCustomTabs(url);
+    }
+
+    @Override
+    public void noRedirectUrlAvailable() {
+        showLongToast(R.string.post_details_no_redirect_url_available);
+    }
+
+    @Override
+    public void fireShareIntent(Intent shareIntent) {
+        startActivity(shareIntent);
+    }
+
+    @Override
+    public void noShareIntentAvailable() {
+        showLongToast(R.string.post_details_cannot_share_app);
     }
 
     @Override
@@ -534,10 +555,10 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 }
                 break;
             case R.id.menu_open_redirect_url:
-                mPostDetailsPresenter.openRedirectUrl(this);
+                mPostDetailsPresenter.getRedirectUrl(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
                 break;
             case R.id.menu_share:
-                sharePostDetails();
+                mPostDetailsPresenter.getShareIntent(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -546,25 +567,6 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     @Override
     public void setPresenter(PostDetailsContract.Presenter presenter) {
         mPostDetailsPresenter = presenter;
-    }
-
-    public void sharePostDetails() {
-        if (mPostDetailsPresenter.getPostDetails() == null ||
-                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTitle()) ||
-                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTagline())) {
-            Toast.makeText(getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String title = mPostDetailsPresenter.getPostDetails().getTitle();
-        String body = mPostDetailsPresenter.getPostDetails().getTagline() + "\n" +
-                mPostDetailsPresenter.getPostDetails().getDiscussionUrl();
-
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_using)));
     }
 
     public void openMedia(Media media) {

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.saket.bettermovementmethod.BetterLinkMovementMethod;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
@@ -73,8 +75,25 @@ public class AboutDeveloperFragment extends BaseSupportFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        txtExtraDesc.setMovementMethod(LinkMovementMethod.getInstance());
         txtExtraDesc.setText(Html.fromHtml(getString(R.string.activity_about_extra_desc)));
+
+        // Modify link clicks on textview
+        BetterLinkMovementMethod method = BetterLinkMovementMethod.linkify(Linkify.ALL,
+                txtExtraDesc);
+        method.setOnLinkClickListener(new BetterLinkMovementMethod.OnLinkClickListener() {
+            @Override
+            public boolean onClick(TextView textView, String s) {
+                openUrlViaChromeCustomTabs(s);
+                return true;
+            }
+        });
+        method.setOnLinkLongClickListener(new BetterLinkMovementMethod.OnLinkLongClickListener() {
+            @Override
+            public boolean onLongClick(TextView textView, String s) {
+                openUrlNormally(s);
+                return true;
+            }
+        });
     }
 
     @OnClick(R.id.card_view_kartik)
@@ -93,9 +112,6 @@ public class AboutDeveloperFragment extends BaseSupportFragment {
 
     @OnClick(R.id.card_view_kajal)
     public void onCardViewKajalClick() {
-        CustomTabsHelperFragment.open(getActivity(),
-                getCustomTabsIntent(),
-                Uri.parse(Constants.About.URL_GITHUB_KAJAL),
-                getCustomTabsFallback());
+        openUrlViaChromeCustomTabs(Constants.About.URL_GITHUB_KAJAL);
     }
 }

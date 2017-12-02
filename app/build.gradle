@@ -23,16 +23,17 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 27
-        versionName "0.36"
+        versionCode 28
+        versionName "0.37"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -113,15 +114,22 @@ dependencies {
     // changelog lib
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
+    // crashlytics
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
+    }
+
     // firebase
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-core:11.6.0'
 
     // font
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
 
     // lottie
     compile 'com.airbnb.android:lottie:2.1.0'
+
+    // better link movement method
+    compile 'me.saket:better-link-movement-method:2'
 }
 
 apply plugin: 'com.google.gms.google-services'
