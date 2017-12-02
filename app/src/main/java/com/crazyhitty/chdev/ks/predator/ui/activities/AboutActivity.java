@@ -75,23 +75,7 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 public class AboutActivity extends BaseAppCompatActivity {
     private static final String TAG = "AboutActivity";
-    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .build();
-    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
-            new CustomTabsActivityHelper.CustomTabsFallback() {
-                @Override
-                public void openUri(Activity activity, Uri uri) {
-                    try {
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-            };
+
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
     @BindView(R.id.toolbar)
@@ -232,18 +216,12 @@ public class AboutActivity extends BaseAppCompatActivity {
     }
 
     private void openPrivacyPolicy() {
-        CustomTabsHelperFragment.open(this,
-                mCustomTabsIntent,
-                Uri.parse(Constants.About.URL_PRIVACY_POLICY),
-                mCustomTabsFallback);
+        openUrlViaChromeCustomTabs(Constants.About.URL_PRIVACY_POLICY);
     }
 
     @OnClick(R.id.button_github)
     public void onGithubClick() {
-        CustomTabsHelperFragment.open(this,
-                mCustomTabsIntent,
-                Uri.parse(Constants.About.URL_GITHUB),
-                mCustomTabsFallback);
+        openUrlViaChromeCustomTabs(Constants.About.URL_GITHUB);
     }
 
     @OnClick(R.id.button_google_plus)
