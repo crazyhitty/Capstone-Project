@@ -80,32 +80,13 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private static final String TAG = "PostDetailsPresenter";
 
-    private final CustomTabsIntent mCustomTabsIntent;
-    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
-            new CustomTabsActivityHelper.CustomTabsFallback() {
-                @Override
-                public void openUri(Activity activity, Uri uri) {
-                    try {
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-            };
     @NonNull
     private PostDetailsContract.View mView;
     private CompositeDisposable mCompositeDisposable;
-    private PostDetails mPostDetails;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
         mCompositeDisposable = new CompositeDisposable();
-        mCustomTabsIntent = new CustomTabsIntent.Builder()
-                .enableUrlBarHiding()
-                .setShowTitle(true)
-                .build();
     }
 
     @Override
@@ -141,8 +122,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onNext(PostDetails postDetails) {
                 Logger.d(TAG, "onNext: postDetails: " + postDetails.toString());
-                mPostDetails = postDetails;
-                mView.showDetails(mPostDetails);
+                mView.showDetails(postDetails);
             }
         }));
     }
@@ -458,23 +438,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public void openRedirectUrl(Activity activity) {
-        if (mPostDetails == null ||
-                TextUtils.isEmpty(mPostDetails.getRedirectUrl())) {
-            Toast.makeText(activity.getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String redirectUrl = mPostDetails.getRedirectUrl();
-
-        CustomTabsHelperFragment.open(activity,
-                mCustomTabsIntent,
-                Uri.parse(redirectUrl),
-                mCustomTabsFallback);
-    }
-
-    @Override
     public void setAsRead(final int postId) {
-        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+        Observable<Void> readPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
             @Override
             public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
                 PredatorDatabase.getInstance()
@@ -484,7 +449,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+        mCompositeDisposable.add(readPostsObservable.subscribeWith(new DisposableObserver<Void>() {
             @Override
             public void onComplete() {
                 // Done
@@ -504,7 +469,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void setAsUnread(final int postId) {
-        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+        Observable<Void> unreadPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
             @Override
             public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
                 PredatorDatabase.getInstance()
@@ -514,7 +479,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+        mCompositeDisposable.add(unreadPostsObservable.subscribeWith(new DisposableObserver<Void>() {
             @Override
             public void onComplete() {
                 // Done
@@ -533,8 +498,86 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public PostDetails getPostDetails() {
-        return mPostDetails;
+    public void getRedirectUrl(final int postId) {
+        Observable<String> redirectUrlObservable = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                String redirectUrl = PredatorDatabase.getInstance()
+                        .getPostRedirectUrl(postId);
+                if (TextUtils.isEmpty(redirectUrl)) {
+                    emitter.onError(new NullPointerException("No redirect url available"));
+                } else {
+                    emitter.onNext(redirectUrl);
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(redirectUrlObservable.subscribeWith(new DisposableObserver<String>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.noRedirectUrlAvailable();
+            }
+
+            @Override
+            public void onNext(String value) {
+                mView.openRedirectUrl(value);
+            }
+        }));
+    }
+
+    @Override
+    public void getShareIntent(final int postId) {
+        Observable<Intent> shareIntentObservable = Observable.create(new ObservableOnSubscribe<Intent>() {
+            @Override
+            public void subscribe(ObservableEmitter<Intent> emitter) throws Exception {
+                Post post = PredatorDatabase.getInstance()
+                        .getPost(postId);
+                if (TextUtils.isEmpty(post.getName())) {
+                    emitter.onError(new NullPointerException("Post name unavailable"));
+                    emitter.onComplete();
+                    return;
+                }
+
+                String title = post.getName();
+                String body = post.getTagline() + "\n" + post.getDiscussionUrl();
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+
+                emitter.onNext(sharingIntent);
+
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(shareIntentObservable.subscribeWith(new DisposableObserver<Intent>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.noShareIntentAvailable();
+            }
+
+            @Override
+            public void onNext(Intent value) {
+                mView.fireShareIntent(value);
+            }
+        }));
     }
 
     @Override

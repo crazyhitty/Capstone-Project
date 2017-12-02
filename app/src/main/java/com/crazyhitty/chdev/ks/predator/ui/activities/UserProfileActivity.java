@@ -400,10 +400,7 @@ public class UserProfileActivity extends BaseAppCompatActivity implements UserPr
 
     @Override
     public void websiteAvailable(String url) {
-        CustomTabsHelperFragment.open(this,
-                getCustomTabsIntent(),
-                Uri.parse(url),
-                getCustomTabsFallback());
+        openUrlViaChromeCustomTabs(url);
     }
 
     @Override

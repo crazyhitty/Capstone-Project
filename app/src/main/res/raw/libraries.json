@@ -83,6 +83,12 @@
       "library_creator": "Airbnb",
       "library_license_type": "Apache License, Version 2.0",
       "library_redirect_url": "https://github.com/airbnb/lottie-android"
+    },
+    {
+      "library_title": "BetterLinkMovementMethod",
+      "library_creator": "Saket Narayan",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/Saketme/Better-Link-Movement-Method"
     }
   ]
 }

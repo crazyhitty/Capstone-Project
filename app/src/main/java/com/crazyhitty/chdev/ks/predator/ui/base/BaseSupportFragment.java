@@ -30,7 +30,9 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
@@ -44,8 +46,11 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
+import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
+
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -59,10 +64,7 @@ public abstract class BaseSupportFragment extends Fragment {
 
     private Menu mMenu;
 
-    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .build();
+    private CustomTabsIntent mCustomTabsIntent;
 
     private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
             new CustomTabsActivityHelper.CustomTabsFallback() {
@@ -77,6 +79,16 @@ public abstract class BaseSupportFragment extends Fragment {
                     }
                 }
             };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mCustomTabsIntent = new CustomTabsIntent.Builder()
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .setToolbarColor(ResourceUtils.getColorFromAttribute(getContext(), R.attr.colorPrimary))
+                .build();
+    }
 
     protected void setFragment(@IdRes int layoutResId, Fragment fragment, boolean addToBackStack) {
         CoreUtils.setFragment(getFragmentManager(), layoutResId, fragment, addToBackStack);
@@ -127,12 +139,18 @@ public abstract class BaseSupportFragment extends Fragment {
         }
     }
 
-    protected CustomTabsIntent getCustomTabsIntent() {
-        return mCustomTabsIntent;
+    protected void openUrlViaChromeCustomTabs(String url) {
+        CustomTabsHelperFragment.open(getActivity(),
+                mCustomTabsIntent,
+                Uri.parse(url),
+                mCustomTabsFallback);
     }
 
-    protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
-        return mCustomTabsFallback;
+    protected void openUrlNormally(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
