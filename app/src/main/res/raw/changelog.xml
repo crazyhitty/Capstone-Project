@@ -25,6 +25,12 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Dec 3, 2017"
+        versionName="0.38">
+        <changelogtext>[b]New![/b] Add searching functionality for posts and collections.</changelogtext>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Dec 2, 2017"
         versionName="0.37">
         <changelogtext>Update link handling and chrome custom tabs.</changelogtext>
