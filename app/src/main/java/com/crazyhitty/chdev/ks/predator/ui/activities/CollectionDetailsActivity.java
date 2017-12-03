@@ -43,6 +43,7 @@ import com.crazyhitty.chdev.ks.predator.models.Collection;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionDetailsFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
+import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
@@ -107,7 +108,7 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
         // Check if fallback data is available or not.
         if (getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA) != null) {
             Collection collectionFallback = getIntent().getParcelableExtra(ARG_COLLECTION_FALLBACK_DATA);
-            setToolbarTitle(collectionFallback.getTitle());
+            setToolbarTitle(collectionFallback.getName());
         }
     }
 
@@ -174,6 +175,14 @@ public class CollectionDetailsActivity extends BaseAppCompatActivity implements 
 
         if (TextUtils.isEmpty(collection.getBackgroundImageUrl())) {
             imgViewCollection.setVisibility(View.GONE);
+            txtCollectionTitle.setPadding(ScreenUtils.dpToPxInt(getApplicationContext(), getResources().getDimension(R.dimen.padding_avg)),
+                    0,
+                    0,
+                    0);
+            txtCollectionDesc.setPadding(ScreenUtils.dpToPxInt(getApplicationContext(), getResources().getDimension(R.dimen.padding_avg)),
+                    0,
+                    0,
+                    0);
         } else {
             imgViewCollection.setImageURI(collection.getBackgroundImageUrl());
         }
