@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
+package com.crazyhitty.chdev.ks.predator.core.search;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
 import com.crazyhitty.chdev.ks.predator.core.BaseView;
@@ -34,26 +34,32 @@ import java.util.List;
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/21/2017 1:29 PM
+ * Created:     10/9/17 10:26 PM
  * Description: Unavailable
  */
 
-public interface CollectionDetailsContract {
+public interface SearchContract {
     interface View extends BaseView<Presenter> {
-        void showCollectionDetails(Collection collection);
+        void showPostResults(List<Post> posts, boolean loadMore);
 
-        void collectionDetailsUnavailable();
+        void noPostsAvailable(boolean loadMore);
 
-        void showPosts(List<Post> posts);
+        void showCollectionResults(List<Collection> collections, boolean loadMore);
 
-        void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage);
+        void noCollectionsAvailable(boolean loadMore);
     }
 
     interface Presenter extends BasePresenter {
-        void getCollectionDetails(int collectionId);
+        void search(String keyword);
 
-        void getOfflinePosts(int collectionId);
+        void loadMorePosts(String keyword);
 
-        void getPosts(String token, int collectionId);
+        void loadMoreCollections(String keyword);
+
+        void cancelOngoingRequest();
+
+        boolean isLoadingMorePosts();
+
+        boolean isLoadingMoreCollections();
     }
 }

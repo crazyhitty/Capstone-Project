@@ -24,10 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,21 +69,42 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private boolean mNetworkAvailable;
     private String mErrorMessage;
     private int mLastPosition = -1;
+    private boolean mLoadMoreNotRequired = false;
     private HashMap<Integer, Integer> mColorHashMap = new HashMap<>();
 
-    public CollectionsRecyclerAdapter(List<Collection> collections, OnCollectionsLoadMoreRetryListener onCollectionsLoadMoreRetryListener) {
+    public CollectionsRecyclerAdapter() {
+        mLoadMoreNotRequired = true;
+    }
+
+    public CollectionsRecyclerAdapter(List<Collection> collections,
+                                      OnCollectionsLoadMoreRetryListener onCollectionsLoadMoreRetryListener) {
         mCollections = collections;
         mOnCollectionsLoadMoreRetryListener = onCollectionsLoadMoreRetryListener;
+        mLoadMoreNotRequired = false;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setLoadMore(boolean canLoadMore) {
+        mLoadMoreNotRequired = !canLoadMore;
+    }
+
+    public boolean canLoadMore() {
+        return !mLoadMoreNotRequired;
+    }
+
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        notifyItemChanged(getItemCount() - 1);
+        if (!isEmpty() && canLoadMore()) {
+            notifyItemChanged(getItemCount() - 1);
+        }
+    }
+
+    public void removeLoadingView() {
+        notifyItemRemoved(getItemCount() - 1);
     }
 
     public void updateDataset(List<Collection> collections, boolean forceReplace) {
@@ -93,6 +116,19 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             int oldCount = mCollections.size();
             notifyItemRangeInserted(oldCount, mCollections.size() - oldCount);
         }
+    }
+
+    public void addDataset(@NonNull List<Collection> collections) {
+        if (mCollections != null) {
+            int oldCount = mCollections.size();
+            mCollections.addAll(collections);
+            notifyItemRangeInserted(oldCount, mCollections.size() - oldCount);
+        }
+    }
+
+    public void clear() {
+        mCollections = null;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -129,12 +165,15 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         String title = mCollections.get(position).getName();
         String description = mCollections.get(position).getTitle();
 
-        collectionViewHolder.txtTitle.setText(title);
+        Spannable titleSpannable = mCollections.get(position).getNameSpannable();
+        Spannable descriptionSpannable = mCollections.get(position).getTitleSpannable();
+
+        collectionViewHolder.txtTitle.setText(titleSpannable != null ? titleSpannable : title);
 
         if (TextUtils.isEmpty(description)) {
             description = collectionViewHolder.itemView.getResources().getString(R.string.item_collection_no_desc_available);
         }
-        collectionViewHolder.txtDescription.setText(description);
+        collectionViewHolder.txtDescription.setText(descriptionSpannable != null ? descriptionSpannable : description);
 
         if (!mColorHashMap.containsKey(position)) {
             if (PredatorSharedPreferences.getCurrentTheme(collectionViewHolder.itemView.getContext()) == PredatorSharedPreferences.THEME_TYPE.LIGHT) {
@@ -173,7 +212,9 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         loadMoreViewHolder.btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnCollectionsLoadMoreRetryListener.onLoadMore();
+                if (mOnCollectionsLoadMoreRetryListener != null) {
+                    mOnCollectionsLoadMoreRetryListener.onLoadMore();
+                }
             }
         });
     }
@@ -189,7 +230,18 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return mCollections != null ? mCollections.size() + 1 : 0;
+        if (mLoadMoreNotRequired) {
+            return mCollections != null ?
+                    mCollections.size() : 0;
+        } else {
+            // Add extra item, that will be shown in case of load more scenario.
+            return mCollections != null ?
+                    mCollections.size() + 1 : 0;
+        }
+    }
+
+    public boolean isEmpty() {
+        return mCollections == null || mCollections.isEmpty();
     }
 
     /**
@@ -208,10 +260,14 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mCollections.get(position).getCollectionId();
     }
 
+    public Collection getCollection(int position) {
+        return mCollections.get(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
         // If last position, then show "load more" view to the user.
-        if (position == getItemCount() - 1) {
+        if (position == getItemCount() - 1 && !mLoadMoreNotRequired) {
             return VIEW_TYPE_LOAD_MORE;
         } else {
             return VIEW_TYPE_COLLECTION;

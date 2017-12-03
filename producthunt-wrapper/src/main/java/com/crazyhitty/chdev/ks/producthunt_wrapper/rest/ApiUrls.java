@@ -42,6 +42,12 @@ class ApiUrls {
     static final String GET_USER_PROFILE = "users/{user_id}";
     static final String GET_CATEGORIES = "categories";
 
+    static final String SEARCH = "*/queries?" + Constants.SEARCH_X_ANGOLIA_AGENT + "=" + Authorization.X_ANGOLIA_AGENT + "&" +
+            Constants.SEARCH_X_ANGOLIA_APPLICATION_ID + "=" + Authorization.X_ANGOLIA_APPLICATION_ID + "&" +
+            Constants.SEARCH_X_ANGOLIA_API_KEY + "=" + Authorization.X_ANGOLIA_API_KEY;
+    //static final String SEARCH_POSTS = "Post_production/query";
+    //static final String SEARCH_COLLECTIONS = "Collection_production/query";
+
     // Requires public+private auth token
     static final String MY_PROFILE = "me";
 

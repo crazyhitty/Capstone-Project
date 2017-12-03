@@ -22,38 +22,37 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
+package com.crazyhitty.chdev.ks.producthunt_wrapper.utils;
 
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Collection;
-import com.crazyhitty.chdev.ks.predator.models.Post;
-
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/21/2017 1:29 PM
+ * Created:     10/13/17 12:47 PM
  * Description: Unavailable
  */
 
-public interface CollectionDetailsContract {
-    interface View extends BaseView<Presenter> {
-        void showCollectionDetails(Collection collection);
+public class QueryBuilder {
+    private Map<String, String> queryMap = new HashMap<>();
 
-        void collectionDetailsUnavailable();
-
-        void showPosts(List<Post> posts);
-
-        void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage);
+    public QueryBuilder appendQueryParameter(String key, String value) {
+        queryMap.put(key, value);
+        return this;
     }
 
-    interface Presenter extends BasePresenter {
-        void getCollectionDetails(int collectionId);
+    public String build() {
+        if (queryMap.isEmpty()) {
+            return "";
+        }
 
-        void getOfflinePosts(int collectionId);
+        String query = "";
 
-        void getPosts(String token, int collectionId);
+        for (String key : queryMap.keySet()) {
+            query += String.format("%s=%s&", key, queryMap.get(key));
+        }
+
+        return query.substring(0, query.length() - 1);
     }
 }

@@ -133,9 +133,11 @@ public abstract class BaseSupportFragment extends Fragment {
         }
 
         for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).getIcon()
-                    .mutate()
-                    .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+            if (menu.getItem(i).getIcon() != null) {
+                menu.getItem(i).getIcon()
+                        .mutate()
+                        .setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+            }
         }
     }
 

@@ -86,7 +86,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
-    private AlertDialog mErrorDialog;
+    private AlertDialog mErrorDialog, mDialog;
 
     private CustomTabsIntent mCustomTabsIntent;
     private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
@@ -197,9 +197,44 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         }
     }
 
+    protected void showDialog(String title, String message, boolean isCancellable) {
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    protected void dismissDialog() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+    }
+
     protected void showErrorDialog(String message, boolean isCancellable) {
         mErrorDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.error)
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_outline_24dp)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    protected void showErrorDialog(String title, String message, boolean isCancellable) {
+        mErrorDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
                 .setMessage(message)
                 .setIcon(R.drawable.ic_error_outline_24dp)
                 .setCancelable(isCancellable)

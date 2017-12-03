@@ -63,6 +63,9 @@ class Constants {
 
     // search
     static final String SEARCH_SLUG = "search[slug]";
+    static final String SEARCH_X_ANGOLIA_AGENT = "x-algolia-agent";
+    static final String SEARCH_X_ANGOLIA_APPLICATION_ID = "x-algolia-application-id";
+    static final String SEARCH_X_ANGOLIA_API_KEY = "x-algolia-api-key";
 
     // oauth
     static final String CLIENT_ID = "client_id";

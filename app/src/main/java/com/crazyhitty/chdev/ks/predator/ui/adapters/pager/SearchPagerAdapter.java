@@ -22,38 +22,45 @@
  * SOFTWARE.
  */
 
-package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
+package com.crazyhitty.chdev.ks.predator.ui.adapters.pager;
 
-import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
-import com.crazyhitty.chdev.ks.predator.core.BaseView;
-import com.crazyhitty.chdev.ks.predator.models.Collection;
-import com.crazyhitty.chdev.ks.predator.models.Post;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.List;
+import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
- * Created:     1/21/2017 1:29 PM
+ * Created:     10/10/17 3:07 PM
  * Description: Unavailable
  */
 
-public interface CollectionDetailsContract {
-    interface View extends BaseView<Presenter> {
-        void showCollectionDetails(Collection collection);
+public class SearchPagerAdapter extends FragmentPagerAdapter {
+    private BaseSupportFragment[] mFragments;
+    private String[] mTitles;
 
-        void collectionDetailsUnavailable();
-
-        void showPosts(List<Post> posts);
-
-        void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage);
+    public SearchPagerAdapter(FragmentManager fm,
+                                   BaseSupportFragment[] fragments,
+                                   String[] titles) {
+        super(fm);
+        mFragments = fragments;
+        mTitles = titles;
     }
 
-    interface Presenter extends BasePresenter {
-        void getCollectionDetails(int collectionId);
+    @Override
+    public Fragment getItem(int position) {
+        return mFragments[position];
+    }
 
-        void getOfflinePosts(int collectionId);
+    @Override
+    public int getCount() {
+        return mFragments.length;
+    }
 
-        void getPosts(String token, int collectionId);
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return mTitles[position];
     }
 }
