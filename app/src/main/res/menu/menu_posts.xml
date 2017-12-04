@@ -41,11 +41,11 @@
                 <item
                     android:id="@+id/menu_sort_latest"
                     android:orderInCategory="1"
-                    android:title="@string/menu_posts_sort_latest" />
+                    android:title="@string/menu_posts_sort_newest" />
                 <item
                     android:id="@+id/menu_sort_vote_count"
                     android:orderInCategory="2"
-                    android:title="@string/menu_posts_sort_vote_count" />
+                    android:title="@string/menu_posts_sort_popular" />
             </group>
         </menu>
     </item>

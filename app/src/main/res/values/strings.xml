@@ -43,8 +43,8 @@
     <!--menu_posts.xml-->
     <string name="menu_posts_search">Search Posts</string>
     <string name="menu_posts_sort">Sort</string>
-    <string name="menu_posts_sort_latest">Latest</string>
-    <string name="menu_posts_sort_vote_count">Vote count</string>
+    <string name="menu_posts_sort_newest">Newest</string>
+    <string name="menu_posts_sort_popular">Popular</string>
     <string name="menu_posts_sort_oldest">Oldest</string>
     <string name="menu_posts_switch_layout">Switch Layout</string>
     <string name="menu_posts_switch_layout_list">List</string>
