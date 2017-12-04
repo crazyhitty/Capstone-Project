@@ -311,6 +311,11 @@
     <string name="fragment_search_collections_unavailable">No collections available, please search something else</string>
     <string name="fragment_search_collections_max_limit_error">No more collections available, looks like you reached end of the list!</string>
 
+    <!--shortcuts-->
+    <string name="shortcut_show_posts_short_label">Search</string>
+    <string name="shortcut_show_posts_long_label">Search posts and collections</string>
+    <string name="shortcut_show_posts_disabled_message">Search unavailable</string>
+
     <!--settings-->
     <string name="settings_name">Settings</string>
 
