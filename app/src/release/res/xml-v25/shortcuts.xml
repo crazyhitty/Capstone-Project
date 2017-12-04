@@ -27,7 +27,7 @@
     <shortcut
         android:shortcutId="search"
         android:enabled="true"
-        android:icon="@drawable/ic_search_24dp"
+        android:icon="@drawable/ic_search_shortcut_24dp"
         android:shortcutShortLabel="@string/shortcut_show_posts_short_label"
         android:shortcutLongLabel="@string/shortcut_show_posts_long_label"
         android:shortcutDisabledMessage="@string/shortcut_show_posts_disabled_message">
