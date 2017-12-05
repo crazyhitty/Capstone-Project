@@ -438,10 +438,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         }
                         break;
                     case USERS:
-                        if (postDetailsDataType.isEmpty()) {
-                            mView.unableToFetchAllUsers("No users available for provided post");
-                        } else {
+                        if (!postDetailsDataType.isEmpty()) {
                             mView.showAllUsers(postDetailsDataType.getUsers());
+                        } else if (postDetailsDataType.isEmpty() && !mView.isInternetAvailable()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
                         }
                         break;
                 }
