@@ -64,8 +64,8 @@ import io.reactivex.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class PostsPresenter implements PostsContract.Presenter {
-    private static final String TAG = "PostsPresenter";
+public class PostsPresenterLegacy implements PostsContract.Presenter {
+    private static final String TAG = "PostsPresenterLegacy";
 
     private String mLastDate = DateUtils.getPredatorCurrentDate();
 
@@ -78,7 +78,7 @@ public class PostsPresenter implements PostsContract.Presenter {
 
     private CompositeDisposable mCompositeDisposable;
 
-    public PostsPresenter(@NonNull PostsContract.View view) {
+    public PostsPresenterLegacy(@NonNull PostsContract.View view) {
         this.mView = view;
         mCompositeDisposable = new CompositeDisposable();
     }

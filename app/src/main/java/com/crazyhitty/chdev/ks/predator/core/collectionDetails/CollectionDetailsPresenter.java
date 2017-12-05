@@ -27,7 +27,7 @@ package com.crazyhitty.chdev.ks.predator.core.collectionDetails;
 import android.support.annotation.NonNull;
 
 import com.crazyhitty.chdev.ks.predator.core.collections.CollectionsPresenter;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
@@ -119,7 +119,7 @@ public class CollectionDetailsPresenter implements CollectionDetailsContract.Pre
                 if (posts != null && !posts.isEmpty()) {
                     emitter.onNext(posts);
                 } else {
-                    emitter.onError(new PostsPresenter.NoPostsAvailableException());
+                    emitter.onError(new PostsPresenterLegacy.NoPostsAvailableException());
                 }
                 emitter.onComplete();
             }

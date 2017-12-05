@@ -41,7 +41,7 @@ import android.view.ViewGroup;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.events.NetworkEvent;
@@ -101,7 +101,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        setPresenter(new PostsPresenter(this));
+        setPresenter(new PostsPresenterLegacy(this));
         mPostsPresenter.subscribe();
         EventBus.getDefault().register(this);
     }

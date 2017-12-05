@@ -35,7 +35,7 @@ import android.widget.RemoteViewsService;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -72,7 +72,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
     @Override
     public void onCreate() {
         Logger.d(TAG, "onCreate: true");
-        setPresenter(new PostsPresenter(this));
+        setPresenter(new PostsPresenterLegacy(this));
         mPostsPresenter.subscribe();
         mPostsPresenter.getOfflinePosts(mPostsPresenter.getSortType(mContextWeakReference.get()));
     }

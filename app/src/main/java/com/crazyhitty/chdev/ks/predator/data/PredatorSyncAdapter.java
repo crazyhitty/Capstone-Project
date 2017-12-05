@@ -30,13 +30,12 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Bundle;
 
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenter;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.notifications.PostNotification;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
@@ -109,7 +108,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         mAccountManager = AccountManager.get(context);
 
         // Initialize the presenters.
-        mPostsPresenter = new PostsPresenter(mPostsView);
+        mPostsPresenter = new PostsPresenterLegacy(mPostsView);
 
         mPostsPresenter.subscribe();
     }
