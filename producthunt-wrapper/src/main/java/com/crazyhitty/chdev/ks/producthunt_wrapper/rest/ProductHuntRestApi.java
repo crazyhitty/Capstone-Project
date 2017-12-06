@@ -24,6 +24,7 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 
+import com.crazyhitty.chdev.ks.producthunt_wrapper.BuildConfig;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -109,7 +110,7 @@ public class ProductHuntRestApi {
         okHttpClientBuilder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
 
-        if (withInterceptor) {
+        if (withInterceptor && BuildConfig.DEBUG) {
             okHttpClientBuilder.addInterceptor(sInterceptor);
         }
 
