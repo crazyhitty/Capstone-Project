@@ -12,7 +12,7 @@ Predator is a minimalistic client for ProductHunt. It shows latest products and 
 
 # Features
 * Minimal and simple user interface, which user can get easily acquainted with.
-* View latest posts and collections from ProductHunt.
+* View and search through latest posts and collections from ProductHunt.
 * Checkout the media and comments of a particular post and share them with anyone.
 * Sync data in background even if the app is not running, so you can remain up to date with the latest posts and collections (Optional, can be activated via application settings).
 * Multiple font support.
@@ -25,7 +25,9 @@ Predator is a minimalistic client for ProductHunt. It shows latest products and 
 
 <img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/5.png" alt="alt text" width="400"> <img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/6.png" alt="alt text" width="400">
 
-<img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/7.png" alt="alt text" width="400">
+<img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/7.png" alt="alt text" width="400"> <img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/8.png" alt="alt text" width="400">
+
+<img src="https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/screenshots/9.png" alt="alt text" width="400">
 
 # Contributing
 You can contribute to the project by either finding out bugs or by requesting new features.
