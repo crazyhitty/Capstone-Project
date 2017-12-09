@@ -25,10 +25,6 @@
 package com.crazyhitty.chdev.ks.predator.core.search;
 
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.text.style.StyleSpan;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.models.Collection;
@@ -38,20 +34,16 @@ import com.crazyhitty.chdev.ks.predator.utils.SearchSpanCreator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.SearchRequestData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
-import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;

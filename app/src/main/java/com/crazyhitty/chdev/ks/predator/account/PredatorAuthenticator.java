@@ -36,7 +36,6 @@ import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.ui.activities.AuthenticatorActivity;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import java.lang.ref.WeakReference;
 

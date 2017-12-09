@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 
 import com.crazyhitty.chdev.ks.predator.data.Constants;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;

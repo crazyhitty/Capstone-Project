@@ -27,8 +27,6 @@ package com.crazyhitty.chdev.ks.predator.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.facebook.drawee.drawable.RoundedBitmapDrawable;
-
 import java.io.InputStream;
 
 import io.reactivex.Observable;
