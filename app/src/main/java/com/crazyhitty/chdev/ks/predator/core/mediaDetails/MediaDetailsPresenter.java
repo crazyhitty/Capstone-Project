@@ -78,7 +78,7 @@ public class MediaDetailsPresenter implements MediaDetailsContract.Presenter {
                     }
                     emitter.onNext(new MediaData(media, defaultPosition));
                 } else {
-                    emitter.onError(new PostDetailsPresenter.MediaUnavailableException());
+                    emitter.onError(new NullPointerException("No media available for this post"));
                 }
                 emitter.onComplete();
             }

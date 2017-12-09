@@ -29,6 +29,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity-alias>
 
         <activity
@@ -78,6 +80,11 @@
         <activity
             android:name=".ui.activities.AuthenticatorActivity"
             android:theme="@style/DialogActivity.NoTitle.Light" />
+
+        <activity
+            android:name=".ui.activities.SearchActivity"
+            android:parentActivityName=".ui.activities.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".ui.activities.AppLinkingActivity"

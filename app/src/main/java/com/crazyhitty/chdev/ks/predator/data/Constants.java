@@ -89,7 +89,7 @@ public class Constants {
     }
 
     public static class About {
-        public static final String URL_PRIVACY_POLICY = "http://www.crazyhitty.com/privacy-policy-for-predator-for-product-hunt/";
+        public static final String URL_PRIVACY_POLICY = "https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/privacy_policy.html";
         public static final String URL_GITHUB_KAJAL = "https://github.com/kajal-mittal";
         public static final String URL_GITHUB = "https://github.com/crazyhitty/Capstone-Project";
         public static final String URL_GOOGLE_PLUS = "https://plus.google.com/communities/102250921213849521349";
@@ -101,6 +101,11 @@ public class Constants {
         private About() {
 
         }
+    }
+
+    public static class Search {
+        public static final String POST_PRODUCTION = "Post_production";
+        public static final String COLLECTION_PRODUCTION = "Collection_production";
     }
 
     public static class SharedPreferences {

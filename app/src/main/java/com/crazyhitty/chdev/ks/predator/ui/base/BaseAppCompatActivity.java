@@ -59,6 +59,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
+import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
@@ -66,6 +67,7 @@ import org.chromium.customtabsclient.CustomTabsActivityHelper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
@@ -84,12 +86,9 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private String mCurrentFragmentTag;
     private ProgressDialog mLoadingDialog;
-    private AlertDialog mErrorDialog;
+    private AlertDialog mErrorDialog, mDialog;
 
-    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .build();
+    private CustomTabsIntent mCustomTabsIntent;
     private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
             new CustomTabsActivityHelper.CustomTabsFallback() {
                 @Override
@@ -108,6 +107,11 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         manageThemes();
+        mCustomTabsIntent = new CustomTabsIntent.Builder()
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .setToolbarColor(ResourceUtils.getColorFromAttribute(this, R.attr.colorPrimary))
+                .build();
     }
 
     @Override
@@ -193,9 +197,44 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         }
     }
 
+    protected void showDialog(String title, String message, boolean isCancellable) {
+        mDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    protected void dismissDialog() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+    }
+
     protected void showErrorDialog(String message, boolean isCancellable) {
         mErrorDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.error)
+                .setMessage(message)
+                .setIcon(R.drawable.ic_error_outline_24dp)
+                .setCancelable(isCancellable)
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    protected void showErrorDialog(String title, String message, boolean isCancellable) {
+        mErrorDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
                 .setMessage(message)
                 .setIcon(R.drawable.ic_error_outline_24dp)
                 .setCancelable(isCancellable)
@@ -326,11 +365,17 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         }
     }
 
-    protected CustomTabsIntent getCustomTabsIntent() {
-        return mCustomTabsIntent;
+    protected void openUrlViaChromeCustomTabs(String url) {
+        CustomTabsHelperFragment.open(this,
+                mCustomTabsIntent,
+                Uri.parse(url),
+                mCustomTabsFallback);
     }
 
-    protected CustomTabsActivityHelper.CustomTabsFallback getCustomTabsFallback() {
-        return mCustomTabsFallback;
+    protected void openUrlNormally(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

@@ -72,7 +72,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CollectionDetailsFragment extends BaseSupportFragment implements CollectionDetailsContract.View {
     private static final String TAG = "CollectionDetailsFragment";
-    private static final String ARG_COLLECTION_TABLE_ID = "id";
     private static final String ARG_COLLECTION_TABLE_COLLECTION_ID = "collection_id";
 
     @BindView(R.id.recycler_view_posts)
@@ -88,9 +87,10 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
 
     private OnFragmentInteractionListener mOnFragmentInteractionListener;
 
-    public static CollectionDetailsFragment newInstance(int id, int collectionId) {
+    private boolean mSetAppBarContents;
+
+    public static CollectionDetailsFragment newInstance(int collectionId) {
         Bundle args = new Bundle();
-        args.putInt(ARG_COLLECTION_TABLE_ID, id);
         args.putInt(ARG_COLLECTION_TABLE_COLLECTION_ID, collectionId);
         CollectionDetailsFragment fragment = new CollectionDetailsFragment();
         fragment.setArguments(args);
@@ -228,12 +228,25 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
     @Override
     public void showCollectionDetails(Collection collection) {
         mOnFragmentInteractionListener.setToolbarTitle(collection.getName());
+
+        if (mSetAppBarContents) {
+            mOnFragmentInteractionListener.setAppBarContents(collection);
+            mOnFragmentInteractionListener.expandAppBar();
+        }
+    }
+
+    @Override
+    public void collectionDetailsUnavailable() {
+        if (mSetAppBarContents) {
+            mOnFragmentInteractionListener.resortToFallbackData();
+            mOnFragmentInteractionListener.expandAppBar();
+        }
     }
 
     @Override
     public void showPosts(List<Post> posts) {
-        mOnFragmentInteractionListener.setAppBarContents(mCollectionDetailsPresenter.getCurrentCollection());
-        mOnFragmentInteractionListener.expandAppBar();
+        mSetAppBarContents = true;
+        mCollectionDetailsPresenter.getCollectionDetails(getArguments().getInt(ARG_COLLECTION_TABLE_COLLECTION_ID));
 
         // Hide loading view
         loadingView.setComplete(getString(R.string.posts_successfully_loaded_posts));
@@ -305,6 +318,8 @@ public class CollectionDetailsFragment extends BaseSupportFragment implements Co
         void setToolbarTitle(String title);
 
         void setAppBarContents(Collection collection);
+
+        void resortToFallbackData();
 
         void expandAppBar();
     }

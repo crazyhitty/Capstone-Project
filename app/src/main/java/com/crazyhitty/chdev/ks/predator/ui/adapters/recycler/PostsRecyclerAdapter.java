@@ -24,7 +24,9 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.adapters.recycler;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.models.Post;
+import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -110,6 +113,19 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setOnPostsLoadMoreRetryListener(OnPostsLoadMoreRetryListener onPostsLoadMoreRetryListener) {
+        mOnPostsLoadMoreRetryListener = onPostsLoadMoreRetryListener;
+        mLoadMoreNotRequired = false;
+    }
+
+    public void setLoadMore(boolean canLoadMore) {
+        mLoadMoreNotRequired = !canLoadMore;
+    }
+
+    public boolean canLoadMore() {
+        return !mLoadMoreNotRequired;
+    }
+
     public void setType(TYPE type) {
         mType = type;
     }
@@ -147,10 +163,24 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
+    public void addDataset(@NonNull List<Post> posts) {
+        if (mPosts != null) {
+            int oldCount = mPosts.size();
+            mPosts.addAll(posts);
+            notifyItemRangeInserted(oldCount, mPosts.size() - oldCount);
+        }
+    }
+
     public void setNetworkStatus(boolean status, String message) {
         mNetworkAvailable = status;
         mErrorMessage = message;
-        notifyItemChanged(getItemCount() - 1);
+        if (!isEmpty() && canLoadMore()) {
+            notifyItemChanged(getItemCount() - 1);
+        }
+    }
+
+    public void removeLoadingView() {
+        notifyItemRemoved(getItemCount() - 1);
     }
 
     public void clear() {
@@ -192,6 +222,12 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         String title = mPosts.get(position).getName();
         String shortDesc = mPosts.get(position).getTagline();
 
+        Spannable titleSpannable = mPosts.get(position).getNameSpannable();
+        Spannable shortDescSpannable = mPosts.get(position).getTaglineSpannable();
+
+        Logger.d(TAG, "titleSpannable: " + titleSpannable);
+        Logger.d(TAG, "shortDescSpannable: " + shortDescSpannable);
+
         String postImageUrl = mPosts.get(position).getThumbnailImageUrl();
         postImageUrl = ImageUtils.getCustomPostThumbnailImageUrl(postImageUrl,
                 ScreenUtils.dpToPxInt(listItemViewHolder.itemView.getContext(), 44),
@@ -200,8 +236,8 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         String date = mDateHashMap.get(position);
         boolean showDate = (date != null);
 
-        listItemViewHolder.txtPostTitle.setText(title);
-        listItemViewHolder.txtShortDesc.setText(shortDesc);
+        listItemViewHolder.txtPostTitle.setText(titleSpannable != null ? titleSpannable : title);
+        listItemViewHolder.txtShortDesc.setText(shortDescSpannable != null ? shortDescSpannable : shortDesc);
         listItemViewHolder.txtDate.setText(date);
         listItemViewHolder.txtDate.setVisibility(showDate ? View.VISIBLE : View.GONE);
         listItemViewHolder.imageViewPost.setImageURI(postImageUrl);
@@ -257,6 +293,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public boolean isEmpty() {
+        return mPosts == null || mPosts.isEmpty();
+    }
+
     /**
      * @param position Current position of the element.
      * @return Returns the unique id associated with the item at available position.
@@ -271,6 +311,10 @@ public class PostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
      */
     public int getPostId(int position) {
         return mPosts.get(position).getPostId();
+    }
+
+    public Post getPost(int position) {
+        return mPosts.get(position);
     }
 
     @Override

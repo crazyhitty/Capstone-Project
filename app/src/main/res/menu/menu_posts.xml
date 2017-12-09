@@ -26,6 +26,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_posts_search"
+        android:icon="@drawable/ic_search_24dp"
+        android:orderInCategory="98"
+        android:title="@string/menu_posts_search"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:orderInCategory="99"
         android:title="@string/menu_posts_sort"
         app:showAsAction="never">

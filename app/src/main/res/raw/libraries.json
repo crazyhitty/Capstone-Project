@@ -13,6 +13,12 @@
       "library_redirect_url": "https://github.com/ReactiveX/RxAndroid"
     },
     {
+      "library_title": "RxBinding",
+      "library_creator": "Jake Wharton",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/JakeWharton/RxBinding"
+    },
+    {
       "library_title": "Retrofit",
       "library_creator": "Square",
       "library_license_type": "Apache License, Version 2.0",
@@ -83,6 +89,12 @@
       "library_creator": "Airbnb",
       "library_license_type": "Apache License, Version 2.0",
       "library_redirect_url": "https://github.com/airbnb/lottie-android"
+    },
+    {
+      "library_title": "BetterLinkMovementMethod",
+      "library_creator": "Saket Narayan",
+      "library_license_type": "Apache License, Version 2.0",
+      "library_redirect_url": "https://github.com/Saketme/Better-Link-Movement-Method"
     }
   ]
 }

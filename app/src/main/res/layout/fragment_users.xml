@@ -46,7 +46,7 @@
             android:id="@+id/text_view_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fragment_comments_loading_please_wait"
+            android:text="@string/fragment_users_loading_please_wait"
             android:textAppearance="@style/TextAppearance.Design.Hint" />
 
         <ProgressBar

@@ -63,6 +63,7 @@ import com.crazyhitty.chdev.ks.predator.events.UsersEvent;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.models.InstallLink;
 import com.crazyhitty.chdev.ks.predator.models.Media;
+import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.models.PostDetails;
 import com.crazyhitty.chdev.ks.predator.models.User;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.pager.PostDetailsPagerAdapter;
@@ -75,6 +76,7 @@ import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.DateUtils;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.MediaItemDecorator;
+import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ScreenUtils;
 import com.crazyhitty.chdev.ks.predator.utils.StartSnapHelper;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.ImageUtils;
@@ -100,8 +102,11 @@ import static com.crazyhitty.chdev.ks.predator.data.Constants.Media.YOUTUBE_PATH
 
 public class PostDetailsActivity extends BaseAppCompatActivity implements MediaRecyclerAdapter.OnMediaItemClickListener,
         PostDetailsContract.View {
-    public static final String ARG_POST_TABLE_POST_ID = "post_id";
     private static final String TAG = "PostDetailsActivity";
+
+    public static final String ARG_POST_TABLE_POST_ID = "post_id";
+    public static final String ARG_POST_FALLBACK_DETAILS = "post_fallback_details";
+
     private static final int DELAY_MS = 600;
 
     @BindView(R.id.app_bar_layout)
@@ -142,6 +147,14 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         context.startActivity(intent);
     }
 
+    public static void startActivity(Context context, int postId, PostDetails fallbackPostDetails) {
+        Intent intent = new Intent(context, PostDetailsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ARG_POST_TABLE_POST_ID, postId);
+        intent.putExtra(ARG_POST_FALLBACK_DETAILS, fallbackPostDetails);
+        context.startActivity(intent);
+    }
+
     public static Intent getLaunchIntent(Context context, int postId) {
         Intent intent = new Intent(context, PostDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -170,10 +183,16 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
         mPostDetailsPresenter.getDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 
         // Get users.
-        mPostDetailsPresenter.getUsers(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
+        //mPostDetailsPresenter.getUsers(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
 
         // Always load offline posts details first.
         getPostDetails(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID), true);
+
+        // If fallback details are available then use it.
+        if (getIntent().getParcelableExtra(ARG_POST_FALLBACK_DETAILS) != null) {
+            PostDetails postDetails = getIntent().getParcelableExtra(ARG_POST_FALLBACK_DETAILS);
+            showDetails(postDetails);
+        }
     }
 
     private void applyTheme() {
@@ -279,6 +298,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 });
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void showDetails(PostDetails postDetails) {
         txtPostTitle.setText(postDetails.getTitle());
@@ -379,11 +399,31 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     @Override
+    public void openRedirectUrl(String url) {
+        openUrlViaChromeCustomTabs(url);
+    }
+
+    @Override
+    public void noRedirectUrlAvailable() {
+        showLongToast(R.string.post_details_no_redirect_url_available);
+    }
+
+    @Override
+    public void fireShareIntent(Intent shareIntent) {
+        startActivity(shareIntent);
+    }
+
+    @Override
+    public void noShareIntentAvailable() {
+        showLongToast(R.string.post_details_cannot_share_app);
+    }
+
+    @Override
     public void unableToFetchPostDetails(String errorMessage) {
         Logger.e(TAG, "unableToFetchPostDetails: " + errorMessage);
     }
 
-    @Override
+    /*@Override
     public void unableToFetchUsers(String errorMessage) {
         Logger.e(TAG, "unableToFetchUsers: " + errorMessage);
 
@@ -393,7 +433,7 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 updateUsers(null);
             }
         }, DELAY_MS);
-    }
+    }*/
 
     @Override
     public void unableToFetchMedia(String errorMessage) {
@@ -462,6 +502,11 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     }
 
     @Override
+    public boolean isInternetAvailable() {
+        return isNetworkAvailable(false);
+    }
+
+    @Override
     public void onMediaItemClick(int position, Media media) {
         openMedia(media);
     }
@@ -516,10 +561,10 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
                 }
                 break;
             case R.id.menu_open_redirect_url:
-                mPostDetailsPresenter.openRedirectUrl(this);
+                mPostDetailsPresenter.getRedirectUrl(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
                 break;
             case R.id.menu_share:
-                sharePostDetails();
+                mPostDetailsPresenter.getShareIntent(getIntent().getExtras().getInt(ARG_POST_TABLE_POST_ID));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -528,25 +573,6 @@ public class PostDetailsActivity extends BaseAppCompatActivity implements MediaR
     @Override
     public void setPresenter(PostDetailsContract.Presenter presenter) {
         mPostDetailsPresenter = presenter;
-    }
-
-    public void sharePostDetails() {
-        if (mPostDetailsPresenter.getPostDetails() == null ||
-                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTitle()) ||
-                TextUtils.isEmpty(mPostDetailsPresenter.getPostDetails().getTagline())) {
-            Toast.makeText(getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String title = mPostDetailsPresenter.getPostDetails().getTitle();
-        String body = mPostDetailsPresenter.getPostDetails().getTagline() + "\n" +
-                mPostDetailsPresenter.getPostDetails().getDiscussionUrl();
-
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_using)));
     }
 
     public void openMedia(Media media) {

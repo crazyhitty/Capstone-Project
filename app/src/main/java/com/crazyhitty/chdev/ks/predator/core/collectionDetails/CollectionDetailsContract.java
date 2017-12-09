@@ -42,6 +42,8 @@ public interface CollectionDetailsContract {
     interface View extends BaseView<Presenter> {
         void showCollectionDetails(Collection collection);
 
+        void collectionDetailsUnavailable();
+
         void showPosts(List<Post> posts);
 
         void unableToGetPosts(boolean wasLoadingOfflinePosts, String errorMessage);
@@ -49,8 +51,6 @@ public interface CollectionDetailsContract {
 
     interface Presenter extends BasePresenter {
         void getCollectionDetails(int collectionId);
-
-        Collection getCurrentCollection();
 
         void getOfflinePosts(int collectionId);
 

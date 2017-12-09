@@ -48,16 +48,14 @@ import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UsersComparator;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostCommentsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
+import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -80,32 +78,13 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     private static final String TAG = "PostDetailsPresenter";
 
-    private final CustomTabsIntent mCustomTabsIntent;
-    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
-            new CustomTabsActivityHelper.CustomTabsFallback() {
-                @Override
-                public void openUri(Activity activity, Uri uri) {
-                    try {
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-            };
     @NonNull
     private PostDetailsContract.View mView;
     private CompositeDisposable mCompositeDisposable;
-    private PostDetails mPostDetails;
 
     public PostDetailsPresenter(@NonNull PostDetailsContract.View view) {
         this.mView = view;
         mCompositeDisposable = new CompositeDisposable();
-        mCustomTabsIntent = new CustomTabsIntent.Builder()
-                .enableUrlBarHiding()
-                .setShowTitle(true)
-                .build();
     }
 
     @Override
@@ -118,7 +97,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 if (postDetails != null) {
                     emitter.onNext(postDetails);
                 } else {
-                    emitter.onError(new PostDetailsUnavailableException());
+                    emitter.onError(new NullPointerException("No offline post details available"));
                 }
                 emitter.onComplete();
             }
@@ -141,13 +120,12 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onNext(PostDetails postDetails) {
                 Logger.d(TAG, "onNext: postDetails: " + postDetails.toString());
-                mPostDetails = postDetails;
-                mView.showDetails(mPostDetails);
+                mView.showDetails(postDetails);
             }
         }));
     }
 
-    @Override
+    /*@Override
     public void getUsers(final int postId) {
         Observable<List<User>> postUsersObservable = Observable.create(new ObservableOnSubscribe<List<User>>() {
             @Override
@@ -182,7 +160,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                 mView.showUsers(users);
             }
         }));
-    }
+    }*/
 
     @Override
     public void getExtraDetails(String token, final int postId) {
@@ -207,6 +185,16 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 postDetails.setType(PostDetailsDataType.TYPE.POST_DETAILS);
                                 emitter.onNext(postDetails);
 
+                                // Add/update the hunter/makers for this post.
+                                PredatorDatabase.getInstance()
+                                        .insertUser(PredatorDbValuesHelper.getContentValuesForHunterUser(postId,
+                                                postDetailsData.getPost().getUser()));
+                                for (PostsData.Posts.Makers maker : postDetailsData.getPost().getMakers()) {
+                                    PredatorDatabase.getInstance()
+                                            .insertUser(PredatorDbValuesHelper.getContentValuesForMakerUser(postId,
+                                                    maker));
+                                }
+
                                 // Add users who upvoted this post to database.
                                 PredatorDatabase.getInstance()
                                         .insertUsers(PredatorDbValuesHelper.getBulkContentValuesForUsers(postId,
@@ -215,13 +203,18 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 List<User> users = PredatorDatabase.getInstance()
                                         .getAllUsersForPost(postId);
                                 if (users != null && !users.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
-                                    postDetailsDataType.setUsers(users);
+                                    // Sort the users list on basis of user type.
+                                    Collections.sort(users, new UsersComparator());
 
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                                    postDetailsDataType.setUsers(users);
                                     emitter.onNext(postDetailsDataType);
                                 } else {
-                                    emitter.onError(new VotedUsersUnavailableException());
+                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                                    postDetailsDataType.setUsers(null);
+                                    emitter.onNext(postDetailsDataType);
                                 }
 
                                 // Clear media for that particular post.
@@ -235,15 +228,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 // Query the media available.
                                 List<Media> media = PredatorDatabase.getInstance()
                                         .getMediaForPost(postId);
-                                if (media != null && !media.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setMedia(media);
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
-
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new MediaUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsMedia = new PostDetailsDataType();
+                                postDetailsMedia.setMedia(media);
+                                postDetailsMedia.setType(PostDetailsDataType.TYPE.MEDIA);
+                                emitter.onNext(postDetailsMedia);
 
                                 // Clear comments for that particular post.
                                 PredatorDatabase.getInstance()
@@ -259,14 +247,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                                 new ArrayList<Comment>(),
                                                 0,
                                                 CommentTimeCalculator.getInstance());
-                                if (comments != null && comments.size() != 0) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
-                                    postDetailsDataType.setComments(comments);
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new CommentsUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsComments = new PostDetailsDataType();
+                                postDetailsComments.setType(PostDetailsDataType.TYPE.COMMENTS);
+                                postDetailsComments.setComments(comments);
+                                emitter.onNext(postDetailsComments);
 
                                 // Clear install links for that particular post.
                                 PredatorDatabase.getInstance()
@@ -279,16 +263,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 // Query the install links available.
                                 List<InstallLink> installLinks = PredatorDatabase.getInstance()
                                         .getInstallLinksForPost(postId);
-
-                                if (installLinks != null && !installLinks.isEmpty()) {
-                                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                                    postDetailsDataType.setInstallLinks(installLinks);
-                                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
-
-                                    emitter.onNext(postDetailsDataType);
-                                } else {
-                                    emitter.onError(new InstallLinksUnavailableException());
-                                }
+                                PostDetailsDataType postDetailsInstallLinks = new PostDetailsDataType();
+                                postDetailsInstallLinks.setInstallLinks(installLinks);
+                                postDetailsInstallLinks.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                                emitter.onNext(postDetailsInstallLinks);
 
                                 emitter.onComplete();
                             }
@@ -306,17 +284,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onError(Throwable e) {
                 Logger.e(TAG, "onError: " + e.getMessage(), e);
-                if (e instanceof MediaUnavailableException) {
-                    mView.unableToFetchMedia(e.getMessage());
-                } else if (e instanceof CommentsUnavailableException) {
-                    mView.unableToFetchComments(e.getMessage());
-                } else if (e instanceof InstallLinksUnavailableException) {
-                    mView.unableToFetchInstallLinks(e.getMessage());
-                } else if (e instanceof VotedUsersUnavailableException) {
-                    mView.unableToFetchAllUsers(e.getMessage());
-                } else {
-                    mView.unableToFetchPostDetails(e.getMessage());
-                }
                 mView.dismissLoading();
             }
 
@@ -324,19 +291,39 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             public void onNext(PostDetailsDataType postDetailsDataType) {
                 switch (postDetailsDataType.getType()) {
                     case POST_DETAILS:
-                        mView.showDetails(postDetailsDataType.getPostDetails());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchPostDetails("No post details available for provided post");
+                        } else {
+                            mView.showDetails(postDetailsDataType.getPostDetails());
+                        }
                         break;
                     case MEDIA:
-                        mView.showMedia(postDetailsDataType.getMedia());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchMedia("No media available for provided post");
+                        } else {
+                            mView.showMedia(postDetailsDataType.getMedia());
+                        }
                         break;
                     case COMMENTS:
-                        mView.showComments(postDetailsDataType.getComments());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchComments("No comments available for provided post");
+                        } else {
+                            mView.showComments(postDetailsDataType.getComments());
+                        }
                         break;
                     case INSTALL_LINKS:
-                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchInstallLinks("No install links available for provided post");
+                        } else {
+                            mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        }
                         break;
-                    case USERS_VOTED:
-                        mView.showAllUsers(postDetailsDataType.getUsers());
+                    case USERS:
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
+                        } else {
+                            mView.showAllUsers(postDetailsDataType.getUsers());
+                        }
                         break;
                 }
                 mView.dismissLoading();
@@ -356,28 +343,23 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                     Collections.sort(users, new UsersComparator());
 
                     PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS_VOTED);
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
                     postDetailsDataType.setUsers(users);
-
                     emitter.onNext(postDetailsDataType);
                 } else {
-                    emitter.onError(new VotedUsersUnavailableException());
-                    return;
+                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
+                    postDetailsDataType.setType(PostDetailsDataType.TYPE.USERS);
+                    postDetailsDataType.setUsers(null);
+                    emitter.onNext(postDetailsDataType);
                 }
 
                 // Query the media available.
                 List<Media> media = PredatorDatabase.getInstance()
                         .getMediaForPost(postId);
-                if (media != null && !media.isEmpty()) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setMedia(media);
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.MEDIA);
-
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new MediaUnavailableException());
-                    return;
-                }
+                PostDetailsDataType postDetailsMedia = new PostDetailsDataType();
+                postDetailsMedia.setMedia(media);
+                postDetailsMedia.setType(PostDetailsDataType.TYPE.MEDIA);
+                emitter.onNext(postDetailsMedia);
 
                 // Query the comments available.
                 List<Comment> comments = PredatorDatabase.getInstance()
@@ -386,27 +368,24 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                                 new ArrayList<Comment>(),
                                 0,
                                 CommentTimeCalculator.getInstance());
-                if (comments != null && comments.size() != 0) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.COMMENTS);
-                    postDetailsDataType.setComments(comments);
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new CommentsUnavailableException());
-                    return;
-                }
+                PostDetailsDataType postDetailsComments = new PostDetailsDataType();
+                postDetailsComments.setType(PostDetailsDataType.TYPE.COMMENTS);
+                postDetailsComments.setComments(comments);
+                emitter.onNext(postDetailsComments);
 
                 // Query the install links available.
                 List<InstallLink> installLinks = PredatorDatabase.getInstance()
                         .getInstallLinksForPost(postId);
-                if (installLinks != null && !installLinks.isEmpty()) {
-                    PostDetailsDataType postDetailsDataType = new PostDetailsDataType();
-                    postDetailsDataType.setInstallLinks(installLinks);
-                    postDetailsDataType.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                PostDetailsDataType postDetailsInstallLinks = new PostDetailsDataType();
+                postDetailsInstallLinks.setInstallLinks(installLinks);
+                postDetailsInstallLinks.setType(PostDetailsDataType.TYPE.INSTALL_LINKS);
+                emitter.onNext(postDetailsInstallLinks);
 
-                    emitter.onNext(postDetailsDataType);
-                } else {
-                    emitter.onError(new InstallLinksUnavailableException());
+                if (users == null || users.isEmpty() ||
+                        media == null || media.isEmpty() ||
+                        comments == null || comments.isEmpty() ||
+                        installLinks == null || installLinks.isEmpty()) {
+                    emitter.onError(new NullPointerException("Complete offline data for this post is unavailable"));
                 }
 
                 emitter.onComplete();
@@ -423,15 +402,6 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-                if (e instanceof MediaUnavailableException) {
-                    mView.unableToFetchMedia(e.getMessage());
-                } else if (e instanceof CommentsUnavailableException) {
-                    mView.unableToFetchComments(e.getMessage());
-                } else if (e instanceof InstallLinksUnavailableException) {
-                    mView.unableToFetchInstallLinks(e.getMessage());
-                } else if (e instanceof VotedUsersUnavailableException) {
-                    mView.unableToFetchAllUsers(e.getMessage());
-                }
                 mView.noOfflineDataAvailable();
                 mView.dismissLoading();
             }
@@ -439,17 +409,40 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             @Override
             public void onNext(PostDetailsDataType postDetailsDataType) {
                 switch (postDetailsDataType.getType()) {
+                    case POST_DETAILS:
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchPostDetails("No post details available for provided post");
+                        } else {
+                            mView.showDetails(postDetailsDataType.getPostDetails());
+                        }
+                        break;
                     case MEDIA:
-                        mView.showMedia(postDetailsDataType.getMedia());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchMedia("No media available for provided post");
+                        } else {
+                            mView.showMedia(postDetailsDataType.getMedia());
+                        }
                         break;
                     case COMMENTS:
-                        mView.showComments(postDetailsDataType.getComments());
+                        if (!postDetailsDataType.isEmpty()) {
+                            mView.showComments(postDetailsDataType.getComments());
+                        } else if (postDetailsDataType.isEmpty() && !mView.isInternetAvailable()) {
+                            mView.unableToFetchComments("No comments available for provided post");
+                        }
                         break;
                     case INSTALL_LINKS:
-                        mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        if (postDetailsDataType.isEmpty()) {
+                            mView.unableToFetchInstallLinks("No install links available for provided post");
+                        } else {
+                            mView.attachInstallLinks(postDetailsDataType.getInstallLinks());
+                        }
                         break;
-                    case USERS_VOTED:
-                        mView.showAllUsers(postDetailsDataType.getUsers());
+                    case USERS:
+                        if (!postDetailsDataType.isEmpty()) {
+                            mView.showAllUsers(postDetailsDataType.getUsers());
+                        } else if (postDetailsDataType.isEmpty() && !mView.isInternetAvailable()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
+                        }
                         break;
                 }
                 mView.dismissLoading();
@@ -458,23 +451,8 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public void openRedirectUrl(Activity activity) {
-        if (mPostDetails == null ||
-                TextUtils.isEmpty(mPostDetails.getRedirectUrl())) {
-            Toast.makeText(activity.getApplicationContext(), R.string.post_details_no_redirect_url_available, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String redirectUrl = mPostDetails.getRedirectUrl();
-
-        CustomTabsHelperFragment.open(activity,
-                mCustomTabsIntent,
-                Uri.parse(redirectUrl),
-                mCustomTabsFallback);
-    }
-
-    @Override
     public void setAsRead(final int postId) {
-        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+        Observable<Void> readPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
             @Override
             public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
                 PredatorDatabase.getInstance()
@@ -484,7 +462,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+        mCompositeDisposable.add(readPostsObservable.subscribeWith(new DisposableObserver<Void>() {
             @Override
             public void onComplete() {
                 // Done
@@ -504,7 +482,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
 
     @Override
     public void setAsUnread(final int postId) {
-        Observable<Void> clearPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
+        Observable<Void> unreadPostsObservable = Observable.create(new ObservableOnSubscribe<Void>() {
             @Override
             public void subscribe(ObservableEmitter<Void> emitter) throws Exception {
                 PredatorDatabase.getInstance()
@@ -514,7 +492,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        mCompositeDisposable.add(clearPostsObservable.subscribeWith(new DisposableObserver<Void>() {
+        mCompositeDisposable.add(unreadPostsObservable.subscribeWith(new DisposableObserver<Void>() {
             @Override
             public void onComplete() {
                 // Done
@@ -533,8 +511,86 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
     }
 
     @Override
-    public PostDetails getPostDetails() {
-        return mPostDetails;
+    public void getRedirectUrl(final int postId) {
+        Observable<String> redirectUrlObservable = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                String redirectUrl = PredatorDatabase.getInstance()
+                        .getPostRedirectUrl(postId);
+                if (TextUtils.isEmpty(redirectUrl)) {
+                    emitter.onError(new NullPointerException("No redirect url available"));
+                } else {
+                    emitter.onNext(redirectUrl);
+                }
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(redirectUrlObservable.subscribeWith(new DisposableObserver<String>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.noRedirectUrlAvailable();
+            }
+
+            @Override
+            public void onNext(String value) {
+                mView.openRedirectUrl(value);
+            }
+        }));
+    }
+
+    @Override
+    public void getShareIntent(final int postId) {
+        Observable<Intent> shareIntentObservable = Observable.create(new ObservableOnSubscribe<Intent>() {
+            @Override
+            public void subscribe(ObservableEmitter<Intent> emitter) throws Exception {
+                Post post = PredatorDatabase.getInstance()
+                        .getPost(postId);
+                if (TextUtils.isEmpty(post.getName())) {
+                    emitter.onError(new NullPointerException("Post name unavailable"));
+                    emitter.onComplete();
+                    return;
+                }
+
+                String title = post.getName();
+                String body = post.getTagline() + "\n" + post.getDiscussionUrl();
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+
+                emitter.onNext(sharingIntent);
+
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        mCompositeDisposable.add(shareIntentObservable.subscribeWith(new DisposableObserver<Intent>() {
+            @Override
+            public void onComplete() {
+                // Done
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Logger.e(TAG, "onError: " + e.getMessage(), e);
+                mView.noShareIntentAvailable();
+            }
+
+            @Override
+            public void onNext(Intent value) {
+                mView.fireShareIntent(value);
+            }
+        }));
     }
 
     @Override
@@ -555,7 +611,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         }
     }
 
-    public static class PostDetailsUnavailableException extends Throwable {
+    /*public static class PostDetailsUnavailableException extends Throwable {
         @Override
         public String getMessage() {
             return "Post details unavailable for the provided id.";
@@ -595,7 +651,7 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
         public String getMessage() {
             return "Voted users unavailable for the provided post.";
         }
-    }
+    }*/
 
     public static class PostDetailsDataType {
         private TYPE type;
@@ -653,12 +709,29 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
             this.installLinks = installLinks;
         }
 
+        public boolean isEmpty() {
+            switch (type) {
+                case POST_DETAILS:
+                    return postDetails == null;
+                case MEDIA:
+                    return media == null || media.isEmpty();
+                case COMMENTS:
+                    return comments == null || comments.isEmpty();
+                case INSTALL_LINKS:
+                    return installLinks == null || installLinks.isEmpty();
+                case USERS:
+                    return users == null || users.isEmpty();
+                default:
+                    return false;
+            }
+        }
+
         enum TYPE {
             POST_DETAILS,
             MEDIA,
             COMMENTS,
             INSTALL_LINKS,
-            USERS_VOTED
+            USERS
         }
     }
 }

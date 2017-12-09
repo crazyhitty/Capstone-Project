@@ -90,6 +90,14 @@ public class PostDetailsData {
         private List<InstallLinks> installLinks;
         private List<Media> media;
         private List<PostCommentsData.Comments> comments;
+        private List<PostsData.Posts.Makers> makers;
+        private PostsData.Posts.User user;
+        /**
+         * thumbnail : {"media_type":"image","image_url":"https://ph-files.imgix.net/dd1a1657-cff0-427c-8e46-34f9960c142e?auto=format&fit=crop&h=570&w=430"}
+         */
+
+        private PostsData.Posts.Thumbnail thumbnail;
+
 
         public List<Votes> getVotes() {
             return votes;
@@ -217,6 +225,30 @@ public class PostDetailsData {
 
         public void setVotesCount(int votesCount) {
             this.votesCount = votesCount;
+        }
+
+        public List<PostsData.Posts.Makers> getMakers() {
+            return makers;
+        }
+
+        public void setMakers(List<PostsData.Posts.Makers> makers) {
+            this.makers = makers;
+        }
+
+        public PostsData.Posts.User getUser() {
+            return user;
+        }
+
+        public void setUser(PostsData.Posts.User user) {
+            this.user = user;
+        }
+
+        public PostsData.Posts.Thumbnail getThumbnail() {
+            return thumbnail;
+        }
+
+        public void setThumbnail(PostsData.Posts.Thumbnail thumbnail) {
+            this.thumbnail = thumbnail;
         }
 
         public static class Votes {
@@ -614,5 +646,7 @@ public class PostDetailsData {
                 }
             }
         }
+
+
     }
 }

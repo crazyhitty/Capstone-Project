@@ -24,6 +24,8 @@
 
 package com.crazyhitty.chdev.ks.predator.models;
 
+import android.text.Spannable;
+
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
@@ -57,6 +59,8 @@ public class Post {
     private boolean isInCollection;
     private boolean notificationShown;
     private boolean read;
+    private Spannable nameSpannable;
+    private Spannable taglineSpannable;
 
     public int getId() {
         return id;
@@ -268,5 +272,21 @@ public class Post {
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public Spannable getNameSpannable() {
+        return nameSpannable;
+    }
+
+    public void setNameSpannable(Spannable nameSpannable) {
+        this.nameSpannable = nameSpannable;
+    }
+
+    public Spannable getTaglineSpannable() {
+        return taglineSpannable;
+    }
+
+    public void setTaglineSpannable(Spannable taglineSpannable) {
+        this.taglineSpannable = taglineSpannable;
     }
 }

@@ -66,25 +66,10 @@ import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 public class AboutLibrariesFragment extends BaseSupportFragment implements AboutLibrariesContract.View,
         AboutLibrariesRecyclerAdapter.OnLibraryItemClickListener {
     private static final String TAG = "AboutLibrariesFragment";
-    private final CustomTabsIntent mCustomTabsIntent = new CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .build();
-    private final CustomTabsActivityHelper.CustomTabsFallback mCustomTabsFallback =
-            new CustomTabsActivityHelper.CustomTabsFallback() {
-                @Override
-                public void openUri(Activity activity, Uri uri) {
-                    try {
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, R.string.no_application_available_to_open_this_url, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-            };
+
     @BindView(R.id.recycler_view_libraries)
     RecyclerView recyclerViewLibraries;
+
     private AboutLibrariesRecyclerAdapter mAboutLibrariesRecyclerAdapter;
     private AboutLibrariesContract.Presenter mAboutLibrariesPresenter;
 
@@ -144,10 +129,7 @@ public class AboutLibrariesFragment extends BaseSupportFragment implements About
 
     @Override
     public void onLibraryItemClick(int position, String redirectUrl) {
-        CustomTabsHelperFragment.open(getActivity(),
-                mCustomTabsIntent,
-                Uri.parse(redirectUrl),
-                mCustomTabsFallback);
+        openUrlViaChromeCustomTabs(redirectUrl);
     }
 
     @Override
