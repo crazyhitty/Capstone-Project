@@ -70,6 +70,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
 
     // stetho
-    compile 'com.facebook.stetho:stetho:1.4.2'
-    compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+    debugCompile 'com.facebook.stetho:stetho:1.4.2'
+    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
 }
