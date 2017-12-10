@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.rest;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
@@ -84,9 +83,7 @@ public class ProductHuntRestApi {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ProductHuntService productHuntService = retrofit.create(ProductHuntService.class);
-
-        return productHuntService;
+        return retrofit.create(ProductHuntService.class);
     }
 
     public static ProductHuntService getSearchApi() {
@@ -97,14 +94,11 @@ public class ProductHuntRestApi {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ProductHuntService productHuntService = retrofit.create(ProductHuntService.class);
-
-        return productHuntService;
+        return retrofit.create(ProductHuntService.class);
     }
 
     private static OkHttpClient getOkHttpClient(boolean withInterceptor) {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
-        okHttpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
         okHttpClientBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okHttpClientBuilder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);

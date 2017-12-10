@@ -24,8 +24,6 @@
 
 package com.crazyhitty.chdev.ks.producthunt_wrapper.models;
 
-import android.net.Uri;
-
 import com.crazyhitty.chdev.ks.producthunt_wrapper.utils.QueryBuilder;
 
 import java.util.ArrayList;

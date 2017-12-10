@@ -30,7 +30,6 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Bundle;
 

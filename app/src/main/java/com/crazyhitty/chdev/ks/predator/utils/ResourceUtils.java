@@ -31,8 +31,6 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
-import com.crazyhitty.chdev.ks.predator.R;
-
 /**
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com

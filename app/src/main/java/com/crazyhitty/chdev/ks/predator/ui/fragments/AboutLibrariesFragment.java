@@ -24,19 +24,13 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.core.about.AboutLibrariesContract;
@@ -47,13 +41,10 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.UserItemDecorator;
 
-import org.chromium.customtabsclient.CustomTabsActivityHelper;
-
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
 /**

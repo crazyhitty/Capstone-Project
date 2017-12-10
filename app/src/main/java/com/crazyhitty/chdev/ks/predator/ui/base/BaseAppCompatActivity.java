@@ -39,7 +39,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -57,7 +56,6 @@ import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
@@ -65,7 +63,6 @@ import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;

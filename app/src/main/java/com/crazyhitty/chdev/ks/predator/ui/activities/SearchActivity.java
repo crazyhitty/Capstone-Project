@@ -40,7 +40,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -56,10 +55,8 @@ import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseSupportFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchCollectionsFragment;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.SearchPostsFragment;
-import com.crazyhitty.chdev.ks.predator.ui.views.LoadingView;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
-import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import org.greenrobot.eventbus.EventBus;
