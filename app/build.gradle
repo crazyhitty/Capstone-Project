@@ -24,6 +24,7 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-crash'
 
 android {
     compileSdkVersion 26
@@ -134,7 +135,8 @@ dependencies {
     }
 
     // firebase
-    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-core:11.6.2'
+    compile 'com.google.firebase:firebase-crash:11.6.2'
 
     // font
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
