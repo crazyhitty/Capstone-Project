@@ -80,6 +80,26 @@ android {
     }
 }
 
+
+ext.abiCodes = ['x86':1, 'x86_64':2, 'arm64-v8a':3, 'armeabi-v7a':4, 'armeabi':5]
+ext.densityCodes = ['mdpi': 1, 'hdpi': 2, 'xhdpi': 3, 'xxhdpi': 4]
+import com.android.build.OutputFile
+android.applicationVariants.all { variant ->
+    // Assigns a different version code for each output APK
+    // other than the universal APK.
+    variant.outputs.each { output ->
+        def baseAbiVersionCode =
+                project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+        def baseDensityVersionCode =
+                project.ext.densityCodes.get(output.getFilter(OutputFile.DENSITY))
+
+        output.versionCodeOverride =
+                (baseAbiVersionCode == null ? 0 : baseAbiVersionCode) * 10000000 +
+                (baseDensityVersionCode == null ? 0 : baseDensityVersionCode) * 1000000 +
+                        variant.versionCode
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
