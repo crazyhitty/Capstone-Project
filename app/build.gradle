@@ -25,10 +25,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-crash'
+apply plugin: 'com.github.triplet.play'
 
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+
+    playAccountConfigs {
+        defaultAccountConfig {
+            serviceAccountEmail = props.serviceAccountMail
+            jsonFile = file(props.publishKey)
+        }
+    }
+
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
@@ -37,6 +46,7 @@ android {
         versionName "0.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
 
     signingConfigs {
@@ -80,7 +90,6 @@ android {
     }
 }
 
-
 ext.abiCodes = ['x86':1, 'x86_64':2, 'arm64-v8a':3, 'armeabi-v7a':4, 'armeabi':5]
 ext.densityCodes = ['mdpi': 1, 'hdpi': 2, 'xhdpi': 3, 'xxhdpi': 4]
 import com.android.build.OutputFile
@@ -98,6 +107,11 @@ android.applicationVariants.all { variant ->
                 (baseDensityVersionCode == null ? 0 : baseDensityVersionCode) * 1000000 +
                         variant.versionCode
     }
+}
+
+play {
+    track = 'beta'
+    untrackOld = true // will untrack 'alpha' while upload to 'beta'
 }
 
 dependencies {
@@ -169,3 +183,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+//apply from: 'properties.gradle'
