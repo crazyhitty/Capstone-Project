@@ -1,6 +1,6 @@
 Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt API. It also offers other information like media and comments associated with that product.
 
-Features:
+Features: 
 
 • Minimal and simple user interface, which user can get easily acquainted with.
 • View latest posts, collections and user profiles from ProductHunt.
