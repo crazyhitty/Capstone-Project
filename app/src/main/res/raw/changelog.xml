@@ -25,7 +25,7 @@
 <changelog bulletedList="true">
 
     <changelogversion
-        changeDate="Dec 10, 2017"
+        changeDate="Dec 22, 2017"
         versionName="0.41">
         <changelogtext>Optimize and reduce apk size.</changelogtext>
     </changelogversion>
