@@ -2,7 +2,7 @@
 
 buildscript {
     // Remove this line if you face issues while building project.
-    apply from: 'publishing.gradle'
+    //apply from: 'publishing.gradle'
 
     repositories {
         jcenter()

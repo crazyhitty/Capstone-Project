@@ -27,6 +27,9 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-crash'
 apply plugin: 'com.github.triplet.play'
 
+ext.shouldSplitApk = false
+ext.universalApkStatus = true
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
