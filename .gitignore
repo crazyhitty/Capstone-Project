@@ -160,8 +160,8 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 ### App specific ###
-properties.gradle
-/app/publishing.gradle
+publishing.gradle
 /app/release
+publish.sh
 
 # End of https://www.gitignore.io/api/android,androidstudio
