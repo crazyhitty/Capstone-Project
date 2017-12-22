@@ -1,0 +1,10 @@
+Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt API. It also offers other information like media and comments associated with that product.
+
+Features: 
+
+• Minimal and simple user interface, which user can get easily acquainted with.
+• View latest posts, collections and user profiles from ProductHunt.
+• Check out the media and comments of a particular post and share them with anyone.
+• Sync data in the background even if the app is not running, so you can remain up to date with the latest posts and collections (Optional, can be activated via application settings).
+• Delightful animations to encourage the user experience.
+• Custom themes to suit your personal needs, the application contains Light, Dark, and AMOLED themes.
