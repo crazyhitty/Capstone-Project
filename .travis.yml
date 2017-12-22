@@ -1,0 +1,30 @@
+language: android
+branches:
+  only:
+  - master-prod
+  - beta-prod
+  - feature-integrate_ci
+android:
+  components:
+  - tools
+  - platform-tools
+  - tools
+  - build-tools-26.0.1
+  - android-26
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - addon-google_apis-google-19
+  - sys-img-armeabi-v7a-addon-google_apis-google-26
+  licenses:
+  - android-sdk-license-.+
+script:
+  - "./gradlew assembleRelease -PpredatorStorePassword=${storePass} -PpredatorKeyPassword=${keyPass}"
+before_install:
+  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv
+  -in keystore.jks.enc -out ~\/.local/.keys/Android\ publishing/Predator/keystore.jks
+  -d
+env:
+  global:
+  - secure: tRJdbvDPCStXgTZUQ37WRqOFUf3lBZmRX1jXkL9YfLGW1q4AheOC721b0lG4oYadmFxt9pLhU3yYaKMqe6nWTeVTBkt3Qp1bvGAf8c6HG+Zlj2oq5ct8IXAgH4DiGzXIo0loDuC95HnnCM2XTYVOmnMvWIve4xPmUGEV6sGKaQ3cbycalT0HsD2V6hGXBr2MTQMjNu8gO+oS4af++evi568tbdKr15q8kATLZSsG0nap8AnSGL7+x5W2+MsRgffBrWssdMnMfKro7ig0kuma2kZS3MVbUdGfuUM0HWCRvEaSma/OmYcBM0NQj1lCgAVQKuoDqMT9dBuhuu4RPhN/r4buxO7he32byjJT+AMGbRzsUETkWd0QveROHcGj0UkxqQ7p/Ie7k2TTP5aZo2R5SdisHdJiu+ZkfCJtzCVls75XXdUysu1wf/IdDT/MFAI4eTmLKc5fQof3rNxTY/IhH936B9f3bg1Ms4+KHOvvUZsD5fWDw7kOK+NRtF7dAW9qg5VZR3+DQ3xl8WRzznxpBqtMBxLFc5DSDQaiL+WH78fpqery2d+U4/q8Yrm2ZJ5k1KuCIUPNSBDgK6qoV8v+z4A2/oLZ3XNbaKOK7Y1Fu/s7s2q6xUkUoLA3SlPsI5KCRFpORxR3RI2cUde90uFlzkxo0lx63ixg1lkEcesOOcg=
+  - secure: qMMXeB5DfTsPQ/b2pqOGyq+f0nOmwsB7X/WDyFfgqBql/y8+0UZV7rm8l3lK9QFfRn3cTwjolprZjR9dmvkdHf29GgO3Xcp0JwEgzNzWAJRVMQpKHP1OB437Fx64WOGVFLosBuwFLVzAF5G/aiNpGn05yZKldoFtmGPnJ4t4bplPuSe3YjnVb6vzh5IPRx97BFyjl88ZhYn2VtaCycZXwmOq4+RM0cwxAR3031jjzJjZ+7/ENuiHEZJNovRlb1lTtgWdcaAiB+HzW4WiTkOT0Vbj4g1DpvmIP6q0SMvmqW5oVM2W32+tVbYX3Riq1SV+ys3C3/Ic8RCd3MTDvtAhDLl+v+BOYgitdTgG5YFHGMUiIDYJusLx0IRRSU30T4ebPY0TnqY0SEbc/lHTUgIqPW++jhrmpnN3eVZHWBvzH6fs9v3dtqXr8VDzosvvNIuek0+Bqs0fbwuljBJdm+fgaaN8LMfVaDYgO6K7rPJkyJYjRAM66UKSeFzhuayY8l6afS+zkYXtcMpk9xPI3cZWdeS+fxND7KvoCv+vi63vfRATVkKo7XYGJ2IIu06x3kHDz8FdVuQdZVxbMR9P2Bk2YhhpzcXQ4FdZbuwJ6nn9rouUnln1OuqPjsHCQQf172l1GvPVUV5GW2JmOSQIBFA10qYWR42RaEOlwJX4AM/tnIs=
