@@ -33,8 +33,8 @@ android {
 
     playAccountConfigs {
         defaultAccountConfig {
-            serviceAccountEmail = props.serviceAccountMail
-            jsonFile = file(props.publishKey)
+            serviceAccountEmail = googlePlayPublish.serviceAccountMail
+            jsonFile = file(googlePlayPublish.publishKey)
         }
     }
 
@@ -51,10 +51,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("release.jks")
-            storePassword "predator_keystore"
-            keyAlias "predator_keystore"
-            keyPassword "predator_keystore"
+            storeFile file(signingProp.storeFile)
+            storePassword project.hasProperty("predatorStorePassword") ? "$predatorStorePassword" : ""
+            keyAlias signingProp.keyAlias
+            keyPassword project.hasProperty("predatorKeyPassword") ? "$predatorKeyPassword" : ""
         }
     }
 
@@ -77,15 +77,15 @@ android {
 
     splits {
         density {
-            enable true
+            enable shouldSplitApk
             exclude 'ldpi', 'tvdpi', 'xxxhdpi'
             compatibleScreens 'small', 'normal', 'large', 'xlarge'
         }
         abi {
-            enable true
+            enable shouldSplitApk
             reset()
             include 'x86', 'x86_64', 'arm64-v8a', 'armeabi-v7a', 'armeabi'
-            universalApk false
+            universalApk universalApk
         }
     }
 }
@@ -97,15 +97,17 @@ android.applicationVariants.all { variant ->
     // Assigns a different version code for each output APK
     // other than the universal APK.
     variant.outputs.each { output ->
-        def baseAbiVersionCode =
-                project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
-        def baseDensityVersionCode =
-                project.ext.densityCodes.get(output.getFilter(OutputFile.DENSITY))
+        if (shouldSplitApk) {
+            def baseAbiVersionCode =
+                    project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+            def baseDensityVersionCode =
+                    project.ext.densityCodes.get(output.getFilter(OutputFile.DENSITY))
 
-        output.versionCodeOverride =
-                (baseAbiVersionCode == null ? 0 : baseAbiVersionCode) * 10000000 +
-                (baseDensityVersionCode == null ? 0 : baseDensityVersionCode) * 1000000 +
-                        variant.versionCode
+            output.versionCodeOverride =
+                    (baseAbiVersionCode == null ? 0 : baseAbiVersionCode) * 10000000 +
+                            (baseDensityVersionCode == null ? 0 : baseDensityVersionCode) * 1000000 +
+                            variant.versionCode
+        }
     }
 }
 
