@@ -21,7 +21,7 @@ android:
 script:
   - "./gradlew assembleRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass}"
 before_install:
-  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in keystore.jks.enc -out ~\/.local/.keys/Android\ publishing/Predator/keystore.jks -d
+  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in keystore.jks.enc -out keystore.jks -d
 env:
   global:
   - secure: vwhhFkkaw6SoVVReCvBNBaFHzNJlgBZkTulNjPLy6rLufd7UwstZuCV17QS7sqsviPwv0mb9KhVbpXIHjDa+d2AGY8uSCXFOO9gFihHkKMPjhrSeRq2VihALGPT4sxykMqjYHt1s7zzvXeJKW+CHlJwJnd6Gz9KKKA7P0s4+6g+gGkaGcPFtIwut5L767RQhF8dsQvmpOapnjl6LcAPaffAJx1rOpIQdSULZ3UGzbdPYfnHVaHFfGRN6Hi4p7LgKfXgXaONoFPCALOCYhra9EmSXK67Bi1m8eD1f4U7d8/RdnSdtnXbWBHNcBMJpJITnjvd8x8D4zBBWqHXNohoW9/GS5CXib+Oj/KFLHFoUMONOJGT93hmRswhWQqRLu2nmVHRR/iBN+p3wd/WKA8FjbyEN1WIgk/hhF5ResbWodjxE5cfpXelrSfKwX40peHJ9dkKPi1Un2oCZ/46Nu0FxADMf5eFNPew8IYbAPEGae9KiWefByj1Q58EAmNDWKe5chAR4d/CYCzrov4y8ehkJT68TqLaMKlaipwQQfuyq4Nw752qKi61/u9KlK0J5Ojfr4dll/5HCix8YVsPYLJq1GcTC8eVkOPHy0/gkIcy0fZi02315BIdiX+LHNH5b6DfxLGmTQJ2UfNpY3AE0Jy6efZrMXGimTeA0Tz3/MsG+1Ks=
