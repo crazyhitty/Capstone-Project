@@ -54,7 +54,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(project.hasProperty("predatorStoreFile") ? "$predatorStoreFile" : "../keystore.jks")
+            storeFile file("../keystore.jks")
             storePassword project.hasProperty("predatorStorePassword") ? "$predatorStorePassword" : ""
             keyAlias project.hasProperty("predatorKeyAlias") ? "$predatorKeyAlias" : ""
             keyPassword project.hasProperty("predatorKeyPassword") ? "$predatorKeyPassword" : ""
