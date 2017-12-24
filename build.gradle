@@ -1,7 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    // Remove this line if you face issues while building project.
     File configFile = new File('config.gradle')
     if (configFile.isFile()) {
         println 'config.gradle exists; applying config.gradle'
