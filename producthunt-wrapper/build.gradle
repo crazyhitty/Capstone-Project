@@ -38,12 +38,12 @@ android {
 
     buildTypes {
         debug {
-            def apiKey = project.hasProperty("apiKey") ? "\"$apiKey\"" : "\"\""
-            def apiSecret = project.hasProperty("apiSecret") ? "\"$apiSecret\"" : "\"\""
-            def searchUrl = project.hasProperty("searchUrl") ? "\"$searchUrl\"" : "\"\""
-            def xAngoliaAgent = project.hasProperty("xAngoliaAgent") ? "\"$xAngoliaAgent\"" : "\"\""
-            def xAngoliaApplicationId = project.hasProperty("xAngoliaApplicationId") ? "\"$xAngoliaApplicationId\"" : "\"\""
-            def xAngoliaApiKey = project.hasProperty("xAngoliaApiKey") ? "\"$xAngoliaApiKey\"" : "\"\""
+            def apiKey = config.apiKey
+            def apiSecret = config.apiSecret
+            def searchUrl = config.searchUrl
+            def xAngoliaAgent = config.xAngoliaAgent
+            def xAngoliaApplicationId = config.xAngoliaApplicationId
+            def xAngoliaApiKey = config.xAngoliaApiKey
 
             buildConfigField "String", "API_KEY", apiKey
             buildConfigField "String", "API_SECRET", apiSecret
