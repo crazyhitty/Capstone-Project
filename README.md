@@ -1,20 +1,46 @@
 # Predator for ProductHunt
 
-<a href='https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200"/></a>
+[![Google play badge](https://img.shields.io/badge/Google%20play-v0.41-green.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
 
 Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt api. It also offers other information like media and comments associated with that product.
 
 # Installation instructions
+
 * Clone this repository using `git clone https://github.com/crazyhitty/Capstone-Project.git`
-* Download [Authorization.java](https://gist.github.com/crazyhitty/08fcf4b67d3e20a87e2bde8be7e5ead9) and paste it in `producthunt-wrapper\src\main\java\com\crazyhitty\chdev\ks\producthunt_wrapper\rest\`
-* Add appropriate **API_KEY** and **API_SECRET** into the **Authorization.java** file. You can generate these from [here](https://www.producthunt.com/v1/oauth/applications). Make sure to login first on [producthunt.com](https://www.producthunt.com/) as the previous link will keep on redirecting you onto the main site until you log in. Also, make sure to put this in redirect uri: `predator://com.crazyhitty.chdev.ks.predator/oauth2redirect`
-* Now, from the root directory of the project run `gradlew installRelease` (windows) or `./gradlew installRelease` (linux) as this will install the release build of the application in your device.
+* Create api key and api secret for your project via [product hunt api console](https://www.producthunt.com/v1/oauth/applications). Make sure to login first on [producthunt.com](https://www.producthunt.com/) as the previous link will keep on redirecting you onto the main site until you log in. Also, make sure to put this in redirect uri: `predator://com.crazyhitty.chdev.ks.predator/oauth2redirect`
+* Add those keys in producthunt-wrapper's build.gradle file:
+
+```
+    debug {
+            if (!project.hasProperty("isReleaseBuild") || "$isReleaseBuild" == "false") {
+                def apiKey = "\"your_api_key_here\""
+                def apiSecret = "\"your_api_secret_here\""
+                def searchUrl = "\"\""
+                def xAngoliaAgent = "\"\""
+                def xAngoliaApplicationId = "\"\""
+                def xAngoliaApiKey = "\"\""
+
+                buildConfigField "String", "API_KEY", apiKey
+                buildConfigField "String", "API_SECRET", apiSecret
+                buildConfigField "String", "SEARCH_URL", searchUrl
+                buildConfigField "String", "X_ANGOLIA_AGENT", xAngoliaAgent
+                buildConfigField "String", "X_ANGOLIA_APPLICATION_ID", xAngoliaApplicationId
+                buildConfigField "String", "X_ANGOLIA_API_KEY", xAngoliaApiKey
+            }
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+```
+
+* Now, just hit the run button on your android studio or execute `installDebug` task to install debug variant of the application.
 
 # Features
 * Minimal and simple user interface, which user can get easily acquainted with.
 * View and search through latest posts and collections from ProductHunt.
 * Checkout the media and comments of a particular post and share them with anyone.
 * Sync data in background even if the app is not running, so you can remain up to date with the latest posts and collections (Optional, can be activated via application settings).
+* Notification support.
 * Multiple font support.
 * Delightful animations to encourage the user experience.
 
