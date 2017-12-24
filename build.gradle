@@ -2,7 +2,13 @@
 
 buildscript {
     // Remove this line if you face issues while building project.
-    //apply from: 'publishing.gradle'
+    File configFile = new File('config.gradle')
+    if (configFile.isFile()) {
+        println 'config.gradle exists; applying config.gradle'
+        apply from: 'config.gradle'
+    } else {
+        println 'config.gradle doesn\'t exists; can\'t apply config.gradle'
+    }
 
     repositories {
         jcenter()
