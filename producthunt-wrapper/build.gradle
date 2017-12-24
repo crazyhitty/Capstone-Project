@@ -27,12 +27,6 @@ import java.util.regex.Pattern
 
 apply plugin: 'com.android.library'
 
-//ext.buildType
-
-/*gradle.taskGraph.whenReady {
-
-}*/
-
 android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
