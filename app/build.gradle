@@ -27,16 +27,19 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-crash'
 apply plugin: 'com.github.triplet.play'
 
+ext.shouldSplitApk = false
+ext.universalApkStatus = true
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
-    playAccountConfigs {
+    /*playAccountConfigs {
         defaultAccountConfig {
             serviceAccountEmail = googlePlayPublish.serviceAccountMail
             jsonFile = file(googlePlayPublish.publishKey)
         }
-    }
+    }*/
 
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
@@ -46,14 +49,14 @@ android {
         versionName "0.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
+        //playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
 
     signingConfigs {
         release {
-            storeFile file(signingProp.storeFile)
+            storeFile file("../keystore.jks")
             storePassword project.hasProperty("predatorStorePassword") ? "$predatorStorePassword" : ""
-            keyAlias signingProp.keyAlias
+            keyAlias project.hasProperty("predatorKeyAlias") ? "$predatorKeyAlias" : ""
             keyPassword project.hasProperty("predatorKeyPassword") ? "$predatorKeyPassword" : ""
         }
     }
@@ -111,10 +114,10 @@ android.applicationVariants.all { variant ->
     }
 }
 
-play {
+/*play {
     track = 'beta'
     untrackOld = true // will untrack 'alpha' while upload to 'beta'
-}
+}*/
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

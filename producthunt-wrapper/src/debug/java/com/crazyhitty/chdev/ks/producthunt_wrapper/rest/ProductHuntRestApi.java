@@ -60,7 +60,7 @@ public class ProductHuntRestApi {
                     .addHeader(Constants.ACCEPT, Constants.APPLICATION_JSON)
                     .addHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
                     .addHeader(Constants.HOST, Constants.HOST_PRODUCT_HUNT)
-                    .addHeader(Constants.IF_NONE_MATCH, Authorization.E_TAG)
+                    //.addHeader(Constants.IF_NONE_MATCH, Authorization.E_TAG)
                     .build();
 
             return chain.proceed(request);

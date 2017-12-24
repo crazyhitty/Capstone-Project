@@ -163,5 +163,6 @@ fabric.properties
 publishing.gradle
 /app/release
 publish.sh
+config.gradle
 
 # End of https://www.gitignore.io/api/android,androidstudio

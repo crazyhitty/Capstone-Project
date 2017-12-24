@@ -1,3 +1,6 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 /*
  * MIT License
  *
@@ -24,6 +27,12 @@
 
 apply plugin: 'com.android.library'
 
+//ext.buildType
+
+/*gradle.taskGraph.whenReady {
+
+}*/
+
 android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
@@ -33,12 +42,45 @@ android {
         targetSdkVersion 25
         versionCode 2
         versionName "0.11"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
+
     buildTypes {
+        debug {
+            if (!project.hasProperty("isReleaseBuild") || "$isReleaseBuild" == "false") {
+                def apiKey = config.apiKey
+                def apiSecret = config.apiSecret
+                def searchUrl = config.searchUrl
+                def xAngoliaAgent = config.xAngoliaAgent
+                def xAngoliaApplicationId = config.xAngoliaApplicationId
+                def xAngoliaApiKey = config.xAngoliaApiKey
+
+                buildConfigField "String", "API_KEY", apiKey
+                buildConfigField "String", "API_SECRET", apiSecret
+                buildConfigField "String", "SEARCH_URL", searchUrl
+                buildConfigField "String", "X_ANGOLIA_AGENT", xAngoliaAgent
+                buildConfigField "String", "X_ANGOLIA_APPLICATION_ID", xAngoliaApplicationId
+                buildConfigField "String", "X_ANGOLIA_API_KEY", xAngoliaApiKey
+            }
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
+            def apiKey = project.hasProperty("apiKey") ? "\"$apiKey\"" : "\"\""
+            def apiSecret = project.hasProperty("apiSecret") ? "\"$apiSecret\"" : "\"\""
+            def searchUrl = project.hasProperty("searchUrl") ? "\"$searchUrl\"" : "\"\""
+            def xAngoliaAgent = project.hasProperty("xAngoliaAgent") ? "\"$xAngoliaAgent\"" : "\"\""
+            def xAngoliaApplicationId = project.hasProperty("xAngoliaApplicationId") ? "\"$xAngoliaApplicationId\"" : "\"\""
+            def xAngoliaApiKey = project.hasProperty("xAngoliaApiKey") ? "\"$xAngoliaApiKey\"" : "\"\""
+
+            buildConfigField "String", "API_KEY", apiKey
+            buildConfigField "String", "API_SECRET", apiSecret
+            buildConfigField "String", "SEARCH_URL", searchUrl
+            buildConfigField "String", "X_ANGOLIA_AGENT", xAngoliaAgent
+            buildConfigField "String", "X_ANGOLIA_APPLICATION_ID", xAngoliaApplicationId
+            buildConfigField "String", "X_ANGOLIA_API_KEY", xAngoliaApiKey
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
