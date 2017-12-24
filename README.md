@@ -1,6 +1,8 @@
 # Predator for ProductHunt
 
-[![Google play badge](https://img.shields.io/badge/Google%20play-v0.41-green.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
+[![Google play badge](https://img.shields.io/badge/Google%20play-v0.41-brightgreen.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
+[![Rating badge](https://img.shields.io/badge/Rating-4.5%E2%98%85-blue.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
+[![Downloads badge](https://img.shields.io/badge/Downloads-%3C2k-red.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
 
 Predator is a minimalistic client for ProductHunt. It shows latest products and collections fetched via ProductHunt api. It also offers other information like media and comments associated with that product.
 
