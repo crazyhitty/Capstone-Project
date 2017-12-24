@@ -1,3 +1,6 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 /*
  * MIT License
  *
@@ -24,6 +27,12 @@
 
 apply plugin: 'com.android.library'
 
+//ext.buildType
+
+/*gradle.taskGraph.whenReady {
+
+}*/
+
 android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
@@ -38,19 +47,21 @@ android {
 
     buildTypes {
         debug {
-            def apiKey = config.apiKey
-            def apiSecret = config.apiSecret
-            def searchUrl = config.searchUrl
-            def xAngoliaAgent = config.xAngoliaAgent
-            def xAngoliaApplicationId = config.xAngoliaApplicationId
-            def xAngoliaApiKey = config.xAngoliaApiKey
+            if (!project.hasProperty("isReleaseBuild") || "$isReleaseBuild" == "false") {
+                def apiKey = config.apiKey
+                def apiSecret = config.apiSecret
+                def searchUrl = config.searchUrl
+                def xAngoliaAgent = config.xAngoliaAgent
+                def xAngoliaApplicationId = config.xAngoliaApplicationId
+                def xAngoliaApiKey = config.xAngoliaApiKey
 
-            buildConfigField "String", "API_KEY", apiKey
-            buildConfigField "String", "API_SECRET", apiSecret
-            buildConfigField "String", "SEARCH_URL", searchUrl
-            buildConfigField "String", "X_ANGOLIA_AGENT", xAngoliaAgent
-            buildConfigField "String", "X_ANGOLIA_APPLICATION_ID", xAngoliaApplicationId
-            buildConfigField "String", "X_ANGOLIA_API_KEY", xAngoliaApiKey
+                buildConfigField "String", "API_KEY", apiKey
+                buildConfigField "String", "API_SECRET", apiSecret
+                buildConfigField "String", "SEARCH_URL", searchUrl
+                buildConfigField "String", "X_ANGOLIA_AGENT", xAngoliaAgent
+                buildConfigField "String", "X_ANGOLIA_APPLICATION_ID", xAngoliaApplicationId
+                buildConfigField "String", "X_ANGOLIA_API_KEY", xAngoliaApiKey
+            }
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
