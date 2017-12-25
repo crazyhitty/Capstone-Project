@@ -26,7 +26,6 @@ package com.crazyhitty.chdev.ks.predator.core.mediaDetails;
 
 import android.support.annotation.NonNull;
 
-import com.crazyhitty.chdev.ks.predator.core.postDetails.PostDetailsPresenter;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.models.Media;
 

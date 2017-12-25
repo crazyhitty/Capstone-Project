@@ -24,16 +24,10 @@
 
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
 import android.text.TextUtils;
-import android.widget.Toast;
 
-import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorDbValuesHelper;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
@@ -51,8 +45,6 @@ import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostDetailsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.models.PostsData;
 import com.crazyhitty.chdev.ks.producthunt_wrapper.rest.ProductHuntRestApi;
 
-import org.chromium.customtabsclient.CustomTabsActivityHelper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +58,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -438,10 +429,10 @@ public class PostDetailsPresenter implements PostDetailsContract.Presenter {
                         }
                         break;
                     case USERS:
-                        if (postDetailsDataType.isEmpty()) {
-                            mView.unableToFetchAllUsers("No users available for provided post");
-                        } else {
+                        if (!postDetailsDataType.isEmpty()) {
                             mView.showAllUsers(postDetailsDataType.getUsers());
+                        } else if (postDetailsDataType.isEmpty() && !mView.isInternetAvailable()) {
+                            mView.unableToFetchAllUsers("No users available for provided post");
                         }
                         break;
                 }

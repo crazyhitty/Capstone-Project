@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +36,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.events.CommentsEvent;
 import com.crazyhitty.chdev.ks.predator.models.Comment;
 import com.crazyhitty.chdev.ks.predator.ui.adapters.recycler.CommentsRecyclerAdapter;
@@ -47,7 +45,6 @@ import com.crazyhitty.chdev.ks.predator.utils.CommentItemDecorator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
 /**

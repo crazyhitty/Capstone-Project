@@ -25,26 +25,40 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-crash'
+apply plugin: 'com.github.triplet.play'
+
+ext.shouldSplitApk = false
+ext.universalApkStatus = true
 
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+
+    /*playAccountConfigs {
+        defaultAccountConfig {
+            serviceAccountEmail = googlePlayPublish.serviceAccountMail
+            jsonFile = file(googlePlayPublish.publishKey)
+        }
+    }*/
+
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 30
-        versionName "0.39"
+        versionCode 32
+        versionName "0.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        //playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
 
     signingConfigs {
         release {
-            storeFile file("release.jks")
-            storePassword "predator_keystore"
-            keyAlias "predator_keystore"
-            keyPassword "predator_keystore"
+            storeFile file("../keystore.jks")
+            storePassword project.hasProperty("predatorStorePassword") ? "$predatorStorePassword" : ""
+            keyAlias project.hasProperty("predatorKeyAlias") ? "$predatorKeyAlias" : ""
+            keyPassword project.hasProperty("predatorKeyPassword") ? "$predatorKeyPassword" : ""
         }
     }
 
@@ -54,7 +68,7 @@ android {
         }
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -64,7 +78,47 @@ android {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
+
+    splits {
+        density {
+            enable shouldSplitApk
+            exclude 'ldpi', 'tvdpi', 'xxxhdpi'
+            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+        }
+        abi {
+            enable shouldSplitApk
+            reset()
+            include 'x86', 'x86_64', 'arm64-v8a', 'armeabi-v7a', 'armeabi'
+            universalApk universalApkStatus
+        }
+    }
 }
+
+ext.abiCodes = ['x86':1, 'x86_64':2, 'arm64-v8a':3, 'armeabi-v7a':4, 'armeabi':5]
+ext.densityCodes = ['mdpi': 1, 'hdpi': 2, 'xhdpi': 3, 'xxhdpi': 4]
+import com.android.build.OutputFile
+android.applicationVariants.all { variant ->
+    // Assigns a different version code for each output APK
+    // other than the universal APK.
+    variant.outputs.each { output ->
+        if (shouldSplitApk) {
+            def baseAbiVersionCode =
+                    project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+            def baseDensityVersionCode =
+                    project.ext.densityCodes.get(output.getFilter(OutputFile.DENSITY))
+
+            output.versionCodeOverride =
+                    (baseAbiVersionCode == null ? 0 : baseAbiVersionCode) * 10000000 +
+                            (baseDensityVersionCode == null ? 0 : baseDensityVersionCode) * 1000000 +
+                            variant.versionCode
+        }
+    }
+}
+
+/*play {
+    track = 'beta'
+    untrackOld = true // will untrack 'alpha' while upload to 'beta'
+}*/
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -121,7 +175,8 @@ dependencies {
     }
 
     // firebase
-    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-core:11.6.2'
+    compile 'com.google.firebase:firebase-crash:11.6.2'
 
     // font
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
