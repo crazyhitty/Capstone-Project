@@ -1,6 +1,7 @@
 # Predator for ProductHunt
 
-[![Google play badge](https://img.shields.io/badge/Google%20play-v0.41-brightgreen.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
+[![Google play Production badge](https://img.shields.io/badge/Production-v0.40-brightgreen.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
+[![Google play Beta badge](https://img.shields.io/badge/Beta-0.41-yellow.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
 [![Rating badge](https://img.shields.io/badge/Rating-4.5%E2%98%85-blue.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
 [![Downloads badge](https://img.shields.io/badge/Downloads-%3C2k-red.svg)](https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.predator)
 
