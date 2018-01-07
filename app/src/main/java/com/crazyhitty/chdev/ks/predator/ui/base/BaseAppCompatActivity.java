@@ -42,6 +42,7 @@ import android.support.annotation.StringRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,7 @@ import android.widget.Toast;
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.ChangelogDialogFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
@@ -374,5 +376,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         intent.setData(Uri.parse(url));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    protected void openChangelog() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(ChangelogDialogFragment.class.getSimpleName());
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+        ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
     }
 }

@@ -199,15 +199,6 @@ public class AboutActivity extends BaseAppCompatActivity {
         CoreUtils.openFeedback(this);
     }
 
-    private void openChangelog() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag(ChangelogDialogFragment.class.getSimpleName());
-        if (prev != null) {
-            fragmentTransaction.remove(prev);
-        }
-        ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
-    }
-
     private void openPrivacyPolicy() {
         openUrlViaChromeCustomTabs(Constants.About.URL_PRIVACY_POLICY);
     }
