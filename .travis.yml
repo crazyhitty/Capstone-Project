@@ -2,9 +2,8 @@ language: android
 
 branches:
   only:
-  - master-prod
-  - beta-prod
-  - feature-integrate_ci
+  - master
+  - beta
 
 android:
   components:
