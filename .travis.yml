@@ -23,20 +23,20 @@ android:
 
 script:
   - case "$TRAVIS_BRANCH" in
-  -        "master")
-  -        echo "\n---------------------------------\nThis branch is master, preparing for publishApkRelease\n---------------------------------\n"
-  -        gradleTask = publishApkRelease
-  -        ;;
-  -        "beta")
-  -        echo "\n---------------------------------\nThis branch is beta, preparing for publishRelease\n---------------------------------\n"
-  -        gradleTask = publishRelease
-  -        ;;
-  -        "develop")
-  -        echo "\n---------------------------------\nThis branch is develop, preparing for assembleRelease\n---------------------------------\n"
-  -        gradleTask = assembleRelease
-  -        ;;
-  -        esac
-  - echo "\n---------------------------------\ngradle task is $gradleTask\n---------------------------------\n"
+        "master")
+        printf "\n---------------------------------\nThis branch is master, preparing for publishApkRelease\n---------------------------------\n"
+        gradleTask="publishApkRelease"
+        ;;
+        "beta")
+        printf "\n---------------------------------\nThis branch is beta, preparing for publishRelease\n---------------------------------\n"
+        gradleTask="publishRelease"
+        ;;
+        "develop")
+        printf "\n---------------------------------\nThis branch is develop, preparing for assembleRelease\n---------------------------------\n"
+        gradleTask="assembleRelease"
+        ;;
+        esac
+    printf "\n---------------------------------\ngradle task is $gradleTask\n---------------------------------\n"
   #- "./gradlew ${gradleTask} -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
 
 before_install:
