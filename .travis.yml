@@ -4,7 +4,6 @@ branches:
   only:
   - master
   - beta
-  - develop
 
 android:
   components:
@@ -22,7 +21,15 @@ android:
   - android-sdk-license-.+
 
 script:
-  - "./gradlew assembleRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
+  - case "$TRAVIS_BRANCH" in
+    "master") echo "This branch is master, preparing for publishApkRelease"
+    ;;
+    "beta") echo "This branch is beta, preparing for publishRelease"
+    ;;
+    "develop") echo "This branch is develop, preparing for assembleRelease"
+    ;;
+    esac
+#  - "./gradlew assembleRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in predator.tar.enc -out predator.tar -d
