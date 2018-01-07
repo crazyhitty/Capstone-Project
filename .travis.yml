@@ -22,22 +22,29 @@ android:
   - android-sdk-license-.+
 
 script:
-  - case "$TRAVIS_BRANCH" in
-    "master") echo "This branch is master, preparing for publishApkRelease"
-    ;;
-    "beta") echo "This branch is beta, preparing for publishRelease"
-    ;;
-    "develop") echo "This branch is develop, preparing for assembleRelease"
-    ;;
-    esac
-#  - "./gradlew assembleRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
+  - "./gradlew ${gradleTask} -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in predator.tar.enc -out predator.tar -d
   - tar xvf predator.tar
+  - case "$TRAVIS_BRANCH" in
+        "master")
+        echo "\n---------------------------------\nThis branch is master, preparing for publishApkRelease\n---------------------------------\n"
+        $gradleTask = publishApkRelease
+        ;;
+        "beta")
+        echo "\n---------------------------------\nThis branch is beta, preparing for publishRelease\n---------------------------------\n"
+        $gradleTask = publishRelease
+        ;;
+        "develop")
+        echo "\n---------------------------------\nThis branch is develop, preparing for assembleRelease\n---------------------------------\n"
+        $gradleTask = assembleRelease
+        ;;
+        esac
 
 env:
   global:
+  - gradleTask = build
   - secure: vwhhFkkaw6SoVVReCvBNBaFHzNJlgBZkTulNjPLy6rLufd7UwstZuCV17QS7sqsviPwv0mb9KhVbpXIHjDa+d2AGY8uSCXFOO9gFihHkKMPjhrSeRq2VihALGPT4sxykMqjYHt1s7zzvXeJKW+CHlJwJnd6Gz9KKKA7P0s4+6g+gGkaGcPFtIwut5L767RQhF8dsQvmpOapnjl6LcAPaffAJx1rOpIQdSULZ3UGzbdPYfnHVaHFfGRN6Hi4p7LgKfXgXaONoFPCALOCYhra9EmSXK67Bi1m8eD1f4U7d8/RdnSdtnXbWBHNcBMJpJITnjvd8x8D4zBBWqHXNohoW9/GS5CXib+Oj/KFLHFoUMONOJGT93hmRswhWQqRLu2nmVHRR/iBN+p3wd/WKA8FjbyEN1WIgk/hhF5ResbWodjxE5cfpXelrSfKwX40peHJ9dkKPi1Un2oCZ/46Nu0FxADMf5eFNPew8IYbAPEGae9KiWefByj1Q58EAmNDWKe5chAR4d/CYCzrov4y8ehkJT68TqLaMKlaipwQQfuyq4Nw752qKi61/u9KlK0J5Ojfr4dll/5HCix8YVsPYLJq1GcTC8eVkOPHy0/gkIcy0fZi02315BIdiX+LHNH5b6DfxLGmTQJ2UfNpY3AE0Jy6efZrMXGimTeA0Tz3/MsG+1Ks=
   - secure: tRJdbvDPCStXgTZUQ37WRqOFUf3lBZmRX1jXkL9YfLGW1q4AheOC721b0lG4oYadmFxt9pLhU3yYaKMqe6nWTeVTBkt3Qp1bvGAf8c6HG+Zlj2oq5ct8IXAgH4DiGzXIo0loDuC95HnnCM2XTYVOmnMvWIve4xPmUGEV6sGKaQ3cbycalT0HsD2V6hGXBr2MTQMjNu8gO+oS4af++evi568tbdKr15q8kATLZSsG0nap8AnSGL7+x5W2+MsRgffBrWssdMnMfKro7ig0kuma2kZS3MVbUdGfuUM0HWCRvEaSma/OmYcBM0NQj1lCgAVQKuoDqMT9dBuhuu4RPhN/r4buxO7he32byjJT+AMGbRzsUETkWd0QveROHcGj0UkxqQ7p/Ie7k2TTP5aZo2R5SdisHdJiu+ZkfCJtzCVls75XXdUysu1wf/IdDT/MFAI4eTmLKc5fQof3rNxTY/IhH936B9f3bg1Ms4+KHOvvUZsD5fWDw7kOK+NRtF7dAW9qg5VZR3+DQ3xl8WRzznxpBqtMBxLFc5DSDQaiL+WH78fpqery2d+U4/q8Yrm2ZJ5k1KuCIUPNSBDgK6qoV8v+z4A2/oLZ3XNbaKOK7Y1Fu/s7s2q6xUkUoLA3SlPsI5KCRFpORxR3RI2cUde90uFlzkxo0lx63ixg1lkEcesOOcg=
   - secure: 0q62qPHXcBAsJDEVsdkCkVs+ghfxZkAXtOWXqNYU8/Na2mVGnm1uIxMZJbuCDGPwN5QClqv3eZgT6+71WIg7Eu/p+9NFIwZv5bQ+/dOB8ir44+CCSFQqc5EXIqTnJHm4kn6ngUfvLlf4W44tCeiMmoRdQ0hZ2pldp5V8J/P9X0f3AuDpRmU1HkUeRGeAbR+YfJMVrRmiRrBuWhxOhwXA3jtfc8MMdgE00u3H9CYs3EIoJgb+bo0FUZHv7z1etahxLoGiP2AK4S05TQmjVaqQiBeFbXROV550ROE+CXSo0OgSGiV6Uj7L+WsDEBFY/i7EycihBZeWwFCwENFBzdnppv7GJYkh3efGzMRAj4dudcuBE8oc4FthGQcFeOMGMSdD8e9vz5ulLTGeGa4pRvzv4vyJ0KPzcaPyFhEqOLg4PPTc8Wl8mDAQoHNV9UKwcuKjsPsxZ9luOKZk9x/2s/OW+l9odImGaUtKtiGbjkwAwBpmabTBMVb9jdwZs9mF8k6UTy6QQVel9s3QeMr7lYUrBB6Maf74Mit6A3dYQr7y54sTp88jI4MCE2hPDGRv4qJzKVrbJuL+MLkM+LIhohCDWi9XytbkQcXbfXckHSMWpmnm7bhA1NRHoE7qSjZXxCCCTma+6Zsef2CcmmvJyhcLG5AUUV/ZKPrBD3R5gmTRML8=
