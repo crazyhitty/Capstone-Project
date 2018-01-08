@@ -43,7 +43,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
+import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.receivers.NetworkBroadcastReceiver;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionFragment;
@@ -103,6 +105,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         initNetworkBroadcastReceiver();
         initToolbar();
         initDrawer();
+        showChangelog();
 
         // Only set fragment when saved instance is null.
         // This is done inorder to stop reloading fragment on orientation changes.
@@ -159,6 +162,20 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         setFragment(R.id.frame_layout_dashboard_container,
                 PostsFragment.newInstance(),
                 false);
+    }
+
+    private void showChangelog() {
+        if (BuildConfig.VERSION_CODE >
+                PredatorSharedPreferences.getCurrentAppVersionCode(getApplicationContext()) &&
+                PredatorSharedPreferences.getCurrentAppVersionCode(getApplicationContext()) != 0) {
+            // The available version code is higher than the stored version code. This would only
+            // show when an app is updated.
+            openChangelog();
+        }
+
+        // Save the current version so that we can check it again in future.
+        PredatorSharedPreferences.setCurrentAppVersionCode(getApplicationContext(),
+                BuildConfig.VERSION_CODE);
     }
 
     @Override

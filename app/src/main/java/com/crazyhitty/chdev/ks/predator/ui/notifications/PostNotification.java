@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -107,7 +108,9 @@ public class PostNotification {
     }
 
     private void showPostNotification(Post post, Bitmap bitmap) {
-        showHeaderNotification();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            showHeaderNotification();
+        }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
                 post.getPostId(),
@@ -146,6 +149,7 @@ public class PostNotification {
         mNotificationManager.notify(post.getPostId(), builder.build());
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private void showHeaderNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setColor(ContextCompat.getColor(mContext, R.color.notification_color_header))

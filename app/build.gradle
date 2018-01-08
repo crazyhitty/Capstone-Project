@@ -34,22 +34,22 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
-    /*playAccountConfigs {
+    playAccountConfigs {
         defaultAccountConfig {
-            serviceAccountEmail = googlePlayPublish.serviceAccountMail
-            jsonFile = file(googlePlayPublish.publishKey)
+            serviceAccountEmail = project.hasProperty("predatorServiceAccountEmail") ? "$predatorServiceAccountEmail" : ""
+            jsonFile = file("../google_play.json")
         }
-    }*/
+    }
 
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.predator"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 32
-        versionName "0.41"
+        versionCode 34
+        versionName "0.43"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        //playAccountConfig = playAccountConfigs.defaultAccountConfig
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
 
     signingConfigs {
@@ -114,10 +114,10 @@ android.applicationVariants.all { variant ->
     }
 }
 
-/*play {
+play {
     track = 'beta'
     untrackOld = true // will untrack 'alpha' while upload to 'beta'
-}*/
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

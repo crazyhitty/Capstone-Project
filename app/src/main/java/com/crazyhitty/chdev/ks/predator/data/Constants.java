@@ -116,6 +116,7 @@ public class Constants {
         public static final String POSTS_SORTING_TYPE = "posts_sorting_type";
         public static final String POSTS_SORTING_TYPE_LATEST = "posts_sorting_type";
         public static final String POSTS_SORTING_TYPE_VOTE_COUNT = "posts_sorting_type_vote_count";
+        public static final String APP_VERSION_CODE = "app_version_code";
 
         private SharedPreferences() {
 

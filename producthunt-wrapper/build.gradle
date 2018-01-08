@@ -1,6 +1,3 @@
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 /*
  * MIT License
  *
@@ -26,12 +23,6 @@ import java.util.regex.Pattern
  */
 
 apply plugin: 'com.android.library'
-
-//ext.buildType
-
-/*gradle.taskGraph.whenReady {
-
-}*/
 
 android {
     compileSdkVersion 25
