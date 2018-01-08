@@ -55,6 +55,7 @@ env:
 deploy:
   - provider: script
     script: .travis/deploy_develop.sh
+    skip_cleanup: true
     on:
       branch: feature-integrate_ci
       repo: crazyhitty/Capstone-Project
