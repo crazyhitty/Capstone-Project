@@ -4,7 +4,7 @@ branches:
   only:
 #  - master
   - beta
-  - integrate_ci
+  - feature-integrate_ci
 
 android:
   components:
@@ -56,7 +56,7 @@ deploy:
   - provider: script
     script: .travis/deploy_develop.sh
     on:
-      branch: integrate-ci
+      branch: feature-integrate_ci
       repo: crazyhitty/Capstone-Project
 
   - provider: script
