@@ -4,7 +4,6 @@ branches:
   only:
   - master
   - beta
-  - develop
 
 android:
   components:
