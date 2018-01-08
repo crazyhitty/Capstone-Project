@@ -4,6 +4,7 @@ branches:
   only:
 #  - master
   - beta
+  - develop
 
 android:
   components:
@@ -20,8 +21,8 @@ android:
   licenses:
   - android-sdk-license-.+
 
-script:
-  - "./gradlew publishApkRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
+#script:
+#  - "./gradlew publishApkRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in predator.tar.enc -out predator.tar -d
@@ -49,3 +50,26 @@ env:
 #  on:
 #    tags: true
 #    repo: crazyhitty/Capstone-Project
+
+deploy:
+  - provider: script
+    script: .travis/deploy_develop.sh
+    on:
+      branch: develop
+      repo: crazyhitty/Capstone-Project
+
+  - provider: script
+    script: .travis/deploy_beta.sh
+    on:
+      branch: beta
+      repo: crazyhitty/Capstone-Project
+
+#  - provider: releases
+#    api_key:
+#      secure: GDktplxlZFcdLfW0tGOZx1JhjIfJ6n8vNc/4Qd8VU0Jt+bIchkMWWndzoBQB249YjLf8B8dOWeh+c62DQjdcXAJt+pqw1tPgl9BG8LCU4r0qd2rxLH3MWuhpho4lxyQpnJo5bC8OZk1fMCD2L7paFWcR87sDMnQQidm3vjiwRilDdH51bDKBlVzAcV2m+PoHFF64iNp8cp6HnQ7ZAhUWoyfYDzpRyGSyryw6ua9Ffhg/6s6qovnkmFYH/7GT274ly29YvFK3rm9AH2AAU6/boQyEoCV9R5XMBo4yj8vGGhBGUETjws/faQH2z/q4T9dAy6D2YRu5qhh+Vf//AlCuCkdZTpQL5wtmLLQ7UhcxMC0xaXLNTM4NTBkmTS7FpfNgYZC85CnXJ6JFsoxCYzOUbdAuLbIbNuwfvomNMBM36RGkVLT7d6apmQFKuZgFv1A3YISKSji/LH5vfRwubAMAuw1kNVtc8glHOgMi5ppbbkcFknBJaLaTQgs0BV8gJhG5YLmdNmjjepxMtPbmlgZZOvrS+5+IOSIkD2N15VJqQlOyg9gMuI+ba4wsT3RxphMj2NtZxBWSUnjxoiwwR2oj8/d63Ei9H2a6AoqqlYa+sRO0zA61uaCkjO1AAMXu3ZOO825epZgdqPsjJD/lnio2bdM0c4SWbi2hQ3F/bpEmvso=
+#      file: app/build/outputs/apk/release/app-release.apk
+#    skip_cleanup: true
+#    script: .travis/deploy_master.sh
+#    on:
+#      branch: master
+#      repo: crazyhitty/Capstone-Project
