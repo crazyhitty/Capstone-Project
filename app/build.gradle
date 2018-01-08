@@ -187,4 +187,10 @@ dependencies {
     compile 'me.saket:better-link-movement-method:2'
 }
 
+task getVersionName() {
+    doLast {
+        println android.defaultConfig.versionName
+    }
+}
+
 apply plugin: 'com.google.gms.google-services'
