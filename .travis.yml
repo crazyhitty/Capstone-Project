@@ -21,11 +21,11 @@ android:
   - android-sdk-license-.+
 
 script:
-  - "./gradlew assembleRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
+  - "./gradlew publishApkRelease -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true"
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in keystore.jks.enc -out keystore.jks -d
-#  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in google_play.json.enc -out google_play.json -d
+  - openssl aes-256-cbc -K $encrypted_400f62f18203_key -iv $encrypted_400f62f18203_iv -in predator.tar.enc -out predator.tar -d
+  - tar xvf predator.tar
 
 env:
   global:
@@ -40,3 +40,12 @@ env:
   - secure: OmFpXF7buGZJipf6tycGEC2cmPqPSTUE1shsbm8ffJ/3ALU/cvfPxdsPjHbcTSlMDEBe6E+RJUikEqSR4udYaKccSTx+bAyq9s2i4WDSyh0STk/LvcHZjF+bn23xZl2Fac7p0x3orq7JYbCCbwpRjcGShGNHHsBXamWMeNq8LH/JRbPALSZyR30p4JPqHSRioNP/qa96xZeaJDuYt3yNzVVkIpaT4KLfhX7ZB1Hn6XOqzlbAYh5PrFuUpRSrEnERWtoPbggTsYn9jvxWYfbnhSdvSe0aVcOo4IiR+gn1XrIDUhXIhrNEH91ZC33jg/73CRvxwFDqGpluQhdigwx/N8n97whhvhlYmx6x0IUxUOtuNES8E9rJyqFISHcLWkuOzh2P4rXIZ8HPjtmUeK8h9DytIIms0zcQatfqeo3y/XiSZaE+SSE6miw9MSrb+bRYY6z+K0OuRbrSWxwfpuUdxJ0/72AeFnJVd3yyORmt2CfGAH2N4tmV0/1eE2yX8wdZ0ZU3kYDKxbIb+bd59JdLqO04IAj6Hnr884jASBpOUOXBWUp9YuovOOMEMwbDOUfKBvSGaGZJF+sORJf5n6FcYvugpAicQpOKESR6rzfPF2nINEtOhsryI6FjTdrpaUTiQOyAJixhNJfxCINxKzeJlbxTcXJUKphQ3h7r8owKGOc=
   - secure: 0CZdGOCdQW8UjUH/xxEBSuVhfyqZbT+GSoNj/OkNeBcmkgyXIgt/VaJMHpABzsvLIJirzrNR8kJzafjc5Adbql4f96BveAdp9xnEvLVuorkTMhT5ED7eYXI8QZBdgrfxhO36g/CwzgUx3sxf8ztSHMwDNAnQUAShZ1c/D6Y2DS1gbp6MiQLx1duKgbYL5Md45cM6QRyqDKYn0oQpBLrydeHokU25H1YK1uLvPSijgvE7wdKDZ6Sls9xAOXwgdm3j5PeWe6/C/MquqT1Z3L41HT2CPZpCLyXOIRlxGfJ2HzCgD1UUI92cyVXM1PDljGgKB9T9+kcYJczH41wqgDJfVqoVozTJ1RpqKDmyK9gn7JdXocEzisjrTM5bq9Tp5NdtIFlWgjmk3w/b/rv9Axf+wDgzpM64bYuCDKX0NXUvFkMXbKbyGcUWclBxVR52XcP3JizfwEGi3Ne2AzKyVg6uOchT9roqmwIHDXKfJRYtQVxViDgqHSHbsilz4SqIoBYQKA1I4C93Qkqd+AR2Y6YsH27+cp98dktaqlOS39eNzC2j6802AunuiZbBEYRIP1gVBQSg+5g+gBUOoIJHFI55Rxoh8SE1DjDLR8uRaLWBjBi1Qy1x7Xlu9KJ8W0RHJrGk3qT44nY5vFWP64dNyN5pqyo2HP6jgUELbk1Wc0VV2gw=
   - secure: Kix1y2WaVORKESLdrYQ7FkX0hEbqLxNpE4+wzINBJYsjPi3wixAIG2oKX+6rb5VJu1RZkf4NVj1cflKt9BTIh7mEdPFJ7jp83hs85c5F+wRpgJsWxmFXmwSg84jlk3qf8mpBzd+4oUqETPOezug7MFjzQUWYD6vc3MZex0rsVIQYZtLquUVwyaH8rY0b9LZKu8uuwhK82bo81BYD6cEM1u/lzKEU0c2bRfxzeUktgaEKpLxx5YzKsXZA2OwRoXg8yu7Qi1jKUULcV/q7I9+nd+yfWEt+sJRPgK/vtguPGImkNiRstDYVi69Rxe6vcM/aWqckjwaAo7JMIR6icm9LTYAF1LQf4LhEna+zz3WIUY5C9n1D9tln225qXH6UvC4xkiS+9g+GqnZhfd4Z1eYpQEietUBVWrqwuxrGvAqXF1aREDV/T514M4QSysxD0A/mdSG9PKjkfRJ1zYMLS0D73qoj5l2RrrPM91WaoAbbBU7+tV4vdpiPe4WcZRs0jHLuKJYy4AE6hb016ODH8EsKN3dizbF7E/0d5pDZ0m1LbFURfBAjOahGm7rx+GNwLE36YdCcm3JpCTXII90rJ3hCfvCPZ7+7U1LDFVTw30qdL4cEdgJLTYCla2Ttgxf+6lDk6tJewFldoXcJ33o0kD6qIjE7LkUYWeeRGVmIsATC3+I=
+
+#deploy:
+#  provider: releases
+#  api_key:
+#    secure: GDktplxlZFcdLfW0tGOZx1JhjIfJ6n8vNc/4Qd8VU0Jt+bIchkMWWndzoBQB249YjLf8B8dOWeh+c62DQjdcXAJt+pqw1tPgl9BG8LCU4r0qd2rxLH3MWuhpho4lxyQpnJo5bC8OZk1fMCD2L7paFWcR87sDMnQQidm3vjiwRilDdH51bDKBlVzAcV2m+PoHFF64iNp8cp6HnQ7ZAhUWoyfYDzpRyGSyryw6ua9Ffhg/6s6qovnkmFYH/7GT274ly29YvFK3rm9AH2AAU6/boQyEoCV9R5XMBo4yj8vGGhBGUETjws/faQH2z/q4T9dAy6D2YRu5qhh+Vf//AlCuCkdZTpQL5wtmLLQ7UhcxMC0xaXLNTM4NTBkmTS7FpfNgYZC85CnXJ6JFsoxCYzOUbdAuLbIbNuwfvomNMBM36RGkVLT7d6apmQFKuZgFv1A3YISKSji/LH5vfRwubAMAuw1kNVtc8glHOgMi5ppbbkcFknBJaLaTQgs0BV8gJhG5YLmdNmjjepxMtPbmlgZZOvrS+5+IOSIkD2N15VJqQlOyg9gMuI+ba4wsT3RxphMj2NtZxBWSUnjxoiwwR2oj8/d63Ei9H2a6AoqqlYa+sRO0zA61uaCkjO1AAMXu3ZOO825epZgdqPsjJD/lnio2bdM0c4SWbi2hQ3F/bpEmvso=
+#  file: app/build/outputs/apk/release/app-release.apk
+#  on:
+#    tags: true
+#    repo: crazyhitty/Capstone-Project

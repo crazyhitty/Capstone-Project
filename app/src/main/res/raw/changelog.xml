@@ -25,6 +25,15 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Jan 08, 2018"
+        versionName="0.42">
+        <changelogtext>Show changelog on update.</changelogtext>
+        <changelogtext>Integrate CI for automated app releases.</changelogtext>
+        <changelogbug>Fix a bug where notifications were not showing data properly for pre nougat devices.</changelogbug>
+        <changelogtext>[a href="http://crazyhitty.com/articles/2018-01/predator-for-product-hunt-update"]Detailed changelog for this update.[/a]</changelogtext>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Dec 22, 2017"
         versionName="0.41">
         <changelogtext>Optimize and reduce apk size.</changelogtext>
