@@ -24,11 +24,9 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +43,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.saket.bettermovementmethod.BetterLinkMovementMethod;
-import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 
 /**

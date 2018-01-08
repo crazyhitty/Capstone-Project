@@ -89,7 +89,7 @@ public class Constants {
     }
 
     public static class About {
-        public static final String URL_PRIVACY_POLICY = "https://raw.githubusercontent.com/crazyhitty/Capstone-Project/master/privacy_policy.html";
+        public static final String URL_PRIVACY_POLICY = "https://crazyhitty.github.io/Capstone-Project/PRIVACY_POLICY";
         public static final String URL_GITHUB_KAJAL = "https://github.com/kajal-mittal";
         public static final String URL_GITHUB = "https://github.com/crazyhitty/Capstone-Project";
         public static final String URL_GOOGLE_PLUS = "https://plus.google.com/communities/102250921213849521349";
@@ -116,6 +116,7 @@ public class Constants {
         public static final String POSTS_SORTING_TYPE = "posts_sorting_type";
         public static final String POSTS_SORTING_TYPE_LATEST = "posts_sorting_type";
         public static final String POSTS_SORTING_TYPE_VOTE_COUNT = "posts_sorting_type_vote_count";
+        public static final String APP_VERSION_CODE = "app_version_code";
 
         private SharedPreferences() {
 

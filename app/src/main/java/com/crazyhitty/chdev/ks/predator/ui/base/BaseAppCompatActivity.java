@@ -39,10 +39,10 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -56,8 +56,8 @@ import android.widget.Toast;
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.ChangelogDialogFragment;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
-import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.crazyhitty.chdev.ks.predator.utils.NetworkConnectionUtil;
 import com.crazyhitty.chdev.ks.predator.utils.ResourceUtils;
 import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
@@ -65,7 +65,6 @@ import com.crazyhitty.chdev.ks.predator.utils.ToolbarUtils;
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -377,5 +376,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         intent.setData(Uri.parse(url));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    protected void openChangelog() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(ChangelogDialogFragment.class.getSimpleName());
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+        ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
     }
 }

@@ -24,15 +24,12 @@
 
 package com.crazyhitty.chdev.ks.predator.ui.activities;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -44,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crazyhitty.chdev.ks.predator.BuildConfig;
 import com.crazyhitty.chdev.ks.predator.R;
@@ -59,12 +55,9 @@ import com.crazyhitty.chdev.ks.predator.ui.fragments.ChangelogDialogFragment;
 import com.crazyhitty.chdev.ks.predator.utils.AppBarStateChangeListener;
 import com.crazyhitty.chdev.ks.predator.utils.CoreUtils;
 
-import org.chromium.customtabsclient.CustomTabsActivityHelper;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 
 /**
  * Author:      Kartik Sharma
@@ -204,15 +197,6 @@ public class AboutActivity extends BaseAppCompatActivity {
 
     private void openFeedback() {
         CoreUtils.openFeedback(this);
-    }
-
-    private void openChangelog() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag(ChangelogDialogFragment.class.getSimpleName());
-        if (prev != null) {
-            fragmentTransaction.remove(prev);
-        }
-        ChangelogDialogFragment.newInstance().show(fragmentTransaction, ChangelogDialogFragment.class.getSimpleName());
     }
 
     private void openPrivacyPolicy() {

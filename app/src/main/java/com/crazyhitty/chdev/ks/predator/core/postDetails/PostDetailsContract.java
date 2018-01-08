@@ -24,7 +24,6 @@
 
 package com.crazyhitty.chdev.ks.predator.core.postDetails;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import com.crazyhitty.chdev.ks.predator.core.BasePresenter;
