@@ -26,6 +26,12 @@
 
     <changelogversion
         changeDate="Jan 08, 2018"
+        versionName="0.43">
+        <changelogbug>Bug fixes and performance improvements.</changelogbug>
+    </changelogversion>
+
+    <changelogversion
+        changeDate="Jan 08, 2018"
         versionName="0.42">
         <changelogtext>Show changelog on update.</changelogtext>
         <changelogtext>Integrate CI for automated app releases.</changelogtext>
