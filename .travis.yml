@@ -5,6 +5,7 @@ branches:
   - master
   - beta
   - develop
+  - feature-integrate_ci
 
 android:
   components:
@@ -64,4 +65,11 @@ deploy:
     skip_cleanup: true
     on:
       branch: master
+      repo: crazyhitty/Capstone-Project
+  # Deployment settings for feature-integrate_ci branch.
+  - provider: script
+    script: .travis/deploy_feature_integrate_ci.sh
+    skip_cleanup: true
+    on:
+      branch: feature-integrate_ci
       repo: crazyhitty/Capstone-Project
