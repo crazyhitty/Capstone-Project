@@ -4,7 +4,7 @@ branches:
   only:
   - master
   - beta
-  - feature-integrate_ci
+  - develop
 
 android:
   components:
