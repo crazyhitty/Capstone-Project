@@ -12,7 +12,7 @@ commit_test() {
 }
 
 push_git() {
-    git remote add origin https://${GITHUB_ACCESS_TOKEN}@github.com/crazyhitty/Capstone-Project.git > /dev/null 2>&1
+    git remote add origin https://crazyhitty:${GITHUB_ACCESS_TOKEN}@github.com/crazyhitty/Capstone-Project.git > /dev/null 2>&1
     git push origin "test_branch_${versionName}"
     git push --quiet --set-upstream origin "test_branch_${versionName}"
 }
