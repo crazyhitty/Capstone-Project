@@ -7,6 +7,7 @@ setup_git() {
 
 commit_test() {
     printf "\n--------------------\nCreating test branch for ${versionName}\n--------------------\n"
+    printf "Changelog: \n${changelog}"
     git checkout -b "test_branch_${versionName}"
     touch testFile
     git add testFile
@@ -29,7 +30,7 @@ versionName=$(./gradlew -q getVersionName -PpredatorStoreFile=${storeFile} -Ppre
 sudo apt install xmlstarlet
 
 # Get changelog for selected version.
-changelog=$(xmlstarlet sel -t -v '/changelog/changelogversion[@versionName="${versionName}"]' app/src/main/res/raw/changelog.xml  | sed 's/^/* /' | awk '{$1=$1};1' | tail -n +2 | head -n -1)
+changelog=$(xmlstarlet sel -t -v '/changelog/changelogversion[@versionName="'"$versionName"'"]' app/src/main/res/raw/changelog.xml  | sed 's/^/* /' | awk '{$1=$1};1' | tail -n +2 | head -n -1)
 
 setup_git
 commit_test
