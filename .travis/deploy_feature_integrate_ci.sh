@@ -8,7 +8,9 @@ setup_git() {
 commit_test() {
     printf "\n--------------------\nCreating test branch for ${versionName}\n--------------------\n"
     git checkout -b "test_branch_${versionName}"
-    git commit --message ${changelog}
+    touch testFile
+    git add testFile
+    git commit --message "${changelog}"
 }
 
 push_git() {
