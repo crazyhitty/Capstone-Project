@@ -23,6 +23,9 @@ printf "\n--------------------\nDeploying for feature-integrate_ci branch\n-----
 # Get app version via gradle task.
 versionName=$(./gradlew -q getVersionName -PpredatorStoreFile=${storeFile} -PpredatorStorePassword=${storePass} -PpredatorKeyAlias=${keyAlias} -PpredatorKeyPassword=${keyPass} -PapiKey=${apiKey} -PapiSecret=${apiSecret} -PsearchUrl=${searchUrl} -PxAngoliaAgent=${xAngoliaAgent} -PxAngoliaApplicationId=${xAngoliaApplicationId} -PxAngoliaApiKey=${xAngoliaApiKey} -PisReleaseBuild=true | tail -1)
 
+# Installing xmlstarlet package for xml parsing.
+sudo apt install xmlstarlet
+
 # Get changelog for selected version.
 changelog=$(xmlstarlet sel -t -v '/changelog/changelogversion[@versionName="${versionName}"]' app/src/main/res/raw/changelog.xml  | sed 's/^/* /' | awk '{$1=$1};1' | tail -n +2 | head -n -1)
 
