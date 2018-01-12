@@ -11,7 +11,9 @@ commit_test() {
     git checkout -b "test_branch_${versionName}"
     touch testFile
     git add testFile
-    git commit --message "Changelog:\n\n${changelog}"
+    git commit --message "Changelog:
+
+    ${changelog}"
 }
 
 push_git() {
