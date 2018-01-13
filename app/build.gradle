@@ -128,6 +128,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    // kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     // java test
     testCompile 'junit:junit:4.12'
 
@@ -186,7 +189,6 @@ dependencies {
 
     // better link movement method
     compile 'me.saket:better-link-movement-method:2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 task getVersionName() {
