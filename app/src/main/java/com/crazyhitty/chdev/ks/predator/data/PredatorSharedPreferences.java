@@ -168,6 +168,18 @@ public class PredatorSharedPreferences {
         return availableSet.contains(context.getString(R.string.settings_notification_settings_vibrate));
     }
 
+    public static void setCurrentAppVersionCode(Context context, int versionCode) {
+        SharedPreferencesManager.saveInt(context,
+                Constants.SharedPreferences.APP_VERSION_CODE,
+                versionCode);
+    }
+
+    public static int getCurrentAppVersionCode(Context context) {
+        return SharedPreferencesManager.getInt(context,
+                Constants.SharedPreferences.APP_VERSION_CODE,
+                0);
+    }
+
     public static THEME_TYPE getCurrentTheme(Context context) {
         switch (PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.settings_manage_themes_key),
