@@ -41,7 +41,7 @@ import java.util.List;
  * Description: Unavailable
  */
 
-public interface PostsContract {
+public interface PostsContractLegacy {
     interface View extends BaseView<Presenter> {
         void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap);
 

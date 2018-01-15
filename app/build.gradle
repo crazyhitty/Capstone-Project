@@ -120,6 +120,10 @@ play {
     untrackOld = true // will untrack 'alpha' while upload to 'beta'
 }
 
+kapt {
+    generateStubs = true
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -189,6 +193,10 @@ dependencies {
 
     // better link movement method
     compile 'me.saket:better-link-movement-method:2'
+
+    // dagger 2
+    kapt 'com.google.dagger:dagger-compiler:2.14.1'
+    compile 'com.google.dagger:dagger:2.14.1'
 }
 
 task getVersionName() {

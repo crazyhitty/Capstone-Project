@@ -40,7 +40,7 @@ import android.view.ViewGroup;
 
 import com.crazyhitty.chdev.ks.predator.R;
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsContractLegacy;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.data.Constants;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
@@ -74,9 +74,9 @@ import io.reactivex.schedulers.Schedulers;
  * Description: Unavailable
  */
 
-public class PostsFragment extends BaseSupportFragment implements PostsContract.View,
+public class PostsFragmentLegacy extends BaseSupportFragment implements PostsContractLegacy.View,
         PostsRecyclerAdapter.OnPostsLoadMoreRetryListener {
-    private static final String TAG = "PostsFragment";
+    private static final String TAG = "PostsFragmentLegacy";
 
     @BindView(R.id.recycler_view_posts)
     RecyclerView recyclerViewPosts;
@@ -85,7 +85,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     @BindView(R.id.loading_view)
     LoadingView loadingView;
 
-    private PostsContract.Presenter mPostsPresenter;
+    private PostsContractLegacy.Presenter mPostsPresenter;
 
     private PostsRecyclerAdapter mPostsRecyclerAdapter;
 
@@ -93,8 +93,8 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
 
     private boolean mCanManagePosts = true;
 
-    public static PostsFragment newInstance() {
-        return new PostsFragment();
+    public static PostsFragmentLegacy newInstance() {
+        return new PostsFragmentLegacy();
     }
 
     @Override
@@ -369,7 +369,7 @@ public class PostsFragment extends BaseSupportFragment implements PostsContract.
     }
 
     @Override
-    public void setPresenter(PostsContract.Presenter presenter) {
+    public void setPresenter(PostsContractLegacy.Presenter presenter) {
         mPostsPresenter = presenter;
     }
 

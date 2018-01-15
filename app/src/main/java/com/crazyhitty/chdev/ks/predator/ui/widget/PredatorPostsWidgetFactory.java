@@ -34,7 +34,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.crazyhitty.chdev.ks.predator.R;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsContractLegacy;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.activities.PostDetailsActivity;
@@ -52,13 +52,13 @@ import java.util.List;
  */
 
 public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteViewsFactory,
-        PostsContract.View {
+        PostsContractLegacy.View {
     private static final String TAG = "PredatorPostsWidgetFactory";
 
     private WeakReference<Context> mContextWeakReference;
     private int mAppWidgetId;
 
-    private PostsContract.Presenter mPostsPresenter;
+    private PostsContractLegacy.Presenter mPostsPresenter;
 
     private List<Post> mPosts;
 
@@ -171,7 +171,7 @@ public class PredatorPostsWidgetFactory implements RemoteViewsService.RemoteView
     }
 
     @Override
-    public void setPresenter(PostsContract.Presenter presenter) {
+    public void setPresenter(PostsContractLegacy.Presenter presenter) {
         mPostsPresenter = presenter;
     }
 }

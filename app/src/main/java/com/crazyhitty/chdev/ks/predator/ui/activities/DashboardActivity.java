@@ -49,7 +49,7 @@ import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
 import com.crazyhitty.chdev.ks.predator.receivers.NetworkBroadcastReceiver;
 import com.crazyhitty.chdev.ks.predator.ui.base.BaseAppCompatActivity;
 import com.crazyhitty.chdev.ks.predator.ui.fragments.CollectionFragment;
-import com.crazyhitty.chdev.ks.predator.ui.fragments.PostsFragment;
+import com.crazyhitty.chdev.ks.predator.ui.fragments.PostsFragmentLegacy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -160,7 +160,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
      */
     private void initFragment() {
         setFragment(R.id.frame_layout_dashboard_container,
-                PostsFragment.newInstance(),
+                PostsFragmentLegacy.newInstance(),
                 false);
     }
 
@@ -183,7 +183,7 @@ public class DashboardActivity extends BaseAppCompatActivity implements Navigati
         drawerLayoutDashboard.closeDrawer(GravityCompat.START);
         switch (item.getItemId()) {
             case R.id.nav_posts:
-                setFragmentOnDashboard(PostsFragment.newInstance());
+                setFragmentOnDashboard(PostsFragmentLegacy.newInstance());
                 return true;
             case R.id.nav_collections:
                 setFragmentOnDashboard(CollectionFragment.newInstance());

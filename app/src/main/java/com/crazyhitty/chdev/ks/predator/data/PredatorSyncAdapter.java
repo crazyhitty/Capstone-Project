@@ -34,7 +34,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 
 import com.crazyhitty.chdev.ks.predator.account.PredatorAccount;
-import com.crazyhitty.chdev.ks.predator.core.posts.PostsContract;
+import com.crazyhitty.chdev.ks.predator.core.posts.PostsContractLegacy;
 import com.crazyhitty.chdev.ks.predator.core.posts.PostsPresenterLegacy;
 import com.crazyhitty.chdev.ks.predator.models.Post;
 import com.crazyhitty.chdev.ks.predator.ui.notifications.PostNotification;
@@ -56,9 +56,9 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private final AccountManager mAccountManager;
 
-    private PostsContract.Presenter mPostsPresenter;
+    private PostsContractLegacy.Presenter mPostsPresenter;
 
-    private PostsContract.View mPostsView = new PostsContract.View() {
+    private PostsContractLegacy.View mPostsView = new PostsContractLegacy.View() {
         @Override
         public void showPosts(List<Post> posts, HashMap<Integer, String> dateHashMap) {
             Logger.d(TAG, "showPosts: posts synced with size: " + (posts != null ? posts.size() : 0));
@@ -98,7 +98,7 @@ public class PredatorSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         @Override
-        public void setPresenter(PostsContract.Presenter presenter) {
+        public void setPresenter(PostsContractLegacy.Presenter presenter) {
             // Do nothing here.
         }
     };
