@@ -35,7 +35,7 @@ import javax.inject.Inject
  * Author:      Kartik Sharma
  * Email Id:    cr42yh17m4n@gmail.com
  * Created:     1/13/18 1:01 PM
- * Description: Unavailable
+ * Description: Provides the internet status information.
  */
 class InternetHelper @Inject constructor(private val context: Context) {
     private val connectivityManager: ConnectivityManager = context.applicationContext
