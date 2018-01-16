@@ -30,7 +30,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Author:      Kartik Sharma
