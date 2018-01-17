@@ -31,6 +31,9 @@ import android.text.TextUtils;
 
 import com.crazyhitty.chdev.ks.predator.data.PredatorDatabase;
 import com.crazyhitty.chdev.ks.predator.data.PredatorSharedPreferences;
+import com.crazyhitty.chdev.ks.predator.di.component.ApplicationComponent;
+import com.crazyhitty.chdev.ks.predator.di.component.DaggerApplicationComponent;
+import com.crazyhitty.chdev.ks.predator.di.module.ApplicationModule;
 import com.crazyhitty.chdev.ks.predator.utils.Logger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.Stetho;
@@ -48,10 +51,16 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
 
+    protected ApplicationComponent applicationComponent;
+
     static {
         // Supporting vector drawable resources on pre lollipop devices.
         // Source: http://stackoverflow.com/a/38012842
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    public static MainApplication get(Context context) {
+        return (MainApplication) context.getApplicationContext();
     }
 
     @Override
@@ -100,6 +109,16 @@ public class MainApplication extends Application {
                     .build()
             );
         }
+
+        // Setup Dagger 2
+        applicationComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+        applicationComponent.inject(this);
+    }
+
+    public ApplicationComponent getComponent(){
+        return applicationComponent;
     }
 
     public static void reInitializeCalligraphy(Context context, String fontName) {

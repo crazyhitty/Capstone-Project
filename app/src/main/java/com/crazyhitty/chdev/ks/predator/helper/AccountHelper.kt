@@ -33,6 +33,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.crazyhitty.chdev.ks.predator.data.Constants
+import com.crazyhitty.chdev.ks.predator.di.ApplicationContext
 import io.reactivex.Single
 import org.jetbrains.annotations.TestOnly
 import javax.inject.Inject
@@ -43,7 +44,7 @@ import javax.inject.Inject
  * Created:     1/15/18 3:03 PM
  * Description: Manages account related operations for the application.
  */
-class AccountHelper @Inject constructor(private val context: Context) {
+class AccountHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
     /**
      * Adds a new account to the account manager.
@@ -121,8 +122,7 @@ class AccountHelper @Inject constructor(private val context: Context) {
     fun getAccount(): Account? {
         return AccountManager.get(context.applicationContext)
                 .getAccountsByType(Constants.Authenticator.PREDATOR_ACCOUNT_TYPE)
-                .takeIf { arrayOfAccounts -> arrayOfAccounts.isNotEmpty() }
-                ?.get(0)
+                .firstOrNull()
     }
 
     /**

@@ -109,6 +109,8 @@ public class Constants {
     }
 
     public static class SharedPreferences {
+
+        public static final String TAG = "predator_shared_preferences";
         public static final String IS_TOKEN_VALID = "is_token_valid";
         public static final String IS_ONBOARDING_COMPLETE = "is_onboarding_complete";
         public static final String AUTH_TOKEN_TYPE = "auth_token_type";

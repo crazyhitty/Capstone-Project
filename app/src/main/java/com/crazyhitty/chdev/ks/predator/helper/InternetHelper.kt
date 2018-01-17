@@ -29,6 +29,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import com.crazyhitty.chdev.ks.predator.di.ApplicationContext
 import javax.inject.Inject
 
 /**
@@ -37,7 +38,7 @@ import javax.inject.Inject
  * Created:     1/13/18 1:01 PM
  * Description: Provides the internet status information.
  */
-class InternetHelper @Inject constructor(private val context: Context) {
+class InternetHelper @Inject constructor(@ApplicationContext private val context: Context) {
     private val connectivityManager: ConnectivityManager = context.applicationContext
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
