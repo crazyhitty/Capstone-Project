@@ -38,13 +38,15 @@ android {
 
     buildTypes {
         debug {
+            File configFile = new File('config.gradle')
+            def configFileExists = configFile.isFile()
             if (!project.hasProperty("isReleaseBuild") || "$isReleaseBuild" == "false") {
-                def apiKey = config.apiKey
-                def apiSecret = config.apiSecret
-                def searchUrl = config.searchUrl
-                def xAngoliaAgent = config.xAngoliaAgent
-                def xAngoliaApplicationId = config.xAngoliaApplicationId
-                def xAngoliaApiKey = config.xAngoliaApiKey
+                def apiKey = configFileExists ? config.apiKey : "\"\""
+                def apiSecret = configFileExists ? config.apiSecret : "\"\""
+                def searchUrl = configFileExists ? config.searchUrl : "\"\""
+                def xAngoliaAgent = configFileExists ? config.xAngoliaAgent : "\"\""
+                def xAngoliaApplicationId = configFileExists ? config.xAngoliaApplicationId : "\"\""
+                def xAngoliaApiKey = configFileExists ? config.xAngoliaApiKey : "\"\""
 
                 buildConfigField "String", "API_KEY", apiKey
                 buildConfigField "String", "API_SECRET", apiSecret
