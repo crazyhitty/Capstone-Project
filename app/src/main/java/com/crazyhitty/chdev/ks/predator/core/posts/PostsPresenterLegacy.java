@@ -50,6 +50,10 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
@@ -195,22 +199,22 @@ public class PostsPresenterLegacy implements PostsContractLegacy.Presenter {
                         return posts;
                     }
                 })
-                .flatMap(new Function<List<Post>, ObservableSource<List<Post>>>() {
+                .flatMap(new Function<List<Post>, SingleSource<List<Post>>>() {
                     @Override
-                    public ObservableSource<List<Post>> apply(final List<Post> posts) throws Exception {
-                        return Observable.create(new ObservableOnSubscribe<List<Post>>() {
+                    public SingleSource<List<Post>> apply(final List<Post> posts) throws Exception {
+                        return Single.create(new SingleOnSubscribe<List<Post>>() {
                             @Override
-                            public void subscribe(ObservableEmitter<List<Post>> emitter) throws Exception {
+                            public void subscribe(SingleEmitter<List<Post>> emitter) throws Exception {
                                 if (posts != null && posts.size() != 0) {
-                                    emitter.onNext(posts);
+                                    emitter.onSuccess(posts);
                                 } else {
                                     loadMorePosts(token, postsSortingType);
                                 }
-                                emitter.onComplete();
                             }
                         });
                     }
                 })
+                .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 

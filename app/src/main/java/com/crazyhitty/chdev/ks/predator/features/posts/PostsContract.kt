@@ -38,23 +38,31 @@ interface PostsContract {
     interface View : BaseView<Presenter> {
         fun postsFetched(posts: List<Post>)
 
+        fun openPostDetailsScreen(post: Post)
+
         fun showProgress()
 
         fun hideProgress()
 
-        fun showLoadMore()
+        fun showLoadingForNextDay()
 
-        fun hideLoadMore()
+        fun hideLoadingForNextDay()
 
-        fun loadMoreError(message: String)
+        fun unableToFetchPostsForNextDay()
 
-        fun error(message: String)
+        fun unableToFetchPosts()
+
+        fun getAuthTokenType(): String
+
+        fun getSortingType(): String
     }
 
     interface Presenter : BasePresenter {
         fun fetch()
 
         fun fetchNextDay()
+
+        fun redirectToPostDetailsScreen(postId: Int)
 
         fun refresh()
     }

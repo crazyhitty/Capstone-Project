@@ -124,4 +124,8 @@ public class Constants {
 
         }
     }
+
+    public static class DateFormat {
+        public static final String PREDATOR_DATE_PATTERN_ORIGINAL_FORMAT = "yyyy-MM-dd";
+    }
 }

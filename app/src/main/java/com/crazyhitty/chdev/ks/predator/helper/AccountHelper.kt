@@ -44,7 +44,8 @@ import javax.inject.Inject
  * Created:     1/15/18 3:03 PM
  * Description: Manages account related operations for the application.
  */
-class AccountHelper @Inject constructor(@ApplicationContext private val context: Context) {
+class AccountHelper @Inject constructor(@ApplicationContext private val context: Context,
+                                        private val activity: Activity? = null) {
 
     /**
      * Adds a new account to the account manager.
@@ -76,7 +77,6 @@ class AccountHelper @Inject constructor(@ApplicationContext private val context:
      * Get the auth token from current account. It would try to fetch it automatically if not
      * present currently.
      *
-     * @param activity
      * @param authTokenType Type of authentication token, possible inputs are:
      *                      [Constants.Authenticator.AUTH_TYPE_CLIENT] -> Normal user
      *                      [Constants.Authenticator.AUTH_TYPE_USER] -> Logged in user
@@ -85,7 +85,7 @@ class AccountHelper @Inject constructor(@ApplicationContext private val context:
      * Single which will either provide the auth token string or error if something happens while
      * fetching token.
      */
-    fun getAuthToken(activity: Activity, authTokenType: String): Single<String> {
+    fun getAuthToken(authTokenType: String): Single<String> {
         return Single.create({ emitter ->
             AccountManager.get(context.applicationContext).apply {
                 getAuthTokenByFeatures(Constants.Authenticator.PREDATOR_ACCOUNT_TYPE,

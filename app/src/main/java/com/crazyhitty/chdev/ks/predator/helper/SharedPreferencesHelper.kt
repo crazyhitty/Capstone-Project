@@ -49,4 +49,15 @@ class SharedPreferencesHelper @Inject constructor(private val sharedPreferences:
                 .putBoolean(Constants.SharedPreferences.IS_TOKEN_VALID, status)
                 .apply()
     }
+
+    fun setAuthTokenType(type: String) {
+        sharedPreferences.edit()
+                .putString(Constants.SharedPreferences.AUTH_TOKEN_TYPE, type)
+                .apply()
+    }
+
+    fun getAuthTokenType(): String {
+        return sharedPreferences.getString(Constants.SharedPreferences.AUTH_TOKEN_TYPE,
+                Constants.Authenticator.AUTH_TYPE_CLIENT)
+    }
 }
